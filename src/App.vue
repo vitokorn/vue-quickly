@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
+    <img alt="DQ logo" src="./assets/logo-small.png">
+    <div>Discover Mobily</div>
+    <br>
     <HelloWorld msg="Welcome to Your Vue.js App"/>
   </div>
 </template>
@@ -26,3 +28,8 @@ export default {
   margin-top: 60px;
 }
 </style>
+
+<style>
+@import './assets/style/styles.css';
+</style>
+
