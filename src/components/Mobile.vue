@@ -115,7 +115,7 @@
 
 
     </div>
-    <div v-on:click="fetchArtist">Top artists
+    <div v-on:click.self="fetchArtist">Top artists
       <div id="topartist" class="container-fluid con2" style="display: flex;color: black">
         <div class="trackbody" v-for="item of topartist" v-bind:key="item.id">
           <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="click" v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }" >{{item.name}}
@@ -128,7 +128,7 @@
       </div>
     </div>
     <br>
-    <div v-on:click="fetchArtist2">Top artists 6 month
+    <div v-on:click.self="fetchArtist2">Top artists 6 month
       <div id="topartist6" class="container-fluid con2" style="display: flex;color: black">
         <div class="trackbody" v-for="item of topartist6" v-bind:key="item.id">
           <div v-if="item.preview_url" tabindex="0" class="con3"  v-on:click="click" v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">{{item.name}}
@@ -141,7 +141,7 @@
       </div>
     </div>
     <br>
-    <div v-on:click="fetchArtist3">Top artists all time
+    <div v-on:click.self="fetchArtist3">Top artists all time
       <div id="topartista" class="container-fluid con2" style="display: flex;color: black">
         <div class="trackbody" v-for="item of topartista" v-bind:key="item.id">
           <div v-if="item.preview_url" tabindex="0" class="con3"  v-on:click="click" v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">{{item.name}}
@@ -154,7 +154,7 @@
       </div>
     </div>
     <br>
-    <div v-on:click="fetchApi">Top tracks
+    <div v-on:click.self="fetchApi">Top tracks
       <div id="toptrack" class="container-fluid con2" style="display: flex;color: black">
         <div class="trackbody" v-for="item of items" v-bind:key="item.id">
           <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="click" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }">{{lists(item.artists)}}
@@ -167,7 +167,7 @@
       </div>
     </div>
     <br>
-    <div v-on:click="fetchApi2">Top tracks 6
+    <div v-on:click.self="fetchApi2">Top tracks 6
       <div id="toptrack6" class="container-fluid con2" style="display: flex;color: black" >
         <div class="trackbody" v-for="item of itemsm" v-bind:key="item.id">
           <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="click" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" >{{lists(item.artists)}}
@@ -180,7 +180,7 @@
       </div>
     </div>
     <br>
-    <div v-on:click="fetchApi3">Top tracks all time
+    <div v-on:click.self="fetchApi3">Top tracks all time
       <div id="toptrackall" class="container-fluid con2" style="display: flex;color: black" >
         <div class="trackbody" v-for="item of itemsl" v-bind:key="item.id">
           <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="click" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" >{{lists(item.artists)}}
@@ -193,7 +193,7 @@
       </div>
     </div>
     <br>
-    <div v-on:click="fetchAlbums">Saved albums
+    <div v-on:click.self="fetchAlbums">Saved albums
       <div id="savedalbum" class="container-fluid con2">
         <div class="albumbody" v-for="item of savedalbums" v-bind:key="item.id">
           <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="click" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" >{{lists(item.album.artists)}}
@@ -205,7 +205,7 @@
         </div>
       </div>
     </div>
-    <div v-on:click="fetchTracks">Saved tracks
+    <div v-on:click.self="fetchTracks">Saved tracks
       <div id="savedtrack" class="container-fluid con2">
         <div class="albumbody" v-for="item of savedtracks" v-bind:key="item.id">
           <div v-if="item.track.preview_url" tabindex="0" class="con3" v-on:click="click" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" >{{lists(item.track.artists)}}
@@ -218,7 +218,7 @@
       </div>
     </div>
     <br>
-    <div v-on:click="fetchFA">Followed artist
+    <div v-on:click.self="fetchFA">Followed artist
       <div id="followedartist" class="container-fluid con2">
         <div class="fabody" v-for="item of followedartists" v-bind:key="item.id">
           <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="click" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }" >{{item.name}}
@@ -231,7 +231,7 @@
       </div>
     </div>
     <br>
-    <div v-on:click="fetchNR">New releases
+    <div v-on:click.self="fetchNR">New releases
       <div id="newrelease" class="container-fluid con2">
         <div class="newbody" v-for="item of newreleases" v-bind:key="item.id">
           <div v-if="item.tracks.items[0].preview_url" tabindex="0" class="con3" v-on:click="click" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }" >{{lists(item.artists)}}
@@ -262,7 +262,8 @@ export default {
       followedartists:[],
       items:[],
       itemsm:[],
-      itemsl:[]
+      itemsl:[],
+      currentTrack: null
     }
   },
   methods: {
@@ -346,7 +347,7 @@ export default {
       axios.request({
         url:'https://api.spotify.com/v1/me/top/artists?time_range=long_term',
         method: 'get',
-        headers: {'Authorization': 'Bearer BQCyUlkW-Pdh6ZOxP5dxvphBkRWlqbt28GUGwO36KdV70O64STUty3J_ITjR7p2BVALLiglBvDUKE499eA6hZsSBVtCgxzYoq_JAu5rF4zEMLtTY43buWy-gCzpkEliB1Nlqu4xb4jRKnJFHGg_ei92-NaWef4A5whd6tjxoNJUS2G8Zqgeu71MOtE6SGPJNZCnECW6XitrC4jADND1DBpG7xOz6_VpZOkKPjTGWD1D2-3Ip6A'}
+        headers: {'Authorization': 'Bearer '}
       })
           .then((response) =>{
             let newarr = []
@@ -510,10 +511,14 @@ export default {
     click: function (event){
       let target = event.target
       let audios = target.lastChild
-      if (audios.paused == false) {
+      if (this.currentTrack !=null && this.currentTrack !==audios){
+        this.currentTrack.pause()
+      }
+        if (audios.paused === false) {
         audios.pause()
       } else
       audios.play()
+      this.currentTrack = audios
     },
     lists: function (artists){
       const names = artists.map(({
