@@ -20,12 +20,19 @@
 <!--      </div>-->
     <div class="con2" style="display: flex;color: black">
       <div class="trackbody" v-for="item of playlists" v-bind:key="item.id">
-        <div v-if="item.track.preview_url" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" >{{lists(item['track']['artists'])}}
+        <div v-bind:id="item.id" ref="myDiv" v-if="item.track.preview_url" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="test(item)" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" >{{lists(item['track']['artists'])}}
           <audio preload="none" v-bind:src="item.track.preview_url"></audio>
         </div>
         <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" style="opacity: .5">
           <audio preload="none"></audio>
         </div>
+          <div class="rectrack" style="display: flex; width: 100%; margin-top: 12px; margin-bottom: 6px;">
+            <div v-for="d in deeper1" v-bind:key="d.added_at">
+              <div class="con3" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">{{d.track.name}}
+                <audio preload="none" v-bind:src="d.track.preview_url"></audio>
+              </div>
+            </div>
+          </div>
       </div>
 
 
@@ -178,10 +185,15 @@ export default {
       followedartists:[],
       items:[],
       itemsm:[],
-      itemsl:[]
+      itemsl:[],
+      deeper1:[]
     }
   },
   methods: {
+    test: function(item){
+      console.log(item)
+      this.deeper1.push(item)
+    },
     fetchPlaylists(){
       axios.request({
         url:'https://api.spotify.com/v1/me/playlists?fields=items(name,id)&limit=50',
