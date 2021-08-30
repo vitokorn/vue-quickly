@@ -3,8 +3,8 @@
     <img alt="DQ logo" src="./assets/logo-small.png">
     <div>Discover Mobily</div>
     <br>
-    <HelloWorld v-if="!isMobile" msg="Welcome to Your Vue.js App"/>
-    <Mobile v-if="isMobile" msg="Welcome to Your Vue.js App"/>
+    <Desktop v-if="!isMobile"/>
+    <Mobile v-if="isMobile"/>
   </div>
 </template>
 
@@ -20,14 +20,14 @@ var mixinDetictingMobile = {
     }
   }
 }
-import HelloWorld from './components/HelloWorld.vue'
+import Desktop from './components/Desktop.vue'
 import Mobile from './components/Mobile.vue'
 
 export default {
   name: 'App',
   mixins: [mixinDetictingMobile],
   components: {
-    HelloWorld,
+    Desktop,
     Mobile
   }
 }

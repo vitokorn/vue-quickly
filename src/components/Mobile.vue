@@ -1,94 +1,7 @@
 <template>
   <div>
-    <div id="playlistlist" class="container pl">
-
-      <div id="5otni8xbcdesXyqYjGNdH3" v-on:click="fetchInit" class="hr-line-dashed">Chill</div>
-
-      <div id="4K2RlkLBLijwRBgCEM69yN" v-on:click="fetchInit" class="hr-line-dashed">Wave</div>
-
-      <div id="4eKgt1g7GsTE4tpZIbKGER" v-on:click="fetchInit" class="hr-line-dashed">Dance rising: selected</div>
-
-      <div id="6sKGdJlWmzgsus5VBCrc8p" v-on:click="fetchInit" class="hr-line-dashed">Selected</div>
-
-      <div id="28ZxMxSvYtOVsJeRXGxrMf" v-on:click="fetchInit" class="hr-line-dashed">Fresh Finds:Basement (Selected)</div>
-
-      <div id="75FcI0WTzcS5uVRVqYb2w7" v-on:click="fetchInit" class="hr-line-dashed">Release Radar 2021-04-20 </div>
-
-      <div id="3INVfBrRB3KoJ1LcPBRThx" v-on:click="fetchInit" class="hr-line-dashed">Открытия:резерв</div>
-
-      <div id="4FQmKFEUWf3zys8v3ijCqt" v-on:click="fetchInit" class="hr-line-dashed">Развал снисхождения</div>
-
-      <div id="6A7Rws0vkbbEBcJZnBvmr6" v-on:click="fetchInit" class="hr-line-dashed">Radar</div>
-
-      <div id="6NT3wDHN4Pf8XT7pv2gvh9" v-on:click="fetchInit" class="hr-line-dashed">Record</div>
-
-      <div id="6edGcdcn3rvVDjgtky8Sid" v-on:click="fetchInit" class="hr-line-dashed">The same sample</div>
-
-      <div id="1NPsHBF0TxgrbwtRX7jQDL" v-on:click="fetchInit" class="hr-line-dashed">Радар 2 2021-02-07 </div>
-
-      <div id="4XcOH667raSbKNdEyo0sXh" v-on:click="fetchInit" class="hr-line-dashed">Fresh Finds: Best of Basement 2020</div>
-
-      <div id="2zluqMk5zn75zTTiyyIukH" v-on:click="fetchInit" class="hr-line-dashed">Радар:резерв</div>
-
-      <div id="37i9dQZF1DX6bBjHfdRnza" v-on:click="fetchInit" class="hr-line-dashed">Fresh Finds: Basement</div>
-
-      <div id="37i9dQZF1EMaHzgJK8QEZ7" v-on:click="fetchInit" class="hr-line-dashed">Your Top Songs 2020</div>
-
-      <div id="37i9dQZEVXcERLiUqU2pJX" v-on:click="fetchInit" class="hr-line-dashed">Discover Weekly</div>
-
-      <div id="37i9dQZEVXbsudmxBFKW7G" v-on:click="fetchInit" class="hr-line-dashed">Release Radar</div>
-
-      <div id="2c5xActenxAQrVi6YARtb6" v-on:click="fetchInit" class="hr-line-dashed">Groove Theory:Selected</div>
-
-      <div id="1Dp3YCiT3K47Rp4vnSyYFk" v-on:click="fetchInit" class="hr-line-dashed">Vibra Tropical:Selected</div>
-
-      <div id="5LtCw9kUKtdg0A9XMztW3T" v-on:click="fetchInit" class="hr-line-dashed">Disco</div>
-
-      <div id="37i9dQZF1DWYzxqzx1puO0" v-on:click="fetchInit" class="hr-line-dashed">Calvin Harris Guest List</div>
-
-      <div id="2UzjvZJ5VHyYkw2BHa0BXn" v-on:click="fetchInit" class="hr-line-dashed">Neurofunk</div>
-
-      <div id="1UAOiLXScUaID0szlMjIi0" v-on:click="fetchInit" class="hr-line-dashed">Liquid Funk</div>
-
-      <div id="6pl3mlKgqMBKiXd87Q37ld" v-on:click="fetchInit" class="hr-line-dashed">Chill House</div>
-
-      <div id="0FCHh4sY8PPYNO0bb6fWVE" v-on:click="fetchInit" class="hr-line-dashed">Tecktonik</div>
-
-      <div id="3VdWJVw4Y7eKG6ClBgzp40" v-on:click="fetchInit" class="hr-line-dashed">playlist50246148</div>
-
-      <div id="5A8OqmSndfCrgrjac1QU28" v-on:click="fetchInit" class="hr-line-dashed">90s</div>
-
-      <div id="37i9dQZF1DX3fXJqxGjuEP" v-on:click="fetchInit" class="hr-line-dashed">Vibra Tropical</div>
-
-      <div id="6Aeepso6EVNBtOMYlxiN0F" v-on:click="fetchInit" class="hr-line-dashed">In search of perfection</div>
-
-      <div id="56eX19CJMKkOdRoP7MUbfP" v-on:click="fetchInit" class="hr-line-dashed">Alt/Indie</div>
-
-      <div id="3UUrYHXVi7wEvV22PYVUBP" v-on:click="fetchInit" class="hr-line-dashed">Макс Корж</div>
-
-      <div id="6uznlwNfHdzomWhDH7u0t7" v-on:click="fetchInit" class="hr-line-dashed">Big Room</div>
-
-      <div id="40meYd6RrWYIbkA4m0tGBQ" v-on:click="fetchInit" class="hr-line-dashed">Deep</div>
-
-      <div id="237ZMZLnF04RJYLZ7VKNVe" v-on:click="fetchInit" class="hr-line-dashed">Dramina</div>
-
-      <div id="46GbJCgS1j3YiWTfTs7kCy" v-on:click="fetchInit" class="hr-line-dashed"></div>
-
-      <div id="21cjdovZeJLdUoaOsp8fPI" v-on:click="fetchInit" class="hr-line-dashed">Пюрешка с котлеткой</div>
-
-      <div id="22blj6QK5pSrP5qCY9Qad3" v-on:click="fetchInit" class="hr-line-dashed">2016-2017</div>
-
-      <div id="4MfLQqGloiHb6Acqxfiryx" v-on:click="fetchInit" class="hr-line-dashed">Gold days</div>
-
-      <div id="37i9dQZF1DX1wOOgfKQTlO" v-on:click="fetchInit" class="hr-line-dashed">Побег к океану</div>
-
-      <div id="37i9dQZF1DXdQP3bGyOAvs" v-on:click="fetchInit" class="hr-line-dashed">100% Lounge</div>
-
-      <div id="37i9dQZF1DX8a1tdzq5tbM" v-on:click="fetchInit" class="hr-line-dashed">Dance Classics</div>
-
-      <div id="37i9dQZF1EJMMkftayk8vd" v-on:click="fetchInit" class="hr-line-dashed">Whywisked + BeatVito</div>
-
-
+    <div id="playlistlist" v-on:click="fetchPlaylists" v-for="item of listplaylists" v-bind:key="item.id" class="container pl">Playlists
+      <div v-bind:id="item.id" v-on:click="fetchInit" class="hr-line-dashed">{{ item.name }}</div>
     </div>
     <!--    <div id="playlist" class="container-fluid con2">-->
     <!--      <div id="p_" class="con2">-->
@@ -251,6 +164,7 @@ import axios from 'axios'
 export default {
   data(){
     return{
+      listplaylists:[],
       playinfo:[],
       playlists:[],
       topartist:[],
@@ -267,6 +181,17 @@ export default {
     }
   },
   methods: {
+    fetchPlaylists(){
+      axios.request({
+        url:'https://api.spotify.com/v1/me/playlists?fields=items(name,id)&limit=50',
+        method: 'get',
+        headers: {'Authorization': 'Bearer '}
+      })
+          .then((response) =>{
+            this.listplaylists = response.data['items']
+          })
+          .catch()
+    },
     fetchInit:function(event){
       console.log('167'  + event.currentTarget.id)
       let id = event.currentTarget.id
