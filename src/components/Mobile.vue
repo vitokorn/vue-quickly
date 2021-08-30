@@ -1,7 +1,9 @@
 <template>
   <div>
-    <div id="playlistlist" v-on:click="fetchPlaylists" v-for="item of listplaylists" v-bind:key="item.id" class="container pl">Playlists
+    <div id="playlistlist" v-on:click.self="fetchPlaylists" class="container pl">Playlists
+      <div v-for="item of listplaylists" v-bind:key="item.id">
       <div v-bind:id="item.id" v-on:click="fetchInit" class="hr-line-dashed">{{ item.name }}</div>
+      </div>
     </div>
     <!--    <div id="playlist" class="container-fluid con2">-->
     <!--      <div id="p_" class="con2">-->
@@ -16,7 +18,7 @@
     <!--        </div>-->
     <!--        </div>-->
     <!--      </div>-->
-    <div class="container-fluid con2" style="display: flex;color: black">
+    <div class="con2" style="display: flex;color: black">
       <div class="trackbody" v-for="item of playlists" v-bind:key="item.id">
         <div v-if="item.track.preview_url" tabindex="0" class="con3" v-on:click="click" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" >{{lists(item['track']['artists'])}}
           <audio preload="none" v-bind:src="item.track.preview_url"></audio>
@@ -29,7 +31,7 @@
 
     </div>
     <div v-on:click.self="fetchArtist">Top artists
-      <div id="topartist" class="container-fluid con2" style="display: flex;color: black">
+      <div id="topartist" class="con2" style="display: flex;color: black">
         <div class="trackbody" v-for="item of topartist" v-bind:key="item.id">
           <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="click" v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }" >{{item.name}}
             <audio preload="none" v-bind:src="item.preview_url"></audio>
@@ -42,7 +44,7 @@
     </div>
     <br>
     <div v-on:click.self="fetchArtist2">Top artists 6 month
-      <div id="topartist6" class="container-fluid con2" style="display: flex;color: black">
+      <div id="topartist6" class="con2" style="display: flex;color: black">
         <div class="trackbody" v-for="item of topartist6" v-bind:key="item.id">
           <div v-if="item.preview_url" tabindex="0" class="con3"  v-on:click="click" v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">{{item.name}}
             <audio preload="none" v-bind:src="item.preview_url"></audio>
@@ -55,7 +57,7 @@
     </div>
     <br>
     <div v-on:click.self="fetchArtist3">Top artists all time
-      <div id="topartista" class="container-fluid con2" style="display: flex;color: black">
+      <div id="topartista" class="con2" style="display: flex;color: black">
         <div class="trackbody" v-for="item of topartista" v-bind:key="item.id">
           <div v-if="item.preview_url" tabindex="0" class="con3"  v-on:click="click" v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">{{item.name}}
             <audio preload="none" v-bind:src="item.preview_url"></audio>
@@ -68,7 +70,7 @@
     </div>
     <br>
     <div v-on:click.self="fetchApi">Top tracks
-      <div id="toptrack" class="container-fluid con2" style="display: flex;color: black">
+      <div id="toptrack" class="con2" style="display: flex;color: black">
         <div class="trackbody" v-for="item of items" v-bind:key="item.id">
           <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="click" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }">{{lists(item.artists)}}
             <audio preload="none" v-bind:src="item.preview_url"></audio>
@@ -81,7 +83,7 @@
     </div>
     <br>
     <div v-on:click.self="fetchApi2">Top tracks 6
-      <div id="toptrack6" class="container-fluid con2" style="display: flex;color: black" >
+      <div id="toptrack6" class="con2" style="display: flex;color: black" >
         <div class="trackbody" v-for="item of itemsm" v-bind:key="item.id">
           <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="click" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" >{{lists(item.artists)}}
             <audio preload="none" v-bind:src="item.preview_url"></audio>
@@ -94,7 +96,7 @@
     </div>
     <br>
     <div v-on:click.self="fetchApi3">Top tracks all time
-      <div id="toptrackall" class="container-fluid con2" style="display: flex;color: black" >
+      <div id="toptrackall" class="con2" style="display: flex;color: black" >
         <div class="trackbody" v-for="item of itemsl" v-bind:key="item.id">
           <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="click" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" >{{lists(item.artists)}}
             <audio preload="none" v-bind:src="item.preview_url"></audio>
@@ -107,7 +109,7 @@
     </div>
     <br>
     <div v-on:click.self="fetchAlbums">Saved albums
-      <div id="savedalbum" class="container-fluid con2">
+      <div id="savedalbum" class="con2">
         <div class="albumbody" v-for="item of savedalbums" v-bind:key="item.id">
           <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="click" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" >{{lists(item.album.artists)}}
             <audio preload="none" v-bind:src="item.preview_url"></audio>
@@ -119,7 +121,7 @@
       </div>
     </div>
     <div v-on:click.self="fetchTracks">Saved tracks
-      <div id="savedtrack" class="container-fluid con2">
+      <div id="savedtrack" class="con2">
         <div class="albumbody" v-for="item of savedtracks" v-bind:key="item.id">
           <div v-if="item.track.preview_url" tabindex="0" class="con3" v-on:click="click" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" >{{lists(item.track.artists)}}
             <audio preload="none" v-bind:src="item.track.preview_url"></audio>
@@ -132,7 +134,7 @@
     </div>
     <br>
     <div v-on:click.self="fetchFA">Followed artist
-      <div id="followedartist" class="container-fluid con2">
+      <div id="followedartist" class="con2">
         <div class="fabody" v-for="item of followedartists" v-bind:key="item.id">
           <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="click" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }" >{{item.name}}
             <audio preload="none" v-bind:src="item.preview_url"></audio>
@@ -145,7 +147,7 @@
     </div>
     <br>
     <div v-on:click.self="fetchNR">New releases
-      <div id="newrelease" class="container-fluid con2">
+      <div id="newrelease" class="con2">
         <div class="newbody" v-for="item of newreleases" v-bind:key="item.id">
           <div v-if="item.tracks.items[0].preview_url" tabindex="0" class="con3" v-on:click="click" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }" >{{lists(item.artists)}}
             <audio preload="none" v-bind:src="item.tracks.items[0].preview_url"></audio>
