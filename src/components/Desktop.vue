@@ -27,35 +27,62 @@
           <audio preload="none"></audio>
         </div>
       </div>
-      </div>
-      <div class="rectrack" >
-        <div v-for="d in deeper1" v-bind:key="d.added_at">
-          <div v-if="d.type==='pl'" class="playlisttrack" style="display: flex; width: 100%; margin-top: 12px; margin-bottom: 6px;">
-            <div class="con3" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">{{d.track.name}}
-              <audio preload="none" v-bind:src="d.track.preview_url"></audio>
+    </div>
+    <div class="rectrack" >
+      <div v-for="d in deeper1" v-bind:key="d.added_at">
+        <div v-if="d.type==='pl'" class="playlisttrack" style="display: flex; width: 100%; margin-top: 12px; margin-bottom: 6px;">
+          <div class="con3" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.track.name}}
+            <audio preload="none" v-bind:src="d.track.preview_url"></audio>
+          </div>
+          <div style="width: 50%;text-align: left;">
+            <div>{{d.track.name}}</div>
+            <div style="display: flex; align-items: center;"><p>By </p>
+              <div v-for="art in d.track.artists" v-bind:key="art.id" style="display: flex;align-items: center">
+                <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d.track)">{{art.name}}</div>
+              </div>
             </div>
-            <div style="width: 50%;text-align: left;">
-              <div>{{d.track.name}}</div>
-              <div style="display: flex; align-items: center;"><p>By </p>
-                <div v-for="art in d.track.artists" v-bind:key="art.id" style="display: flex;align-items: center">
-                  <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art)">{{art.name}}</div>
-                </div>
-                </div>
-                <span style="color: rgb(240, 55, 165);">Recomended songs based on this</span>
-                <div><a v-bind:href="d['track']['external_urls']['spotify']" target="_blank">
-                  <button class="button">Open is Spotify</button></a>
-                </div>
-            </div>
-            <div class="artist-cirle con3" v-for="art in d.track.artists" v-bind:key="art.id" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">
-              <audio preload="none" v-bind:src="d.track.preview_url"></audio>
-              <div style="float: left; margin-left: 50px;">{{art.name}}</div>
+            <span style="color: rgb(240, 55, 165);">Recomended songs based on this</span>
+            <div><a v-bind:href="d['track']['external_urls']['spotify']" target="_blank">
+              <button class="button">Open is Spotify</button></a>
             </div>
           </div>
-          <div v-else-if="d.type==='artist'" class="con3" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">{{d.name}}
-
+          <div class="artist-cirle con3" v-for="art in d.track.artists" v-bind:key="art.id" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">
+            <audio preload="none" v-bind:src="d.track.preview_url"></audio>
+            <div style="float: left; margin-left: 50px;">{{art.name}}</div>
           </div>
         </div>
+        <div v-else-if="d.type==='artist'" class="recartist" style="display: grid; gap: 16px;text-align: left">
+          <div class="con3" style="grid-column: 1 / 3;text-align: left;" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
+            <audio v-bind:src="d.preview_url"></audio>
+          </div>
+          <div style="grid-column: 3 / 8">{{d.name}}
+            <div>{{d['followers']['total'] + ' followers'}}</div>
+            <div>{{d['genres']}}</div>
+            <div style="color: rgb(240, 55, 165);">Recomended songs based on this</div>
+            <div><a v-bind:href="d['external_urls']['spotify']" target="_blank">
+              <button class="button">Open is Spotify</button></a>
+            </div>
+          </div>
+<!--          <div style="grid-area: 1 / 8 / 3 / 10">Related Artist-->
+<!--            <div class="col2">-->
+<!--              <div tabindex="0" class="img-xs" style="background-image: url(&quot;https://i.scdn.co/image/ab6761610000e5ebf78db90c9a2727a8d298cc47&quot;); background-repeat: no-repeat; background-size: cover;"><audio preload="none" src="https://p.scdn.co/mp3-preview/56f60cf2c5c637c4f72f1858d4dcee2d339de4af?cid=a9be8e308f094d439c5b58809fd0316f"></audio></div>-->
+<!--            </div>-->
+<!--          </div>-->
+          <div style="grid-column: 1 / 8;">
+            <div>Top tracks</div>
+            <div></div>
+            <div>Albums</div>
+            <div></div>
+            <div>Single</div>
+            <div></div>
+            <div>Appears on</div>
+            <div></div>
+          </div>
+
+
+        </div>
       </div>
+    </div>
     <div v-on:click.self="fetchArtist">Top artists
       <div id="topartist" class="con2" style="display: flex;color: black">
         <div class="trackbody" v-for="item of topartist" v-bind:key="item.id">
@@ -146,13 +173,13 @@
         </div>
       </div>
     </div>
-    <div v-on:click.self="fetchTracks">Saved tracks
+    <div v-on:click.self="fetchTracks(0)">Saved tracks
       <div id="savedtrack" class="con2">
         <div class="albumbody" v-for="item of savedtracks" v-bind:key="item.id">
-          <div v-if="item.track.preview_url" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" >{{lists(item.track.artists)}}
+          <div v-if="item.track.preview_url" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" >{{lists(item.track.artists)}} - {{item.track.name}}
             <audio preload="none" v-bind:src="item.track.preview_url"></audio>
           </div>
-          <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(item.track.artists)}}
+          <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(item.track.artists)}} - {{item.track.name}}
             <audio preload="none"></audio>
           </div>
         </div>
@@ -172,7 +199,7 @@
       </div>
     </div>
     <br>
-    <div v-on:click.self="fetchNR">New releases
+    <div v-on:click.self="fetchNR(0)">New releases
       <div id="newrelease" class="con2">
         <div class="newbody" v-for="item of newreleases" v-bind:key="item.id">
           <div v-if="item.tracks.items[0].preview_url" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }" >{{lists(item.artists)}}
@@ -205,7 +232,8 @@ export default {
       items:[],
       itemsm:[],
       itemsl:[],
-      deeper1:[]
+      deeper1:[],
+      arr:[]
     }
   },
   methods: {
@@ -215,7 +243,7 @@ export default {
       console.log('196' + item)
       this.deeper1.push(item)
     },
-    deeperartist: function (item){
+    deeperartist: function (item,track){
       axios.request({
         url:'https://api.spotify.com/v1/artists/' + item.id,
         method: 'get',
@@ -224,6 +252,9 @@ export default {
           .then((response) =>{
             let data = response.data
             data.type = 'artist'
+            if (track.preview_url){
+              data.preview_url = track.preview_url
+            }
             console.log('227 ' + data)
             this.deeper1.push(data)
           })
@@ -411,47 +442,59 @@ export default {
           })
           .catch()
     },
-    fetchTracks(){
+    fetchTracks(offset){
       axios.request({
-        url: 'https://api.spotify.com/v1/me/tracks?offset=' + 0 + '&limit=50',
+        url: 'https://api.spotify.com/v1/me/tracks?offset=' + offset + '&limit=50',
         method: 'get',
-        headers: {'Authorization': 'Bearer '}
+        headers: {'Authorization': 'Bearer BQDk5CvLE-1aafYfdpPW0MyQ_qxgPaW35A6o97pJ2gs_k4Mf0dGZ1pnDQk_Xr816CeyM8GlcvPOd4OVJVrp79Fdpg9zsiOvN8o3Pp7TzqPT-nGlG4xuaeQY5MyaZKU91F6FvkJyZKMCw__EmTrUWzNA9MsDxKY97AA05qT91CVKJNIB32mP81KuHI4uFnIyQfz1spB15k2wjJSIo6kCeTLyyZzJnPLDWUdHihesvqBvM0U7BaQ'}
       })
           .then((response) =>{
-            this.savedtracks =response.data['items']
+            this.savedtracks.push(...response.data['items'])
+            if (response.data['items'].length > 0){
+              this.fetchTracks(offset += 50)
+            }
 
           })
           .catch((onerror) =>{
             console.log(onerror)
           })
     },
-    fetchNR(){
+    fetchNR(offset){
       axios.request({
-        url: 'https://api.spotify.com/v1/browse/new-releases?limit=20&offset=' + 0,
+        url: 'https://api.spotify.com/v1/browse/new-releases?limit=20&offset=' + offset,
         method: 'get',
-        headers: {'Authorization': 'Bearer '}
+        headers: {'Authorization': 'Bearer BQDk5CvLE-1aafYfdpPW0MyQ_qxgPaW35A6o97pJ2gs_k4Mf0dGZ1pnDQk_Xr816CeyM8GlcvPOd4OVJVrp79Fdpg9zsiOvN8o3Pp7TzqPT-nGlG4xuaeQY5MyaZKU91F6FvkJyZKMCw__EmTrUWzNA9MsDxKY97AA05qT91CVKJNIB32mP81KuHI4uFnIyQfz1spB15k2wjJSIo6kCeTLyyZzJnPLDWUdHihesvqBvM0U7BaQ'}
       })
           .then((response) =>{
-            let newarr = []
-            let items =response.data['albums']['items']
-            console.log('235' + items[0].id)
-            for (let i=0;i <  items.length;i++){
-              newarr.push(items[i].id)
-            }
-            axios.request({
-              url:'https://api.spotify.com/v1/albums?ids=' + newarr ,
-              method: 'get',
-              headers: {'Authorization': 'Bearer '}
-            })
-                .then((response) => {
-                  this.newreleases = response.data['albums']}
-
-                )
-
-
+                let newarr = []
+                let items =response.data['albums']['items']
+                console.log('235' + items[0].id)
+                for (let i=0;i <  items.length;i++){
+                  newarr.push(items[i].id)
+                }
+                this.getNewrelease(newarr,offset)
           })
-          .catch()
+
     },
+    getNewrelease(newarr,offset){
+        axios.request({
+          url:'https://api.spotify.com/v1/albums?ids=' + newarr ,
+          method: 'get',
+          headers: {'Authorization': 'Bearer BQDk5CvLE-1aafYfdpPW0MyQ_qxgPaW35A6o97pJ2gs_k4Mf0dGZ1pnDQk_Xr816CeyM8GlcvPOd4OVJVrp79Fdpg9zsiOvN8o3Pp7TzqPT-nGlG4xuaeQY5MyaZKU91F6FvkJyZKMCw__EmTrUWzNA9MsDxKY97AA05qT91CVKJNIB32mP81KuHI4uFnIyQfz1spB15k2wjJSIo6kCeTLyyZzJnPLDWUdHihesvqBvM0U7BaQ'}
+        })
+            .then((response) => {
+              console.log('452 ' + this.newreleases)
+              // let old = this.newreleases
+              // old.push(response.data['albums'])
+              this.newreleases.push(...response.data['albums'])
+                  if (response.data['albums'].length > 0){
+                    this.fetchNR(offset +=20)
+                  }
+            }
+
+            )
+      .catch()
+      },
     fetchFA(){
       axios.request({
         url: 'https://api.spotify.com/v1/me/following?type=artist&limit=50',
