@@ -28,10 +28,15 @@
         </div>
           <div class="rectrack" style="display: flex; width: 100%; margin-top: 12px; margin-bottom: 6px;">
             <div v-for="d in deeper1" v-bind:key="d.added_at">
+              <div v-if="d.type==='pl'" class="playlisttrack">
               <div class="con3" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">{{d.track.name}}
                 <audio preload="none" v-bind:src="d.track.preview_url"></audio>
               </div>
-            </div>
+              </div>
+              <div v-else-if="d.type==='artist'" class="con3" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">Artisi
+
+</div>
+              </div>
           </div>
       </div>
 
@@ -192,6 +197,8 @@ export default {
   methods: {
     test: function(item){
       console.log(item)
+      item.type = 'pl'
+      console.log('196' + item)
       this.deeper1.push(item)
     },
     fetchPlaylists(){
