@@ -31,13 +31,13 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     const id = req.params.id;
 
-    Tutorial.update(req.body, {
+    User.update(req.body, {
         where: { id: id }
     })
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Tutorial was updated successfully."
+                    message: "User was updated successfully."
                 });
             } else {
                 res.send({
@@ -47,7 +47,7 @@ exports.update = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error updating Tutorial with id=" + id
+                message: "Error updating User with id=" + id
             });
         });
 };

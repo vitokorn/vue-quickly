@@ -2,7 +2,7 @@
   <div>
     <div id="playlistlist" v-on:click.self="fetchPlaylists" class="container pl">Playlists
       <div v-for="item of listplaylists" v-bind:key="item.id">
-      <div v-bind:id="item.id" v-on:click="fetchInit" class="hr-line-dashed">{{ item.name }}</div>
+        <div v-bind:id="item.id" v-on:click="fetchInit" class="hr-line-dashed">{{ item.name }}</div>
       </div>
     </div>
     <!--    <div id="playlist" class="container-fluid con2">-->
@@ -441,10 +441,10 @@ export default {
       if (this.currentTrack !=null && this.currentTrack !==audios){
         this.currentTrack.pause()
       }
-        if (audios.paused === false) {
+      if (audios.paused === false) {
         audios.pause()
       } else
-      audios.play()
+        audios.play()
       this.currentTrack = audios
     },
     lists: function (artists){

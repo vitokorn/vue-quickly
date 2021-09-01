@@ -20,7 +20,7 @@
     <!--      </div>-->
     <div class="con2" style="display: flex;color: black">
       <div class="trackbody" v-for="item of playlists" v-bind:key="item.id">
-        <div v-bind:id="item.id" ref="myDiv" v-if="item.track.preview_url" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeper(item)" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" >{{lists(item['track']['artists'])}}
+        <div v-bind:id="item.id" v-if="item.track.preview_url" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeper(item)" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" >{{lists(item['track']['artists'])}}
           <audio preload="none" v-bind:src="item.track.preview_url"></audio>
         </div>
         <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" style="opacity: .5">
@@ -41,7 +41,7 @@
                 <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d.track)">{{art.name}}</div>
               </div>
             </div>
-            <span style="color: rgb(240, 55, 165);">Recomended songs based on this</span>
+            <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d.track)">Recommended songs based on this</span>
             <div><a v-bind:href="d['track']['external_urls']['spotify']" target="_blank">
               <button class="button">Open is Spotify</button></a>
             </div>
@@ -51,19 +51,29 @@
             <div style="float: left; margin-left: 50px;">{{art.name}}</div>
           </div>
         </div>
-        <div v-else-if="d.type==='artist'" class="recartist" style="display: grid; gap: 16px;text-align: left">
-          <div class="con3" style="grid-column: 1 / 3;text-align: left;" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
+        <div v-else-if="d.type==='seed_tracks'" class="seed_tracks con2">
+          <div v-for="s in d.tracks" v-bind:key="s.id">
+            <div v-if="s.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{s.name}}
+              <audio preload="none" v-bind:src="s.preview_url"></audio>
+            </div>
+            <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5">{{s.name}}
+              <audio preload="none"></audio>
+            </div>
+          </div>
+          </div>
+        <div v-else-if="d.type==='artist'" class="recartist con2" style="gap: 16px;text-align: left">
+          <div class="con3" style="text-align: left;" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
             <audio v-bind:src="d.preview_url"></audio>
           </div>
-          <div style="grid-column: 3 / 8">{{d.name}}
+          <div style="width: 60%">{{d.name}}
             <div>{{d['followers']['total'] + ' followers'}}</div>
             <div>{{d['genres']}}</div>
-            <div style="color: rgb(240, 55, 165);">Recomended songs based on this</div>
+            <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist(d)">Recomended artists songs based on this</div>
             <div><a v-bind:href="d['external_urls']['spotify']" target="_blank">
               <button class="button">Open is Spotify</button></a>
             </div>
           </div>
-          <div v-for="ra in relatedartist1" v-bind:key="ra.id" style="grid-area: 1 / 8 / 3 / 10">
+          <div v-for="ra in relatedartist1" v-bind:key="ra.id">
             <div v-if="ra.type==='related-artists'" >Related Artist</div>
             <div v-if="ra.type==='related-artists'" class="col2">
             <div v-for="r in ra['items']" v-bind:key="r.id">
@@ -76,7 +86,8 @@
               </div>
             </div>
           </div>
-          <div v-for="da in deeperartist1" v-bind:key="da.id" style="grid-column: 1 / 8;">
+          <div >
+            <div v-for="da in deeperartist1" v-bind:key="da.id">
             <div v-if="da.type==='top_tracks'">Top tracks</div>
             <div v-if="da.type==='top_tracks'" class="top-tracks con2">
               <div v-for="tt in da['tracks']" v-bind:key="tt.id">
@@ -123,10 +134,21 @@
               </div>
             </div>
           </div>
-
+          </div>
 
         </div>
-      </div>
+        <div v-else-if="d.type==='seed_artists'" class="seed_artists con2" >
+          <div style="width: 100%;">Seed artist</div>
+          <div v-for="s in d.tracks" v-bind:key="s.id">
+            <div v-if="s.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{s.name}}
+              <audio preload="none" v-bind:src="s.preview_url"></audio>
+            </div>
+            <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5">{{s.name}}
+              <audio preload="none"></audio>
+            </div>
+          </div>
+        </div>
+        </div>
     </div>
     <div v-on:click.self="fetchArtist">Top artists
       <div id="topartist" class="con2" style="display: flex;color: black">
@@ -280,6 +302,8 @@ export default {
       deeper1:[],
       deeperartist1:[],
       relatedartist1:[],
+      seedartists1:[],
+      seedtracks1:[],
       arr:[]
     }
   },
@@ -304,19 +328,6 @@ export default {
             }
             console.log(data)
             this.deeper1.push(data)
-          })
-          .catch()
-      // recomendations artists
-      axios.request({
-        url:'https://api.spotify.com/v1/recommendations?seed_artists=' + item['id'] + '&limit=50&offset=0&market=UA',
-        method: 'get',
-        headers: {'Authorization': 'Bearer '}
-      })
-          .then((response) =>{
-            let data = response.data['tracks']
-            data.type = 'seed_artists'
-            console.log(data)
-            this.deeperartist1.push(data)
           })
           .catch()
       // top tracks
@@ -473,6 +484,36 @@ export default {
             console.log(fin)
             this.relatedartist1.push(fin)
 
+          })
+          .catch()
+    },
+    seedArtist(item) {
+      axios.request({
+        url: 'https://api.spotify.com/v1/recommendations?seed_artists=' + item['id'] + '&limit=50&offset=0&market=UA',
+        method: 'get',
+        headers: {'Authorization': 'Bearer '}
+      })
+          .then((response) => {
+            let data = []
+            data.tracks = response.data['tracks']
+            data.type = 'seed_artists'
+            console.log(data)
+            this.deeper1.push(data)
+          })
+          .catch()
+    },
+    seedTracks(item) {
+      axios.request({
+        url: 'https://api.spotify.com/v1/recommendations?seed_tracks=' + item['id'] + '&limit=50&offset=0&market=UA',
+        method: 'get',
+        headers: {'Authorization': 'Bearer '}
+      })
+          .then((response) => {
+            let data = []
+            data.tracks = response.data['tracks']
+            data.type = 'seed_tracks'
+            console.log(data)
+            this.deeper1.push(data)
           })
           .catch()
     },
