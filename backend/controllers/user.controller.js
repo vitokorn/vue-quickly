@@ -1,58 +1,116 @@
 const db = require("../models");
 const User = db.user;
 const Op = db.Sequelize.Op;
+const axios = require('axios');
+const {response} = require("express");
+
+
+const client_id = process.env.client_id
+const client_secret = process.env.client_secret
+const redirect_uri = process.env.redirect_uri
 
 // Create and Save a new User
-exports.create = (req, res) => {
-
-};
-
-// Retrieve all User from the database.
-exports.findAll = (req, res) => {
-
-};
-
-// Find a single User with an id
-exports.findOne = (req, res) => {
-    const id = req.params.id;
-
-    User.findByPk(id)
-        .then(data => {
-            res.send(data);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: "Error retrieving User with id=" + id
-            });
-        });
-};
-
-// Update a User by the id in the request
-exports.update = (req, res) => {
-    const id = req.params.id;
-
-    User.update(req.body, {
-        where: { id: id }
+exports.scode = (req, res) => {
+    let code = req.query.code
+    let url = 'https://accounts.spotify.com/api/token'
+    let data = {'grant_type': 'authorization_code', 'code': code, 'redirect_uri': redirect_uri,'client_id':client_id,
+        'client_secret':client_secret}
+    let access_token
+    let refresh_token
+    axios.get({
+        url,
+        data:{
+            data
+        }
     })
-        .then(num => {
-            if (num == 1) {
-                res.send({
-                    message: "User was updated successfully."
-                });
-            } else {
-                res.send({
-                    message: `Cannot update User with id=${id}. Maybe User was not found or req.body is empty!`
-                });
-            }
+        .then(response =>{
+            access_token = response.data['access_token']
+            refresh_token = response.data['refresh_token']
         })
-        .catch(err => {
-            res.status(500).send({
-                message: "Error updating User with id=" + id
-            });
-        });
+    let surl = 'https://api.spotify.com/v1/me'
+    let sheaders = {
+        'Authorization': 'Bearer ' + access_token,
+        'scope': 'user-read-private user-read-email'
+    }
+    axios.get(surl,{
+        headers:{
+            sheaders
+        }
+    }).then(response =>{
+        let r = response.data
+        User.findOrCreate({where:{spotyid:r['id'],country:r['country'],display_name:r['display_name']},defaults:{
+                access_token:access_token,refresh_token:refresh_token
+            }})
+        response.data
+    })
+res.redirect('/')
 };
 
-// Delete a Tutorial with the specified id in the request
-exports.delete = (req, res) => {
+exports.refresh = (req,res) => {
+    let username = req.query.username
+    // let current_time = new Date().getTime()
+    // let one_day = current_time.setHours(current_time.getHours() - 1)
+    let url = 'https://accounts.spotify.com/api/token'
+    const current = User.findOne({ where: { spotyid: username } });
+    let data = {'grant_type': 'refresh_token','refresh_token': current.refresh_token, 'client_id':client_id,
+        'client_secret':client_secret}
+    axios.post(url,{
+        body:{
+            data
+        }
+            .then(response =>{
+                let r = response.data
+                current.access_token = r['access_token']
+            })})
+    res(res['access_token'], true)
+}
 
-};
+// // Retrieve all User from the database.
+// exports.findAll = (req, res) => {
+//
+// };
+//
+// // Find a single User with an id
+// exports.findOne = (req, res) => {
+//     const id = req.params.id;
+//
+//     User.findByPk(id)
+//         .then(data => {
+//             res.send(data);
+//         })
+//         .catch(err => {
+//             res.status(500).send({
+//                 message: "Error retrieving User with id=" + id
+//             });
+//         });
+// };
+//
+// // Update a User by the id in the request
+// exports.update = (req, res) => {
+//     const id = req.params.id;
+//
+//     User.update(req.body, {
+//         where: { id: id }
+//     })
+//         .then(num => {
+//             if (num == 1) {
+//                 res.send({
+//                     message: "User was updated successfully."
+//                 });
+//             } else {
+//                 res.send({
+//                     message: `Cannot update User with id=${id}. Maybe User was not found or req.body is empty!`
+//                 });
+//             }
+//         })
+//         .catch(err => {
+//             res.status(500).send({
+//                 message: "Error updating User with id=" + id
+//             });
+//         });
+// };
+//
+// // Delete a Tutorial with the specified id in the request
+// exports.delete = (req, res) => {
+//
+// };
