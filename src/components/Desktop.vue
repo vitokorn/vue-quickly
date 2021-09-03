@@ -102,10 +102,10 @@
             <div v-if="da.type==='albums'">Albums</div>
             <div v-if="da.type==='albums'" class="album con2">
               <div v-for="alb in da" v-bind:key="alb.id">
-                <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{alb.name}}
+                <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:click="deeperAlbum(alb)" v-on:mouseleave="mouseLeave">{{alb.name}}
                   <audio v-bind:src="alb.preview_url"></audio>
                 </div>
-                <div v-else class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" style="opacity: .5">{{alb.name}}
+                <div v-else class="con3" v-on:click="deeperAlbum(alb)" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" style="opacity: .5">{{alb.name}}
                   <audio></audio>
                 </div>
               </div>
@@ -113,10 +113,10 @@
             <div v-if="da.type==='single'">Single</div>
             <div v-if="da.type==='single'" class="single con2">
               <div v-for="s in da" v-bind:key="s.id">
-                <div v-if="s.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{s.name}}
+                <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{s.name}}
                   <audio v-bind:src="s.preview_url"></audio>
                 </div>
-                <div v-else class="con3" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" style="opacity: .5">{{s.name}}
+                <div v-else class="con3" v-on:click="deeperAlbum(s)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" style="opacity: .5">{{s.name}}
                   <audio></audio>
                 </div>
               </div>
@@ -125,10 +125,10 @@
             <div v-if="da.type==='appears_on'">Appears on</div>
             <div v-if="da.type==='appears_on'" class="appear con2">
               <div v-for="a in da" v-bind:key="a.id">
-                <div v-if="a.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{a.name}}
+                <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{a.name}}
                   <audio v-bind:src="a.preview_url"></audio>
                 </div>
-                <div v-else class="con3" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" style="opacity: .5">{{a.name}}
+                <div v-else class="con3" v-on:click="deeperAlbum(a)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" style="opacity: .5">{{a.name}}
                   <audio></audio>
                 </div>
               </div>
@@ -146,6 +146,33 @@
             <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5">{{s.name}}
               <audio preload="none"></audio>
             </div>
+          </div>
+        </div>
+        <div v-for="d in deeperalbums1" v-bind:key="d.id">
+        <div class="deep_albums con2" >
+            <div v-if="d.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
+              <audio preload="none" v-bind:src="d.preview_url"></audio>
+            </div>
+            <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }" style="opacity: .5">{{d.name}}
+              <audio preload="none"></audio>
+            </div>
+          <div style="margin-left: 4px; margin-right: 4px;">{{d.name}}
+          <div>{{d.release_date}}</div>
+<!--            <div>{{list(d.artists)}}</div>-->
+            <span style="color: rgb(240, 55, 165);">Recomended songs based on this</span>
+          </div>
+          <div style="display: block;" class="trackList">Tracks
+            <div v-for="track in d.tracks" v-bind:key="track.id">
+            <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">
+              <div class="trackTitle">{{track.name}}</div>
+              <audio preload="none" v-bind:src="track.preview_url"></audio>
+            </div>
+              <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  style="opacity: .5">
+                <div class="trackTitle">{{track.name}}</div>
+                <audio preload="none" v-bind:src="track.preview_url"></audio>
+              </div>
+            </div>
+        </div>
           </div>
         </div>
         </div>
@@ -302,8 +329,7 @@ export default {
       deeper1:[],
       deeperartist1:[],
       relatedartist1:[],
-      seedartists1:[],
-      seedtracks1:[],
+      deeperalbums1:[],
       arr:[]
     }
   },
@@ -366,6 +392,7 @@ export default {
                     let tracks = response.data['items']
                     // console.log(333)
                     // console.log(response.data)
+                    arr.items[i].tracks = tracks
                     if (tracks[0]['preview_url']){
                       arr.items[i].preview_url = tracks[0]['preview_url']
                     }
@@ -401,6 +428,7 @@ export default {
                     let tracks = response.data['items']
                     // console.log(333)
                     // console.log(response.data)
+                    arr.items[i].tracks = tracks
                     if (tracks[0]['preview_url']){
                       arr.items[i].preview_url = tracks[0]['preview_url']
                     }
@@ -434,6 +462,7 @@ export default {
               })
                   .then((response) =>{
                     let tracks = response.data['items']
+                    arr.items[i].tracks = tracks
                     // console.log(333)
                     // console.log(response.data)
                     if (tracks[0]['preview_url']){
@@ -486,6 +515,10 @@ export default {
 
           })
           .catch()
+    },
+    deeperAlbum(item){
+      console.log(item)
+      this.deeperalbums1.push(item)
     },
     seedArtist(item) {
       axios.request({
@@ -672,7 +705,7 @@ export default {
       axios.request({
         url: 'https://api.spotify.com/v1/me/albums',
         method: 'get',
-        headers: {'Authorization': 'Bearer '}
+        headers: {'Authorization': 'Bearer BQDM_QOzRvqooDNHoGwzZvCSnphJCtiu8bSdvyxmUQtc0urniPAKCatxCHhd3A7b4Y_YzyABQJMM6tcS4FC2jjvZzM_7l0EGy2ZI_Yz9C-WbmOuPSsvCKGzebSK0oCUI84W4SCa17yYGiHcDw_ADgH3fgLc80y923-n4B6VGceDsMQiylitOPvlRLGWkAhC9o3xXN-QOqNi6in4CwBeky1jyWUa_IFSIJTxGddXTdZ1oQyAhEg'}
       })
           .then((response) =>{
             let newarr = []
@@ -703,7 +736,7 @@ export default {
       axios.request({
         url: 'https://api.spotify.com/v1/me/tracks?offset=' + offset + '&limit=50',
         method: 'get',
-        headers: {'Authorization': 'Bearer BQDk5CvLE-1aafYfdpPW0MyQ_qxgPaW35A6o97pJ2gs_k4Mf0dGZ1pnDQk_Xr816CeyM8GlcvPOd4OVJVrp79Fdpg9zsiOvN8o3Pp7TzqPT-nGlG4xuaeQY5MyaZKU91F6FvkJyZKMCw__EmTrUWzNA9MsDxKY97AA05qT91CVKJNIB32mP81KuHI4uFnIyQfz1spB15k2wjJSIo6kCeTLyyZzJnPLDWUdHihesvqBvM0U7BaQ'}
+        headers: {'Authorization': 'Bearer '}
       })
           .then((response) =>{
             this.savedtracks.push(...response.data['items'])
@@ -720,7 +753,7 @@ export default {
       axios.request({
         url: 'https://api.spotify.com/v1/browse/new-releases?limit=20&offset=' + offset,
         method: 'get',
-        headers: {'Authorization': 'Bearer BQDk5CvLE-1aafYfdpPW0MyQ_qxgPaW35A6o97pJ2gs_k4Mf0dGZ1pnDQk_Xr816CeyM8GlcvPOd4OVJVrp79Fdpg9zsiOvN8o3Pp7TzqPT-nGlG4xuaeQY5MyaZKU91F6FvkJyZKMCw__EmTrUWzNA9MsDxKY97AA05qT91CVKJNIB32mP81KuHI4uFnIyQfz1spB15k2wjJSIo6kCeTLyyZzJnPLDWUdHihesvqBvM0U7BaQ'}
+        headers: {'Authorization': 'Bearer '}
       })
           .then((response) =>{
                 let newarr = []
@@ -737,7 +770,7 @@ export default {
         axios.request({
           url:'https://api.spotify.com/v1/albums?ids=' + newarr ,
           method: 'get',
-          headers: {'Authorization': 'Bearer BQDk5CvLE-1aafYfdpPW0MyQ_qxgPaW35A6o97pJ2gs_k4Mf0dGZ1pnDQk_Xr816CeyM8GlcvPOd4OVJVrp79Fdpg9zsiOvN8o3Pp7TzqPT-nGlG4xuaeQY5MyaZKU91F6FvkJyZKMCw__EmTrUWzNA9MsDxKY97AA05qT91CVKJNIB32mP81KuHI4uFnIyQfz1spB15k2wjJSIo6kCeTLyyZzJnPLDWUdHihesvqBvM0U7BaQ'}
+          headers: {'Authorization': 'Bearer '}
         })
             .then((response) => {
               console.log('452 ' + this.newreleases)
