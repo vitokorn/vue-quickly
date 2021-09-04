@@ -1,5 +1,5 @@
 const db = require("../models");
-const User = db.user;
+const User = db.users;
 const Op = db.Sequelize.Op;
 const axios = require('axios');
 const {response} = require("express");
@@ -12,57 +12,74 @@ const redirect_uri = process.env.redirect_uri
 // Create and Save a new User
 exports.scode = (req, res) => {
     let code = req.query.code
+    console.log('15 ' + code)
     let url = 'https://accounts.spotify.com/api/token'
-    let data = {'grant_type': 'authorization_code', 'code': code, 'redirect_uri': redirect_uri,'client_id':client_id,
-        'client_secret':client_secret}
+    const params = new URLSearchParams()
+    params.append('grant_type','authorization_code')
+    params.append('code',code)
+    params.append('redirect_uri',redirect_uri)
+    params.append('client_id',client_id)
+    params.append('client_secret',client_secret)
     let access_token
     let refresh_token
-    axios.get({
-        url,
-        data:{
-            data
-        }
-    })
+    axios.post(url,params
+    )
         .then(response =>{
+            console.log(response.data)
             access_token = response.data['access_token']
             refresh_token = response.data['refresh_token']
+            let headers = {
+                'Authorization': 'Bearer ' + access_token,
+                'scope': 'user-read-private user-read-email'
+            }
+            console.log(headers)
+            axios({
+                url:'https://api.spotify.com/v1/me',
+                method:'get',
+                headers:headers
+            })
+                .then(response =>{
+                console.log(response.data)
+                let r = response.data
+                User.findOrCreate({where:{spotyid:r['id'],country:r['country'],display_name:r['display_name']},defaults:{
+                        access_token:access_token,refresh_token:refresh_token
+                    }}).catch(error =>{
+                    console.log('47 ' + error)
+                })
+            })
+                .catch(error =>{
+                    console.log('52 ' + error)
+                })
         })
-    let surl = 'https://api.spotify.com/v1/me'
-    let sheaders = {
-        'Authorization': 'Bearer ' + access_token,
-        'scope': 'user-read-private user-read-email'
-    }
-    axios.get(surl,{
-        headers:{
-            sheaders
-        }
-    }).then(response =>{
-        let r = response.data
-        User.findOrCreate({where:{spotyid:r['id'],country:r['country'],display_name:r['display_name']},defaults:{
-                access_token:access_token,refresh_token:refresh_token
-            }})
-        response.data
-    })
-res.redirect('/')
+        .catch(error =>{
+            console.log('33 ' + error)
+        })
+
+res.redirect('/spot')
 };
 
 exports.refresh = (req,res) => {
-    let username = req.query.username
+    let username = req.params.username
+    console.log(username)
     // let current_time = new Date().getTime()
     // let one_day = current_time.setHours(current_time.getHours() - 1)
     let url = 'https://accounts.spotify.com/api/token'
-    const current = User.findOne({ where: { spotyid: username } });
-    let data = {'grant_type': 'refresh_token','refresh_token': current.refresh_token, 'client_id':client_id,
-        'client_secret':client_secret}
-    axios.post(url,{
-        body:{
-            data
-        }
+    User.findOne({ where: { spotyid: username } }).then(function (user) {
+        const params = new URLSearchParams()
+        params.append('grant_type','refresh_token')
+        params.append('refresh_token',user.refresh_token)
+        params.append('client_id',client_id)
+        params.append('client_secret',client_secret)
+        axios.post(url,params)
             .then(response =>{
                 let r = response.data
-                current.access_token = r['access_token']
-            })})
-    res(res['access_token'], true)
+                user.update({access_token: r['access_token']})
+                res.status(200).json({'new_access_token':r['access_token']})
+            })
+            .catch(error => error.response)
+    }).catch(error => console.log(error));
+
+    res.status(200)
 }
 
 // // Retrieve all User from the database.

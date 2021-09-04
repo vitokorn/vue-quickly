@@ -3,6 +3,7 @@
     <img alt="DQ logo" src="./assets/logo-small.png">
     <div>Discover Mobily</div>
     <br>
+    <Auth />
     <Desktop v-if="!isMobile()"/>
     <Mobile v-else/>
   </div>
@@ -23,6 +24,7 @@ const mixinDetictingMobile = {
     }
   }
 };
+import Auth from "./components/Auth";
 import Desktop from './components/Desktop.vue'
 import Mobile from './components/Mobile.vue'
 
@@ -30,6 +32,7 @@ export default {
   name: 'App',
   mixins: [mixinDetictingMobile],
   components: {
+    Auth,
     Desktop,
     Mobile
   }

@@ -9,7 +9,7 @@ module.exports = app => {
 
     router.get("/spotify/login",function (req,res) {
         let url = 'https://accounts.spotify.com/authorize?'
-            let params = "client_id=" + client_id + "&client_secret" + client_secret + "&redirect_uri" + redirect_uri +
+            let params = "client_id=" + client_id + "&client_secret=" + client_secret + "&redirect_uri=" + redirect_uri +
             "&scope=user-library-read user-read-private playlist-read-collaborative playlist-read-private playlist-modify-public user-top-read user-follow-read&response_type=code&show_dialog=true"
         res.redirect(url + params)
     })
@@ -17,7 +17,7 @@ module.exports = app => {
     // Create a new User
     router.get("/spotify/callback/", user.scode);
 
-    router.get("/spotify/refresh_token/", user.refresh);
+    router.get("/spotify/refresh_token/:username", user.refresh);
 
     // // Retrieve all User
     // router.get("/", user.findAll);
