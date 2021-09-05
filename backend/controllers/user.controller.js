@@ -22,7 +22,8 @@ exports.scode = (req, res) => {
     params.append('client_secret',client_secret)
     let access_token
     let refresh_token
-    axios.post(url,params
+    let username
+    return axios.post(url,params
     )
         .then(response =>{
             console.log(response.data)
@@ -41,9 +42,12 @@ exports.scode = (req, res) => {
                 .then(response =>{
                 console.log(response.data)
                 let r = response.data
+                    username = r['id']
+
                 User.findOrCreate({where:{spotyid:r['id'],country:r['country'],display_name:r['display_name']},defaults:{
                         access_token:access_token,refresh_token:refresh_token
-                    }}).catch(error =>{
+                    }}).then(res.cookie('username',username),res.cookie('access_token',access_token),
+                    res.redirect('/')).catch(error =>{
                     console.log('47 ' + error)
                 })
             })
@@ -55,7 +59,6 @@ exports.scode = (req, res) => {
             console.log('33 ' + error)
         })
 
-res.redirect('/spot')
 };
 
 exports.refresh = (req,res) => {

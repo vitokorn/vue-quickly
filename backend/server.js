@@ -3,6 +3,9 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const app = express();
+const path = __dirname + '/views/'
+
+app.use(express.static(path))
 
 var corsOptions = {
     origin: "http://localhost:8081"

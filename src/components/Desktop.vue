@@ -368,7 +368,7 @@ export default {
       axios.request({
         url:'https://api.spotify.com/v1/artists/' + item.id,
         method: 'get',
-        headers: {'Authorization': 'Bearer '}
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) =>{
             let data = response.data
@@ -384,7 +384,7 @@ export default {
       axios.request({
         url:'https://api.spotify.com/v1/artists/' + item.id + '/top-tracks?limit=10&market=UA',
         method: 'get',
-        headers: {'Authorization': 'Bearer '}
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) =>{
             let data = response.data
@@ -397,7 +397,7 @@ export default {
       axios.request({
         url:'https://api.spotify.com/v1/artists/' + item.id + '/albums?include_groups=album&limit=10',
         method: 'get',
-        headers: {'Authorization': 'Bearer '}
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) =>{
             let newarr = []
@@ -410,7 +410,7 @@ export default {
               axios.request({
                 url:'https://api.spotify.com/v1/albums/' + arr.items[i].id + '/tracks',
                 method: 'get',
-                headers: {'Authorization': 'Bearer '}
+                headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
               })
                   .then((response) =>{
                     let tracks = response.data['items']
@@ -433,7 +433,7 @@ export default {
       axios.request({
         url:'https://api.spotify.com/v1/artists/' + item.id + '/albums?include_groups=single,compilation',
         method: 'get',
-        headers: {'Authorization': 'Bearer '}
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) =>{
             let newarr = []
@@ -446,7 +446,7 @@ export default {
               axios.request({
                 url:'https://api.spotify.com/v1/albums/' + arr.items[i].id + '/tracks',
                 method: 'get',
-                headers: {'Authorization': 'Bearer '}
+                headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
               })
                   .then((response) =>{
                     let tracks = response.data['items']
@@ -469,7 +469,7 @@ export default {
       axios.request({
         url:'https://api.spotify.com/v1/artists/' + item.id + '/albums?include_groups=appears_on',
         method: 'get',
-        headers: {'Authorization': 'Bearer '}
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) =>{
             let newarr = []
@@ -482,7 +482,7 @@ export default {
               axios.request({
                 url:'https://api.spotify.com/v1/albums/' + arr.items[i].id + '/tracks',
                 method: 'get',
-                headers: {'Authorization': 'Bearer '}
+                headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
               })
                   .then((response) =>{
                     let tracks = response.data['items']
@@ -505,7 +505,7 @@ export default {
       axios.request({
         url:'https://api.spotify.com/v1/artists/' + item.id + '/related-artists',
         method: 'get',
-        headers: {'Authorization': 'Bearer '}
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) =>{
             let newarr = []
@@ -520,7 +520,7 @@ export default {
               axios.request({
                 url:'https://api.spotify.com/v1/artists/' + arr.items[i].id + '/top-tracks?market=UA',
                 method: 'get',
-                headers: {'Authorization': 'Bearer '}
+                headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
               })
                   .then((response) =>{
                     let tracks = response.data['tracks']
@@ -548,7 +548,7 @@ export default {
       axios.request({
         url: 'https://api.spotify.com/v1/recommendations?seed_artists=' + item['id'] + '&limit=50&offset=0&market=UA',
         method: 'get',
-        headers: {'Authorization': 'Bearer '}
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) => {
             let data = []
@@ -563,7 +563,7 @@ export default {
       axios.request({
         url: 'https://api.spotify.com/v1/recommendations?seed_tracks=' + item['id'] + '&limit=50&offset=0&market=UA',
         method: 'get',
-        headers: {'Authorization': 'Bearer '}
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) => {
             let data = []
@@ -578,7 +578,7 @@ export default {
       axios.request({
         url:'https://api.spotify.com/v1/me/playlists?fields=items(name,id)&limit=50',
         method: 'get',
-        headers: {'Authorization': 'Bearer '}
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) =>{
             this.listplaylists = response.data['items']
@@ -591,7 +591,7 @@ export default {
       axios.request({
         url:'https://api.spotify.com/v1/playlists/' + id,
         method: 'get',
-        headers: {'Authorization': 'Bearer '}
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) =>{
             this.playinfo = response.data
@@ -603,7 +603,7 @@ export default {
       axios.request({
         url:'https://api.spotify.com/v1/me/top/artists?time_range=short_term',
         method: 'get',
-        headers: {'Authorization': 'Bearer '}
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) =>{
             let newarr = []
@@ -614,7 +614,7 @@ export default {
               axios.request({
                 url:'https://api.spotify.com/v1/artists/' + items[i].id + '/top-tracks?market=UA',
                 method: 'get',
-                headers: {'Authorization': 'Bearer '}
+                headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
               })
                   .then((response) =>{
                     console.log('247' + response.data)
@@ -634,7 +634,7 @@ export default {
       axios.request({
         url:'https://api.spotify.com/v1/me/top/artists?time_range=medium_term',
         method: 'get',
-        headers: {'Authorization': 'Bearer '}
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) =>{
             let newarr = []
@@ -645,7 +645,7 @@ export default {
               axios.request({
                 url:'https://api.spotify.com/v1/artists/' + items[i].id + '/top-tracks?market=UA',
                 method: 'get',
-                headers: {'Authorization': 'Bearer '}
+                headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
               })
                   .then((response) =>{
                     console.log('247' + response.data)
@@ -665,7 +665,7 @@ export default {
       axios.request({
         url:'https://api.spotify.com/v1/me/top/artists?time_range=long_term',
         method: 'get',
-        headers: {'Authorization': 'Bearer '}
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) =>{
             let newarr = []
@@ -676,7 +676,7 @@ export default {
               axios.request({
                 url:'https://api.spotify.com/v1/artists/' + items[i].id + '/top-tracks?market=UA',
                 method: 'get',
-                headers: {'Authorization': 'Bearer '}
+                headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
               })
                   .then((response) =>{
                     console.log('247' + response.data)
@@ -696,7 +696,7 @@ export default {
       axios.request({
         url:'https://api.spotify.com/v1/me/top/tracks?time_range=short_term',
         method: 'get',
-        headers: {'Authorization': 'Bearer '}
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) =>{
             this.items = response.data['items']
@@ -707,7 +707,7 @@ export default {
       axios.request({
         url:'https://api.spotify.com/v1/me/top/tracks?time_range=medium_term',
         method: 'get',
-        headers: {'Authorization': 'Bearer '}
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) =>{
             this.itemsm = response.data['items']
@@ -718,7 +718,7 @@ export default {
       axios.request({
         url:'https://api.spotify.com/v1/me/top/tracks?time_range=long_term',
         method: 'get',
-        headers: {'Authorization': 'Bearer '}
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) =>{
             this.itemsl = response.data['items']
@@ -729,7 +729,7 @@ export default {
       axios.request({
         url: 'https://api.spotify.com/v1/me/albums',
         method: 'get',
-        headers: {'Authorization': 'Bearer BQDM_QOzRvqooDNHoGwzZvCSnphJCtiu8bSdvyxmUQtc0urniPAKCatxCHhd3A7b4Y_YzyABQJMM6tcS4FC2jjvZzM_7l0EGy2ZI_Yz9C-WbmOuPSsvCKGzebSK0oCUI84W4SCa17yYGiHcDw_ADgH3fgLc80y923-n4B6VGceDsMQiylitOPvlRLGWkAhC9o3xXN-QOqNi6in4CwBeky1jyWUa_IFSIJTxGddXTdZ1oQyAhEg'}
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) =>{
             let newarr = []
@@ -740,7 +740,7 @@ export default {
               axios.request({
                 url:'https://api.spotify.com/v1/albums/' + items[i].album.id + '/tracks?market=UA&limit=10',
                 method: 'get',
-                headers: {'Authorization': 'Bearer '}
+                headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
               })
                   .then((response) =>{
                     console.log('247' + response.data)
@@ -760,7 +760,7 @@ export default {
       axios.request({
         url: 'https://api.spotify.com/v1/me/tracks?offset=' + offset + '&limit=50',
         method: 'get',
-        headers: {'Authorization': 'Bearer '}
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) =>{
             this.savedtracks.push(...response.data['items'])
@@ -777,7 +777,7 @@ export default {
       axios.request({
         url: 'https://api.spotify.com/v1/browse/new-releases?limit=20&offset=' + offset,
         method: 'get',
-        headers: {'Authorization': 'Bearer '}
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) =>{
                 let newarr = []
@@ -794,7 +794,7 @@ export default {
         axios.request({
           url:'https://api.spotify.com/v1/albums?ids=' + newarr ,
           method: 'get',
-          headers: {'Authorization': 'Bearer '}
+          headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
         })
             .then((response) => {
               console.log('452 ' + this.newreleases)
@@ -813,7 +813,7 @@ export default {
       axios.request({
         url: 'https://api.spotify.com/v1/me/following?type=artist&limit=50',
         method: 'get',
-        headers: {'Authorization': 'Bearer '}
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) =>{
             let newarr = []
@@ -823,7 +823,7 @@ export default {
               axios.request({
                 url:'https://api.spotify.com/v1/artists/' + items[i].id + '/top-tracks?market=UA&limit=10',
                 method: 'get',
-                headers: {'Authorization': 'Bearer '}
+                headers: {'Authorization': 'Bearer ' + localStorage.getItem('access_token')}
               })
                   .then((response) =>{
                     let tracks = response.data['tracks']
@@ -858,6 +858,9 @@ export default {
           names.join(', ') + ' & ' + finalName :
           finalName;
     },
+  },
+  mounted() {
+    // localStorage.setItem('access_token')
   }
 
 }

@@ -3,14 +3,15 @@
     <img alt="DQ logo" src="./assets/logo-small.png">
     <div>Discover Mobily</div>
     <br>
-    <Auth />
-    <Desktop v-if="!isMobile()"/>
-    <Mobile v-else/>
+    <Auth v-if="!isAuth()"/>
+    <Desktop v-if="!isMobile() && isAuth()"/>
+    <Mobile v-else-if="isMobile() && isAuth()"/>
   </div>
 </template>
 
 <script>
 /* eslint-disable no-useless-escape */
+
 
 const mixinDetictingMobile = {
   methods: {
@@ -24,13 +25,21 @@ const mixinDetictingMobile = {
     }
   }
 };
+const auth = {
+  methods: {
+    isAuth: function (){
+      let access_token = document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+      return access_token.length !== 0;
+    }
+  }
+}
 import Auth from "./components/Auth";
 import Desktop from './components/Desktop.vue'
 import Mobile from './components/Mobile.vue'
 
 export default {
   name: 'App',
-  mixins: [mixinDetictingMobile],
+  mixins: [mixinDetictingMobile,auth],
   components: {
     Auth,
     Desktop,
