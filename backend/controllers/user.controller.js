@@ -1,8 +1,8 @@
 const db = require("../models");
 const User = db.users;
-const Op = db.Sequelize.Op;
+// const Op = db.Sequelize.Op;
 const axios = require('axios');
-const {response} = require("express");
+// const {response} = require("express");
 
 
 const client_id = process.env.client_id
@@ -67,7 +67,7 @@ exports.refresh = (req,res) => {
     // let current_time = new Date().getTime()
     // let one_day = current_time.setHours(current_time.getHours() - 1)
     let url = 'https://accounts.spotify.com/api/token'
-    User.findOne({ where: { spotyid: username } }).then(function (user) {
+    return User.findOne({ where: { spotyid: username } }).then(function (user) {
         const params = new URLSearchParams()
         params.append('grant_type','refresh_token')
         params.append('refresh_token',user.refresh_token)
@@ -77,12 +77,12 @@ exports.refresh = (req,res) => {
             .then(response =>{
                 let r = response.data
                 user.update({access_token: r['access_token']})
-                res.status(200).json({'new_access_token':r['access_token']})
+                res.cookie('access_token',r['access_token'])
+                res.status(200)
             })
             .catch(error => error.response)
     }).catch(error => console.log(error));
 
-    res.status(200)
 }
 
 // // Retrieve all User from the database.

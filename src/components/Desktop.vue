@@ -379,7 +379,11 @@ export default {
             console.log(data)
             this.deeper1.push(data)
           })
-          .catch()
+          .catch(error =>{
+            if (error.response.status){
+              axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then(this.deeperartist(item,track))
+            }
+          })
       // top tracks
       axios.request({
         url:'https://api.spotify.com/v1/artists/' + item.id + '/top-tracks?limit=10&market=UA',
@@ -392,7 +396,11 @@ export default {
             console.log(data)
             this.deeperartist1.push(data)
           })
-          .catch()
+          .catch(error =>{
+            if (error.response.status){
+              axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then(this.deeperartist(item,track))
+            }
+          })
       // album
       axios.request({
         url:'https://api.spotify.com/v1/artists/' + item.id + '/albums?include_groups=album&limit=10',
@@ -428,7 +436,11 @@ export default {
             this.deeperartist1.push(newarr)
 
           })
-          .catch()
+          .catch(error =>{
+            if (error.response.status){
+              axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then(this.deeperartist(item,track))
+            }
+          })
       // single,compilation
       axios.request({
         url:'https://api.spotify.com/v1/artists/' + item.id + '/albums?include_groups=single,compilation',
@@ -464,7 +476,11 @@ export default {
             this.deeperartist1.push(newarr)
 
           })
-          .catch()
+          .catch(error =>{
+            if (error.response.status){
+              axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then(this.deeperartist(item,track))
+            }
+          })
       // appears_on
       axios.request({
         url:'https://api.spotify.com/v1/artists/' + item.id + '/albums?include_groups=appears_on',
@@ -500,7 +516,11 @@ export default {
             this.deeperartist1.push(newarr)
 
           })
-          .catch()
+          .catch(error =>{
+            if (error.response.status){
+              axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then(this.deeperartist(item,track))
+            }
+          })
       // related-artists
       axios.request({
         url:'https://api.spotify.com/v1/artists/' + item.id + '/related-artists',
@@ -538,7 +558,11 @@ export default {
             this.relatedartist1.push(fin)
 
           })
-          .catch()
+          .catch(error =>{
+            if (error.response.status){
+              axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then(this.deeperartist(item,track))
+            }
+          })
     },
     deeperAlbum(item){
       console.log(item)

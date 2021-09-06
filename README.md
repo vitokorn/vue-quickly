@@ -19,6 +19,10 @@ npm run build
 ```
 npm run lint
 ```
+### Sequelize migrate
+```
+npx sequelize-cli db:migrate
+```
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
