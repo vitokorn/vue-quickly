@@ -18,6 +18,11 @@ module.exports = app => {
 
     router.get("/spotify/refresh_token/:username", user.refresh);
 
+    router.get("/spotify/logout",function (req,res) {
+        res.clearCookie("access_token").clearCookie("username")
+        res.redirect('/')
+    })
+
     // // Retrieve all User
     // router.get("/", user.findAll);
     //

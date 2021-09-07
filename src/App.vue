@@ -4,6 +4,7 @@
     <div>Discover Mobily</div>
     <br>
     <Auth v-if="!isAuth()"/>
+    <Logout v-else-if="isAuth()"/>
     <Desktop v-if="!isMobile() && isAuth()"/>
     <Mobile v-else-if="isMobile() && isAuth()"/>
   </div>
@@ -36,6 +37,7 @@ const auth = {
 import Auth from "./components/Auth";
 import Desktop from './components/Desktop.vue'
 import Mobile from './components/Mobile.vue'
+import Logout from "./components/Logout";
 
 export default {
   name: 'App',
@@ -43,7 +45,8 @@ export default {
   components: {
     Auth,
     Desktop,
-    Mobile
+    Mobile,
+    Logout
   }
 }
 </script>
