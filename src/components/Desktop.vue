@@ -36,8 +36,8 @@
         </div>
       </div>
     </div>
-    <div class="rectrack" >
-      <div v-for="d in deeper1" v-bind:key="d.added_at">
+    <div class="rectrack">
+      <div v-for="d in deeper1" v-bind:key="d.id">
         <div v-if="d.type==='pl'" class="playlisttrack" style="display: flex; width: 100%; margin-top: 12px; margin-bottom: 6px;">
           <div class="con3" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.track.name}}
             <audio preload="none" v-bind:src="d.track.preview_url"></audio>
@@ -69,19 +69,23 @@
             </div>
           </div>
           </div>
-        <div v-else-if="d.type==='artist'" class="recartist con2" style="gap: 16px;text-align: left">
-          <div class="con3" style="text-align: left;" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
-            <audio v-bind:src="d.preview_url"></audio>
+        <div v-else-if="d.type==='trackartist'" class="trackartist con2" style="gap: 16px;text-align: left">
+          <div v-for="ta in d" v-bind:key="ta.type">
+          <div v-if="ta.type==='artist'" class="recartist con2" style="gap: 16px;text-align: left">
+          <div class="con3" style="text-align: left;" v-bind:style="{ 'background-image': 'url(' + ta.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{ta.name}}
+            <audio v-bind:src="ta.preview_url"></audio>
           </div>
-          <div style="width: 60%">{{d.name}}
-            <div>{{d['followers']['total'] + ' followers'}}</div>
-            <div>{{d['genres']}}</div>
-            <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist(d)">Recomended artists songs based on this</div>
-            <div><a v-bind:href="d['external_urls']['spotify']" target="_blank">
+          <div style="width: 60%">{{ta.name}}
+            <div>{{ta['followers']['total'] + ' followers'}}</div>
+            <div>{{ta['genres']}}</div>
+            <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist(ta)">Recomended artists songs based on this</div>
+            <div><a v-bind:href="ta['external_urls']['spotify']" target="_blank">
               <button class="button">Open is Spotify</button></a>
             </div>
           </div>
-          <div v-for="ra in relatedartist1" v-bind:key="ra.id">
+            </div>
+            <div v-else-if="d.type==='related-artists'">
+          <div v-for="ra in d" v-bind:key="ra.id">
             <div v-if="ra.type==='related-artists'" >Related Artist</div>
             <div v-if="ra.type==='related-artists'" class="col2">
             <div v-for="r in ra['items']" v-bind:key="r.id">
@@ -94,11 +98,11 @@
               </div>
             </div>
           </div>
+              </div>
           <div >
-            <div v-for="da in deeperartist1" v-bind:key="da.id">
-            <div v-if="da.type==='top_tracks'" tabindex="1">Top tracks</div>
-            <div v-if="da.type==='top_tracks'" tabindex="1" class="top-tracks con2">
-              <div v-for="tt in da['tracks']" v-bind:key="tt.id">
+            <div v-if="ta.type==='top_tracks'" tabindex="1">Top tracks</div>
+            <div v-if="ta.type==='top_tracks'" tabindex="1" class="top-tracks con2">
+              <div v-for="tt in ta['tracks']" v-bind:key="tt">
                 <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(tt)">{{tt.name}}
                   <audio v-bind:src="tt.preview_url"></audio>
                 </div>
@@ -107,9 +111,9 @@
                 </div>
               </div>
             </div>
-            <div v-if="da.type==='albums'" tabindex="2">Albums</div>
-            <div v-if="da.type==='albums'" tabindex="2" class="album con2">
-              <div v-for="alb in da" v-bind:key="alb.id">
+            <div v-if="ta.type==='albums'" tabindex="2">Albums</div>
+            <div v-if="ta.type==='albums'" tabindex="2" class="album con2">
+              <div v-for="alb in ta" v-bind:key="alb">
                 <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:click="deeperAlbum(alb)" v-on:mouseleave="mouseLeave">{{alb.name}}
                   <audio v-bind:src="alb.preview_url"></audio>
                 </div>
@@ -118,9 +122,9 @@
                 </div>
               </div>
             </div>
-            <div v-if="da.type==='single'" tabindex="3">Single</div>
-            <div v-if="da.type==='single'" tabindex="3" class="single con2">
-              <div v-for="s in da" v-bind:key="s.id">
+            <div v-if="ta.type==='single'" tabindex="3">Single</div>
+            <div v-if="ta.type==='single'" tabindex="3" class="single con2">
+              <div v-for="s in ta" v-bind:key="s">
                 <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{s.name}}
                   <audio v-bind:src="s.preview_url"></audio>
                 </div>
@@ -130,9 +134,9 @@
               </div>
             </div>
 
-            <div v-if="da.type==='appears_on'" tabindex="4">Appears on</div>
-            <div v-if="da.type==='appears_on'" tabindex="4" class="appear con2">
-              <div v-for="a in da" v-bind:key="a.id">
+            <div v-if="ta.type==='appears_on'" tabindex="4">Appears on</div>
+            <div v-if="ta.type==='appears_on'" tabindex="4" class="appear con2">
+              <div v-for="a in ta" v-bind:key="a">
                 <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{a.name}}
                   <audio v-bind:src="a.preview_url"></audio>
                 </div>
@@ -143,71 +147,101 @@
             </div>
           </div>
           </div>
-
         </div>
-        <div v-else-if="d.type==='seed_artists'" class="seed_artists con2" >
-          <div style="width: 100%;">Seed artist</div>
-          <div v-for="s in d.tracks" v-bind:key="s.id">
-            <div v-if="s.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{s.name}}
-              <audio preload="none" v-bind:src="s.preview_url"></audio>
-            </div>
-            <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5">{{s.name}}
-              <audio preload="none"></audio>
-            </div>
-          </div>
-        </div>
-        <div v-for="d in deeperalbums1" v-bind:key="d.id">
-        <div class="deep_albums con2" >
-            <div v-if="d.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
+        <div v-else-if="d.type ==='deepertracks'">
+          <div class="playlisttrack" style="display: flex; width: 100%; margin-top: 12px; margin-bottom: 6px;">
+            <div class="con3" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
               <audio preload="none" v-bind:src="d.preview_url"></audio>
             </div>
-            <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }" style="opacity: .5">{{d.name}}
-              <audio preload="none"></audio>
-            </div>
-          <div style="margin-left: 4px; margin-right: 4px;">{{d.name}}
-          <div>{{d.release_date}}</div>
-<!--            <div>{{list(d.artists)}}</div>-->
-            <span style="color: rgb(240, 55, 165);">Recomended songs based on this</span>
-          </div>
-          <div style="display: block;" class="trackList">Tracks
-            <div v-for="track in d.tracks" v-bind:key="track.id">
-            <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">
-              <div class="trackTitle">{{track.name}}</div>
-              <audio preload="none" v-bind:src="track.preview_url"></audio>
-            </div>
-              <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  style="opacity: .5">
-                <div class="trackTitle">{{track.name}}</div>
-                <audio preload="none" v-bind:src="track.preview_url"></audio>
+            <div style="width: 50%;text-align: left;">
+              <div>{{d.name}}</div>
+              <div style="display: flex; align-items: center;"><p>By </p>
+                <div v-for="art in d.artists" v-bind:key="art.id" style="display: flex;align-items: center">
+                  <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d)">{{art.name}}</div>
+                </div>
+              </div>
+              <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d.track)">Recommended songs based on this</span>
+              <div><a v-bind:href="d['external_urls']['spotify']" target="_blank">
+                <button class="button">Open is Spotify</button></a>
               </div>
             </div>
-        </div>
-          </div>
-        </div>
-        </div>
-      <div v-for="d in deepertracks1" v-bind:key="d.id">
-        <div class="playlisttrack" style="display: flex; width: 100%; margin-top: 12px; margin-bottom: 6px;">
-          <div class="con3" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
-            <audio preload="none" v-bind:src="d.preview_url"></audio>
-          </div>
-          <div style="width: 50%;text-align: left;">
-            <div>{{d.name}}</div>
-            <div style="display: flex; align-items: center;"><p>By </p>
-              <div v-for="art in d.artists" v-bind:key="art.id" style="display: flex;align-items: center">
-                <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d)">{{art.name}}</div>
-              </div>
-            </div>
-            <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d.track)">Recommended songs based on this</span>
-            <div><a v-bind:href="d['external_urls']['spotify']" target="_blank">
-              <button class="button">Open is Spotify</button></a>
+            <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
+              <audio preload="none" v-bind:src="d.preview_url"></audio>
+              <div style="float: left; margin-left: 50px;">{{art.name}}</div>
             </div>
           </div>
-          <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
-            <audio preload="none" v-bind:src="d.preview_url"></audio>
-            <div style="float: left; margin-left: 50px;">{{art.name}}</div>
-          </div>
         </div>
-      </div>
-    </div>
+        <div v-else-if="d.type ==='deeperalbum'">
+                <div class="deep_albums con2" >
+                    <div v-if="d.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
+                      <audio preload="none" v-bind:src="d.preview_url"></audio>
+                    </div>
+                    <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }" style="opacity: .5">{{d.name}}
+                      <audio preload="none"></audio>
+                    </div>
+                  <div style="margin-left: 4px; margin-right: 4px;">{{d.name}}
+                  <div>{{d.release_date}}</div>
+        <!--            <div>{{list(d.artists)}}</div>-->
+                    <span style="color: rgb(240, 55, 165);">Recomended songs based on this</span>
+                  </div>
+                  <div style="display: block;" class="trackList">Tracks
+                    <div v-for="track in d.tracks" v-bind:key="track.id">
+                    <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">
+                      <div class="trackTitle">{{track.name}}</div>
+                      <audio preload="none" v-bind:src="track.preview_url"></audio>
+                    </div>
+                      <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  style="opacity: .5">
+                        <div class="trackTitle">{{track.name}}</div>
+                        <audio preload="none" v-bind:src="track.preview_url"></audio>
+                      </div>
+                    </div>
+                </div>
+                </div>
+                </div>
+                <div v-else-if="d.type==='seed_artists'" class="seed_artists con2" >
+                  <div style="width: 100%;">Seed artist</div>
+                  <div v-for="s in d.tracks" v-bind:key="s.id">
+                    <div v-if="s.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{s.name}}
+                      <audio preload="none" v-bind:src="s.preview_url"></audio>
+                    </div>
+                    <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5">{{s.name}}
+                      <audio preload="none"></audio>
+                    </div>
+                  </div>
+                </div>
+</div>
+        </div>
+
+<!--        <div v-for="d in deeperalbums1" v-bind:key="d.id">-->
+<!--        <div class="deep_albums con2" >-->
+<!--            <div v-if="d.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}-->
+<!--              <audio preload="none" v-bind:src="d.preview_url"></audio>-->
+<!--            </div>-->
+<!--            <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }" style="opacity: .5">{{d.name}}-->
+<!--              <audio preload="none"></audio>-->
+<!--            </div>-->
+<!--          <div style="margin-left: 4px; margin-right: 4px;">{{d.name}}-->
+<!--          <div>{{d.release_date}}</div>-->
+<!--&lt;!&ndash;            <div>{{list(d.artists)}}</div>&ndash;&gt;-->
+<!--            <span style="color: rgb(240, 55, 165);">Recomended songs based on this</span>-->
+<!--          </div>-->
+<!--          <div style="display: block;" class="trackList">Tracks-->
+<!--            <div v-for="track in d.tracks" v-bind:key="track.id">-->
+<!--            <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">-->
+<!--              <div class="trackTitle">{{track.name}}</div>-->
+<!--              <audio preload="none" v-bind:src="track.preview_url"></audio>-->
+<!--            </div>-->
+<!--              <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  style="opacity: .5">-->
+<!--                <div class="trackTitle">{{track.name}}</div>-->
+<!--                <audio preload="none" v-bind:src="track.preview_url"></audio>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        </div>-->
+
+<!--    </div>-->
     <div v-on:click.self="fetchArtist">Top artists
       <div id="topartist" class="con2" style="display: flex;color: black">
         <div class="trackbody" v-for="item of topartist" v-bind:key="item.id">
@@ -358,86 +392,89 @@ export default {
       itemsm:[],
       itemsl:[],
       deeper1:[],
-      deeperartist1:[],
-      deepertracks1:[],
-      relatedartist1:[],
-      deeperalbums1:[],
       deeper2:[],
-      deeperartist2:[],
-      relatedartist2:[],
-      deeperalbums2:[],
       deeper3:[],
-      deeperartist3:[],
-      relatedartist3:[],
-      deeperalbums3:[],
       deeper4:[],
-      deeperartist4:[],
-      relatedartist4:[],
-      deeperalbums4:[],
       deeper5:[],
-      deeperartist5:[],
-      relatedartist5:[],
-      deeperalbums5:[],
       deeper6:[],
-      deeperartist6:[],
-      relatedartist6:[],
-      deeperalbums6:[],
       deeper7:[],
-      deeperartist7:[],
-      relatedartist7:[],
-      deeperalbums7:[],
+      deeper8:[],
+      deeper9:[],
+      deepers:[],
       arr:[]
     }
   },
   methods: {
+    polygon(item){
+      console.log(item)
+    },
     deeper: function(item){
       console.log(item)
-      item.type = 'pl'
-      console.log('196' + item)
-      this.deeper1.push(item)
+      let tracktrack = []
+      tracktrack = item
+      tracktrack.type = 'pl'
+      this.deeper1.push(tracktrack)
+      console.log(tracktrack)
+      console.log(this.deeper1)
     },
     deeperartist: function (item,track){
-      axios.request({
+      let trackartist = []
+      trackartist.type = 'trackartist'
+      this.deeperArtistself(item,track).then(result => trackartist.push(result))
+      this.deeperArtisttt(item).then(tt => trackartist.push(tt))
+      this.deeperArtistAlbums(item).then(album => trackartist.push(album))
+      this.deeperArtistSingle(item).then(single => trackartist.push(single))
+      this.deeperArtistAppear(item).then(appear => trackartist.push(appear))
+      this.deeperArtistRelated(item).then(related => trackartist.push(related))
+      this.deeper1.push(trackartist)
+      console.log(this.deeper1)
+    },
+    deeperArtistself(item,track){
+      return axios.request({
         url:'https://api.spotify.com/v1/artists/' + item.id,
         method: 'get',
-        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+        headers: {'Authorization': 'Bearer '}
       })
           .then((response) =>{
-            let data = response.data
-            data.type = 'artist'
+            let trackartist = []
+            trackartist = response.data
+            trackartist.type = 'artist'
             if (track.preview_url){
-              data.preview_url = track.preview_url
+              trackartist.preview_url = track.preview_url
             }
-            console.log(data)
-            this.deeper1.push(data)
+            return trackartist
           })
           .catch(error =>{
             if (error.response.status){
-              axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then(this.deeperartist(item,track))
+              axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1"))
             }
           })
+    },
+    deeperArtisttt(item){
       // top tracks
-      axios.request({
+      return axios.request({
         url:'https://api.spotify.com/v1/artists/' + item.id + '/top-tracks?limit=10&market=UA',
         method: 'get',
-        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+        headers: {'Authorization': 'Bearer '}
       })
           .then((response) =>{
-            let data = response.data
-            data.type = 'top_tracks'
-            console.log(data)
-            this.deeperartist1.push(data)
+            let tt = []
+            tt = response.data
+            tt.type = 'top_tracks'
+            return tt
           })
           .catch(error =>{
             if (error.response.status){
-              axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then(this.deeperartist(item,track))
+              axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1"))
             }
           })
+    },
+    deeperArtistAlbums(item){
       // album
-      axios.request({
+      return axios.request({
         url:'https://api.spotify.com/v1/artists/' + item.id + '/albums?include_groups=album&limit=10',
         method: 'get',
-        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+        headers: {'Authorization': 'Bearer '}
       })
           .then((response) =>{
             let newarr = []
@@ -450,7 +487,7 @@ export default {
               axios.request({
                 url:'https://api.spotify.com/v1/albums/' + arr.items[i].id + '/tracks',
                 method: 'get',
-                headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                headers: {'Authorization': 'Bearer '}
               })
                   .then((response) =>{
                     let tracks = response.data['items']
@@ -463,24 +500,27 @@ export default {
                     newarr.push(arr.items[i])
 
                   })
-            }newarr.type = 'albums'
+            }
+            newarr.type = 'albums'
             console.log(newarr)
-            this.deeperartist1.push(newarr)
+            return newarr
 
           })
           .catch(error =>{
             if (error.response.status){
-              axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then(this.deeperartist(item,track))
+              axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1"))
             }
           })
+    },
+    deeperArtistSingle(item){
       // single,compilation
-      axios.request({
+      return axios.request({
         url:'https://api.spotify.com/v1/artists/' + item.id + '/albums?include_groups=single,compilation',
         method: 'get',
-        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+        headers: {'Authorization': 'Bearer '}
       })
           .then((response) =>{
-            let newarr = []
+            let single = []
             let arr = []
             arr.items = response.data['items']
             console.log(arr)
@@ -490,7 +530,7 @@ export default {
               axios.request({
                 url:'https://api.spotify.com/v1/albums/' + arr.items[i].id + '/tracks',
                 method: 'get',
-                headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                headers: {'Authorization': 'Bearer '}
               })
                   .then((response) =>{
                     let tracks = response.data['items']
@@ -500,27 +540,27 @@ export default {
                     if (tracks[0]['preview_url']){
                       arr.items[i].preview_url = tracks[0]['preview_url']
                     }
-                    newarr.push(arr.items[i])
+                    single.push(arr.items[i])
 
                   })
-            }newarr.type = 'single'
-            console.log(newarr)
-            this.deeperartist1.push(newarr)
-
+            }single.type = 'single'
+            return single
           })
           .catch(error =>{
             if (error.response.status){
-              axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then(this.deeperartist(item,track))
+              axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1"))
             }
           })
+    },
+    deeperArtistAppear(item){
       // appears_on
-      axios.request({
+      return axios.request({
         url:'https://api.spotify.com/v1/artists/' + item.id + '/albums?include_groups=appears_on',
         method: 'get',
-        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+        headers: {'Authorization': 'Bearer '}
       })
           .then((response) =>{
-            let newarr = []
+            let appears = []
             let arr = []
             arr.items = response.data['items']
             console.log(arr)
@@ -530,7 +570,7 @@ export default {
               axios.request({
                 url:'https://api.spotify.com/v1/albums/' + arr.items[i].id + '/tracks',
                 method: 'get',
-                headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                headers: {'Authorization': 'Bearer '}
               })
                   .then((response) =>{
                     let tracks = response.data['items']
@@ -540,27 +580,28 @@ export default {
                     if (tracks[0]['preview_url']){
                       arr.items[i].preview_url = tracks[0]['preview_url']
                     }
-                    newarr.push(arr.items[i])
+                    appears.push(arr.items[i])
 
                   })
-            }newarr.type = 'appears_on'
-            console.log(newarr)
-            this.deeperartist1.push(newarr)
+            }appears.type = 'appears_on'
+            return appears
 
           })
           .catch(error =>{
             if (error.response.status){
-              axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then(this.deeperartist(item,track))
+              axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1"))
             }
           })
+    },
+    deeperArtistRelated(item){
       // related-artists
-      axios.request({
+      return axios.request({
         url:'https://api.spotify.com/v1/artists/' + item.id + '/related-artists',
         method: 'get',
-        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+        headers: {'Authorization': 'Bearer '}
       })
           .then((response) =>{
-            let newarr = []
+            let relatedartist = []
             let fin = []
             let arr = []
             arr.items = response.data['artists']
@@ -572,43 +613,44 @@ export default {
               axios.request({
                 url:'https://api.spotify.com/v1/artists/' + arr.items[i].id + '/top-tracks?market=UA',
                 method: 'get',
-                headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                headers: {'Authorization': 'Bearer '}
               })
                   .then((response) =>{
                     let tracks = response.data['tracks']
                     if (tracks[0]['preview_url']){
                       arr.items[i].preview_url = tracks[0]['preview_url']
                     }
-                    newarr.push(arr.items[i])
+                    relatedartist.push(arr.items[i])
 
                   })
             }
             fin.type = 'related-artists'
-            fin.items = newarr
-            console.log(468)
-            console.log(fin)
-            this.relatedartist1.push(fin)
-
+            fin.items = relatedartist
+            return fin
           })
           .catch(error =>{
             if (error.response.status){
-              axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then(this.deeperartist(item,track))
+              axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1"))
             }
           })
     },
     deeperAlbum(item){
+      item.type ='deeperalbum'
       console.log(item)
-      this.deeperalbums1.push(item)
+      console.log(this.deeper1)
+      this.deeper1.push(item)
     },
     deeperTracks(item){
+      item.type ='deepertracks'
       console.log(item)
-      this.deepertracks1.push(item)
+      console.log(this.deeper1)
+      this.deeper1.push(item)
     },
     seedArtist(item) {
       axios.request({
         url: 'https://api.spotify.com/v1/recommendations?seed_artists=' + item['id'] + '&limit=50&offset=0&market=UA',
         method: 'get',
-        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+        headers: {'Authorization': 'Bearer '}
       })
           .then((response) => {
             let data = []
@@ -623,7 +665,7 @@ export default {
       axios.request({
         url: 'https://api.spotify.com/v1/recommendations?seed_tracks=' + item['id'] + '&limit=50&offset=0&market=UA',
         method: 'get',
-        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+        headers: {'Authorization': 'Bearer '}
       })
           .then((response) => {
             let data = []
@@ -638,7 +680,7 @@ export default {
       axios.request({
         url:'https://api.spotify.com/v1/me/playlists?fields=items(name,id)&limit=50',
         method: 'get',
-        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+        headers: {'Authorization': 'Bearer '}
       })
           .then((response) =>{
             this.listplaylists = response.data['items']
@@ -655,7 +697,7 @@ export default {
       axios.request({
         url:'https://api.spotify.com/v1/playlists/' + id,
         method: 'get',
-        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+        headers: {'Authorization': 'Bearer '}
       })
           .then((response) =>{
             console.log(response.data)
@@ -664,7 +706,7 @@ export default {
           })
           .catch(error =>{
             if (error.response.status){
-              axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then(this.fetchInit(event))
+              axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1"))
             }
           })
     },
