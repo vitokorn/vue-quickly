@@ -46,7 +46,7 @@ exports.scode = (req, res) => {
 
                 User.findOrCreate({where:{spotyid:r['id'],country:r['country'],display_name:r['display_name']},defaults:{
                         access_token:access_token,refresh_token:refresh_token
-                    }}).then(res.cookie('username',username),res.cookie('access_token',access_token),
+                    }}).then(res.cookie('username',username),res.cookie('access_token',access_token),res.cookie('country',r['country']),
                     res.redirect('/')).catch(error =>{
                     console.log('47 ' + error)
                 })
