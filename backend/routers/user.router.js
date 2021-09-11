@@ -1,3 +1,4 @@
+const user = require("../controllers/user.controller.js");
 module.exports = app => {
     const user = require("../controllers/user.controller.js");
 
@@ -22,6 +23,8 @@ module.exports = app => {
         res.clearCookie("access_token").clearCookie("username")
         res.redirect('/')
     })
+
+    router.get("/spotify/global_viral/", user.globalviral);
 
     // // Retrieve all User
     // router.get("/", user.findAll);
