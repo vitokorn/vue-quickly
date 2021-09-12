@@ -263,13 +263,13 @@
                   <button class="button">Open is Spotify</button></a>
                 </div>
               </div>
-              <div class="artist-cirle con3" v-for="art in d.track.artists" v-bind:key="art.id" v-on:click="deeperartist(art,d,2)" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">
+              <div class="artist-cirle con3" v-for="(art,index) in d.track.artists" v-bind:key="index" v-on:click="deeperartist(art,d,2)" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">
                 <audio preload="none" v-bind:src="d.track.preview_url"></audio>
                 <div style="float: left; margin-left: 50px;">{{art.name}}</div>
               </div>
             </div>
             <div v-else-if="d.type==='seed_tracks'" class="seed_tracks con2">
-              <div v-for="s in d.tracks" v-bind:key="s.id">
+              <div v-for="(s,index) in d.tracks" v-bind:key="index">
                 <div v-if="s.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(s,2)">{{s.name}}
                   <audio preload="none" v-bind:src="s.preview_url"></audio>
                 </div>
@@ -279,7 +279,7 @@
               </div>
             </div>
             <div v-else-if="d.type==='trackartist'" class="trackartist con2" style="gap: 16px;text-align: left">
-              <div v-for="ta in d" v-bind:key="ta.type">
+              <div v-for="(ta,index) in d" v-bind:key="index">
                 <div v-if="ta.type==='artist'" class="recartist con2" style="gap: 16px;text-align: left">
                   <div class="con3" style="text-align: left;" v-bind:style="{ 'background-image': 'url(' + ta.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{ta.name}}
                     <audio v-bind:src="ta.preview_url"></audio>
@@ -295,7 +295,7 @@
                 </div>
                 <div v-if="ta.type==='related-artists'" >Related Artist</div>
                 <div v-if="ta.type==='related-artists'" class="col2">
-                  <div v-for="r in ta['items']" v-bind:key="r.id">
+                  <div v-for="(r,index) in ta['items']" v-bind:key="index">
                     <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta,2)">
                       <audio v-bind:src="r.preview_url"></audio>
                     </div>
@@ -307,7 +307,7 @@
                 <div >
                   <div v-if="ta.type==='top_tracks'" tabindex="1">Top tracks</div>
                   <div v-if="ta.type==='top_tracks'" tabindex="1" class="top-tracks con2">
-                    <div v-for="tt in ta['tracks']" v-bind:key="tt">
+                    <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
                       <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(tt,2)">{{tt.name}}
                         <audio v-bind:src="tt.preview_url"></audio>
                       </div>
@@ -318,7 +318,7 @@
                   </div>
                   <div v-if="ta.type==='albums'" tabindex="2">Albums</div>
                   <div v-if="ta.type==='albums'" tabindex="2" class="album con2">
-                    <div v-for="alb in ta" v-bind:key="alb">
+                    <div v-for="(alb,index) in ta" v-bind:key="index">
                       <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:click="deeperAlbum(alb,2)" v-on:mouseleave="mouseLeave">{{alb.name}}
                         <audio v-bind:src="alb.preview_url"></audio>
                       </div>
@@ -329,7 +329,7 @@
                   </div>
                   <div v-if="ta.type==='single'" tabindex="3">Single</div>
                   <div v-if="ta.type==='single'" tabindex="3" class="single con2">
-                    <div v-for="s in ta" v-bind:key="s">
+                    <div v-for="(s,index) in ta" v-bind:key="index">
                       <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,2)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{s.name}}
                         <audio v-bind:src="s.preview_url"></audio>
                       </div>
@@ -341,7 +341,7 @@
 
                   <div v-if="ta.type==='appears_on'" tabindex="4">Appears on</div>
                   <div v-if="ta.type==='appears_on'" tabindex="4" class="appear con2">
-                    <div v-for="a in ta" v-bind:key="a">
+                    <div v-for="(a,index) in ta" v-bind:key="index">
                       <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,2)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{a.name}}
                         <audio v-bind:src="a.preview_url"></audio>
                       </div>
@@ -361,7 +361,7 @@
                 <div style="width: 50%;text-align: left;">
                   <div>{{d.name}}</div>
                   <div style="display: flex; align-items: center;"><p>By </p>
-                    <div v-for="art in d.artists" v-bind:key="art.id" style="display: flex;align-items: center">
+                    <div v-for="(art,index) in d.artists" v-bind:key="index" style="display: flex;align-items: center">
                       <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,2)">{{art.name}}</div>
                     </div>
                   </div>
@@ -370,7 +370,7 @@
                     <button class="button">Open is Spotify</button></a>
                   </div>
                 </div>
-                <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-on:click="deeperartist(art,d,2)" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
+                <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist(art,d,2)" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
                   <audio preload="none" v-bind:src="d.preview_url"></audio>
                   <div style="float: left; margin-left: 50px;">{{art.name}}</div>
                 </div>
@@ -384,7 +384,7 @@
                 <div style="width: 50%;text-align: left;">
                   <div>{{d.name}}</div>
                   <div style="display: flex; align-items: center;"><p>By </p>
-                    <div v-for="art in d.artists" v-bind:key="art.id" style="display: flex;align-items: center">
+                    <div v-for="(art,index) in d.artists" v-bind:key="index" style="display: flex;align-items: center">
                       <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,2)">{{art.name}}</div>
                     </div>
                   </div>
@@ -393,7 +393,7 @@
                     <button class="button">Open is Spotify</button></a>
                   </div>
                 </div>
-                <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-on:click="deeperartist(art,d,2)" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
+                <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist(art,d,2)" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
                   <audio preload="none" v-bind:src="d.preview_url"></audio>
                   <div style="float: left; margin-left: 50px;">{{art.name}}</div>
                 </div>
@@ -413,7 +413,7 @@
                   <span style="color: rgb(240, 55, 165);">Recomended songs based on this</span>
                 </div>
                 <div style="display: block;" class="trackList">Tracks
-                  <div v-for="track in d.tracks" v-bind:key="track.id">
+                  <div v-for="(track,index) in d.tracks" v-bind:key="index">
                     <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks2(track,d,2)">
                       <div class="trackTitle">{{track.name}}</div>
                       <audio preload="none" v-bind:src="track.preview_url"></audio>
@@ -428,7 +428,7 @@
             </div>
             <div v-else-if="d.type==='seed_artists'" class="seed_artists con2" >
               <div style="width: 100%;">Seed artist</div>
-              <div v-for="s in d.tracks" v-bind:key="s.id">
+              <div v-for="(s,index) in d.tracks" v-bind:key="index">
                 <div v-if="s.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(s,2)">{{s.name}}
                   <audio preload="none" v-bind:src="s.preview_url"></audio>
                 </div>
@@ -453,7 +453,7 @@
           </div>
         </div>
         <div class="rectrack">
-          <div v-for="d in deeper22" v-bind:key="d.id">
+          <div v-for="(d,index) in deeper22" v-bind:key="index">
             <div v-if="d.type==='pl'" class="playlisttrack" style="display: flex; width: 100%; margin-top: 12px; margin-bottom: 6px;">
               <div class="con3" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.track.name}}
                 <audio preload="none" v-bind:src="d.track.preview_url"></audio>
@@ -461,7 +461,7 @@
               <div style="width: 50%;text-align: left;">
                 <div>{{d.track.name}}</div>
                 <div style="display: flex; align-items: center;"><p>By </p>
-                  <div v-for="art in d.track.artists" v-bind:key="art.id" style="display: flex;align-items: center">
+                  <div v-for="(art,index) in d.track.artists" v-bind:key="index" style="display: flex;align-items: center">
                     <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d.track,22)">{{art.name}}</div>
                   </div>
                 </div>
@@ -470,13 +470,13 @@
                   <button class="button">Open is Spotify</button></a>
                 </div>
               </div>
-              <div class="artist-cirle con3" v-for="art in d.track.artists" v-bind:key="art.id" v-on:click="deeperartist(art,d,22)" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">
+              <div class="artist-cirle con3" v-for="(art,index) in d.track.artists" v-bind:key="index" v-on:click="deeperartist(art,d,22)" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">
                 <audio preload="none" v-bind:src="d.track.preview_url"></audio>
                 <div style="float: left; margin-left: 50px;">{{art.name}}</div>
               </div>
             </div>
             <div v-else-if="d.type==='seed_tracks'" class="seed_tracks con2">
-              <div v-for="s in d.tracks" v-bind:key="s.id">
+              <div v-for="(s,index) in d.tracks" v-bind:key="index">
                 <div v-if="s.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(s,22)">{{s.name}}
                   <audio preload="none" v-bind:src="s.preview_url"></audio>
                 </div>
@@ -486,7 +486,7 @@
               </div>
             </div>
             <div v-else-if="d.type==='trackartist'" class="trackartist con2" style="gap: 16px;text-align: left">
-              <div v-for="ta in d" v-bind:key="ta.type">
+              <div v-for="(ta,index) in d" v-bind:key="index">
                 <div v-if="ta.type==='artist'" class="recartist con2" style="gap: 16px;text-align: left">
                   <div class="con3" style="text-align: left;" v-bind:style="{ 'background-image': 'url(' + ta.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{ta.name}}
                     <audio v-bind:src="ta.preview_url"></audio>
@@ -502,7 +502,7 @@
                 </div>
                 <div v-if="ta.type==='related-artists'" >Related Artist</div>
                 <div v-if="ta.type==='related-artists'" class="col2">
-                  <div v-for="r in ta['items']" v-bind:key="r.id">
+                  <div v-for="(r,index) in ta['items']" v-bind:key="index">
                     <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta,22)">
                       <audio v-bind:src="r.preview_url"></audio>
                     </div>
@@ -514,7 +514,7 @@
                 <div >
                   <div v-if="ta.type==='top_tracks'" tabindex="1">Top tracks</div>
                   <div v-if="ta.type==='top_tracks'" tabindex="1" class="top-tracks con2">
-                    <div v-for="tt in ta['tracks']" v-bind:key="tt">
+                    <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
                       <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(tt,22)">{{tt.name}}
                         <audio v-bind:src="tt.preview_url"></audio>
                       </div>
@@ -525,7 +525,7 @@
                   </div>
                   <div v-if="ta.type==='albums'" tabindex="2">Albums</div>
                   <div v-if="ta.type==='albums'" tabindex="2" class="album con2">
-                    <div v-for="alb in ta" v-bind:key="alb">
+                    <div v-for="(alb,index) in ta" v-bind:key="index">
                       <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:click="deeperAlbum(alb,22)" v-on:mouseleave="mouseLeave">{{alb.name}}
                         <audio v-bind:src="alb.preview_url"></audio>
                       </div>
@@ -536,7 +536,7 @@
                   </div>
                   <div v-if="ta.type==='single'" tabindex="3">Single</div>
                   <div v-if="ta.type==='single'" tabindex="3" class="single con2">
-                    <div v-for="s in ta" v-bind:key="s">
+                    <div v-for="(s,index) in ta" v-bind:key="index">
                       <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,22)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{s.name}}
                         <audio v-bind:src="s.preview_url"></audio>
                       </div>
@@ -548,7 +548,7 @@
 
                   <div v-if="ta.type==='appears_on'" tabindex="4">Appears on</div>
                   <div v-if="ta.type==='appears_on'" tabindex="4" class="appear con2">
-                    <div v-for="a in ta" v-bind:key="a">
+                    <div v-for="(a,index) in ta" v-bind:key="index">
                       <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,22)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{a.name}}
                         <audio v-bind:src="a.preview_url"></audio>
                       </div>
@@ -568,7 +568,7 @@
                 <div style="width: 50%;text-align: left;">
                   <div>{{d.name}}</div>
                   <div style="display: flex; align-items: center;"><p>By </p>
-                    <div v-for="art in d.artists" v-bind:key="art.id" style="display: flex;align-items: center">
+                    <div v-for="(art,index) in d.artists" v-bind:key="index" style="display: flex;align-items: center">
                       <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,22)">{{art.name}}</div>
                     </div>
                   </div>
@@ -577,7 +577,7 @@
                     <button class="button">Open is Spotify</button></a>
                   </div>
                 </div>
-                <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-on:click="deeperartist(art,d,22)" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
+                <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist(art,d,22)" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
                   <audio preload="none" v-bind:src="d.preview_url"></audio>
                   <div style="float: left; margin-left: 50px;">{{art.name}}</div>
                 </div>
@@ -591,7 +591,7 @@
                 <div style="width: 50%;text-align: left;">
                   <div>{{d.name}}</div>
                   <div style="display: flex; align-items: center;"><p>By </p>
-                    <div v-for="art in d.artists" v-bind:key="art.id" style="display: flex;align-items: center">
+                    <div v-for="(art,index) in d.artists" v-bind:key="index" style="display: flex;align-items: center">
                       <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,22)">{{art.name}}</div>
                     </div>
                   </div>
@@ -600,7 +600,7 @@
                     <button class="button">Open is Spotify</button></a>
                   </div>
                 </div>
-                <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-on:click="deeperartist(art,d,22)" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
+                <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist(art,d,22)" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
                   <audio preload="none" v-bind:src="d.preview_url"></audio>
                   <div style="float: left; margin-left: 50px;">{{art.name}}</div>
                 </div>
@@ -620,7 +620,7 @@
                   <span style="color: rgb(240, 55, 165);">Recomended songs based on this</span>
                 </div>
                 <div style="display: block;" class="trackList">Tracks
-                  <div v-for="track in d.tracks" v-bind:key="track.id">
+                  <div v-for="(track,index) in d.tracks" v-bind:key="index">
                     <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks2(track,d,22)">
                       <div class="trackTitle">{{track.name}}</div>
                       <audio preload="none" v-bind:src="track.preview_url"></audio>
@@ -635,7 +635,7 @@
             </div>
             <div v-else-if="d.type==='seed_artists'" class="seed_artists con2" >
               <div style="width: 100%;">Seed artist</div>
-              <div v-for="s in d.tracks" v-bind:key="s.id">
+              <div v-for="(s,index) in d.tracks" v-bind:key="s.id">
                 <div v-if="s.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(s,22)">{{s.name}}
                   <audio preload="none" v-bind:src="s.preview_url"></audio>
                 </div>
@@ -652,7 +652,7 @@
         <li id="option4">
           <a href="#option4" v-on:click.self="fetchArtist3">Top artists all time</a>
       <div id="topartista" class="con2" style="display: flex;color: black">
-        <div class="trackbody" v-for="item of topartista" v-bind:key="item.id">
+        <div class="trackbody" v-for="(item,index) of topartista" v-bind:key="index">
           <div v-if="item.preview_url" tabindex="0" class="con3"  v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">{{item.name}}
             <audio preload="none" v-bind:src="item.preview_url"></audio>
           </div>
@@ -660,7 +660,7 @@
             <audio preload="none"></audio>
           </div>
         </div>
-        <div v-for="d in deeper23" v-bind:key="d.id">
+        <div v-for="(d,index) in deeper23" v-bind:key="index">
           <div v-if="d.type==='pl'" class="playlisttrack" style="display: flex; width: 100%; margin-top: 12px; margin-bottom: 6px;">
             <div class="con3" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.track.name}}
               <audio preload="none" v-bind:src="d.track.preview_url"></audio>
@@ -668,7 +668,7 @@
             <div style="width: 50%;text-align: left;">
               <div>{{d.track.name}}</div>
               <div style="display: flex; align-items: center;"><p>By </p>
-                <div v-for="art in d.track.artists" v-bind:key="art.id" style="display: flex;align-items: center">
+                <div v-for="(art,index) in d.track.artists" v-bind:key="index" style="display: flex;align-items: center">
                   <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d.track,23)">{{art.name}}</div>
                 </div>
               </div>
@@ -677,13 +677,13 @@
                 <button class="button">Open is Spotify</button></a>
               </div>
             </div>
-            <div class="artist-cirle con3" v-for="art in d.track.artists" v-bind:key="art.id" v-on:click="deeperartist(art,d,23)" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">
+            <div class="artist-cirle con3" v-for="(art,index) in d.track.artists" v-bind:key="index" v-on:click="deeperartist(art,d,23)" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">
               <audio preload="none" v-bind:src="d.track.preview_url"></audio>
               <div style="float: left; margin-left: 50px;">{{art.name}}</div>
             </div>
           </div>
           <div v-else-if="d.type==='seed_tracks'" class="seed_tracks con2">
-            <div v-for="s in d.tracks" v-bind:key="s.id">
+            <div v-for="(s,index) in d.tracks" v-bind:key="index">
               <div v-if="s.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(s,23)">{{s.name}}
                 <audio preload="none" v-bind:src="s.preview_url"></audio>
               </div>
@@ -693,7 +693,7 @@
             </div>
           </div>
           <div v-else-if="d.type==='trackartist'" class="trackartist con2" style="gap: 16px;text-align: left">
-            <div v-for="ta in d" v-bind:key="ta.type">
+            <div v-for="(ta,index) in d" v-bind:key="index">
               <div v-if="ta.type==='artist'" class="recartist con2" style="gap: 16px;text-align: left">
                 <div class="con3" style="text-align: left;" v-bind:style="{ 'background-image': 'url(' + ta.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{ta.name}}
                   <audio v-bind:src="ta.preview_url"></audio>
@@ -709,7 +709,7 @@
               </div>
               <div v-if="ta.type==='related-artists'" >Related Artist</div>
               <div v-if="ta.type==='related-artists'" class="col2">
-                <div v-for="r in ta['items']" v-bind:key="r.id">
+                <div v-for="(r,index) in ta['items']" v-bind:key="index">
                   <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta,23)">
                     <audio v-bind:src="r.preview_url"></audio>
                   </div>
@@ -721,7 +721,7 @@
               <div >
                 <div v-if="ta.type==='top_tracks'" tabindex="1">Top tracks</div>
                 <div v-if="ta.type==='top_tracks'" tabindex="1" class="top-tracks con2">
-                  <div v-for="tt in ta['tracks']" v-bind:key="tt">
+                  <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
                     <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(tt,23)">{{tt.name}}
                       <audio v-bind:src="tt.preview_url"></audio>
                     </div>
@@ -732,7 +732,7 @@
                 </div>
                 <div v-if="ta.type==='albums'" tabindex="2">Albums</div>
                 <div v-if="ta.type==='albums'" tabindex="2" class="album con2">
-                  <div v-for="alb in ta" v-bind:key="alb">
+                  <div v-for="(alb,index) in ta" v-bind:key="index">
                     <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:click="deeperAlbum(alb,23)" v-on:mouseleave="mouseLeave">{{alb.name}}
                       <audio v-bind:src="alb.preview_url"></audio>
                     </div>
@@ -743,7 +743,7 @@
                 </div>
                 <div v-if="ta.type==='single'" tabindex="3">Single</div>
                 <div v-if="ta.type==='single'" tabindex="3" class="single con2">
-                  <div v-for="s in ta" v-bind:key="s">
+                  <div v-for="(s,index) in ta" v-bind:key="index">
                     <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,23)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{s.name}}
                       <audio v-bind:src="s.preview_url"></audio>
                     </div>
@@ -755,7 +755,7 @@
 
                 <div v-if="ta.type==='appears_on'" tabindex="4">Appears on</div>
                 <div v-if="ta.type==='appears_on'" tabindex="4" class="appear con2">
-                  <div v-for="a in ta" v-bind:key="a">
+                  <div v-for="(a,index) in ta" v-bind:key="index">
                     <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,23)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{a.name}}
                       <audio v-bind:src="a.preview_url"></audio>
                     </div>
@@ -775,7 +775,7 @@
               <div style="width: 50%;text-align: left;">
                 <div>{{d.name}}</div>
                 <div style="display: flex; align-items: center;"><p>By </p>
-                  <div v-for="art in d.artists" v-bind:key="art.id" style="display: flex;align-items: center">
+                  <div v-for="(art,index) in d.artists" v-bind:key="index" style="display: flex;align-items: center">
                     <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,23)">{{art.name}}</div>
                   </div>
                 </div>
@@ -784,7 +784,7 @@
                   <button class="button">Open is Spotify</button></a>
                 </div>
               </div>
-              <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-on:click="deeperartist(art,d,23)" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
+              <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist(art,d,23)" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
                 <audio preload="none" v-bind:src="d.preview_url"></audio>
                 <div style="float: left; margin-left: 50px;">{{art.name}}</div>
               </div>
@@ -798,7 +798,7 @@
               <div style="width: 50%;text-align: left;">
                 <div>{{d.name}}</div>
                 <div style="display: flex; align-items: center;"><p>By </p>
-                  <div v-for="art in d.artists" v-bind:key="art.id" style="display: flex;align-items: center">
+                  <div v-for="(art,index) in d.artists" v-bind:key="index" style="display: flex;align-items: center">
                     <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,23)">{{art.name}}</div>
                   </div>
                 </div>
@@ -807,7 +807,7 @@
                   <button class="button">Open is Spotify</button></a>
                 </div>
               </div>
-              <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-on:click="deeperartist(art,d,23)" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
+              <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist(art,d,23)" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
                 <audio preload="none" v-bind:src="d.preview_url"></audio>
                 <div style="float: left; margin-left: 50px;">{{art.name}}</div>
               </div>
@@ -827,7 +827,7 @@
                 <span style="color: rgb(240, 55, 165);">Recomended songs based on this</span>
               </div>
               <div style="display: block;" class="trackList">Tracks
-                <div v-for="track in d.tracks" v-bind:key="track.id">
+                <div v-for="(track,index) in d.tracks" v-bind:key="index">
                   <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks2(track,d,23)">
                     <div class="trackTitle">{{track.name}}</div>
                     <audio preload="none" v-bind:src="track.preview_url"></audio>
@@ -842,7 +842,7 @@
           </div>
           <div v-else-if="d.type==='seed_artists'" class="seed_artists con2" >
             <div style="width: 100%;">Seed artist</div>
-            <div v-for="s in d.tracks" v-bind:key="s.id">
+            <div v-for="(s,index) in d.tracks" v-bind:key="index">
               <div v-if="s.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(s,23)">{{s.name}}
                 <audio preload="none" v-bind:src="s.preview_url"></audio>
               </div>
@@ -857,7 +857,7 @@
         <li id="option5">
     <a href="#option5" v-on:click.self="fetchApi">Top tracks</a>
       <div id="toptrack" class="con2" style="display: flex;color: black">
-        <div class="trackbody" v-for="item of items" v-bind:key="item.id">
+        <div class="trackbody" v-for="(item,index) of items" v-bind:key="index">
           <div v-if="item.preview_url" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeper(item,3)" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }">{{lists(item.artists)}}
             <audio preload="none" v-bind:src="item.preview_url"></audio>
           </div>
@@ -866,7 +866,7 @@
           </div>
         </div>
         <div class="rectrack">
-          <div v-for="d in deeper3" v-bind:key="d.id">
+          <div v-for="(d,index) in deeper3" v-bind:key="index">
             <div v-if="d.type==='pl'" class="playlisttrack" style="display: flex; width: 100%; margin-top: 12px; margin-bottom: 6px;">
               <div class="con3" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
                 <audio preload="none" v-bind:src="d.preview_url"></audio>
@@ -874,7 +874,7 @@
               <div style="width: 50%;text-align: left;">
                 <div>{{d.name}}</div>
                 <div style="display: flex; align-items: center;"><p>By </p>
-                  <div v-for="art in d.artists" v-bind:key="art.id" style="display: flex;align-items: center">
+                  <div v-for="(art,index) in d.artists" v-bind:key="index" style="display: flex;align-items: center">
                     <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d.track,3)">{{art.name}}</div>
                   </div>
                 </div>
@@ -883,13 +883,13 @@
                   <button class="button">Open is Spotify</button></a>
                 </div>
               </div>
-              <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-on:click="deeperartist(art,d,3)" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
+              <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist(art,d,3)" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
                 <audio preload="none" v-bind:src="d.preview_url"></audio>
                 <div style="float: left; margin-left: 50px;">{{art.name}}</div>
               </div>
             </div>
             <div v-else-if="d.type==='seed_tracks'" class="seed_tracks con2">
-              <div v-for="s in d.tracks" v-bind:key="s.id">
+              <div v-for="(s,index) in d.tracks" v-bind:key="index">
                 <div v-if="s.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(s,3)">{{s.name}}
                   <audio preload="none" v-bind:src="s.preview_url"></audio>
                 </div>
@@ -899,7 +899,7 @@
               </div>
             </div>
             <div v-else-if="d.type==='trackartist'" class="trackartist con2" style="gap: 16px;text-align: left">
-              <div v-for="ta in d" v-bind:key="ta.type">
+              <div v-for="(ta,index) in d" v-bind:key="index">
                 <div v-if="ta.type==='artist'" class="recartist con2" style="gap: 16px;text-align: left">
                   <div class="con3" style="text-align: left;" v-bind:style="{ 'background-image': 'url(' + ta.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{ta.name}}
                     <audio v-bind:src="ta.preview_url"></audio>
@@ -927,7 +927,7 @@
                 <div >
                   <div v-if="ta.type==='top_tracks'" tabindex="1">Top tracks</div>
                   <div v-if="ta.type==='top_tracks'" tabindex="1" class="top-tracks con2">
-                    <div v-for="tt in ta['tracks']" v-bind:key="tt">
+                    <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
                       <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(tt,3)">{{tt.name}}
                         <audio v-bind:src="tt.preview_url"></audio>
                       </div>
@@ -938,7 +938,7 @@
                   </div>
                   <div v-if="ta.type==='albums'" tabindex="2">Albums</div>
                   <div v-if="ta.type==='albums'" tabindex="2" class="album con2">
-                    <div v-for="alb in ta" v-bind:key="alb">
+                    <div v-for="(alb,index) in ta" v-bind:key="index">
                       <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:click="deeperAlbum(alb,3)" v-on:mouseleave="mouseLeave">{{alb.name}}
                         <audio v-bind:src="alb.preview_url"></audio>
                       </div>
@@ -949,7 +949,7 @@
                   </div>
                   <div v-if="ta.type==='single'" tabindex="3">Single</div>
                   <div v-if="ta.type==='single'" tabindex="3" class="single con2">
-                    <div v-for="s in ta" v-bind:key="s">
+                    <div v-for="(s,index) in ta" v-bind:key="index">
                       <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,3)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{s.name}}
                         <audio v-bind:src="s.preview_url"></audio>
                       </div>
@@ -961,7 +961,7 @@
 
                   <div v-if="ta.type==='appears_on'" tabindex="4">Appears on</div>
                   <div v-if="ta.type==='appears_on'" tabindex="4" class="appear con2">
-                    <div v-for="a in ta" v-bind:key="a">
+                    <div v-for="(a,index) in ta" v-bind:key="index">
                       <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,3)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{a.name}}
                         <audio v-bind:src="a.preview_url"></audio>
                       </div>
@@ -981,7 +981,7 @@
                 <div style="width: 50%;text-align: left;">
                   <div>{{d.name}}</div>
                   <div style="display: flex; align-items: center;"><p>By </p>
-                    <div v-for="art in d.artists" v-bind:key="art.id" style="display: flex;align-items: center">
+                    <div v-for="(art,index) in d.artists" v-bind:key="index" style="display: flex;align-items: center">
                       <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,3)">{{art.name}}</div>
                     </div>
                   </div>
@@ -990,7 +990,7 @@
                     <button class="button">Open is Spotify</button></a>
                   </div>
                 </div>
-                <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-on:click="deeperartist(art,d,3)" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
+                <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist(art,d,3)" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
                   <audio preload="none" v-bind:src="d.preview_url"></audio>
                   <div style="float: left; margin-left: 50px;">{{art.name}}</div>
                 </div>
@@ -1004,7 +1004,7 @@
                 <div style="width: 50%;text-align: left;">
                   <div>{{d.name}}</div>
                   <div style="display: flex; align-items: center;"><p>By </p>
-                    <div v-for="art in d.artists" v-bind:key="art.id" style="display: flex;align-items: center">
+                    <div v-for="(art,index) in d.artists" v-bind:key="index" style="display: flex;align-items: center">
                       <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,3)">{{art.name}}</div>
                     </div>
                   </div>
@@ -1033,7 +1033,7 @@
                   <span style="color: rgb(240, 55, 165);">Recomended songs based on this</span>
                 </div>
                 <div style="display: block;" class="trackList">Tracks
-                  <div v-for="track in d.tracks" v-bind:key="track.id">
+                  <div v-for="(track,index) in d.tracks" v-bind:key="index">
                     <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks2(track,d,3)">
                       <div class="trackTitle">{{track.name}}</div>
                       <audio preload="none" v-bind:src="track.preview_url"></audio>
@@ -1048,7 +1048,7 @@
             </div>
             <div v-else-if="d.type==='seed_artists'" class="seed_artists con2" >
               <div style="width: 100%;">Seed artist</div>
-              <div v-for="s in d.tracks" v-bind:key="s.id">
+              <div v-for="(s,index) in d.tracks" v-bind:key="index">
                 <div v-if="s.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(s,3)">{{s.name}}
                   <audio preload="none" v-bind:src="s.preview_url"></audio>
                 </div>
@@ -1064,7 +1064,7 @@
         <li id="option6">
     <a href="#option6" v-on:click.self="fetchApi2">Top tracks 6</a>
       <div id="toptrack6" class="con2" style="display: flex;color: black" >
-        <div class="trackbody" v-for="item of itemsm" v-bind:key="item.id">
+        <div class="trackbody" v-for="(item,index) of itemsm" v-bind:key="index">
           <div v-if="item.preview_url" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeper(item,32)" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" >{{lists(item.artists)}}
             <audio preload="none" v-bind:src="item.preview_url"></audio>
           </div>
@@ -1073,7 +1073,7 @@
           </div>
         </div>
         <div class="rectrack">
-          <div v-for="d in deeper32" v-bind:key="d.id">
+          <div v-for="(d,index) in deeper32" v-bind:key="index">
             <div v-if="d.type==='pl'" class="playlisttrack" style="display: flex; width: 100%; margin-top: 12px; margin-bottom: 6px;">
               <div class="con3" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
                 <audio preload="none" v-bind:src="d.preview_url"></audio>
@@ -1081,7 +1081,7 @@
               <div style="width: 50%;text-align: left;">
                 <div>{{d.name}}</div>
                 <div style="display: flex; align-items: center;"><p>By </p>
-                  <div v-for="art in d.artists" v-bind:key="art.id" style="display: flex;align-items: center">
+                  <div v-for="(art,index) in d.artists" v-bind:key="index" style="display: flex;align-items: center">
                     <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d.track,32)">{{art.name}}</div>
                   </div>
                 </div>
@@ -1090,13 +1090,13 @@
                   <button class="button">Open is Spotify</button></a>
                 </div>
               </div>
-              <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-on:click="deeperartist(art,d,32)" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
+              <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist(art,d,32)" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
                 <audio preload="none" v-bind:src="d.preview_url"></audio>
                 <div style="float: left; margin-left: 50px;">{{art.name}}</div>
               </div>
             </div>
             <div v-else-if="d.type==='seed_tracks'" class="seed_tracks con2">
-              <div v-for="s in d.tracks" v-bind:key="s.id">
+              <div v-for="(s,index) in d.tracks" v-bind:key="index">
                 <div v-if="s.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(s,32)">{{s.name}}
                   <audio preload="none" v-bind:src="s.preview_url"></audio>
                 </div>
@@ -1106,7 +1106,7 @@
               </div>
             </div>
             <div v-else-if="d.type==='trackartist'" class="trackartist con2" style="gap: 16px;text-align: left">
-              <div v-for="ta in d" v-bind:key="ta.type">
+              <div v-for="(ta,index) in d" v-bind:key="index">
                 <div v-if="ta.type==='artist'" class="recartist con2" style="gap: 16px;text-align: left">
                   <div class="con3" style="text-align: left;" v-bind:style="{ 'background-image': 'url(' + ta.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{ta.name}}
                     <audio v-bind:src="ta.preview_url"></audio>
@@ -1122,7 +1122,7 @@
                 </div>
                 <div v-if="ta.type==='related-artists'" >Related Artist</div>
                 <div v-if="ta.type==='related-artists'" class="col2">
-                  <div v-for="r in ta['items']" v-bind:key="r.id">
+                  <div v-for="(r,index) in ta['items']" v-bind:key="index">
                     <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta,3)">
                       <audio v-bind:src="r.preview_url"></audio>
                     </div>
@@ -1134,7 +1134,7 @@
                 <div >
                   <div v-if="ta.type==='top_tracks'" tabindex="1">Top tracks</div>
                   <div v-if="ta.type==='top_tracks'" tabindex="1" class="top-tracks con2">
-                    <div v-for="tt in ta['tracks']" v-bind:key="tt">
+                    <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
                       <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(tt,32)">{{tt.name}}
                         <audio v-bind:src="tt.preview_url"></audio>
                       </div>
@@ -1145,7 +1145,7 @@
                   </div>
                   <div v-if="ta.type==='albums'" tabindex="2">Albums</div>
                   <div v-if="ta.type==='albums'" tabindex="2" class="album con2">
-                    <div v-for="alb in ta" v-bind:key="alb">
+                    <div v-for="(alb,index) in ta" v-bind:key="index">
                       <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:click="deeperAlbum(alb,3)" v-on:mouseleave="mouseLeave">{{alb.name}}
                         <audio v-bind:src="alb.preview_url"></audio>
                       </div>
@@ -1156,7 +1156,7 @@
                   </div>
                   <div v-if="ta.type==='single'" tabindex="3">Single</div>
                   <div v-if="ta.type==='single'" tabindex="3" class="single con2">
-                    <div v-for="s in ta" v-bind:key="s">
+                    <div v-for="(s,index) in ta" v-bind:key="index">
                       <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,32)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{s.name}}
                         <audio v-bind:src="s.preview_url"></audio>
                       </div>
@@ -1168,7 +1168,7 @@
 
                   <div v-if="ta.type==='appears_on'" tabindex="4">Appears on</div>
                   <div v-if="ta.type==='appears_on'" tabindex="4" class="appear con2">
-                    <div v-for="a in ta" v-bind:key="a">
+                    <div v-for="(a,index) in ta" v-bind:key="index">
                       <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,32)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{a.name}}
                         <audio v-bind:src="a.preview_url"></audio>
                       </div>
@@ -1188,7 +1188,7 @@
                 <div style="width: 50%;text-align: left;">
                   <div>{{d.name}}</div>
                   <div style="display: flex; align-items: center;"><p>By </p>
-                    <div v-for="art in d.artists" v-bind:key="art.id" style="display: flex;align-items: center">
+                    <div v-for="(art,index) in d.artists" v-bind:key="index" style="display: flex;align-items: center">
                       <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,32)">{{art.name}}</div>
                     </div>
                   </div>
@@ -1197,7 +1197,7 @@
                     <button class="button">Open is Spotify</button></a>
                   </div>
                 </div>
-                <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-on:click="deeperartist(art,d,32)" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
+                <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist(art,d,32)" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
                   <audio preload="none" v-bind:src="d.preview_url"></audio>
                   <div style="float: left; margin-left: 50px;">{{art.name}}</div>
                 </div>
@@ -1211,7 +1211,7 @@
                 <div style="width: 50%;text-align: left;">
                   <div>{{d.name}}</div>
                   <div style="display: flex; align-items: center;"><p>By </p>
-                    <div v-for="art in d.artists" v-bind:key="art.id" style="display: flex;align-items: center">
+                    <div v-for="(art,index) in d.artists" v-bind:key="index" style="display: flex;align-items: center">
                       <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,3)">{{art.name}}</div>
                     </div>
                   </div>
@@ -1220,7 +1220,7 @@
                     <button class="button">Open is Spotify</button></a>
                   </div>
                 </div>
-                <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-on:click="deeperartist(art,d,32)" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
+                <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist(art,d,32)" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
                   <audio preload="none" v-bind:src="d.preview_url"></audio>
                   <div style="float: left; margin-left: 50px;">{{art.name}}</div>
                 </div>
@@ -1240,7 +1240,7 @@
                   <span style="color: rgb(240, 55, 165);">Recomended songs based on this</span>
                 </div>
                 <div style="display: block;" class="trackList">Tracks
-                  <div v-for="track in d.tracks" v-bind:key="track.id">
+                  <div v-for="(track,index) in d.tracks" v-bind:key="index">
                     <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks2(track,d,32)">
                       <div class="trackTitle">{{track.name}}</div>
                       <audio preload="none" v-bind:src="track.preview_url"></audio>
@@ -1255,7 +1255,7 @@
             </div>
             <div v-else-if="d.type==='seed_artists'" class="seed_artists con2" >
               <div style="width: 100%;">Seed artist</div>
-              <div v-for="s in d.tracks" v-bind:key="s.id">
+              <div v-for="(s,index) in d.tracks" v-bind:key="index">
                 <div v-if="s.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(s,32)">{{s.name}}
                   <audio preload="none" v-bind:src="s.preview_url"></audio>
                 </div>
@@ -1271,7 +1271,7 @@
         <li id="option7">
     <a href="#option7" v-on:click.self="fetchApi3">Top tracks all time</a>
       <div id="toptrackall" class="con2" style="display: flex;color: black" >
-        <div class="trackbody" v-for="item of itemsl" v-bind:key="item.id">
+        <div class="trackbody" v-for="(item,index) of itemsl" v-bind:key="index">
           <div v-if="item.preview_url" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeper(item,33)" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" >{{lists(item.artists)}}
             <audio preload="none" v-bind:src="item.preview_url"></audio>
           </div>
@@ -1280,7 +1280,7 @@
           </div>
         </div>
         <div class="rectrack">
-          <div v-for="d in deeper33" v-bind:key="d.id">
+          <div v-for="(d,index) in deeper33" v-bind:key="index">
             <div v-if="d.type==='pl'" class="playlisttrack" style="display: flex; width: 100%; margin-top: 12px; margin-bottom: 6px;">
               <div class="con3" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
                 <audio preload="none" v-bind:src="d.preview_url"></audio>
@@ -1288,7 +1288,7 @@
               <div style="width: 50%;text-align: left;">
                 <div>{{d.name}}</div>
                 <div style="display: flex; align-items: center;"><p>By </p>
-                  <div v-for="art in d.artists" v-bind:key="art.id" style="display: flex;align-items: center">
+                  <div v-for="(art,index) in d.artists" v-bind:key="index" style="display: flex;align-items: center">
                     <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d.track,33)">{{art.name}}</div>
                   </div>
                 </div>
@@ -1297,13 +1297,13 @@
                   <button class="button">Open is Spotify</button></a>
                 </div>
               </div>
-              <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-on:click="deeperartist(art,d,33)" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
+              <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist(art,d,33)" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
                 <audio preload="none" v-bind:src="d.preview_url"></audio>
                 <div style="float: left; margin-left: 50px;">{{art.name}}</div>
               </div>
             </div>
             <div v-else-if="d.type==='seed_tracks'" class="seed_tracks con2">
-              <div v-for="s in d.tracks" v-bind:key="s.id">
+              <div v-for="(s,index) in d.tracks" v-bind:key="index">
                 <div v-if="s.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(s,33)">{{s.name}}
                   <audio preload="none" v-bind:src="s.preview_url"></audio>
                 </div>
@@ -1313,7 +1313,7 @@
               </div>
             </div>
             <div v-else-if="d.type==='trackartist'" class="trackartist con2" style="gap: 16px;text-align: left">
-              <div v-for="ta in d" v-bind:key="ta.type">
+              <div v-for="(ta,index) in d" v-bind:key="index">
                 <div v-if="ta.type==='artist'" class="recartist con2" style="gap: 16px;text-align: left">
                   <div class="con3" style="text-align: left;" v-bind:style="{ 'background-image': 'url(' + ta.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{ta.name}}
                     <audio v-bind:src="ta.preview_url"></audio>
@@ -1329,7 +1329,7 @@
                 </div>
                 <div v-if="ta.type==='related-artists'" >Related Artist</div>
                 <div v-if="ta.type==='related-artists'" class="col2">
-                  <div v-for="r in ta['items']" v-bind:key="r.id">
+                  <div v-for="(r,index) in ta['items']" v-bind:key="index">
                     <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta,33)">
                       <audio v-bind:src="r.preview_url"></audio>
                     </div>
@@ -1341,7 +1341,7 @@
                 <div >
                   <div v-if="ta.type==='top_tracks'" tabindex="1">Top tracks</div>
                   <div v-if="ta.type==='top_tracks'" tabindex="1" class="top-tracks con2">
-                    <div v-for="tt in ta['tracks']" v-bind:key="tt">
+                    <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
                       <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(tt,33)">{{tt.name}}
                         <audio v-bind:src="tt.preview_url"></audio>
                       </div>
@@ -1352,7 +1352,7 @@
                   </div>
                   <div v-if="ta.type==='albums'" tabindex="2">Albums</div>
                   <div v-if="ta.type==='albums'" tabindex="2" class="album con2">
-                    <div v-for="alb in ta" v-bind:key="alb">
+                    <div v-for="(alb,index) in ta" v-bind:key="index">
                       <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:click="deeperAlbum(alb,33)" v-on:mouseleave="mouseLeave">{{alb.name}}
                         <audio v-bind:src="alb.preview_url"></audio>
                       </div>
@@ -1363,7 +1363,7 @@
                   </div>
                   <div v-if="ta.type==='single'" tabindex="3">Single</div>
                   <div v-if="ta.type==='single'" tabindex="3" class="single con2">
-                    <div v-for="s in ta" v-bind:key="s">
+                    <div v-for="(s,index) in ta" v-bind:key="index">
                       <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,33)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{s.name}}
                         <audio v-bind:src="s.preview_url"></audio>
                       </div>
@@ -1375,7 +1375,7 @@
 
                   <div v-if="ta.type==='appears_on'" tabindex="4">Appears on</div>
                   <div v-if="ta.type==='appears_on'" tabindex="4" class="appear con2">
-                    <div v-for="a in ta" v-bind:key="a">
+                    <div v-for="(a,index) in ta" v-bind:key="index">
                       <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,33)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{a.name}}
                         <audio v-bind:src="a.preview_url"></audio>
                       </div>
@@ -1395,7 +1395,7 @@
                 <div style="width: 50%;text-align: left;">
                   <div>{{d.name}}</div>
                   <div style="display: flex; align-items: center;"><p>By </p>
-                    <div v-for="art in d.artists" v-bind:key="art.id" style="display: flex;align-items: center">
+                    <div v-for="(art,index) in d.artists" v-bind:key="index" style="display: flex;align-items: center">
                       <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,33)">{{art.name}}</div>
                     </div>
                   </div>
@@ -1404,7 +1404,7 @@
                     <button class="button">Open is Spotify</button></a>
                   </div>
                 </div>
-                <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-on:click="deeperartist(art,d,33)" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
+                <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist(art,d,33)" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
                   <audio preload="none" v-bind:src="d.preview_url"></audio>
                   <div style="float: left; margin-left: 50px;">{{art.name}}</div>
                 </div>
@@ -1418,7 +1418,7 @@
                 <div style="width: 50%;text-align: left;">
                   <div>{{d.name}}</div>
                   <div style="display: flex; align-items: center;"><p>By </p>
-                    <div v-for="art in d.artists" v-bind:key="art.id" style="display: flex;align-items: center">
+                    <div v-for="(art,index) in d.artists" v-bind:key="index" style="display: flex;align-items: center">
                       <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,33)">{{art.name}}</div>
                     </div>
                   </div>
@@ -1427,7 +1427,7 @@
                     <button class="button">Open is Spotify</button></a>
                   </div>
                 </div>
-                <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-on:click="deeperartist(art,d,3)" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
+                <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist(art,d,3)" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
                   <audio preload="none" v-bind:src="d.preview_url"></audio>
                   <div style="float: left; margin-left: 50px;">{{art.name}}</div>
                 </div>
@@ -1447,7 +1447,7 @@
                   <span style="color: rgb(240, 55, 165);">Recomended songs based on this</span>
                 </div>
                 <div style="display: block;" class="trackList">Tracks
-                  <div v-for="track in d.tracks" v-bind:key="track.id">
+                  <div v-for="(track,index) in d.tracks" v-bind:key="index">
                     <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks2(track,d,33)">
                       <div class="trackTitle">{{track.name}}</div>
                       <audio preload="none" v-bind:src="track.preview_url"></audio>
@@ -1462,7 +1462,7 @@
             </div>
             <div v-else-if="d.type==='seed_artists'" class="seed_artists con2" >
               <div style="width: 100%;">Seed artist</div>
-              <div v-for="s in d.tracks" v-bind:key="s.id">
+              <div v-for="(s,index) in d.tracks" v-bind:key="index">
                 <div v-if="s.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(s,33)">{{s.name}}
                   <audio preload="none" v-bind:src="s.preview_url"></audio>
                 </div>
@@ -1478,7 +1478,7 @@
         <li id="option8">
     <a href="#option8" v-on:click.self="fetchAlbums">Saved albums</a>
       <div id="savedalbum" class="con2">
-        <div class="albumbody" v-for="item of savedalbums" v-bind:key="item.id">
+        <div class="albumbody" v-for="(item,index) of savedalbums" v-bind:key="index">
           <div v-if="item.preview_url" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperAlbum(item,4)" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" >{{lists(item.album.artists)}}
             <audio preload="none" v-bind:src="item.preview_url"></audio>
           </div>
@@ -1487,7 +1487,7 @@
           </div>
         </div>
         <div class="rectrack">
-          <div v-for="d in deeper4" v-bind:key="d.id">
+          <div v-for="(d,index) in deeper4" v-bind:key="index">
             <div v-if="d.type==='pl'" class="playlisttrack" style="display: flex; width: 100%; margin-top: 12px; margin-bottom: 6px;">
               <div class="con3" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.track.name}}
                 <audio preload="none" v-bind:src="d.track.preview_url"></audio>
@@ -1495,7 +1495,7 @@
               <div style="width: 50%;text-align: left;">
                 <div>{{d.track.name}}</div>
                 <div style="display: flex; align-items: center;"><p>By </p>
-                  <div v-for="art in d.track.artists" v-bind:key="art.id" style="display: flex;align-items: center">
+                  <div v-for="(art,index) in d.track.artists" v-bind:key="index" style="display: flex;align-items: center">
                     <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d.track,4)">{{art.name}}</div>
                   </div>
                 </div>
@@ -1504,13 +1504,13 @@
                   <button class="button">Open is Spotify</button></a>
                 </div>
               </div>
-              <div class="artist-cirle con3" v-for="art in d.track.artists" v-bind:key="art.id" v-on:click="deeperartist(art,d,4)" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">
+              <div class="artist-cirle con3" v-for="(art,index) in d.track.artists" v-bind:key="index" v-on:click="deeperartist(art,d,4)" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">
                 <audio preload="none" v-bind:src="d.track.preview_url"></audio>
                 <div style="float: left; margin-left: 50px;">{{art.name}}</div>
               </div>
             </div>
             <div v-else-if="d.type==='seed_tracks'" class="seed_tracks con2">
-              <div v-for="s in d.tracks" v-bind:key="s.id">
+              <div v-for="(s,index) in d.tracks" v-bind:key="index">
                 <div v-if="s.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(s,4)">{{s.name}}
                   <audio preload="none" v-bind:src="s.preview_url"></audio>
                 </div>
@@ -1520,7 +1520,7 @@
               </div>
             </div>
             <div v-else-if="d.type==='trackartist'" class="trackartist con2" style="gap: 16px;text-align: left">
-              <div v-for="ta in d" v-bind:key="ta.type">
+              <div v-for="(ta,index) in d" v-bind:key="index">
                 <div v-if="ta.type==='artist'" class="recartist con2" style="gap: 16px;text-align: left">
                   <div class="con3" style="text-align: left;" v-bind:style="{ 'background-image': 'url(' + ta.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{ta.name}}
                     <audio v-bind:src="ta.preview_url"></audio>
@@ -1536,7 +1536,7 @@
                 </div>
                 <div v-if="ta.type==='related-artists'" >Related Artist</div>
                 <div v-if="ta.type==='related-artists'" class="col2">
-                  <div v-for="r in ta['items']" v-bind:key="r.id">
+                  <div v-for="(r,index) in ta['items']" v-bind:key="index">
                     <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta,4)">
                       <audio v-bind:src="r.preview_url"></audio>
                     </div>
@@ -1548,7 +1548,7 @@
                 <div >
                   <div v-if="ta.type==='top_tracks'" tabindex="1">Top tracks</div>
                   <div v-if="ta.type==='top_tracks'" tabindex="1" class="top-tracks con2">
-                    <div v-for="tt in ta['tracks']" v-bind:key="tt">
+                    <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
                       <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(tt,4)">{{tt.name}}
                         <audio v-bind:src="tt.preview_url"></audio>
                       </div>
@@ -1559,7 +1559,7 @@
                   </div>
                   <div v-if="ta.type==='albums'" tabindex="2">Albums</div>
                   <div v-if="ta.type==='albums'" tabindex="2" class="album con2">
-                    <div v-for="alb in ta" v-bind:key="alb">
+                    <div v-for="(alb,index) in ta" v-bind:key="index">
                       <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:click="deeperAlbum(alb,4)" v-on:mouseleave="mouseLeave">{{alb.name}}
                         <audio v-bind:src="alb.preview_url"></audio>
                       </div>
@@ -1570,7 +1570,7 @@
                   </div>
                   <div v-if="ta.type==='single'" tabindex="3">Single</div>
                   <div v-if="ta.type==='single'" tabindex="3" class="single con2">
-                    <div v-for="s in ta" v-bind:key="s">
+                    <div v-for="(s,index) in ta" v-bind:key="index">
                       <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,4)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{s.name}}
                         <audio v-bind:src="s.preview_url"></audio>
                       </div>
@@ -1582,7 +1582,7 @@
 
                   <div v-if="ta.type==='appears_on'" tabindex="4">Appears on</div>
                   <div v-if="ta.type==='appears_on'" tabindex="4" class="appear con2">
-                    <div v-for="a in ta" v-bind:key="a">
+                    <div v-for="(a,index) in ta" v-bind:key="index">
                       <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,4)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{a.name}}
                         <audio v-bind:src="a.preview_url"></audio>
                       </div>
@@ -1602,7 +1602,7 @@
                 <div style="width: 50%;text-align: left;">
                   <div>{{d.name}}</div>
                   <div style="display: flex; align-items: center;"><p>By </p>
-                    <div v-for="art in d.artists" v-bind:key="art.id" style="display: flex;align-items: center">
+                    <div v-for="(art,index) in d.artists" v-bind:key="index" style="display: flex;align-items: center">
                       <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,4)">{{art.name}}</div>
                     </div>
                   </div>
@@ -1611,7 +1611,7 @@
                     <button class="button">Open is Spotify</button></a>
                   </div>
                 </div>
-                <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-on:click="deeperartist(art,d,4)" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
+                <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist(art,d,4)" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
                   <audio preload="none" v-bind:src="d.preview_url"></audio>
                   <div style="float: left; margin-left: 50px;">{{art.name}}</div>
                 </div>
@@ -1625,7 +1625,7 @@
                 <div style="width: 50%;text-align: left;">
                   <div>{{d.name}}</div>
                   <div style="display: flex; align-items: center;"><p>By </p>
-                    <div v-for="art in d.artists" v-bind:key="art.id" style="display: flex;align-items: center">
+                    <div v-for="(art,index) in d.artists" v-bind:key="index" style="display: flex;align-items: center">
                       <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,4)">{{art.name}}</div>
                     </div>
                   </div>
@@ -1634,7 +1634,7 @@
                     <button class="button">Open is Spotify</button></a>
                   </div>
                 </div>
-                <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-on:click="deeperartist(art,d,4)" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
+                <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist(art,d,4)" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
                   <audio preload="none" v-bind:src="d.preview_url"></audio>
                   <div style="float: left; margin-left: 50px;">{{art.name}}</div>
                 </div>
@@ -1654,7 +1654,7 @@
                   <span style="color: rgb(240, 55, 165);">Recomended songs based on this</span>
                 </div>
                 <div style="display: block;" class="trackList">Tracks
-                  <div v-for="track in d.album.tracks.items" v-bind:key="track.id">
+                  <div v-for="(track,index) in d.album.tracks.items" v-bind:key="index">
                     <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.album.images[1].url + ')' }"  v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks2(track,d.album,4)">
                       <div class="trackTitle">{{track.name}}</div>
                       <audio preload="none" v-bind:src="track.preview_url"></audio>
@@ -1669,7 +1669,7 @@
             </div>
             <div v-else-if="d.type==='seed_artists'" class="seed_artists con2" >
               <div style="width: 100%;">Seed artist</div>
-              <div v-for="s in d.tracks" v-bind:key="s.id">
+              <div v-for="(s,index) in d.tracks" v-bind:key="index">
                 <div v-if="s.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(s,4)">{{s.name}}
                   <audio preload="none" v-bind:src="s.preview_url"></audio>
                 </div>
