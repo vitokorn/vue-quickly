@@ -249,7 +249,7 @@ exports.globalviral = (req, res) => {
     // console.log(globalviral)
     for (let i=0;i <  globalviral.length;i++){
         axios({
-            url:'https://api.spotify.com/v1/playlists/'+ globalviral[i] +'/tracks',
+            url:'https://api.spotify.com/v1/playlists/'+ globalviral[i] +'?fields=description,id,images,name,onwer,tracks(items(track(album(artists,id,images,name),artists(id,name),images,name,id,preview_url)))',
             method:'get',
             headers :{
                 'Authorization': 'Bearer ' + cookies.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
