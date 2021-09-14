@@ -58,7 +58,7 @@
                 <div>{{d.track.name}}</div>
                 <div style="display: flex; align-items: center;"><p>By </p>
                   <div v-for="(art,index) in d.track.artists" v-bind:key="index" style="display: flex;align-items: center">
-                    <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d.track,10)">{{art.name}}</div>
+                    <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,10)">{{art.name}}</div>
                   </div>
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d.track,10)">Recommended songs based on this</span>
@@ -99,7 +99,7 @@
                 <div v-if="ta.type==='related-artists'" >Related Artist</div>
                 <div v-if="ta.type==='related-artists'" class="col2">
                   <div v-for="(r,index) in ta['items']" v-bind:key="index">
-                    <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items,10)">
+                    <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items[index],10)">
                       <audio v-bind:src="r.preview_url"></audio>
                     </div>
                     <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5">
@@ -314,7 +314,7 @@
     </div>
     <div class="rectrack">
       <div v-for="d in deeper1" v-bind:key="d.id">
-        <div v-if="d.type==='pl'" class="playlisttrack" style="display: flex; width: 100%; margin-top: 12px; margin-bottom: 6px;">
+        <div v-if="d.type==='pl'" class="playlisttrack" v-bind:id="d.track.id" style="display: flex; width: 100%; margin-top: 12px; margin-bottom: 6px;">
           <div class="con3" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.track.name}}
             <audio preload="none" v-bind:src="d.track.preview_url"></audio>
           </div>
@@ -322,7 +322,7 @@
             <div>{{d.track.name}}</div>
             <div style="display: flex; align-items: center;"><p>By </p>
               <div v-for="(art,index) in d.track.artists" v-bind:key="index" style="display: flex;align-items: center">
-                <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d.track,1)">{{art.name}}</div>
+                <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,1)">{{art.name}}</div>
               </div>
             </div>
             <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d.track,1)">Recommended songs based on this</span>
@@ -363,7 +363,7 @@
             <div v-if="ta.type==='related-artists'" >Related Artist</div>
             <div v-if="ta.type==='related-artists'" class="col2">
             <div v-for="(r,index) in ta['items']" v-bind:key="index">
-              <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items,1)">
+              <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items[index],1)">
                 <audio v-bind:src="r.preview_url"></audio>
               </div>
               <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5">
@@ -529,7 +529,7 @@
                 <div>{{d.track.name}}</div>
                 <div style="display: flex; align-items: center;"><p>By </p>
                   <div v-for="(art,index) in d.track.artists" v-bind:key="index" style="display: flex;align-items: center">
-                    <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d.track,2)">{{art.name}}</div>
+                    <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,2)">{{art.name}}</div>
                   </div>
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d.track,2)">Recommended songs based on this</span>
@@ -573,7 +573,7 @@
                 <div v-if="ta.type==='related-artists'" >Related Artist</div>
                 <div v-if="ta.type==='related-artists'" class="col2">
                   <div v-for="(r,index) in ta['items']" v-bind:key="index">
-                    <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items,2)">
+                    <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items[index],2)">
                       <audio v-bind:src="r.preview_url"></audio>
                     </div>
                     <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5">
@@ -739,7 +739,7 @@
                 <div>{{d.track.name}}</div>
                 <div style="display: flex; align-items: center;"><p>By </p>
                   <div v-for="(art,index) in d.track.artists" v-bind:key="index" style="display: flex;align-items: center">
-                    <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d.track,22)">{{art.name}}</div>
+                    <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,22)">{{art.name}}</div>
                   </div>
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d.track,22)">Recommended songs based on this</span>
@@ -783,7 +783,7 @@
                 <div v-if="ta.type==='related-artists'" >Related Artist</div>
                 <div v-if="ta.type==='related-artists'" class="col2">
                   <div v-for="(r,index) in ta['items']" v-bind:key="index">
-                    <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items,22)">
+                    <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items[index],22)">
                       <audio v-bind:src="r.preview_url"></audio>
                     </div>
                     <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5">
@@ -949,7 +949,7 @@
               <div>{{d.track.name}}</div>
               <div style="display: flex; align-items: center;"><p>By </p>
                 <div v-for="(art,index) in d.track.artists" v-bind:key="index" style="display: flex;align-items: center">
-                  <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d.track,23)">{{art.name}}</div>
+                  <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,23)">{{art.name}}</div>
                 </div>
               </div>
               <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d.track,23)">Recommended songs based on this</span>
@@ -990,7 +990,7 @@
               <div v-if="ta.type==='related-artists'" >Related Artist</div>
               <div v-if="ta.type==='related-artists'" class="col2">
                 <div v-for="(r,index) in ta['items']" v-bind:key="index">
-                  <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items,23)">
+                  <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items[index],23)">
                     <audio v-bind:src="r.preview_url"></audio>
                   </div>
                   <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5">
@@ -1138,10 +1138,10 @@
     <a href="#option5" v-on:click.self="fetchApi">Top tracks</a>
       <div id="toptrack" class="con2" style="display: flex;color: black">
         <div class="trackbody" v-for="(item,index) of items" v-bind:key="index">
-          <div v-if="item.preview_url" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeper(item,3)" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }">{{lists(item.artists)}}
+          <div v-if="item.preview_url" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeper(item,3)" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }">{{lists(item.artists)}} - {{item.name}}
             <audio preload="none" v-bind:src="item.preview_url"></audio>
           </div>
-          <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" style="opacity: .5">{{lists(item.artists)}}
+          <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" style="opacity: .5">{{lists(item.artists)}} - {{item.name}}
             <audio preload="none"></audio>
           </div>
         </div>
@@ -1155,7 +1155,7 @@
                 <div>{{d.name}}</div>
                 <div style="display: flex; align-items: center;"><p>By </p>
                   <div v-for="(art,index) in d.artists" v-bind:key="index" style="display: flex;align-items: center">
-                    <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d.track,3)">{{art.name}}</div>
+                    <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,3)">{{art.name}}</div>
                   </div>
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d,3)">Recommended songs based on this</span>
@@ -1199,7 +1199,7 @@
                 <div v-if="ta.type==='related-artists'" >Related Artist</div>
                 <div v-if="ta.type==='related-artists'" class="col2">
                   <div v-for="r in ta['items']" v-bind:key="r.id">
-                    <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items,3)">
+                    <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items[index],3)">
                       <audio v-bind:src="r.preview_url"></audio>
                     </div>
                     <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5">
@@ -1348,10 +1348,10 @@
     <a href="#option6" v-on:click.self="fetchApi2">Top tracks 6</a>
       <div id="toptrack6" class="con2" style="display: flex;color: black" >
         <div class="trackbody" v-for="(item,index) of itemsm" v-bind:key="index">
-          <div v-if="item.preview_url" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeper(item,32)" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" >{{lists(item.artists)}}
+          <div v-if="item.preview_url" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeper(item,32)" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" >{{lists(item.artists)}} - {{item.name}}
             <audio preload="none" v-bind:src="item.preview_url"></audio>
           </div>
-          <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" style="opacity: .5">{{lists(item.artists)}}
+          <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" style="opacity: .5">{{lists(item.artists)}} - {{item.name}}
             <audio preload="none"></audio>
           </div>
         </div>
@@ -1365,7 +1365,7 @@
                 <div>{{d.name}}</div>
                 <div style="display: flex; align-items: center;"><p>By </p>
                   <div v-for="(art,index) in d.artists" v-bind:key="index" style="display: flex;align-items: center">
-                    <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d.track,32)">{{art.name}}</div>
+                    <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,32)">{{art.name}}</div>
                   </div>
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d,32)">Recommended songs based on this</span>
@@ -1409,7 +1409,7 @@
                 <div v-if="ta.type==='related-artists'" >Related Artist</div>
                 <div v-if="ta.type==='related-artists'" class="col2">
                   <div v-for="(r,index) in ta['items']" v-bind:key="index">
-                    <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items,3)">
+                    <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items[index],32)">
                       <audio v-bind:src="r.preview_url"></audio>
                     </div>
                     <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5">
@@ -1558,10 +1558,10 @@
     <a href="#option7" v-on:click.self="fetchApi3">Top tracks all time</a>
       <div id="toptrackall" class="con2" style="display: flex;color: black" >
         <div class="trackbody" v-for="(item,index) of itemsl" v-bind:key="index">
-          <div v-if="item.preview_url" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeper(item,33)" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" >{{lists(item.artists)}}
+          <div v-if="item.preview_url" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeper(item,33)" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" >{{lists(item.artists)}} - {{item.name}}
             <audio preload="none" v-bind:src="item.preview_url"></audio>
           </div>
-          <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" style="opacity: .5">{{lists(item.artists)}}
+          <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" style="opacity: .5">{{lists(item.artists)}} - {{item.name}}
             <audio preload="none"></audio>
           </div>
         </div>
@@ -1575,7 +1575,7 @@
                 <div>{{d.name}}</div>
                 <div style="display: flex; align-items: center;"><p>By </p>
                   <div v-for="(art,index) in d.artists" v-bind:key="index" style="display: flex;align-items: center">
-                    <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d.track,33)">{{art.name}}</div>
+                    <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,33)">{{art.name}}</div>
                   </div>
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d,3)">Recommended songs based on this</span>
@@ -1619,7 +1619,7 @@
                 <div v-if="ta.type==='related-artists'" >Related Artist</div>
                 <div v-if="ta.type==='related-artists'" class="col2">
                   <div v-for="(r,index) in ta['items']" v-bind:key="index">
-                    <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items,33)">
+                    <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items[index],33)">
                       <audio v-bind:src="r.preview_url"></audio>
                     </div>
                     <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5">
@@ -1785,7 +1785,7 @@
                 <div>{{d.track.name}}</div>
                 <div style="display: flex; align-items: center;"><p>By </p>
                   <div v-for="(art,index) in d.track.artists" v-bind:key="index" style="display: flex;align-items: center">
-                    <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d.track,4)">{{art.name}}</div>
+                    <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,4)">{{art.name}}</div>
                   </div>
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d.track,4)">Recommended songs based on this</span>
@@ -1829,7 +1829,7 @@
                 <div v-if="ta.type==='related-artists'" >Related Artist</div>
                 <div v-if="ta.type==='related-artists'" class="col2">
                   <div v-for="(r,index) in ta['items']" v-bind:key="index">
-                    <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items,4)">
+                    <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items[index],4)">
                       <audio v-bind:src="r.preview_url"></audio>
                     </div>
                     <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5">
@@ -1995,7 +1995,7 @@
                 <div>{{d.track.name}}</div>
                 <div style="display: flex; align-items: center;"><p>By </p>
                   <div v-for="(art,index) in d.track.artists" v-bind:key="index" style="display: flex;align-items: center">
-                    <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d.track,5)">{{art.name}}</div>
+                    <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,5)">{{art.name}}</div>
                   </div>
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d.track,5)">Recommended songs based on this</span>
@@ -2039,7 +2039,7 @@
                 <div v-if="ta.type==='related-artists'" >Related Artist</div>
                 <div v-if="ta.type==='related-artists'" class="col2">
                   <div v-for="(r,index) in ta['items']" v-bind:key="index">
-                    <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items,5)">
+                    <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items[index],5)">
                       <audio v-bind:src="r.preview_url"></audio>
                     </div>
                     <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5">
@@ -2205,7 +2205,7 @@
                 <div>{{d.track.name}}</div>
                 <div style="display: flex; align-items: center;"><p>By </p>
                   <div v-for="art in d.track.artists" v-bind:key="art.id" style="display: flex;align-items: center">
-                    <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d.track,6)">{{art.name}}</div>
+                    <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,6)">{{art.name}}</div>
                   </div>
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d.track,6)">Recommended songs based on this</span>
@@ -2249,7 +2249,7 @@
                 <div v-if="ta.type==='related-artists'" >Related Artist</div>
                 <div v-if="ta.type==='related-artists'" class="col2">
                   <div v-for="(r,index) in ta['items']" v-bind:key="index">
-                    <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items,6)">
+                    <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items[index],6)">
                       <audio v-bind:src="r.preview_url"></audio>
                     </div>
                     <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5">
@@ -2415,7 +2415,7 @@
                 <div>{{d.name}}</div>
                 <div style="display: flex; align-items: center;"><p>By </p>
                   <div v-for="(art,index) in d.artists" v-bind:key="index" style="display: flex;align-items: center">
-                    <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d.track,7)">{{art.name}}</div>
+                    <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,7)">{{art.name}}</div>
                   </div>
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d.track,7)">Recommended songs based on this</span>
@@ -2459,7 +2459,7 @@
                 <div v-if="ta.type==='related-artists'" >Related Artist</div>
                 <div v-if="ta.type==='related-artists'" class="col2">
                   <div v-for="(r,index) in ta['items']" v-bind:key="index">
-                    <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items,7)">
+                    <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items[index],7)">
                       <audio v-bind:src="r.preview_url"></audio>
                     </div>
                     <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5">
@@ -2634,7 +2634,7 @@
             <div>{{d.track.name}}</div>
             <div style="display: flex; align-items: center;"><p>By </p>
               <div v-for="(art,index) in d.track.artists" v-bind:key="index" style="display: flex;align-items: center">
-                <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d.track,9)">{{art.name}}</div>
+                <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,9)">{{art.name}}</div>
               </div>
             </div>
             <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d.track,9)">Recommended songs based on this</span>
@@ -2675,7 +2675,7 @@
             <div v-if="ta.type==='related-artists'" >Related Artist</div>
             <div v-if="ta.type==='related-artists'" class="col2">
               <div v-for="(r,index) in ta['items']" v-bind:key="index">
-                <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items,9)">
+                <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta.items[index],9)">
                   <audio v-bind:src="r.preview_url"></audio>
                 </div>
                 <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5">
@@ -2882,59 +2882,101 @@ export default {
       tracktrack = item
       tracktrack.type = 'pl'
       if (num === 1){
-        this.deeper1.push(tracktrack)
+        let indexing = this.deeper1.indexOf(tracktrack)
+        if (indexing === -1){
+          this.deeper1.push(tracktrack)
+        }
         console.log(tracktrack)
         console.log(this.deeper1)
       } else if (num === 2){
-        this.deeper2.push(tracktrack)
+        let indexing = this.deeper2.indexOf(tracktrack)
+        if (indexing === -1){
+          this.deeper2.push(tracktrack)
+        }
         console.log(tracktrack)
         console.log(this.deeper2)
       } else if (num === 22){
-        this.deeper22.push(tracktrack)
+        let indexing = this.deeper22.indexOf(tracktrack)
+        if (indexing === -1){
+          this.deeper22.push(tracktrack)
+        }
         console.log(tracktrack)
         console.log(this.deeper22)
       } else if (num === 23){
-        this.deeper23.push(tracktrack)
+        let indexing = this.deeper23.indexOf(tracktrack)
+        if (indexing === -1){
+          this.deeper23.push(tracktrack)
+        }
         console.log(tracktrack)
         console.log(this.deeper23)
       } else if (num === 3){
-        this.deeper3.push(tracktrack)
+        let indexing = this.deeper3.indexOf(tracktrack)
+        if (indexing === -1){
+          this.deeper3.push(tracktrack)
+        }
         console.log(tracktrack)
         console.log(this.deeper3)
       } else if (num === 32){
-        this.deeper32.push(tracktrack)
+        let indexing = this.deeper32.indexOf(tracktrack)
+        if (indexing === -1){
+          this.deeper32.push(tracktrack)
+        }
         console.log(tracktrack)
         console.log(this.deeper32)
       } else if (num === 33){
-        this.deeper33.push(tracktrack)
+        let indexing = this.deeper33.indexOf(tracktrack)
+        if (indexing === -1){
+          this.deeper33.push(tracktrack)
+        }
         console.log(tracktrack)
         console.log(this.deeper33)
       } else if (num === 4){
-        this.deeper4.push(tracktrack)
+        let indexing = this.deeper4.indexOf(tracktrack)
+        if (indexing === -1){
+          this.deeper4.push(tracktrack)
+        }
         console.log(tracktrack)
         console.log(this.deeper4)
       } else if (num === 5){
-        this.deeper5.push(tracktrack)
+        let indexing = this.deeper5.indexOf(tracktrack)
+        if (indexing === -1){
+          this.deeper5.push(tracktrack)
+        }
         console.log(tracktrack)
         console.log(this.deeper5)
       } else if (num === 6){
-        this.deeper6.push(tracktrack)
+        let indexing = this.deeper6.indexOf(tracktrack)
+        if (indexing === -1){
+          this.deeper6.push(tracktrack)
+        }
         console.log(tracktrack)
         console.log(this.deeper6)
       } else if (num === 7){
-        this.deeper7.push(tracktrack)
+        let indexing = this.deeper7.indexOf(tracktrack)
+        if (indexing === -1){
+          this.deeper7.push(tracktrack)
+        }
         console.log(tracktrack)
         console.log(this.deeper7)
       } else if (num === 8){
-        this.deeper8.push(tracktrack)
+        let indexing = this.deeper8.indexOf(tracktrack)
+        if (indexing === -1){
+          this.deeper8.push(tracktrack)
+        }
         console.log(tracktrack)
         console.log(this.deeper8)
       } else if (num === 9){
-        this.deeper9.push(tracktrack)
+        let indexing = this.deeper9.indexOf(tracktrack)
+        if (indexing === -1){
+          this.deeper9.push(tracktrack)
+        }
         console.log(tracktrack)
         console.log(this.deeper9)
       } else if (num === 10){
-        this.deepers.push(tracktrack)
+        let indexing = this.deepers.indexOf(tracktrack)
+        if (indexing === -1){
+          this.deepers.push(tracktrack)
+        }
         console.log(this.deepers)
       }
     },
@@ -3193,33 +3235,76 @@ export default {
       console.log(item)
       console.log(this.deeper1)
       if (num === 1){
-        this.deeper1.push(item)
+        let indexing = this.deeper1.indexOf(item)
+        if (indexing === -1){
+          this.deeper1.push(item)
+        }
       } else if (num === 2){
-        this.deeper2.push(item)
+        let indexing = this.deeper2.indexOf(item)
+        if (indexing === -1){
+          this.deeper2.push(item)
+        }
       } else if (num === 22){
-        this.deeper22.push(item)
+        let indexing = this.deeper22.indexOf(item)
+        if (indexing === -1){
+          this.deeper22.push(item)
+        }
       } else if (num === 23){
-        this.deeper23.push(item)
+        let indexing = this.deeper23.indexOf(item)
+        if (indexing === -1){
+          this.deeper23.push(item)
+        }
       } else if (num === 3){
-        this.deeper3.push(item)
+        let indexing = this.deeper3.indexOf(item)
+        if (indexing === -1){
+          this.deeper3.push(item)
+        }
       } else if (num === 32){
-        this.deeper32.push(item)
+        let indexing = this.deeper32.indexOf(item)
+        if (indexing === -1){
+          this.deeper32.push(item)
+        }
       } else if (num === 33){
+        let indexing = this.deeper33.indexOf(item)
+        if (indexing === -1){
+          this.deeper33.push(item)
+        }
         this.deeper33.push(item)
       } else if (num === 4){
-        this.deeper4.push(item)
+        let indexing = this.deeper4.indexOf(item)
+        if (indexing === -1){
+          this.deeper4.push(item)
+        }
       } else if (num === 5){
-        this.deeper5.push(item)
+        let indexing = this.deeper5.indexOf(item)
+        if (indexing === -1){
+          this.deeper5.push(item)
+        }
       } else if (num === 6){
-        this.deeper6.push(item)
+        let indexing = this.deeper6.indexOf(item)
+        if (indexing === -1){
+          this.deeper6.push(item)
+        }
       } else if (num === 7){
-        this.deeper7.push(item)
+        let indexing = this.deeper7.indexOf(item)
+        if (indexing === -1){
+          this.deeper7.push(item)
+        }
       } else if (num === 8){
-        this.deeper8.push(item)
+        let indexing = this.deeper8.indexOf(item)
+        if (indexing === -1){
+          this.deeper8.push(item)
+        }
       } else if (num === 9){
-        this.deeper9.push(item)
+        let indexing = this.deeper9.indexOf(item)
+        if (indexing === -1){
+          this.deeper9.push(item)
+        }
       } else if (num === 10){
-        this.deepers.push(item)
+        let indexing = this.deepers.indexOf(item)
+        if (indexing === -1){
+          this.deepers.push(item)
+        }
       }
     },
     deeperAlbum2(item){
@@ -3229,66 +3314,152 @@ export default {
     deeperTracks(item,num){
       item.type ='deepertracks'
       if (num === 1){
-        this.deeper1.push(item)
+        let indexing = this.deeper1.indexOf(item)
+        if (indexing === -1){
+          this.deeper1.push(item)
+        }
       } else if (num === 2){
-        this.deeper2.push(item)
+        let indexing = this.deeper2.indexOf(item)
+        if (indexing === -1){
+          this.deeper2.push(item)
+        }
       } else if (num === 22){
-        this.deeper22.push(item)
+        let indexing = this.deeper22.indexOf(item)
+        if (indexing === -1){
+          this.deeper22.push(item)
+        }
       } else if (num === 23){
-        this.deeper23.push(item)
+        let indexing = this.deeper23.indexOf(item)
+        if (indexing === -1){
+          this.deeper23.push(item)
+        }
       } else if (num === 3){
-        this.deeper3.push(item)
+        let indexing = this.deeper3.indexOf(item)
+        if (indexing === -1){
+          this.deeper3.push(item)
+        }
       } else if (num === 32){
-        this.deeper32.push(item)
+        let indexing = this.deeper32.indexOf(item)
+        if (indexing === -1){
+          this.deeper32.push(item)
+        }
       } else if (num === 33){
+        let indexing = this.deeper33.indexOf(item)
+        if (indexing === -1){
+          this.deeper33.push(item)
+        }
         this.deeper33.push(item)
       } else if (num === 4){
-        this.deeper4.push(item)
+        let indexing = this.deeper4.indexOf(item)
+        if (indexing === -1){
+          this.deeper4.push(item)
+        }
       } else if (num === 5){
-        this.deeper5.push(item)
+        let indexing = this.deeper5.indexOf(item)
+        if (indexing === -1){
+          this.deeper5.push(item)
+        }
       } else if (num === 6){
-        this.deeper6.push(item)
+        let indexing = this.deeper6.indexOf(item)
+        if (indexing === -1){
+          this.deeper6.push(item)
+        }
       } else if (num === 7){
-        this.deeper7.push(item)
+        let indexing = this.deeper7.indexOf(item)
+        if (indexing === -1){
+          this.deeper7.push(item)
+        }
       } else if (num === 8){
-        this.deeper8.push(item)
+        let indexing = this.deeper8.indexOf(item)
+        if (indexing === -1){
+          this.deeper8.push(item)
+        }
       } else if (num === 9){
-        this.deeper9.push(item)
+        let indexing = this.deeper9.indexOf(item)
+        if (indexing === -1){
+          this.deeper9.push(item)
+        }
       } else if (num === 10){
-        this.deepers.push(item)
+        let indexing = this.deepers.indexOf(item)
+        if (indexing === -1){
+          this.deepers.push(item)
+        }
       }
     },
     deeperTracks2(item,d,num){
       item.images = d.images
       item.type ='deepertracks2'
       if (num === 1){
-        this.deeper1.push(item)
+        let indexing = this.deeper1.indexOf(item)
+        if (indexing === -1){
+          this.deeper1.push(item)
+        }
       } else if (num === 2){
-        this.deeper2.push(item)
+        let indexing = this.deeper2.indexOf(item)
+        if (indexing === -1){
+          this.deeper2.push(item)
+        }
       } else if (num === 22){
-        this.deeper22.push(item)
+        let indexing = this.deeper22.indexOf(item)
+        if (indexing === -1){
+          this.deeper22.push(item)
+        }
       } else if (num === 23){
-        this.deeper23.push(item)
+        let indexing = this.deeper23.indexOf(item)
+        if (indexing === -1){
+          this.deeper23.push(item)
+        }
       } else if (num === 3){
-        this.deeper3.push(item)
+        let indexing = this.deeper3.indexOf(item)
+        if (indexing === -1){
+          this.deeper3.push(item)
+        }
       } else if (num === 32){
-        this.deeper32.push(item)
+        let indexing = this.deeper32.indexOf(item)
+        if (indexing === -1){
+          this.deeper32.push(item)
+        }
       } else if (num === 33){
+        let indexing = this.deeper33.indexOf(item)
+        if (indexing === -1){
+          this.deeper33.push(item)
+        }
         this.deeper33.push(item)
       } else if (num === 4){
-        this.deeper4.push(item)
+        let indexing = this.deeper4.indexOf(item)
+        if (indexing === -1){
+          this.deeper4.push(item)
+        }
       } else if (num === 5){
-        this.deeper5.push(item)
+        let indexing = this.deeper5.indexOf(item)
+        if (indexing === -1){
+          this.deeper5.push(item)
+        }
       } else if (num === 6){
-        this.deeper6.push(item)
+        let indexing = this.deeper6.indexOf(item)
+        if (indexing === -1){
+          this.deeper6.push(item)
+        }
       } else if (num === 7){
-        this.deeper7.push(item)
+        let indexing = this.deeper7.indexOf(item)
+        if (indexing === -1){
+          this.deeper7.push(item)
+        }
       } else if (num === 8){
-        this.deeper8.push(item)
-      }else if (num === 9){
-        this.deeper9.push(item)
+        let indexing = this.deeper8.indexOf(item)
+        if (indexing === -1){
+          this.deeper8.push(item)
+        }
+      } else if (num === 9){
+        let indexing = this.deeper9.indexOf(item)
+        if (indexing === -1){
+          this.deeper9.push(item)
+        }
       } else if (num === 10){
-        this.deepers.push(item)
+        let indexing = this.deepers.indexOf(item)
+        if (indexing === -1){
+          this.deepers.push(item)
+        }
       }
     },
     seedArtist(item,num) {
@@ -3303,33 +3474,75 @@ export default {
             data.type = 'seed_artists'
             console.log(data)
             if (num === 1){
-              this.deeper1.push(data)
+              let indexing = this.deeper1.indexOf(data)
+              if (indexing === -1){
+                this.deeper1.push(data)
+              }
             } else if (num === 2){
-              this.deeper2.push(data)
+              let indexing = this.deeper2.indexOf(data)
+              if (indexing === -1){
+                this.deeper2.push(data)
+              }
             } else if (num === 22){
-              this.deeper22.push(data)
+              let indexing = this.deeper22.indexOf(data)
+              if (indexing === -1){
+                this.deeper22.push(data)
+              }
             } else if (num === 23){
-              this.deeper23.push(data)
+              let indexing = this.deeper23.indexOf(data)
+              if (indexing === -1){
+                this.deeper23.push(data)
+              }
             } else if (num === 3){
-              this.deeper3.push(data)
+              let indexing = this.deeper3.indexOf(data)
+              if (indexing === -1){
+                this.deeper3.push(data)
+              }
             } else if (num === 32){
-              this.deeper32.push(data)
+              let indexing = this.deeper32.indexOf(data)
+              if (indexing === -1){
+                this.deeper32.push(data)
+              }
             } else if (num === 33){
-              this.deeper33.push(data)
+              let indexing = this.deeper33.indexOf(data)
+              if (indexing === -1){
+                this.deeper33.push(data)
+              }
             } else if (num === 4){
-              this.deeper4.push(data)
+              let indexing = this.deeper4.indexOf(data)
+              if (indexing === -1){
+                this.deeper4.push(data)
+              }
             } else if (num === 5){
-              this.deeper5.push(data)
+              let indexing = this.deeper5.indexOf(data)
+              if (indexing === -1){
+                this.deeper5.push(data)
+              }
             } else if (num === 6){
-              this.deeper6.push(data)
+              let indexing = this.deeper6.indexOf(data)
+              if (indexing === -1){
+                this.deeper6.push(data)
+              }
             } else if (num === 7){
-              this.deeper7.push(data)
+              let indexing = this.deeper7.indexOf(data)
+              if (indexing === -1){
+                this.deeper7.push(data)
+              }
             } else if (num === 8){
-              this.deeper8.push(data)
+              let indexing = this.deeper8.indexOf(data)
+              if (indexing === -1){
+                this.deeper8.push(data)
+              }
             }else if (num === 9){
-              this.deeper9.push(item)
+              let indexing = this.deeper9.indexOf(data)
+              if (indexing === -1){
+                this.deeper9.push(item)
+              }
             } else if (num === 10){
-              this.deepers.push(item)
+              let indexing = this.deepers.indexOf(data)
+              if (indexing === -1){
+                this.deepers.push(item)
+              }
             }
           })
           .catch()
@@ -3346,33 +3559,75 @@ export default {
             data.type = 'seed_tracks'
             console.log(data)
             if (num === 1){
-              this.deeper1.push(data)
+              let indexing = this.deeper1.indexOf(data)
+              if (indexing === -1){
+                this.deeper1.push(data)
+              }
             } else if (num === 2){
-              this.deeper2.push(data)
+              let indexing = this.deeper2.indexOf(data)
+              if (indexing === -1){
+                this.deeper2.push(data)
+              }
             } else if (num === 22){
-              this.deeper22.push(data)
+              let indexing = this.deeper22.indexOf(data)
+              if (indexing === -1){
+                this.deeper22.push(data)
+              }
             } else if (num === 23){
-              this.deeper23.push(data)
+              let indexing = this.deeper23.indexOf(data)
+              if (indexing === -1){
+                this.deeper23.push(data)
+              }
             } else if (num === 3){
-              this.deeper3.push(data)
+              let indexing = this.deeper3.indexOf(data)
+              if (indexing === -1){
+                this.deeper3.push(data)
+              }
             } else if (num === 32){
-              this.deeper32.push(data)
+              let indexing = this.deeper32.indexOf(data)
+              if (indexing === -1){
+                this.deeper32.push(data)
+              }
             } else if (num === 33){
-              this.deeper33.push(data)
+              let indexing = this.deeper33.indexOf(data)
+              if (indexing === -1){
+                this.deeper33.push(data)
+              }
             } else if (num === 4){
-              this.deeper4.push(data)
+              let indexing = this.deeper4.indexOf(data)
+              if (indexing === -1){
+                this.deeper4.push(data)
+              }
             } else if (num === 5){
-              this.deeper5.push(data)
+              let indexing = this.deeper5.indexOf(data)
+              if (indexing === -1){
+                this.deeper5.push(data)
+              }
             } else if (num === 6){
-              this.deeper6.push(data)
+              let indexing = this.deeper6.indexOf(data)
+              if (indexing === -1){
+                this.deeper6.push(data)
+              }
             } else if (num === 7){
-              this.deeper7.push(data)
+              let indexing = this.deeper7.indexOf(data)
+              if (indexing === -1){
+                this.deeper7.push(data)
+              }
             } else if (num === 8){
-              this.deeper8.push(data)
+              let indexing = this.deeper8.indexOf(data)
+              if (indexing === -1){
+                this.deeper8.push(data)
+              }
             }else if (num === 9){
-              this.deeper9.push(item)
-            }else if (num === 10){
-              this.deepers.push(item)
+              let indexing = this.deeper9.indexOf(item)
+              if (indexing === -1){
+                this.deeper9.push(item)
+              }
+            } else if (num === 10){
+              let indexing = this.deepers.indexOf(item)
+              if (indexing === -1){
+                this.deepers.push(item)
+              }
             }
           })
           .catch()
