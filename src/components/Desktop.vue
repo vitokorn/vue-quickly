@@ -2864,6 +2864,7 @@ export default {
       artists:[],
       albums:[],
       splaylists:[],
+      current:null
     }
   },
   methods: {
@@ -2878,10 +2879,19 @@ export default {
     },
     deeper: function(item,num){
       console.log(item)
+      if (this.current === null || this.current !== item.track.id){
+        if (this.current !== null){
+          document.getElementById(this.current).style.display = 'none'
+        }
+      }
       let tracktrack = []
       tracktrack = item
       tracktrack.type = 'pl'
       if (num === 1){
+        this.current = item.track.id
+        if (document.getElementById(this.current)!==null){
+          document.getElementById(this.current).style.display = 'flex'
+        }
         let indexing = this.deeper1.indexOf(tracktrack)
         if (indexing === -1){
           this.deeper1.push(tracktrack)
@@ -2910,6 +2920,10 @@ export default {
         console.log(tracktrack)
         console.log(this.deeper23)
       } else if (num === 3){
+        this.current = item.id
+        if (document.getElementById(this.current)!==null){
+          document.getElementById(this.current).style.display = 'flex'
+        }
         let indexing = this.deeper3.indexOf(tracktrack)
         if (indexing === -1){
           this.deeper3.push(tracktrack)
@@ -2917,6 +2931,10 @@ export default {
         console.log(tracktrack)
         console.log(this.deeper3)
       } else if (num === 32){
+        this.current = item.id
+        if (document.getElementById(this.current)!==null){
+          document.getElementById(this.current).style.display = 'flex'
+        }
         let indexing = this.deeper32.indexOf(tracktrack)
         if (indexing === -1){
           this.deeper32.push(tracktrack)
@@ -2924,6 +2942,10 @@ export default {
         console.log(tracktrack)
         console.log(this.deeper32)
       } else if (num === 33){
+        this.current = item.id
+        if (document.getElementById(this.current)!==null){
+          document.getElementById(this.current).style.display = 'flex'
+        }
         let indexing = this.deeper33.indexOf(tracktrack)
         if (indexing === -1){
           this.deeper33.push(tracktrack)
