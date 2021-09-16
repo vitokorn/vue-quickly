@@ -3066,6 +3066,12 @@ export default {
       } else if (num === 3){
         this.deeper3.push(trackartist)
       } else if (num === 32){
+        let arelem = document.querySelectorAll('#toptrack6> .rectrack > div.trackartist')
+        arelem[arelem.length- 1]
+        let elems = document.querySelectorAll('#toptrack6> .rectrack > div')
+        if (arelem[arelem.length- 1] === elems[elems.length- 1]){
+          elems[elems.length- 1].style.display = 'none'
+        }
         this.deeper32.push(trackartist)
       } else if (num === 33){
         this.deeper33.push(trackartist)
