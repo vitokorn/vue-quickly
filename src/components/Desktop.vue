@@ -540,7 +540,7 @@
                 <div style="float: left; margin-left: 50px;">{{art.name}}</div>
               </div>
             </div>
-            <div v-else-if="d.type==='seed_tracks'" v-bind:key="index" class="seed_tracks con2">
+            <div v-else-if="d.type==='seed_tracks'" v-bind:key="index" class="seed_tracks con2" v-bind:id="d.id">
               <template v-for="(s,index) in d.tracks" >
                 <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(s,2,false,'seed_tracks')">{{s.name}}
                   <audio preload="none" v-bind:src="s.preview_url"></audio>
@@ -616,7 +616,10 @@
                   <div v-if="ta.type==='related-artists'" v-bind:key="index" >Related Artist</div>
                   <div v-if="ta.type==='related-artists'" v-bind:key="index" class="related col2">
                     <div v-for="(r,index) in ta" v-bind:key="index">
-                      <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta[index],2,false,'trackartist','art'+d[0].id)">
+                      <div v-if="r.preview_url && r.images[0].url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta[index],2,false,'trackartist','art'+d[0].id)">
+                        <audio v-bind:src="r.preview_url"></audio>
+                      </div>
+                      <div v-else-if="r.preview_url && !r.images[0].url" tabindex="0" class="img-xs" style="color: grey" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta[index],2,false,'trackartist','art'+d[0].id)">
                         <audio v-bind:src="r.preview_url"></audio>
                       </div>
                       <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5">
@@ -687,7 +690,7 @@
                   </template>
                   <div>{{d.release_date}}</div>
                   <!--            <div>{{list(d.artists)}}</div>-->
-                  <span style="color: rgb(240, 55, 165);">Recomended songs based on this</span>
+                  <span style="color: rgb(240, 55, 165);">Recommended songs based on this</span>
                 </div>
                 <div style="display: block;" class="trackList">Tracks
                   <div v-for="(track,index) in d.tracks" v-bind:key="index">
@@ -703,7 +706,7 @@
                 </div>
               </div>
             </template>
-            <div v-else-if="d.type==='seed_artists'" class="seed_artists con2" v-bind:key="index">
+            <div v-else-if="d.type==='seed_artists'" class="seed_artists con2" v-bind:key="index" v-bind:id="d.id">
               <div style="width: 100%;">Seed artist</div>
               <template v-for="(s,index) in d.tracks" >
                 <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(s,2)">{{s.name}}
@@ -722,7 +725,7 @@
     <a href="#option3" v-on:click.self="fetchArtist2">Top artists 6 month</a>
       <div id="topartist6" class="con2" style="display: flex;color: black">
         <div class="trackbody" v-for="(item,index) of topartist6" v-bind:key="index">
-          <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="deeperartist(item,item.tracks,22)"  v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">{{item.name}}
+          <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="deeperartist(item,item.tracks,22,true)"  v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">{{item.name}}
             <audio preload="none" v-bind:src="item.preview_url"></audio>
           </div>
           <div v-else tabindex="0" class="con3"  v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }" style="opacity: .5">{{item.name}}
@@ -731,7 +734,7 @@
         </div>
         <div class="rectrack">
           <template v-for="(d,index) in deeper22" >
-            <div v-if="d.type==='pl'" class="playlisttrack" v-bind:key="index" style="display: flex; width: 100%; margin-top: 12px; margin-bottom: 6px;">
+            <div v-if="d.type==='pl'" class="pl" v-bind:key="index" style="display: flex; width: 100%; margin-top: 12px; margin-bottom: 6px;">
               <div class="con3" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.track.name}}
                 <audio preload="none" v-bind:src="d.track.preview_url"></audio>
               </div>
@@ -739,10 +742,10 @@
                 <div>{{d.track.name}}</div>
                 <div style="display: flex; align-items: center;"><p>By </p>
                   <div v-for="(art,index) in d.track.artists" v-bind:key="index" style="display: flex;align-items: center">
-                    <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,22)">{{art.name}}</div>
+                    <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,22,false,'pl')">{{art.name}}</div>
                   </div>
                 </div>
-                <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d.track,22)">Recommended songs based on this</span>
+                <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d[index],22,'pl')">Recommended songs based on this</span>
                 <div><a v-bind:href="d['track']['external_urls']['spotify']" target="_blank">
                   <button class="button">Open is Spotify</button></a>
                 </div>
@@ -752,29 +755,29 @@
                 <div style="float: left; margin-left: 50px;">{{art.name}}</div>
               </div>
             </div>
-            <div v-else-if="d.type==='seed_tracks'" v-bind:key="index" class="seed_tracks con2">
-              <div v-for="(s,index) in d.tracks" v-bind:key="index">
-                <div v-if="s.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(s,22)">{{s.name}}
+            <div v-else-if="d.type==='seed_tracks'" v-bind:key="index" class="seed_tracks con2" v-bind:id="d.id">
+              <template v-for="(s,index) in d.tracks">
+                <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(s,22,false,'seed_tracks')">{{s.name}}
                   <audio preload="none" v-bind:src="s.preview_url"></audio>
                 </div>
-                <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5">{{s.name}}
+                <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks(s,22,false,'seed_tracks')">{{s.name}}
                   <audio preload="none"></audio>
                 </div>
-              </div>
+              </template>
             </div>
             <div v-else-if="d.type==='trackartist'" v-bind:id="d.id" v-bind:key="index" class="trackartist con2" style="gap: 16px;text-align: left">
               <template v-for="(ta,index) in d">
-                <div v-if="ta.type==='artist'" class="recartist con2" v-bind:id="ta.id" v-bind:key="index"  style="gap: 16px;text-align: left">
+                <div v-if="ta.type==='artist'" class="recartist con2" v-bind:id="'art6' + ta.id" v-bind:key="index"  style="gap: 16px;text-align: left">
                   <div class="con3" v-if="ta.preview_url" style="text-align: left;" v-bind:style="{ 'background-image': 'url(' + ta.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{ta.name}}
                     <audio v-bind:src="ta.preview_url"></audio>
                   </div>
-                  <div class="con3" v-else style="text-align: left; opacity: .5" v-bind:style="{ 'background-image': 'url(' + ta.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{ta.name}}
+                  <div class="con3" v-else style="text-align: left; opacity: .5" v-bind:style="{ 'background-image': 'url(' + ta.images[0].url + ')' }">{{ta.name}}
                     <audio></audio>
                   </div>
                   <div style="width: 60%">{{ta.name}}
                     <div>{{ta['followers']['total'] + ' followers'}}</div>
                     <div>{{ta['genres']}}</div>
-                    <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist(ta,22)">Recomended artists songs based on this</div>
+                    <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist(ta,22,false,'art6' + d[index].id)">Recommended artists songs based on this</div>
                     <div><a v-bind:href="ta['external_urls']['spotify']" target="_blank">
                       <button class="button">Open is Spotify</button></a>
                     </div>
@@ -783,7 +786,7 @@
                   <div v-if="ta.type==='top_tracks'" v-bind:key="index" tabindex="0">Top tracks</div>
                   <div v-if="ta.type==='top_tracks'" v-bind:key="index" tabindex="0" class="top-tracks con2">
                     <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
-                      <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(tt,22)">{{tt.name}}
+                      <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(tt,22,false,'trackartist','art6'+ d[0].id)">{{tt.name}}
                         <audio v-bind:src="tt.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" style="opacity: .5">{{tt.name}}
@@ -794,10 +797,10 @@
                   <div v-if="ta.type==='albums'" v-bind:key="index" tabindex="0">Albums</div>
                   <div v-if="ta.type==='albums'" v-bind:key="index" tabindex="0" class="album con2">
                     <div v-for="(alb,index) in ta" v-bind:key="index">
-                      <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:click="deeperAlbum(alb,22)" v-on:mouseleave="mouseLeave">{{alb.name}}
+                      <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:click="deeperAlbum(alb,22,'art6' + d[0].id)" v-on:mouseleave="mouseLeave">{{alb.name}}
                         <audio v-bind:src="alb.preview_url"></audio>
                       </div>
-                      <div v-else class="con3" v-on:click="deeperAlbum(alb,22)" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" style="opacity: .5">{{alb.name}}
+                      <div v-else class="con3" v-on:click="deeperAlbum(alb,22,'art6' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" style="opacity: .5">{{alb.name}}
                         <audio></audio>
                       </div>
                     </div>
@@ -805,10 +808,10 @@
                   <div v-if="ta.type==='single'" v-bind:key="index" tabindex="0">Single</div>
                   <div v-if="ta.type==='single'" v-bind:key="index" tabindex="0" class="single con2">
                     <div v-for="(s,index) in ta" v-bind:key="index">
-                      <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,22)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{s.name}}
+                      <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,22,'art6' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{s.name}}
                         <audio v-bind:src="s.preview_url"></audio>
                       </div>
-                      <div v-else class="con3" v-on:click="deeperAlbum(s,22)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" style="opacity: .5">{{s.name}}
+                      <div v-else class="con3" v-on:click="deeperAlbum(s,22,'art6' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" style="opacity: .5">{{s.name}}
                         <audio></audio>
                       </div>
                     </div>
@@ -817,29 +820,32 @@
                   <div v-if="ta.type==='appears_on'" v-bind:key="index" tabindex="0">Appears on</div>
                   <div v-if="ta.type==='appears_on'" v-bind:key="index" tabindex="0" class="appear con2">
                     <div v-for="(a,index) in ta" v-bind:key="index">
-                      <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,22)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{a.name}}
+                      <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,22,'art6' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{a.name}}
                         <audio v-bind:src="a.preview_url"></audio>
                       </div>
-                      <div v-else class="con3" v-on:click="deeperAlbum(a,22)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" style="opacity: .5">{{a.name}}
+                      <div v-else class="con3" v-on:click="deeperAlbum(a,22,'art6' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" style="opacity: .5">{{a.name}}
                         <audio></audio>
                       </div>
                     </div>
                   </div>
                   <div v-if="ta.type==='related-artists'" v-bind:key="index" >Related Artist</div>
-                  <div v-if="ta.type==='related-artists'" v-bind:key="index" class="col2">
+                  <div v-if="ta.type==='related-artists'" v-bind:key="index" class="related col2">
                     <div v-for="(r,index) in ta" v-bind:key="index">
-                      <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta[index],22)">
+                      <div v-if="r.preview_url && r.images[0].url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta[index],22,false,'trackartist','art6' + d[0].id)">
                         <audio v-bind:src="r.preview_url"></audio>
                       </div>
-                      <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5">
+                      <div v-else-if="r.preview_url && !r.images[0].url" tabindex="0" class="img-xs" style="color: grey" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperartist(r,ta[index],22,false,'trackartist','art'+d[0].id)">
+                        <audio v-bind:src="r.preview_url"></audio>
+                      </div>
+                      <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5" v-on:click="deeperartist(r,ta[i],22,false,'trackartist','art6' + d[0].id)">
                         <audio></audio>
                       </div>
                     </div>
                   </div>
               </template>
             </div>
-            <div v-else-if="d.type ==='deepertracks'" v-bind:key="index">
-              <div class="playlisttrack" style="display: flex; width: 100%; margin-top: 12px; margin-bottom: 6px;">
+            <template v-else-if="d.type ==='deepertracks'">
+              <div class="playlisttrack" v-bind:id="'d'+d.id" v-bind:key="index" style="display: flex; width: 100%; margin-top: 12px; margin-bottom: 6px;">
                 <div class="con3" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
                   <audio preload="none" v-bind:src="d.preview_url"></audio>
                 </div>
@@ -847,20 +853,26 @@
                   <div>{{d.name}}</div>
                   <div style="display: flex; align-items: center;"><p>By </p>
                     <div v-for="(art,index) in d.artists" v-bind:key="index" style="display: flex;align-items: center">
-                      <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,22)">{{art.name}}</div>
+                      <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,22,false,'playlisttrack')">{{art.name}}</div>
                     </div>
                   </div>
-                  <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d.track,22)">Recommended songs based on this</span>
+                  <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d,22,false,'d'+d.id)">Recommended songs based on this</span>
                   <div><a v-bind:href="d['external_urls']['spotify']" target="_blank">
                     <button class="button">Open is Spotify</button></a>
                   </div>
                 </div>
-                <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist(art,d,22)" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
-                  <audio preload="none" v-bind:src="d.preview_url"></audio>
-                  <div style="float: left; margin-left: 50px;">{{art.name}}</div>
-                </div>
+                <template v-for="(art,index) in d.artists">
+                  <div class="artist-cirle con3" v-if="d.preview_url" v-bind:key="index" v-on:click="deeperartist(art,d,22,false,'playlisttrack')" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
+                    <audio preload="none" v-bind:src="d.preview_url"></audio>
+                    <div style="float: left; margin-left: 50px;">{{art.name}}</div>
+                  </div>
+                  <div class="artist-cirle con3" v-else v-bind:key="index" v-on:click="deeperartist(art,d,22,false,'playlisttrack')" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }" style="opacity: .5">
+                    <audio preload="none" v-bind:src="d.preview_url"></audio>
+                    <div style="float: left; margin-left: 50px;">{{art.name}}</div>
+                  </div>
+                </template>
               </div>
-            </div>
+            </template>
             <div v-else-if="d.type ==='deepertracks2'" v-bind:key="index">
               <div class="playlisttrack" style="display: flex; width: 100%; margin-top: 12px; margin-bottom: 6px;">
                 <div class="con3" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
@@ -870,22 +882,28 @@
                   <div>{{d.name}}</div>
                   <div style="display: flex; align-items: center;"><p>By </p>
                     <div v-for="(art,index) in d.artists" v-bind:key="index" style="display: flex;align-items: center">
-                      <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,22)">{{art.name}}</div>
+                      <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist(art,d,22,false,'playlisttrack')">{{art.name}}</div>
                     </div>
                   </div>
-                  <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d,22)">Recommended songs based on this</span>
+                  <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d,22,false,'d'+ d.id)">Recommended songs based on this</span>
                   <div><a v-bind:href="d['external_urls']['spotify']" target="_blank">
                     <button class="button">Open is Spotify</button></a>
                   </div>
                 </div>
-                <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist(art,d,22)" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
-                  <audio preload="none" v-bind:src="d.preview_url"></audio>
-                  <div style="float: left; margin-left: 50px;">{{art.name}}</div>
-                </div>
+                <template v-for="(art,index) in d.artists">
+                  <div class="artist-cirle con3" v-if="d.preview_url" v-bind:key="index" v-on:click="deeperartist(art,d,22,false,'playlisttrack')" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
+                    <audio preload="none" v-bind:src="d.preview_url"></audio>
+                    <div style="float: left; margin-left: 50px;">{{art.name}}</div>
+                  </div>
+                  <div class="artist-cirle con3" v-else v-bind:key="index" v-on:click="deeperartist(art,d,22,false,'playlisttrack')" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" style="opacity: .5">
+                    <audio preload="none" v-bind:src="d.preview_url"></audio>
+                    <div style="float: left; margin-left: 50px;">{{art.name}}</div>
+                  </div>
+                </template>
               </div>
             </div>
-            <div v-else-if="d.type ==='deeperalbum'" v-bind:key="index">
-              <div class="deep_albums con2" >
+            <template v-else-if="d.type ==='deeperalbum'">
+              <div class="deep_albums con2" v-bind:key="index" v-bind:id="'alb'+d.id">
                 <div v-if="d.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
                   <audio preload="none" v-bind:src="d.preview_url"></audio>
                 </div>
@@ -895,29 +913,29 @@
                 <div style="margin-left: 4px; margin-right: 4px;">{{d.name}}
                   <div>{{d.release_date}}</div>
                   <!--            <div>{{list(d.artists)}}</div>-->
-                  <span style="color: rgb(240, 55, 165);">Recomended songs based on this</span>
+                  <span style="color: rgb(240, 55, 165);">Recommended songs based on this</span>
                 </div>
                 <div style="display: block;" class="trackList">Tracks
                   <div v-for="(track,index) in d.tracks" v-bind:key="index">
-                    <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks2(track,d,22)">
+                    <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks2(track,d,22,false,'deep_albums')">
                       <div class="trackTitle">{{track.name}}</div>
                       <audio preload="none" v-bind:src="track.preview_url"></audio>
                     </div>
-                    <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  style="opacity: .5">
+                    <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  style="opacity: .5" v-on:click="deeperTracks2(track,d,22,false,'deep_albums')">
                       <div class="trackTitle">{{track.name}}</div>
                       <audio preload="none" v-bind:src="track.preview_url"></audio>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </template>
             <div v-else-if="d.type==='seed_artists'" class="seed_artists con2" v-bind:key="index">
               <div style="width: 100%;">Seed artist</div>
               <div v-for="(s,index) in d.tracks" v-bind:key="index">
-                <div v-if="s.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(s,22)">{{s.name}}
+                <div v-if="s.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(s,22,false,'seed_artists')">{{s.name}}
                   <audio preload="none" v-bind:src="s.preview_url"></audio>
                 </div>
-                <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5">{{s.name}}
+                <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks(s,22,false,'seed_artists')">{{s.name}}
                   <audio preload="none"></audio>
                 </div>
               </div>
@@ -960,7 +978,7 @@
               <div style="float: left; margin-left: 50px;">{{art.name}}</div>
             </div>
           </div>
-          <div v-else-if="d.type==='seed_tracks'" class="seed_tracks con2" v-bind:key="index">
+          <div v-else-if="d.type==='seed_tracks'" class="seed_tracks con2" v-bind:key="index" v-bind:id="d.id">
             <div v-for="(s,index) in d.tracks" v-bind:key="index">
               <div v-if="s.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(s,23)">{{s.name}}
                 <audio preload="none" v-bind:src="s.preview_url"></audio>
@@ -1090,7 +1108,7 @@
             </div>
           </div>
           <div v-else-if="d.type ==='deeperalbum'" v-bind:key="index">
-            <div class="deep_albums con2" >
+            <div class="deep_albums con2" v-bind:id="'alb'+d.id">
               <div v-if="d.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
                 <audio preload="none" v-bind:src="d.preview_url"></audio>
               </div>
@@ -1372,7 +1390,7 @@
                 <div style="float: left; margin-left: 50px;">{{art.name}}</div>
               </div>
             </div>
-            <div v-else-if="d.type==='seed_tracks'" v-bind:key="index" class="seed_tracks con2">
+            <div v-else-if="d.type==='seed_tracks'" v-bind:key="index" class="seed_tracks con2" v-bind:id="d.id">
               <div v-for="(s,index) in d.tracks" v-bind:key="index">
                 <div v-if="s.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(s,32)">{{s.name}}
                   <audio preload="none" v-bind:src="s.preview_url"></audio>
@@ -2411,7 +2429,7 @@
                 <div style="float: left; margin-left: 50px;">{{art.name}}</div>
               </div>
             </div>
-            <div v-else-if="d.type==='seed_tracks'" v-bind:key="index" class="seed_tracks con2">
+            <div v-else-if="d.type==='seed_tracks'" v-bind:key="index" class="seed_tracks con2" v-bind:id="d.id">
               <div v-for="(s,index) in d.tracks" v-bind:key="index">
                 <div v-if="s.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks(s,7)">{{s.name}}
                   <audio preload="none" v-bind:src="s.preview_url"></audio>
@@ -3030,6 +3048,7 @@ export default {
       let trackartist = []
       trackartist.type = 'trackartist'
       console.log(item)
+      console.log(track)
       /* eslint-disable no-empty */
         if (num === 1){
 
@@ -3092,6 +3111,62 @@ export default {
             return
           }
         } else if (num === 22){
+          let all = document.querySelectorAll('#topartist6> .rectrack > div')
+          // let allartist = document.querySelectorAll('#topartist> .rectrack > div.trackartist:not([style="display: none;"])')
+          let alltop = document.querySelectorAll('#topartist6> .rectrack > div.' + sib)
+          // let alltop = document.querySelectorAll('#topartist> .rectrack > div.playlisttrack')
+          let last = document.querySelector('#topartist6> .rectrack > div.trackartist > div[id="' + item.id + '"]')
+          if (flag === true){
+            console.log(item.id)
+            if (all.length !==0 && all.length !==0){
+              for (let i=0;i < all.length;i++){
+                console.log(all[i])
+                if (last !== null && all[i].firstChild.id === last.id && last.id === item.id){
+                  last.parentElement.style.display = 'block'
+                } else {
+                  console.log(all[i])
+                  all[i].style.display = 'none'
+                }
+              }
+              if (last !== null && last.id === item.id){
+                return
+              }
+            }
+          }else if (alltop[alltop.length-1].nextElementSibling!== null) {
+            let par = alltop[alltop.length-1].nextElementSibling
+            while (par != null) {
+              par.style.display = 'none'
+              if (par.nextElementSibling !== null && par.nextElementSibling.style.display !== 'none'){
+                par = par.nextElementSibling
+              } else if (par.nextElementSibling !== null && par.nextElementSibling.style.display === 'none'){
+                par = par.nextElementSibling.nextElementSibling
+              } else if (par.nextElementSibling === null){
+                par = null
+              }
+            }
+          } else if (related){
+            let par = document.getElementById(related).parentElement.nextElementSibling
+            while (par != null) {
+              par.style.display = 'none'
+              if (par.nextElementSibling !== null && par.nextElementSibling.style.display !== 'none'){
+                par = par.nextElementSibling
+              } else if (par.nextElementSibling !== null && par.nextElementSibling.style.display === 'none'){
+                par = par.nextElementSibling.nextElementSibling
+              } else if (par.nextElementSibling === null){
+                par = null
+              }
+            }}
+
+              //  else if (flag ===false && alltop.length > 2 && alltop[alltop.length-1] !== null &&  alltop[alltop.length-1].classList.contains('trackartist')=== true){
+              //   alltop[alltop.length - 1].style.display = 'none'
+              // }
+              //   while (allartist[allartist.length-1].nextElementSibling.nextElementSibling!== null){
+              //     allartist[allartist.length-1].nextElementSibling.nextElementSibling.remove()
+              //   }
+          // }
+          else if (last !== null && last.id === item.id){
+            return
+          }
 
         } else if (num === 23){
 
@@ -3228,7 +3303,7 @@ export default {
             console.log(arr)
             // this.deeper1.push(data)
             for (let i=0;i <  arr.items.length;i++){
-              console.log('237 ' + arr.items[i].id)
+              // console.log('237 ' + arr.items[i].id)
               axios.request({
                 url:'https://api.spotify.com/v1/albums/' + arr.items[i].id + '/tracks',
                 method: 'get',
@@ -3271,7 +3346,7 @@ export default {
             console.log(arr)
             // this.deeper1.push(data)
             for (let i=0;i <  arr.items.length;i++){
-              console.log('237 ' + arr.items[i].id)
+              // console.log('237 ' + arr.items[i].id)
               axios.request({
                 url:'https://api.spotify.com/v1/albums/' + arr.items[i].id + '/tracks',
                 method: 'get',
@@ -3311,7 +3386,7 @@ export default {
             console.log(arr)
             // this.deeper1.push(data)
             for (let i=0;i <  arr.items.length;i++){
-              console.log('237 ' + arr.items[i].id)
+              // console.log('237 ' + arr.items[i].id)
               axios.request({
                 url:'https://api.spotify.com/v1/albums/' + arr.items[i].id + '/tracks',
                 method: 'get',
@@ -3354,23 +3429,30 @@ export default {
             // console.log(arr)
             // this.deeper1.push(data)
             for (let i=0;i <  arr.items.length;i++){
-              console.log('447 ' + arr.items[i].id)
+              // console.log('447 ' + arr.items[i].id)
               axios.request({
                 url:'https://api.spotify.com/v1/artists/' + arr.items[i].id + '/top-tracks?market=UA',
                 method: 'get',
                 headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
               })
                   .then((response) =>{
+                    console.log(response.data['tracks'])
                     let tracks = response.data['tracks']
-                    if (tracks[0]['preview_url']){
+                    console.log(arr.items[i])
+                    if (tracks!==null && tracks[0]['preview_url']){
                       arr.items[i].preview_url = tracks[0]['preview_url']
                     }
                     relatedartist.push(arr.items[i])
 
                   })
+              if (i===11){
+                break
+              }
             }
             fin = relatedartist
             fin.type = 'related-artists'
+            console.log(3451)
+            console.log(fin)
             return fin
           })
           .catch(error =>{
@@ -3409,9 +3491,26 @@ export default {
           document.getElementById('alb' + item.id).style.display = 'flex'
         }
       } else if (num === 22){
+        if (child){
+          console.log(child)
+          let par = document.getElementById(child).parentElement.nextElementSibling
+          while (par != null) {
+            par.style.display = 'none'
+            if (par.nextElementSibling !== null && par.nextElementSibling.style.display !== 'none'){
+              par = par.nextElementSibling
+            } else if (par.nextElementSibling !== null && par.nextElementSibling.style.display === 'none'){
+              par = par.nextElementSibling.nextElementSibling
+            } else if (par.nextElementSibling === null){
+              par = null
+            }
+          }}
         let indexing = this.deeper22.indexOf(item)
         if (indexing === -1){
+          console.log(item)
           this.deeper22.push(item)
+        }
+        if (document.getElementById('alb' + item.id)){
+          document.getElementById('alb' + item.id).style.display = 'flex'
         }
       } else if (num === 23){
         let indexing = this.deeper23.indexOf(item)
@@ -3477,6 +3576,9 @@ export default {
     },
     deeperTracks(item,num,flag,sib,child){
       item.type ='deepertracks'
+      console.log(item)
+      console.log(flag)
+      console.log(sib)
       if (num === 1){
         let all = document.querySelectorAll('#topartist> .rectrack > div')
         let last = document.querySelector('#topartist> .rectrack > div > div[id="d' + item.id + '"]')
@@ -3546,6 +3648,44 @@ export default {
           this.deeper2.push(item)
         }
       } else if (num === 22){
+        let all = document.querySelectorAll('#topartist6> .rectrack > div')
+        if (child){
+          let par = document.getElementById(child).parentElement.nextElementSibling
+          while (par != null) {
+            par.style.display = 'none'
+            if (par.nextElementSibling !== null && par.nextElementSibling.style.display !== 'none'){
+              par = par.nextElementSibling
+            } else if (par.nextElementSibling !== null && par.nextElementSibling.style.display === 'none'){
+              par = par.nextElementSibling.nextElementSibling
+            } else if (par.nextElementSibling === null){
+              par = null
+            }
+          }}else if (sib) {
+          let alltop = document.querySelectorAll('#topartist6> .rectrack > div.' + sib)
+          let current = alltop[alltop.length-1].nextElementSibling
+          while (current != null) {
+            console.log(current)
+            current.style.display = 'none'
+            if (current.nextElementSibling !== null && current.nextElementSibling.style.display !== 'none'){
+              current = current.nextElementSibling
+            } else if (current.nextElementSibling !== null && current.nextElementSibling.style.display === 'none'){
+              current = current.nextElementSibling.nextElementSibling
+            } else if (current.nextElementSibling === null){
+              current = null
+            }
+
+          }
+          let newall = Array.from(all)
+          let track = newall.indexOf(document.getElementById('d'+item.id))
+          let album = newall.indexOf(alltop[alltop.length-1])
+          console.log(track)
+          if (track!== -1 && track < album){
+            alltop[alltop.length-1].insertAdjacentElement('afterend', document.getElementById('d'+item.id));
+            // all.parentNode.insertBefore(newall[album],newall[track])
+          }}
+        if (document.getElementById('d'+item.id)){
+          document.getElementById('d'+item.id).style.display = 'flex'
+        }
         let indexing = this.deeper22.indexOf(item)
         if (indexing === -1){
           this.deeper22.push(item)
@@ -3684,6 +3824,46 @@ export default {
           this.deeper2.push(item)
         }
       } else if (num === 22){
+        let all = document.querySelectorAll('#topartist> .rectrack > div')
+        if (child){
+          let par = document.getElementById(child).parentElement.nextElementSibling
+          while (par != null) {
+            par.style.display = 'none'
+            if (par.nextElementSibling !== null && par.nextElementSibling.style.display !== 'none'){
+              par = par.nextElementSibling
+            } else if (par.nextElementSibling !== null && par.nextElementSibling.style.display === 'none'){
+              par = par.nextElementSibling.nextElementSibling
+            } else if (par.nextElementSibling === null){
+              par = null
+            }
+          }}else if (sib) {
+          let alltop = document.querySelectorAll('#topartist> .rectrack > div.' + sib)
+          let current = alltop[alltop.length-1].nextElementSibling
+          while (current != null) {
+            console.log(current)
+            current.style.display = 'none'
+            if (current.nextElementSibling !== null && current.nextElementSibling.style.display !== 'none'){
+              current = current.nextElementSibling
+            } else if (current.nextElementSibling !== null && current.nextElementSibling.style.display === 'none'){
+              current = current.nextElementSibling.nextElementSibling
+            } else if (current.nextElementSibling === null){
+              current = null
+            }
+
+          }
+          let newall = Array.from(all)
+          let track = newall.indexOf(document.getElementById('d'+item.id))
+          let album = newall.indexOf(alltop[alltop.length-1])
+          console.log(track)
+          if (track!== -1 && track < album){
+            alltop[alltop.length-1].insertAdjacentElement('afterend', document.getElementById('d'+item.id));
+            // all.parentNode.insertBefore(newall[album],newall[track])
+          }}
+        if (document.getElementById('d'+item.id)){
+          document.getElementById('d'+item.id).style.display = 'flex'
+          return
+        }
+
         let indexing = this.deeper22.indexOf(item)
         if (indexing === -1){
           this.deeper22.push(item)
@@ -3756,6 +3936,7 @@ export default {
             let data = []
             data.tracks = response.data['tracks']
             data.type = 'seed_artists'
+            data.id = 'sa' + item.id
             console.log(data)
             if (num === 1){
               let indexing = this.deeper1.indexOf(data)
@@ -3791,11 +3972,46 @@ export default {
                   }
                 }
               }
+              if(document.getElementById('sa'+item.id)){
+                document.getElementById('sa'+item.id).style.display = 'flex'
+                return
+              }
               let indexing = this.deeper2.indexOf(data)
               if (indexing === -1){
                 this.deeper2.push(data)
               }
             } else if (num === 22){
+              let alltop = document.querySelectorAll('#topartist6> .rectrack > div.' + sib)
+              console.log(child)
+              if (child){
+                let par = document.getElementById(child).parentElement.nextElementSibling
+                console.log(par)
+                while (par != null) {
+                  par.style.display = 'none'
+                  if (par.nextElementSibling !== null && par.nextElementSibling.style.display !== 'none'){
+                    par = par.nextElementSibling
+                  } else if (par.nextElementSibling !== null && par.nextElementSibling.style.display === 'none'){
+                    par = par.nextElementSibling.nextElementSibling
+                  } else if (par.nextElementSibling === null){
+                    par = null
+                  }
+                }} else if (sib!==false && alltop[alltop.length-1].nextElementSibling!== null) {
+                let par = alltop[alltop.length-1].nextElementSibling
+                while (par != null) {
+                  par.style.display = 'none'
+                  if (par.nextElementSibling !== null && par.nextElementSibling.style.display !== 'none'){
+                    par = par.nextElementSibling
+                  } else if (par.nextElementSibling !== null && par.nextElementSibling.style.display === 'none'){
+                    par = par.nextElementSibling.nextElementSibling
+                  } else if (par.nextElementSibling === null){
+                    par = null
+                  }
+                }
+              }
+              if(document.getElementById('sa'+item.id)){
+                document.getElementById('sa'+item.id).style.display = 'flex'
+                return
+              }
               let indexing = this.deeper22.indexOf(data)
               if (indexing === -1){
                 this.deeper22.push(data)
@@ -3870,6 +4086,7 @@ export default {
             let data = []
             data.tracks = response.data['tracks']
             data.type = 'seed_tracks'
+            data.id = 'st' + item.id
             console.log(data)
             if (num === 1){
               let indexing = this.deeper1.indexOf(data)
@@ -3903,11 +4120,41 @@ export default {
                   }
                 }
               }
+              if(document.getElementById('st'+item.id)){
+                document.getElementById('st'+item.id).style.display = 'flex'
+                return
+              }
               let indexing = this.deeper2.indexOf(data)
               if (indexing === -1){
                 this.deeper2.push(data)
               }
             } else if (num === 22){
+              let alltop = document.querySelectorAll('#topartist6> .rectrack > div.' + sib)
+              if (child){
+                let par = document.getElementById(child).parentElement.nextElementSibling
+                console.log(par)
+                while (par != null) {
+                  par.style.display = 'none'
+                  if (par.nextElementSibling !== null && par.nextElementSibling.style.display !== 'none'){
+                    par = par.nextElementSibling
+                  } else if (par.nextElementSibling !== null && par.nextElementSibling.style.display === 'none'){
+                    par = par.nextElementSibling.nextElementSibling
+                  } else if (par.nextElementSibling === null){
+                    par = null
+                  }
+                }} else if (sib!==false && alltop[alltop.length-1].nextElementSibling!== null) {
+                let par = alltop[alltop.length-1].nextElementSibling
+                while (par != null) {
+                  par.style.display = 'none'
+                  if (par.nextElementSibling !== null && par.nextElementSibling.style.display !== 'none'){
+                    par = par.nextElementSibling
+                  } else if (par.nextElementSibling !== null && par.nextElementSibling.style.display === 'none'){
+                    par = par.nextElementSibling.nextElementSibling
+                  } else if (par.nextElementSibling === null){
+                    par = null
+                  }
+                }
+              }
               let indexing = this.deeper22.indexOf(data)
               if (indexing === -1){
                 this.deeper22.push(data)
@@ -4024,14 +4271,14 @@ export default {
             let items =response.data['items']
             console.log('235' + items[0].id)
             for (let i=0;i <  items.length;i++){
-              console.log('237' + items[i].id)
+              // console.log('237' + items[i].id)
               axios.request({
                 url:'https://api.spotify.com/v1/artists/' + items[i].id + '/top-tracks?market=UA',
                 method: 'get',
                 headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
               })
                   .then((response) =>{
-                    console.log('247' + response.data)
+                    // console.log('247' + response.data)
                     let tracks = response.data['tracks']
                     if (tracks[0]['preview_url']){
                       items[i].preview_url = tracks[0]['preview_url']
@@ -4064,7 +4311,7 @@ export default {
             let items =response.data['items']
             console.log('235' + items[0].id)
             for (let i=0;i <  items.length;i++){
-              console.log('237' + items[i].id)
+              // console.log('237' + items[i].id)
               axios.request({
                 url:'https://api.spotify.com/v1/artists/' + items[i].id + '/top-tracks?market=UA',
                 method: 'get',
@@ -4076,6 +4323,7 @@ export default {
                     if (tracks[0]['preview_url']){
                       items[i].preview_url = tracks[0]['preview_url']
                     }
+                    items[i].tracks = tracks
                     newarr.push(items[i])
 
                   })
@@ -4103,7 +4351,7 @@ export default {
             let items =response.data['items']
             console.log('235' + items[0].id)
             for (let i=0;i <  items.length;i++){
-              console.log('237' + items[i].id)
+              // console.log('237' + items[i].id)
               axios.request({
                 url:'https://api.spotify.com/v1/artists/' + items[i].id + '/top-tracks?market=UA',
                 method: 'get',
@@ -4115,6 +4363,7 @@ export default {
                     if (tracks[0]['preview_url']){
                       items[i].preview_url = tracks[0]['preview_url']
                     }
+                    items[i].tracks = tracks
                     newarr.push(items[i])
 
                   })
@@ -4199,7 +4448,7 @@ export default {
             let items =response.data['items']
             console.log('235' + items[0].id)
             for (let i=0;i <  items.length;i++){
-              console.log('237' + items[i].id)
+              // console.log('237' + items[i].id)
               axios.request({
                 url:'https://api.spotify.com/v1/albums/' + items[i].album.id + '/tracks?market=UA&limit=10',
                 method: 'get',
@@ -4313,7 +4562,7 @@ export default {
             let newarr = []
             let items =response.data['artists']['items']
             for (let i=0;i <  items.length;i++){
-              console.log('237 ' + items[i].id)
+              // console.log('237 ' + items[i].id)
               axios.request({
                 url:'https://api.spotify.com/v1/artists/' + items[i].id + '/top-tracks?market=UA&limit=10',
                 method: 'get',
@@ -4444,7 +4693,7 @@ export default {
                 console.log(response.data['tracks']['items'])
                 let albarr = []
                 for (let i = 0; i < albums.length; i++) {
-                  console.log('237' + albums[i].id)
+                  // console.log('237' + albums[i].id)
                   axios.request({
                     url: 'https://api.spotify.com/v1/albums/' + albums[i].id + '/tracks?market=UA&limit=10',
                     method: 'get',
@@ -4463,7 +4712,7 @@ export default {
 
                 let artarr = []
                 for (let i = 0; i < artists.length; i++) {
-                  console.log('237' + artists[i].id)
+                  // console.log('237' + artists[i].id)
                   axios.request({
                     url: 'https://api.spotify.com/v1/artists/' + artists[i].id + '/top-tracks?market=UA',
                     method: 'get',
@@ -4484,7 +4733,7 @@ export default {
                 console.log(this.artists)
                 let playlist = []
                 for (let i = 0; i < playlists.length; i++) {
-                  console.log('237' + playlists[i].id)
+                  // console.log('237' + playlists[i].id)
                   axios.request({
                     url: 'https://api.spotify.com/v1/playlists/' + playlists[i].id,
                     method: 'get',
