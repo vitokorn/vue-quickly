@@ -79,7 +79,7 @@ header{
     font-weight: bolder;
 }
 .con2{
-    width: 100%;
+    width: 98%;
     background-size: cover;
     display: flex;
     -moz-box-pack: start;
@@ -91,7 +91,7 @@ header{
     margin-bottom: 6px;
 }
 .card2{
-    width: 100%;
+    width: 98%;
     background-size: cover;
     display: flex;
     -moz-box-pack: start;
@@ -602,7 +602,7 @@ footer{
     background: rgba(219,219,219,0);
 }
 .tabs :target a + div{
-    height: 100%;
+    height: auto;
     overflow: visible;
 }
 
