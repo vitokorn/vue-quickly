@@ -90,6 +90,21 @@ header{
     /*height: 100%;*/
     margin-bottom: 6px;
 }
+.card2{
+    width: 100%;
+    background-size: cover;
+    display: flex;
+    -moz-box-pack: start;
+    place-content: flex-start;
+    -moz-box-align: stretch;
+    align-items: stretch;
+    flex-flow: row wrap;
+    /*height: 100%;*/
+    box-shadow: 0 2px 4px 1px rgba(0,0,0,.18);
+    background-color: #fff;
+    padding: 16px;
+    margin: 0 0 24px;
+}
 .con3{
   width: 105px;
     height: 105px;
