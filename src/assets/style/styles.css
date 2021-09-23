@@ -1,3 +1,7 @@
+body{
+    margin: 0;
+    /*padding-left: 30px;*/
+}
 header{
     align-items: flex-end;
 }
@@ -91,7 +95,7 @@ header{
     margin-bottom: 6px;
 }
 .card2{
-    width: 98%;
+    width: 95%;
     background-size: cover;
     display: flex;
     -moz-box-pack: start;
@@ -438,7 +442,6 @@ position: relative;
   color: #444;
   cursor: pointer;
   padding: 18px;
-  width: 100%;
   border: none;
   text-align: center;
   outline: none;
@@ -455,6 +458,24 @@ position: relative;
   display: none;
   /*background-color: black;*/
   overflow: hidden;
+}
+@media (max-width: 1023px) {
+    .accordion {
+        background-color: #eee;
+        color: #444;
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        border: none;
+        text-align: center;
+        outline: none;
+        font-size: 15px;
+        transition: 0.4s;
+    }
+
+    .active, .accordion:hover {
+        background-color: #ccc;
+    }
 }
 
 .navbar{
@@ -576,20 +597,22 @@ footer{
     align-items: center;
 }
 .tabs li{
-    margin-right: 1px;
+    /*margin-right: 1px;*/
+    margin: 0;
     list-style-type: none;
     font-size: 14px;
 }
-.tabs li:last-child{
-    margin-right: 0;
-}
+/*.tabs li:last-child{*/
+/*    margin-right: 0;*/
+/*}*/
 .tabs li a{
     display: block;
-    padding: 10px 15px;
-    background: rgba(219,219,219,1);
+    /*padding: 10px 15px;*/
+    background: #eee;
     text-decoration: none;
     color:#4B5056;
     transition: background 0.5s ease;
+    padding: 18px;
 }
 .tabs a + div{
     position: absolute;
