@@ -1,5 +1,6 @@
 body{
-    margin: 0;
+    /*margin: 0;*/
+    width: 95%;
     /*padding-left: 30px;*/
 }
 header{
@@ -83,7 +84,7 @@ header{
     font-weight: bolder;
 }
 .con2{
-    width: 98%;
+    width: 100%;
     background-size: cover;
     display: flex;
     -moz-box-pack: start;
@@ -95,7 +96,7 @@ header{
     margin-bottom: 6px;
 }
 .card2{
-    width: 95%;
+    /*width: 95%;*/
     background-size: cover;
     display: flex;
     -moz-box-pack: start;
@@ -677,3 +678,8 @@ footer{
     animation: blinker 1.7s cubic-bezier(.5, 0, 1, 1) infinite alternate;
 }
 @keyframes blinker { to { opacity: 0; } }
+
+.break {
+    flex-basis: 100%;
+    height: 0;
+}
