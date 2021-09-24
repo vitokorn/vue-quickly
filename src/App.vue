@@ -1,11 +1,24 @@
 <template>
   <div id="app">
-    <img alt="DQ logo" src="./assets/logo-small.png">
-    <div>Discover Mobily</div>
+    <header class="header" id="navbar">
+      <img class="logo" src="./assets/logo-small.png" alt="">
+      <h1>Discover Mobily</h1>
+      <div class="content">
+
+        <div v-if="isAuth()" class="">Hello, {{username}}</div>
+        <div class="dropdown-content">
+          <Auth v-if="!isAuth()"/>
+          <Logout v-else-if="isAuth()"/>
+        </div>
+<!--        <div>-->
+<!--          <a href="/lang/en/">En</a>-->
+<!--          <a href="/lang/ru/">Ru</a>-->
+<!--        </div>-->
+
+      </div>
+    </header>
     <br>
-    <Auth v-if="!isAuth()"/>
-    <Logout v-else-if="isAuth()"/>
-    <Desktop v-if="!isMobile() && isAuth()"/>
+    <Desktop style="text-align: center;" v-if="!isMobile() && isAuth()"/>
     <Mobile v-else-if="isMobile() && isAuth()"/>
   </div>
 </template>
@@ -40,6 +53,11 @@ import Mobile from './components/Mobile.vue'
 import Logout from "./components/Logout";
 
 export default {
+  data(){
+    return{
+      username: document.cookie.replace(/(?:(?:^|.*;\s*)nickname\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
+    }
+  },
   name: 'App',
   mixins: [mixinDetictingMobile,auth],
   components: {
@@ -53,16 +71,16 @@ export default {
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
+  /*color: #2c3e50;*/
+  /*margin-top: 60px;*/
 }
 </style>
 
 <style>
 @import './assets/style/styles.css';
+/*@import './assets/style/normalize.css';*/
 </style>
 
