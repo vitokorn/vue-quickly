@@ -4,7 +4,7 @@
       <ul class="tabs">
         <li id="option1">
     <a id="playlistlist" href="#option1" v-on:click.self.once="fetchPlaylists">Playlists Pc</a>
-          <div id="yourplaylists" class="con2" style="display: block;overflow-scrolling: unset">
+          <div id="yourplaylists" class="con2" style="display: block;">
             <div class="pl">
       <template  v-for="(item,index) of listplaylists" >
         <div v-bind:id="item.id" v-bind:key="index" v-on:click="fetchInit" class="hr-line-dashed">{{ item.name }}</div>
@@ -2929,7 +2929,8 @@ export default {
       artists:[],
       albums:[],
       splaylists:[],
-      current:null
+      current:null,
+      searchtimer:null
     }
   },
   methods: {
@@ -4026,14 +4027,19 @@ export default {
           })
           .catch()
     },
-    fetchPlaylists(){
+    fetchPlaylists(event){
+      let div = "<div id='loader' class='loading waitingForConnection'>Loading<span>.</span><span>.</span><span>.</span></div>"
+      event.target.nextElementSibling.insertAdjacentHTML("afterbegin",div)
       axios.request({
         url:'https://api.spotify.com/v1/me/playlists?fields=items(name,id)&limit=50',
         method: 'get',
         headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) =>{
-            this.listplaylists = response.data['items']
+            setTimeout(() => {
+              this.listplaylists = response.data['items']
+              document.getElementById("loader").remove()
+            }, 1000);
           })
           .catch(error =>{
             if (error.response.status){
@@ -4067,7 +4073,9 @@ export default {
             }
           })
     },
-    fetchArtist(){
+    fetchArtist(event){
+      let div = "<div id='loader' class='loading waitingForConnection'>Loading<span>.</span><span>.</span><span>.</span></div>"
+      event.target.nextElementSibling.insertAdjacentHTML("afterbegin",div)
       axios.request({
         url:'https://api.spotify.com/v1/me/top/artists?time_range=short_term',
         method: 'get',
@@ -4096,6 +4104,7 @@ export default {
                   })
             }
             this.topartist = newarr
+            document.getElementById("loader").remove()
           })
           .catch(error =>{
             if (error.response.status){
@@ -4107,7 +4116,9 @@ export default {
             }
           })
     },
-    fetchArtist2(){
+    fetchArtist2(event){
+      let div = "<div id='loader' class='loading waitingForConnection'>Loading<span>.</span><span>.</span><span>.</span></div>"
+      event.target.nextElementSibling.insertAdjacentHTML("afterbegin",div)
       axios.request({
         url:'https://api.spotify.com/v1/me/top/artists?time_range=medium_term',
         method: 'get',
@@ -4136,6 +4147,7 @@ export default {
                   })
             }
             this.topartist6 = newarr
+            document.getElementById("loader").remove()
           })
           .catch(error =>{
             if (error.response.status){
@@ -4147,7 +4159,9 @@ export default {
             }
           })
     },
-    fetchArtist3(){
+    fetchArtist3(event){
+      let div = "<div id='loader' class='loading waitingForConnection'>Loading<span>.</span><span>.</span><span>.</span></div>"
+      event.target.nextElementSibling.insertAdjacentHTML("afterbegin",div)
       axios.request({
         url:'https://api.spotify.com/v1/me/top/artists?time_range=long_term',
         method: 'get',
@@ -4176,6 +4190,7 @@ export default {
                   })
             }
             this.topartista = newarr
+            document.getElementById("loader").remove()
           })
           .catch(error =>{
             if (error.response.status){
@@ -4187,7 +4202,9 @@ export default {
             }
           })
     },
-    fetchApi(){
+    fetchApi(event){
+      let div = "<div id='loader' class='loading waitingForConnection'>Loading<span>.</span><span>.</span><span>.</span></div>"
+      event.target.nextElementSibling.insertAdjacentHTML("afterbegin",div)
       axios.request({
         url:'https://api.spotify.com/v1/me/top/tracks?time_range=short_term',
         method: 'get',
@@ -4195,6 +4212,7 @@ export default {
       })
           .then((response) =>{
             this.items = response.data['items']
+            document.getElementById("loader").remove()
           })
           .catch(error =>{
             if (error.response.status){
@@ -4206,7 +4224,9 @@ export default {
             }
           })
     },
-    fetchApi2(){
+    fetchApi2(event){
+      let div = "<div id='loader' class='loading waitingForConnection'>Loading<span>.</span><span>.</span><span>.</span></div>"
+      event.target.nextElementSibling.insertAdjacentHTML("afterbegin",div)
       axios.request({
         url:'https://api.spotify.com/v1/me/top/tracks?time_range=medium_term',
         method: 'get',
@@ -4214,6 +4234,7 @@ export default {
       })
           .then((response) =>{
             this.itemsm = response.data['items']
+            document.getElementById("loader").remove()
           })
           .catch(error =>{
             if (error.response.status){
@@ -4225,7 +4246,9 @@ export default {
             }
           })
     },
-    fetchApi3(){
+    fetchApi3(event){
+      let div = "<div id='loader' class='loading waitingForConnection'>Loading<span>.</span><span>.</span><span>.</span></div>"
+      event.target.nextElementSibling.insertAdjacentHTML("afterbegin",div)
       axios.request({
         url:'https://api.spotify.com/v1/me/top/tracks?time_range=long_term',
         method: 'get',
@@ -4233,6 +4256,7 @@ export default {
       })
           .then((response) =>{
             this.itemsl = response.data['items']
+            document.getElementById("loader").remove()
           })
           .catch(error =>{
             if (error.response.status){
@@ -4244,7 +4268,9 @@ export default {
             }
           })
     },
-    fetchAlbums(){
+    fetchAlbums(event){
+      let div = "<div id='loader' class='loading waitingForConnection'>Loading<span>.</span><span>.</span><span>.</span></div>"
+      event.target.nextElementSibling.insertAdjacentHTML("afterbegin",div)
       axios.request({
         url: 'https://api.spotify.com/v1/me/albums',
         method: 'get',
@@ -4272,6 +4298,7 @@ export default {
                   })
             }
             this.savedalbums = newarr
+            document.getElementById("loader").remove()
           })
           .catch(error =>{
             if (error.response.status){
@@ -4477,6 +4504,10 @@ export default {
         window.location.hash = "srch"
       }
       console.log(window.location.href)
+      clearTimeout(this.searchtimer)
+      this.searchtimer = setTimeout(() => {
+
+
         if (e.target.value) {
           let value = e.target.value
           console.log(value)
@@ -4572,9 +4603,9 @@ export default {
               })
             }
           })
-
-
-    }},
+      }
+        }, 1000);
+    },
     mouseOver: function (event){
       let target = event.target
       let audios = target.lastChild
