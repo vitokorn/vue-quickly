@@ -2336,6 +2336,11 @@
         <li id="option12">
     <a href="#option12" id="spt" v-on:click.self.once="fetchSpotPlaylists(0)" >Spotify playlists</a>
           <div id="sptplaylists" class="con2" style="display: block;width: auto;">
+            <div class="head">
+              <input type="text" v-on:keyup="filterres"
+                     placeholder="Please enter a search term.." title="Type in a name">
+
+            </div>
           <div class="pl">
       <template v-for="item of spotplaylists" >
         <div v-bind:id="item.id" v-on:click="SpotInit" v-bind:key="item.id" class="hr-line-dashed">{{ item.name }}</div>
@@ -4448,7 +4453,7 @@ export default {
           allTracks[i].style.display = 'none'
         }
       }
-      let pl = document.querySelectorAll('#sptplaylists > div:not(.rectrack,.pl)')
+      let pl = document.querySelectorAll('#sptplaylists > div:not(.rectrack,.pl,.head)')
       for (let i=0;i <  pl.length;i++){
         pl[i].style.display = 'none'
 
@@ -4614,6 +4619,20 @@ export default {
           window.location.hash = "srch"
         }
         }, 1000);
+    },
+    filterres(event){
+      let input = event.target
+      let filter = input.value.toUpperCase();
+      let pl = document.querySelectorAll('#sptplaylists > div:not(.rectrack,.head) > div');
+
+      for (let i=0; i<pl.length; i++){
+        if(pl[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
+          pl[i].style.display = "block";
+        }
+        else{
+          pl[i].style.display = "none";
+        }
+      }
     },
     mouseOver: function (event){
       let target = event.target
