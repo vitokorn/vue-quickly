@@ -2335,7 +2335,7 @@
         </li>
         <li id="option12">
     <a href="#option12" id="spt" v-on:click.self.once="fetchSpotPlaylists(0)" >Spotify playlists</a>
-          <div id="sptplaylists" class="con2" style="display: block;width: auto;">
+          <div id="sptplaylists" class="con2" style="display: block;">
             <div class="head">
               <input type="text" v-on:keyup="filterres"
                      placeholder="Please enter a search term.." title="Type in a name">
