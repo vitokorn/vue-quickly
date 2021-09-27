@@ -575,6 +575,10 @@ footer{
 }
 .title{
     position: relative;
+    width: 65%;
+    text-align: left;
+    margin-top: auto;
+    margin-bottom: auto;
     /*left: 3%;*/
 }
 
@@ -704,4 +708,12 @@ footer{
     display: initial !important;
     padding: initial !important;
     background: initial !important;
+}
+.btn{
+    width: 24px;
+    height: 24px;
+    margin-bottom: auto;
+    margin-top: auto;
+    border: transparent;
+    background-color: white;
 }
