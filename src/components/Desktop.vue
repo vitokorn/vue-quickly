@@ -42,7 +42,7 @@
               </div>
             </div>
             <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('yourplaylists',d,1,'pl','d'+ d.id)">Recommended songs based on this</span>
-            <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+            <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
             </div>
           </div>
           <template v-for="(art,index) in d.artists">
@@ -79,7 +79,7 @@
                 <div>{{ta['followers']['total'] + ' followers'}}</div>
                 <div>{{ta['genres']}}</div>
                 <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('yourplaylists',ta,1,'trackartist')">Recomended artists songs based on this</div>
-                <div><button class="button"><a v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                 </div>
               </div>
             </div>
@@ -154,7 +154,7 @@
                 </div>
               </div>
               <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('yourplaylists',d.track,1,'playlisttrack','d'+ d.id)">Recommended songs based on this</span>
-              <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+              <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
               </div>
             </div>
             <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist('yourplaylists',art,d,1,false,'playlisttrack')" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
@@ -176,7 +176,7 @@
                 </div>
               </div>
               <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('yourplaylists',d,1,'playlisttrack','d' + d.id)">Recommended songs based on this</span>
-              <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+              <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
               </div>
             </div>
             <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-on:click="deeperartist('yourplaylists',art,d,1,false,'playlisttrack')" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
@@ -251,7 +251,7 @@
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('topartist',d[index],2,'pl')">Recommended songs based on this</span>
                 <div>
-                  <button class="button"><a v-bind:href="d['track']['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                  <button class="button"><a class="linkresset" v-bind:href="d['track']['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                 </div>
               </div>
               <div class="artist-cirle con3" v-for="(art,index) in d.track.artists" v-bind:key="index" v-on:click="deeperartist('topartist',art,d,2)" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">
@@ -282,7 +282,7 @@
                     <div>{{ta['followers']['total'] + ' followers'}}</div>
                     <div>{{ta.genres}}</div>
                     <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('topartist',ta,2,'trackartist','art' +d[index].id)">Recommended artists songs based on this</div>
-                    <div><button class="button"><a v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                     </div>
                   </div>
                 </div>
@@ -357,7 +357,7 @@
                     </div>
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('topartist',d,2,'playlisttrack','d'+d.id)">Recommended songs based on this</span>
-                  <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                  <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                   </div>
                 </div>
                 <template v-for="(art,index) in d.artists">
@@ -385,7 +385,7 @@
                     </div>
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('topartist',d,2,'playlisttrack','d'+d.id)">Recommended songs based on this</span>
-                  <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                  <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                   </div>
                 </div>
                 <template v-for="(art,index) in d.artists">
@@ -469,7 +469,7 @@
                   </div>
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('pl',d[index],22,'pl')">Recommended songs based on this</span>
-                <div><button class="button"><a v-bind:href="d['track']['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                <div><button class="button"><a class="linkresset" v-bind:href="d['track']['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                 </div>
               </div>
               <div class="artist-cirle con3" v-for="(art,index) in d.track.artists" v-bind:key="index" v-on:click="deeperartist('topartist6',art,d,22)" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">
@@ -500,7 +500,7 @@
                     <div>{{ta['followers']['total'] + ' followers'}}</div>
                     <div>{{ta['genres']}}</div>
                     <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('topartist6',ta,22,'trackartist','art' + d[index].id)">Recommended artists songs based on this</div>
-                    <div><button class="button"><a v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                     </div>
                   </div>
                 </div>
@@ -575,7 +575,7 @@
                     </div>
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('topartist6',d,22,'playlisttrack','d'+d.id)">Recommended songs based on this</span>
-                  <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                  <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                   </div>
                 </div>
                 <template v-for="(art,index) in d.artists">
@@ -603,7 +603,7 @@
                     </div>
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('topartist6',d,22,'playlisttrack','d'+ d.id)">Recommended songs based on this</span>
-                  <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                  <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                   </div>
                 </div>
                 <template v-for="(art,index) in d.artists">
@@ -684,7 +684,7 @@
               </div>
               <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('topartista',d[index],23,'pl')">Recommended songs based on this</span>
               <div>
-                <button class="button"><a v-bind:href="d['track']['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                <button class="button"><a class="linkresset" v-bind:href="d['track']['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
               </div>
             </div>
             <div class="artist-cirle con3" v-for="(art,index) in d.track.artists" v-bind:key="index" v-on:click="deeperartist('topartista',art,d,23)" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">
@@ -716,7 +716,7 @@
                   <div>{{ta['genres']}}</div>
                   <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('topartista',ta,23,'trackartist','art' + d[index].id)">Recommended artists songs based on this</div>
                   <div>
-                    <button class="button"><a v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    <button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                   </div>
                 </div>
               </div>
@@ -791,7 +791,7 @@
                   </div>
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('topartista',d,23,'playlisttrack','d'+d.id)">Recommended songs based on this</span>
-                <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                 </div>
               </div>
               <template v-for="(art,index) in d.artists">
@@ -819,7 +819,7 @@
                   </div>
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('topartista',d,23,'playlisttrack','d'+ d.id)">Recommended songs based on this</span>
-                <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                 </div>
               </div>
               <template v-for="(art,index) in d.artists">
@@ -898,7 +898,7 @@
                   </div>
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('toptrack',d,3,'pl','d'+ d.id)">Recommended songs based on this</span>
-                <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                 </div>
               </div>
               <template v-for="(art,index) in d.artists">
@@ -935,7 +935,7 @@
                     <div>{{ta['followers']['total'] + ' followers'}}</div>
                     <div>{{ta['genres']}}</div>
                     <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('toptrack',ta,3,'trackartist')">Recomended artists songs based on this</div>
-                    <div><button class="button"><a v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                     </div>
                   </div>
                 </div>
@@ -1010,7 +1010,7 @@
                     </div>
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('toptrack',d.track,3,'playlisttrack','d'+ d.id)">Recommended songs based on this</span>
-                  <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                  <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                   </div>
                 </div>
                 <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist('toptrack',art,d,3,false,'playlisttrack')" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
@@ -1032,7 +1032,7 @@
                     </div>
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('toptrack',d,3,'playlisttrack','d' + d.id)">Recommended songs based on this</span>
-                  <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                  <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                   </div>
                 </div>
                 <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-on:click="deeperartist('toptrack',art,d,3,false,'playlisttrack')" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
@@ -1106,7 +1106,7 @@
                   </div>
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('toptrack6',d,32,'pl','d'+ d.id)">Recommended songs based on this</span>
-                <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                 </div>
               </div>
               <template v-for="(art,index) in d.artists">
@@ -1143,7 +1143,7 @@
                     <div>{{ta['followers']['total'] + ' followers'}}</div>
                     <div>{{ta['genres']}}</div>
                     <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('toptrack6',ta,32,'trackartist')">Recomended artists songs based on this</div>
-                    <div><button class="button"><a v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                     </div>
                   </div>
                 </div>
@@ -1218,7 +1218,7 @@
                     </div>
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('toptrack6',d.track,32,'playlisttrack','d'+ d.id)">Recommended songs based on this</span>
-                  <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                  <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                   </div>
                 </div>
                 <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist('toptrack6',art,d,32,false,'playlisttrack')" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
@@ -1240,7 +1240,7 @@
                     </div>
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('toptrack6',d,32,'playlisttrack','d' + d.id)">Recommended songs based on this</span>
-                  <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                  <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                   </div>
                 </div>
                 <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-on:click="deeperartist('toptrack6',art,d,32,false,'playlisttrack')" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
@@ -1314,7 +1314,7 @@
                   </div>
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('toptrackall',d,33,'pl','d'+ d.id)">Recommended songs based on this</span>
-                <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                 </div>
               </div>
               <template v-for="(art,index) in d.artists">
@@ -1351,7 +1351,7 @@
                     <div>{{ta['followers']['total'] + ' followers'}}</div>
                     <div>{{ta['genres']}}</div>
                     <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('toptrackall',ta,33,'trackartist')">Recomended artists songs based on this</div>
-                    <div><button class="button"><a v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                     </div>
                   </div>
                 </div>
@@ -1426,7 +1426,7 @@
                     </div>
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('toptrackall',d.track,33,'playlisttrack','d'+ d.id)">Recommended songs based on this</span>
-                  <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                  <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                   </div>
                 </div>
                 <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist('toptrackall',art,d,33,false,'playlisttrack')" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
@@ -1448,7 +1448,7 @@
                     </div>
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('toptrackall',d,33,'playlisttrack','d' + d.id)">Recommended songs based on this</span>
-                  <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                  <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                   </div>
                 </div>
                 <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-on:click="deeperartist('toptrackall',art,d,33,false,'playlisttrack')" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
@@ -1522,7 +1522,7 @@
                   </div>
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('savedalbum',d.track,4)">Recommended songs based on this</span>
-                <div><button class="button"><a v-bind:href="d['track']['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                <div><button class="button"><a class="linkresset" v-bind:href="d['track']['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                 </div>
               </div>
               <div class="artist-cirle con3" v-for="(art,index) in d.track.artists" v-bind:key="index" v-on:click="deeperartist('savedalbum',art,d,4)" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">
@@ -1553,7 +1553,7 @@
                     <div>{{ta['followers']['total'] + ' followers'}}</div>
                     <div>{{ta['genres']}}</div>
                     <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('savedalbum',ta,4)">Recomended artists songs based on this</div>
-                    <div><button class="button"><a v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                     </div>
                   </div>
                 </div>
@@ -1628,7 +1628,7 @@
                     </div>
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d.track,4)">Recommended songs based on this</span>
-                  <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                  <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                   </div>
                 </div>
                 <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist('savedalbum',art,d,4)" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
@@ -1650,7 +1650,7 @@
                     </div>
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d,4)">Recommended songs based on this</span>
-                  <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                  <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                   </div>
                 </div>
                 <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist('savedalbum',art,d,4)" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
@@ -1724,7 +1724,7 @@
                   </div>
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('savedtrack',d,5,'pl','d'+ d.id)">Recommended songs based on this</span>
-                <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                 </div>
               </div>
               <template v-for="(art,index) in d.artists">
@@ -1761,7 +1761,7 @@
                     <div>{{ta['followers']['total'] + ' followers'}}</div>
                     <div>{{ta['genres']}}</div>
                     <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('savedtrack',ta,5,'trackartist')">Recomended artists songs based on this</div>
-                    <div><button class="button"><a v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                     </div>
                   </div>
                 </div>
@@ -1836,7 +1836,7 @@
                     </div>
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('savedtrack',d.track,5,'playlisttrack','d'+ d.id)">Recommended songs based on this</span>
-                  <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                  <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                   </div>
                 </div>
                 <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist('savedtrack',art,d,5,false,'playlisttrack')" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
@@ -1858,7 +1858,7 @@
                     </div>
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('savedtrack',d,5,'playlisttrack','d' + d.id)">Recommended songs based on this</span>
-                  <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                  <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                   </div>
                 </div>
                 <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-on:click="deeperartist('savedtrack',art,d,5,false,'playlisttrack')" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
@@ -1932,7 +1932,7 @@
                   </div>
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('followedartist',d[index],6,'pl')">Recommended songs based on this</span>
-                <div><button class="button"><a v-bind:href="d['track']['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                <div><button class="button"><a class="linkresset" v-bind:href="d['track']['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                 </div>
               </div>
               <div class="artist-cirle con3" v-for="(art,index) in d.track.artists" v-bind:key="index" v-on:click="deeperartist('followedartist',art,d,6)" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">
@@ -1963,7 +1963,7 @@
                     <div>{{ta['followers']['total'] + ' followers'}}</div>
                     <div>{{ta.genres}}</div>
                     <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('followedartist',ta,6,'trackartist','art' +d[index].id)">Recommended artists songs based on this</div>
-                    <div><button class="button"><a v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                     </div>
                   </div>
                 </div>
@@ -2038,7 +2038,7 @@
                     </div>
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('followedartist',d,6,'playlisttrack','d'+d.id)">Recommended songs based on this</span>
-                  <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                  <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                   </div>
                 </div>
                 <template v-for="(art,index) in d.artists">
@@ -2066,7 +2066,7 @@
                     </div>
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('followedartist',d,6,'playlisttrack','d'+d.id)">Recommended songs based on this</span>
-                  <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                  <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                   </div>
                 </div>
                 <template v-for="(art,index) in d.artists">
@@ -2150,7 +2150,7 @@
                   </div>
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('newrelease',d,7,'pl','d'+ d.id)">Recommended songs based on this</span>
-                <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                 </div>
               </div>
               <template v-for="(art,index) in d.artists">
@@ -2187,7 +2187,7 @@
                     <div>{{ta['followers']['total'] + ' followers'}}</div>
                     <div>{{ta['genres']}}</div>
                     <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('newrelease',ta,7,'trackartist')">Recomended artists songs based on this</div>
-                    <div><button class="button"><a v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                     </div>
                   </div>
                 </div>
@@ -2262,7 +2262,7 @@
                     </div>
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('newrelease',d.track,7,'playlisttrack','d'+ d.id)">Recommended songs based on this</span>
-                  <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                  <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                   </div>
                 </div>
                 <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist('newrelease',art,d,7,false,'playlisttrack')" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
@@ -2284,7 +2284,7 @@
                     </div>
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('newrelease',d,7,'playlisttrack','d' + d.id)">Recommended songs based on this</span>
-                  <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                  <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                   </div>
                 </div>
                 <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-on:click="deeperartist('newrelease',art,d,7,false,'playlisttrack')" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
@@ -2379,7 +2379,7 @@
               </div>
             </div>
             <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('sptplaylists',d,9,'pl','d'+ d.id)">Recommended songs based on this</span>
-            <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+            <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
             </div>
           </div>
           <template v-for="(art,index) in d.artists">
@@ -2416,7 +2416,7 @@
                 <div>{{ta['followers']['total'] + ' followers'}}</div>
                 <div>{{ta['genres']}}</div>
                 <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('sptplaylists',ta,9,'trackartist')">Recomended artists songs based on this</div>
-                <div><button class="button"><a v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                 </div>
               </div>
             </div>
@@ -2491,7 +2491,7 @@
                 </div>
               </div>
               <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('sptplaylists',d.track,9,'playlisttrack','d'+ d.id)">Recommended songs based on this</span>
-              <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+              <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
               </div>
             </div>
             <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist('sptplaylists',art,d,9,false,'playlisttrack')" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
@@ -2513,7 +2513,7 @@
                 </div>
               </div>
               <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('sptplaylists',d,9,'playlisttrack','d' + d.id)">Recommended songs based on this</span>
-              <div><button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+              <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
               </div>
             </div>
             <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-on:click="deeperartist('sptplaylists',art,d,9,false,'playlisttrack')" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
@@ -2623,7 +2623,7 @@
                       </div>
                     </div>
                     <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('search',d.track,10,'playlisttrack')">Recommended songs based on this</span>
-                    <div><button class="button"><a v-bind:href="d['track']['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    <div><button class="button"><a class="linkresset" v-bind:href="d['track']['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                     </div>
                   </div>
                   <div class="artist-cirle con3" v-for="(art,index) in d.track.artists" v-bind:key="index" v-on:click="deeperartist(art,d,10)" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">
@@ -2652,7 +2652,7 @@
                         <div>{{ta['genres']}}</div>
                         <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('search',ta,10,'trackartist','art'+ta.id)">Recommended artists songs based on this</div>
                         <div>
-                          <button class="button"><a v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                          <button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                         </div>
                       </div>
                     </div>
@@ -2728,7 +2728,7 @@
                       </div>
                       <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('search',d,10,'playlisttrack','d'+d.id)">Recommended songs based on this</span>
                       <div>
-                        <button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                        <button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                       </div>
                     </div>
                     <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist('search',art,d,10,false,'playlisttrack')" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
@@ -2751,7 +2751,7 @@
                       </div>
                       <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d,10)">Recommended songs based on this</span>
                       <div>
-                        <button class="button"><a v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                        <button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                       </div>
                     </div>
                     <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist(art,d,10)" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
@@ -2913,19 +2913,37 @@ export default {
     },
     deeper: function(item,num){
       console.log(item)
-      let allTracks = document.querySelectorAll(".rectrack > div");
-      if (allTracks != null) {
-        for (let i = 0; i < allTracks.length; i++) {
-          // eslint-disable-next-line no-empty
-          if (document.getElementById('d'+  item.id) !=null && allTracks[i].id === document.getElementById('d'+ item.id).id){
 
-          } else{
-            allTracks[i].style.display = 'none'
+      if (num === 10){
+        let allTracks = document.querySelectorAll(".rectrack > div:not(.playlist)");
+        if (allTracks != null) {
+          for (let i = 0; i < allTracks.length; i++) {
+            // eslint-disable-next-line no-empty
+            if (document.getElementById('d'+  item.id) !=null && allTracks[i].id === document.getElementById('d'+ item.id).id){
+
+            } else{
+              allTracks[i].style.display = 'none'
+            }
+
+
           }
 
+        }
+      } else {
+        let allTracks = document.querySelectorAll(".rectrack > div");
+        if (allTracks != null) {
+          for (let i = 0; i < allTracks.length; i++) {
+            // eslint-disable-next-line no-empty
+            if (document.getElementById('d'+  item.id) !=null && allTracks[i].id === document.getElementById('d'+ item.id).id){
+
+            } else{
+              allTracks[i].style.display = 'none'
+            }
+
+
+          }
 
         }
-
       }
       if (document.getElementById('d'+ item.id) !==null){
         document.getElementById('d'+ item.id).style.display = 'flex'
@@ -3136,7 +3154,6 @@ export default {
       await this.deeperArtistSingle(item).then(single => trackartist.push(single))
       await this.deeperArtistAppear(item).then(appear => trackartist.push(appear))
       await this.deeperArtistRelated(item).then(related => trackartist.push(related))
-      console.log(trackartist)
       if (num === 1){
         this.deeper1.push(trackartist)
       } else if (num === 2){
@@ -3166,7 +3183,7 @@ export default {
       } else if (num === 10){
         this.deepers.push(trackartist)
       }
-
+      console.log(trackartist)
     },
     deeperArtistself(item,track){
       return axios.request({
@@ -3339,11 +3356,11 @@ export default {
                     if (tracks[0]['preview_url']){
                       arr[i].preview_url = tracks[0]['preview_url']
                     }
-                    console.log(response.data['items'])
-                    console.log(response.data['items'].length)
-                    console.log(arr[i])
+                    // console.log(response.data['items'])
+                    // console.log(response.data['items'].length)
+                    // console.log(arr[i])
                     if (arr[i].images.length!==0 && arr[i].images!==null && arr[i].images[0]!==undefined && arr[i].images[0].url !==null){
-                      console.log(arr[i].images[0])
+                      // console.log(arr[i].images[0])
                       appears.push(arr[i])
                     } else{
                       arr[i].images[0] = 'url("")'
@@ -3383,10 +3400,10 @@ export default {
                 headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
               })
                   .then((response) =>{
-                    console.log(response.data['tracks'])
-                    console.log(response.data['tracks'].length)
+                    // console.log(response.data['tracks'])
+                    // console.log(response.data['tracks'].length)
+                    // console.log(arr[i])
                     let tracks = response.data['tracks']
-                    console.log(arr[i])
                     if (tracks.length!==0 && tracks[0]['preview_url']){
                       arr[i].preview_url = tracks[0]['preview_url']
                     }
@@ -4633,6 +4650,91 @@ export default {
           pl[i].style.display = "none";
         }
       }
+    },
+    reloader(id,num){
+      console.log(id)
+      console.log(num)
+      // if (id.startsWith('art')){
+      //   let cid = id.replace('art','')
+      //   if (num===1){
+      //     let deeper1 = this.deeper1
+      //     deeper1.find(deeper1 => item => item.id === cid)
+      //   } else if (num ===2){
+      //     let deeper2 = this.deeper2
+      //     deeper2.find(deeper2 => item => item.id === cid)
+      //   }
+      // }
+      // if (num === 1){
+      //   let indexing = this.deeper1.indexOf(data)
+      //   if (indexing === -1){
+      //     this.deeper1.push(data)
+      //   }
+      // } else if (num === 2){
+      //   let indexing = this.deeper2.indexOf(data)
+      //   if (indexing === -1){
+      //     this.deeper2.push(data)
+      //   }
+      // } else if (num === 22){
+      //   let indexing = this.deeper22.indexOf(data)
+      //   if (indexing === -1){
+      //     this.deeper22.push(data)
+      //   }
+      // } else if (num === 23){
+      //   let indexing = this.deeper23.indexOf(data)
+      //   if (indexing === -1){
+      //     this.deeper23.push(data)
+      //   }
+      // } else if (num === 3){
+      //   let indexing = this.deeper3.indexOf(data)
+      //   if (indexing === -1){
+      //     this.deeper3.push(data)
+      //   }
+      // } else if (num === 32){
+      //   let indexing = this.deeper32.indexOf(data)
+      //   if (indexing === -1){
+      //     this.deeper32.push(data)
+      //   }
+      // } else if (num === 33){
+      //   let indexing = this.deeper33.indexOf(data)
+      //   if (indexing === -1){
+      //     this.deeper33.push(data)
+      //   }
+      // } else if (num === 4){
+      //   let indexing = this.deeper4.indexOf(data)
+      //   if (indexing === -1){
+      //     this.deeper4.push(data)
+      //   }
+      // } else if (num === 5){
+      //   let indexing = this.deeper5.indexOf(data)
+      //   if (indexing === -1){
+      //     this.deeper5.push(data)
+      //   }
+      // } else if (num === 6){
+      //   let indexing = this.deeper6.indexOf(data)
+      //   if (indexing === -1){
+      //     this.deeper6.push(data)
+      //   }
+      // } else if (num === 7){
+      //   let indexing = this.deeper7.indexOf(data)
+      //   if (indexing === -1){
+      //     this.deeper7.push(data)
+      //   }
+      // } else if (num === 8){
+      //   let indexing = this.deeper8.indexOf(data)
+      //   if (indexing === -1){
+      //     this.deeper8.push(data)
+      //   }
+      // }else if (num === 9){
+      //   let indexing = this.deeper9.indexOf(data)
+      //   if (indexing === -1){
+      //     this.deeper9.push(data)
+      //   }
+      // } else if (num === 10){
+      //   let indexing = this.deepers.indexOf(data)
+      //   if (indexing === -1){
+      //     this.deepers.push(data)
+      //   }
+      // }
     },
     mouseOver: function (event){
       let target = event.target
