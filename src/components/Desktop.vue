@@ -4061,7 +4061,7 @@ export default {
           })
     },
     fetchInit:function(event){
-      console.log('167'  + event.currentTarget.id)
+      console.log('167 '  + event.currentTarget.id)
       let id = event.currentTarget.id
       let allTracks = document.querySelectorAll("#yourplaylists > .rectrack > div");
       if (allTracks != null) {
@@ -4075,6 +4075,7 @@ export default {
 
       }
       if (document.getElementById('p'+ id)){
+        console.log(document.getElementById('p'+ id))
         document.getElementById('p'+ id).style.display = 'block'
         return
       }
@@ -4674,16 +4675,27 @@ export default {
         console.log(nid)
         // let sea = this.playlists.find((playlists) => {return playlists.id === nid})
         let sea = this.playlists.findIndex((playlists) => {return playlists.id === nid})
+        this.playlists.splice(sea, 1)
+        document.getElementById('p'+ nid).remove()
+        console.log(this.playlists)
+        let test = {}
+        let currentTarget = {}
+        currentTarget.id = nid
+        test.currentTarget = currentTarget
+        console.log(test)
+        this.fetchInit(test)
         console.log(sea)
       } else if (num === 9){
         let nid = parent.id.replace('s','')
         console.log(nid)
         let sea = this.sptplaylists.findIndex((sptplaylists) => {return sptplaylists.id === nid})
+        this.sptplaylists[sea].pop
         console.log(sea)
       } else if (num ===10){
         let nid = parent.id.replace('p','')
         console.log(nid)
         let sea = this.deepers.findIndex((deepers) => {return deepers.id === nid})
+        this.deepers[sea].pop
         console.log(sea)
       }
       setTimeout(() => {
