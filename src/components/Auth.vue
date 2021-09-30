@@ -1,5 +1,5 @@
 <template>
-  <a href="spotify/login"><button>Login</button></a>
+  <a href="spotify/login"><button class="inp">Login</button></a>
 </template>
 
 <script>

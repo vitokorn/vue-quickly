@@ -10,9 +10,9 @@
             <div v-bind:id="item.id" v-bind:key="index" v-on:click="fetchInit" class="hr-line-dashed">{{ item.name }}</div>
           </template>
         </div>
-        <div v-for="(item,index) of playlists" v-bind:id="'p' + item.id" v-bind:key="index">
+        <div class="play" v-for="(item,index) of playlists" v-bind:id="'p' + item.id" v-bind:key="index">
           <div class="con2" >
-            <div class="con4" style="color: black">{{item.name}}</div>
+            <div class="con4">{{item.name}}</div>
             <button class="btn" v-on:click="reloader(1,$event)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button>
             <div style="width: 60%;display: flex;align-items: center;">{{item.description}}</div>
             <div v-if="item.images" class="con4" style="background-repeat: no-repeat;background-size: cover;" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }"></div>
@@ -2422,18 +2422,18 @@
       <a href="#option8" id="spt" v-on:click.self.once="fetchSpotPlaylists(0)" >Spotify playlists</a>
       <div id="sptplaylists" class="con2" style="display: block;width: 95%;">
         <div class="head">
-          <input type="text" v-on:keyup="filterres"
+          <input class="inp" type="text" v-on:keyup="filterres"
                  placeholder="Please enter a search term.." title="Type in a name">
 
-        </div>
+        </div >
         <div class="pl">
           <template v-for="item of spotplaylists" >
             <div v-bind:id="item.id" v-on:click="SpotInit" v-bind:key="item.id" class="hr-line-dashed">{{ item.name }}</div>
           </template>
         </div>
-        <div v-for="(item,index) of sptplaylists" v-bind:id="'s' + item.id" v-bind:key="index">
+        <div class="play" v-for="(item,index) of sptplaylists" v-bind:id="'s' + item.id" v-bind:key="index">
           <div class="con2" >
-            <div class="con4" style="color: black">{{item.name}}</div>
+            <div class="con4">{{item.name}}</div>
             <button class="btn" v-on:click="reloader(9,$event)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button>
             <div style="width: 60%;display: flex;align-items: center;">{{item.description}}</div>
             <div v-if="item.images" class="con4" style="background-repeat: no-repeat;background-size: cover;" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }"></div>
@@ -2653,11 +2653,11 @@
         </div>
       </div>
     </li>
-    <li id="srch" class="srch"><a style="padding: 15px;"><input v-on:keyup="search"></a>
+    <li id="srch" class="srch"><a style="padding: 15px;"><input class="inp" v-on:keyup="search"></a>
       <div id="search" style="width: 100%">
         <div style="display: flex;height: auto; flex-flow: row wrap;">
           <div style="width: 50%">
-            <div style="display: flex;margin: 16px 0 6px;flex-basis: 100%;">Songs</div>
+            <div class="stitle">Songs</div>
             <div v-for="(item,index) in tracks" class="playable-search" v-on:mouseover="parentmouseOver" v-on:mouseleave="parentmouseLeave" v-bind:key="index">
               <div v-if="item.preview_url" tabindex="0" class="itemImg itemImg-xs  itemImg-search" v-on:click="deeperTracks('search',item,10,true)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }">
                 <audio preload="none" v-bind:src="item.preview_url"></audio>
@@ -2669,7 +2669,7 @@
             </div>
           </div>
           <div style="width: 50%">
-            <div style="display: flex;margin: 16px 0 6px;flex-basis: 100%;">Artists</div>
+            <div class="stitle">Artists</div>
             <div v-for="(item,index) in artists" class="playable-search" v-on:mouseover="parentmouseOver" v-on:mouseleave="parentmouseLeave" v-bind:key="index">
               <div v-if="item.tracks[0].preview_url" tabindex="0" class="itemImg itemImg-xs  itemImg-search" v-on:click="deeperartist('search',item,item.tracks,10,true)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }">
                 <audio preload="none" v-bind:src="item.tracks[0].preview_url"></audio>
@@ -2681,7 +2681,7 @@
             </div>
           </div>
           <div style="width: 50%">
-            <div style="display: flex;margin: 16px 0 6px;flex-basis: 100%;">Albums</div>
+            <div class="stitle">Albums</div>
             <div v-for="(item,index) in albums" class="playable-search" v-on:mouseover="parentmouseOver" v-on:mouseleave="parentmouseLeave" v-bind:key="index">
               <div v-if="item.preview_url" tabindex="0" class="itemImg itemImg-xs  itemImg-search" v-on:click="deeperAlbum(item,10,false,true)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }">
                 <audio preload="none" v-bind:src="item.preview_url"></audio>
@@ -2693,7 +2693,7 @@
             </div>
           </div>
           <div style="width: 50%">
-            <div style="display: flex;margin: 16px 0 6px;flex-basis: 100%;">Playlists</div>
+            <div class="stitle">Playlists</div>
             <div v-for="(item,index) in splaylists" class="playable-search" v-on:mouseover="parentmouseOver" v-on:mouseleave="parentmouseLeave" v-bind:key="index">
               <div v-if="item.preview_url" tabindex="0" class="itemImg itemImg-xs  itemImg-search" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="playl(item)" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }">
                 <audio preload="none" v-bind:src="item.preview_url"></audio>
@@ -2924,7 +2924,7 @@
             </div>
             <div v-else-if="d.type==='playlist'" class="playlist card2" v-bind:key="index" v-bind:id="'p' + d.id">
               <div class="con2">
-                <div class="con4" style="color: black">{{d.name}}</div>
+                <div class="con4">{{d.name}}</div>
                 <button class="btn" v-on:click="reloader(10,$event)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button>
                 <div style="width: 60%;display: flex;align-items: center;">{{d.description}}</div>
                 <div class="con4" style="background-repeat: no-repeat;background-size: cover;" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }"></div>
