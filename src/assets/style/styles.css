@@ -16,11 +16,14 @@
     --root-color:black;
     --border-color:none;
     --input-color:white;
+    --border-top:#e7eaec;
+    --box-shadow:0 2px 4px 1px rgba(0,0,0,.18);
+
 }
 :root.dark{
     --main-color:#181a1b;
     --tabs-background:#222426;
-    --tabs-color:#4b5056;
+    --tabs-color:#b5afa5;
     --tabs-target:#35393b;
     --recomended-color:rgb(240, 55, 165);
     --active-tab:#f037a5;
@@ -28,19 +31,22 @@
     --button-background-border:2px solid #736b5e;
     --con2-color:white;
     --title-color:white;
-    --card2-background-color:#181a1b;
+    --card2-background-color:#2a2e2f;
     --pl-color:grey;
-    --pl-background-color:#181a1b;
+    --pl-background-color:#2a2e2f;
     --h1-color:grey;
     --root-color:grey;
     --border-color:black;
     --input-color:grey;
+    --border-top:rgb(54, 59, 61);
+    --box-shadow:0 2px 4px 1px #35393b;
+
 }
 :root.dark-blue{
-    --main-color:#1F2D40;
-    --tabs-background:#eee;
-    --tabs-color:#366CD9;
-    --tabs-target:#ccc;
+    --main-color:#001331;
+    --tabs-background:#2F4460;
+    --tabs-color:#05AFF2;
+    --tabs-target:#42566D;
     --recomended-color:#0D8C44;
     --active-tab:#0D8C44;
     --button-background-color:transparent;
@@ -48,13 +54,16 @@
     --con2-color: white;
     --title-color:white;
     --card2-background-color:#1F2D40;
-    --pl-color:grey;
+    --pl-color:#05AFF2;
     --pl-background-color:#1F2D40;
     --h1-color:grey;
     --root-color:grey;
     --border-color:#366CD9;
     --input-color:grey;
+    --border-top:rgb(54, 59, 61);
+    --box-shadow:0 2px 4px 1px #05AFF2;
     /*--con2-color:#42566D;*/
+    /*#1F2D40*/
 }
 :root.dq{
     --main-color:#3f3d58;
@@ -74,6 +83,8 @@
     --root-color:white;
     --border-color:transparent;
     --input-color:#333;
+    --border-top:#e7eaec;
+    --box-shadow:0 2px 4px 1px rgba(0,0,0,.18);
     /*--con2-color:#42566D;*/
 }
 body{
@@ -197,7 +208,7 @@ h1{
     align-items: stretch;
     flex-flow: row wrap;
     /*height: 100%;*/
-    box-shadow: 0 2px 4px 1px rgba(0,0,0,.18);
+    box-shadow: var(--box-shadow);
     background-color: var(--pl-background-color);
     padding: 16px;
     margin: 0 0 24px;
@@ -652,7 +663,7 @@ footer{
     }
 }
 .hr-line-dashed {
-  border-top: 1px dotted #e7eaec;
+  border-top: 1px dotted var(--border-top);
     cursor:pointer;
 }
 

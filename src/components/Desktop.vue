@@ -3350,7 +3350,7 @@ export default {
         }
         console.log(this.deepers)
       }
-      if (num !== 1 || num !==5){
+      if (num !== 1 && num !==5){
         setTimeout(() => {
           window.scrollTo({
             top:(document.getElementById('d'+ tracktrack.id)).offsetTop,
