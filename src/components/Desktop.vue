@@ -50,8 +50,11 @@
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('yourplaylists',d,1,'pl','d'+ d.id)">Recommended songs based on this</span>
                 <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
-                </div>
+                  Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                  <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
+<!--                  <button v-else-if="d.followed === true" class="button" @click.once="followTrack(d)">Remove track</button>-->
               </div>
+                </div>
               <template v-for="(art,index) in d.artists">
                 <div class="artist-cirle con3" v-if="d.preview_url" v-bind:key="index" v-on:click="deeperartist('yourplaylists',art,d,1,false,'pl')" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
                   <audio preload="none" v-bind:src="d.preview_url"></audio>
@@ -88,8 +91,10 @@
                   <div >{{ta.name}}
                     <div>{{ta['followers']['total'] + ' followers'}}</div>
                     <div>{{ta['genres']}}</div>
-                    <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('yourplaylists',ta,1,'trackartist')">Recomended artists songs based on this</div>
+                    <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('yourplaylists',ta,1,'trackartist')">Recommended artists songs based on this</div>
                     <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                      Follow<input type="checkbox" v-if="ta.followed" @click.once="followArtist(ta,$event)"  checked v-model="ta.followed">
+                      <input type="checkbox" v-else @click.once="followArtist(ta,$event)" v-model="ta.followed">
                     </div>
                   </div>
                 </div>
@@ -167,6 +172,8 @@
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('yourplaylists',d.track,1,'playlisttrack','d'+ d.id)">Recommended songs based on this</span>
                   <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                    <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                   </div>
                 </div>
                 <template v-for="(art,index) in d.artists">
@@ -198,6 +205,8 @@
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('yourplaylists',d,1,'playlisttrack','d' + d.id)">Recommended songs based on this</span>
                   <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                    <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                   </div>
                 </div>
                 <template v-for="(art,index) in d.artists">
@@ -222,6 +231,8 @@
                 </div>
                 <div style="margin-left: 4px; margin-right: 4px;">{{d.name}}
                   <div>{{d.release_date}}</div>
+                  Save<input type="checkbox" v-if="d.followed" @click.once="followAlbum(d,$event)"  checked v-model="d.followed">
+                  <input type="checkbox" v-else @click.once="followAlbum(d,$event)" v-model="d.followed">
                 </div>
                 <div style="display: block;" class="trackList">Tracks
                   <div v-for="(track,index) in d.tracks" v-bind:key="index">
@@ -325,6 +336,8 @@
                       <div>{{ta.genres}}</div>
                       <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('topartist',ta,2,'trackartist','art' +d[index].id)">Recommended artists songs based on this</div>
                       <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                        Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                        <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                       </div>
                     </div>
                   </div>
@@ -403,6 +416,8 @@
                     </div>
                     <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('topartist',d,2,'playlisttrack','d'+d.id)">Recommended songs based on this</span>
                     <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                      Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                      <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                     </div>
                   </div>
                   <template v-for="(art,index) in d.artists">
@@ -431,6 +446,8 @@
                     </div>
                     <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('topartist',d,2,'playlisttrack','d'+d.id)">Recommended songs based on this</span>
                     <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                      Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                      <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                     </div>
                   </div>
                   <template v-for="(art,index) in d.artists">
@@ -454,7 +471,9 @@
                     <audio preload="none"></audio>
                   </div>
                   <div style="margin-left: 4px; margin-right: 4px;">{{d.name}}
-                    <div>By </div>
+                    <div>{{d.release_date}}</div>
+                    Save<input type="checkbox" v-if="d.followed" @click.once="followAlbum(d,$event)"  checked v-model="d.followed">
+                    <input type="checkbox" v-else @click.once="followAlbum(d,$event)" v-model="d.followed">
                     <template v-for="(art,index) in d.artists">
                       <div v-bind:key="index" style="margin-left: 4px; margin-right: 4px; cursor: pointer;display: flex;align-items: center" v-on:click="deeperartist('topartist',art,d,2,false,'deep_albums')">{{art.name}}</div>
                     </template>
@@ -514,6 +533,8 @@
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('pl',d[index],22,'pl')">Recommended songs based on this</span>
                   <div><button class="button"><a class="linkresset" v-bind:href="d['track']['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                    <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                   </div>
                 </div>
                 <div class="artist-cirle con3" v-for="(art,index) in d.track.artists" v-bind:key="index" v-on:click="deeperartist('topartist6',art,d,22)" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">
@@ -548,6 +569,8 @@
                       <div>{{ta['genres']}}</div>
                       <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('topartist6',ta,22,'trackartist','art' + d[index].id)">Recommended artists songs based on this</div>
                       <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                        Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                        <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                       </div>
                     </div>
                   </div>
@@ -626,6 +649,8 @@
                     </div>
                     <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('topartist6',d,22,'playlisttrack','d'+d.id)">Recommended songs based on this</span>
                     <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                      Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                      <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                     </div>
                   </div>
                   <template v-for="(art,index) in d.artists">
@@ -657,6 +682,8 @@
                     </div>
                     <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('topartist6',d,22,'playlisttrack','d'+ d.id)">Recommended songs based on this</span>
                     <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                      Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                      <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                     </div>
                   </div>
                   <template v-for="(art,index) in d.artists">
@@ -681,6 +708,8 @@
                   </div>
                   <div style="margin-left: 4px; margin-right: 4px;">{{d.name}}
                     <div>{{d.release_date}}</div>
+                    Save<input type="checkbox" v-if="d.followed" @click.once="followAlbum(d,$event)"  checked v-model="d.followed">
+                    <input type="checkbox" v-else @click.once="followAlbum(d,$event)" v-model="d.followed">
                   </div>
                   <div style="display: block;" class="trackList">Tracks
                     <div v-for="(track,index) in d.tracks" v-bind:key="index">
@@ -848,6 +877,8 @@
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('topartista',d,23,'playlisttrack','d'+d.id)">Recommended songs based on this</span>
                   <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                    <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                   </div>
                 </div>
                 <template v-for="(art,index) in d.artists">
@@ -879,6 +910,8 @@
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('topartista',d,23,'playlisttrack','d'+ d.id)">Recommended songs based on this</span>
                   <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                    <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                   </div>
                 </div>
                 <template v-for="(art,index) in d.artists">
@@ -903,6 +936,8 @@
                 </div>
                 <div style="margin-left: 4px; margin-right: 4px;">{{d.name}}
                   <div>{{d.release_date}}</div>
+                  Save<input type="checkbox" v-if="d.followed" @click.once="followAlbum(d,$event)"  checked v-model="d.followed">
+                  <input type="checkbox" v-else @click.once="followAlbum(d,$event)" v-model="d.followed">
                 </div>
                 <div style="display: block;" class="trackList">Tracks
                   <div v-for="(track,index) in d.tracks" v-bind:key="index">
@@ -982,6 +1017,8 @@
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('toptrack',d,3,'pl','d'+ d.id)">Recommended songs based on this</span>
                   <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                    <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                   </div>
                 </div>
                 <template v-for="(art,index) in d.artists">
@@ -1020,8 +1057,10 @@
                     <div >{{ta.name}}
                       <div>{{ta['followers']['total'] + ' followers'}}</div>
                       <div>{{ta['genres']}}</div>
-                      <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('toptrack',ta,3,'trackartist')">Recomended artists songs based on this</div>
+                      <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('toptrack',ta,3,'trackartist')">Recommended artists songs based on this</div>
                       <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                        Follow<input type="checkbox" v-if="ta.followed" @click.once="followArtist(ta,$event)"  checked v-model="ta.followed">
+                        <input type="checkbox" v-else @click.once="followArtist(ta,$event)" v-model="ta.followed">
                       </div>
                     </div>
                   </div>
@@ -1100,6 +1139,8 @@
                     </div>
                     <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('toptrack',d.track,3,'playlisttrack','d'+ d.id)">Recommended songs based on this</span>
                     <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                      Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                      <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                     </div>
                   </div>
                   <template v-for="(art,index) in d.artists">
@@ -1131,6 +1172,8 @@
                     </div>
                     <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('toptrack',d,3,'playlisttrack','d' + d.id)">Recommended songs based on this</span>
                     <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                      Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                      <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                     </div>
                   </div>
                   <template v-for="(art,index) in d.artists">
@@ -1155,6 +1198,8 @@
                   </div>
                   <div style="margin-left: 4px; margin-right: 4px;">{{d.name}}
                     <div>{{d.release_date}}</div>
+                    Save<input type="checkbox" v-if="d.followed" @click.once="followAlbum(d,$event)"  checked v-model="d.followed">
+                    <input type="checkbox" v-else @click.once="followAlbum(d,$event)" v-model="d.followed">
                   </div>
                   <div style="display: block;" class="trackList">Tracks
                     <div v-for="(track,index) in d.tracks" v-bind:key="index">
@@ -1213,6 +1258,8 @@
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('toptrack6',d,32,'pl','d'+ d.id)">Recommended songs based on this</span>
                   <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                    <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                   </div>
                 </div>
                 <template v-for="(art,index) in d.artists">
@@ -1251,8 +1298,10 @@
                     <div >{{ta.name}}
                       <div>{{ta['followers']['total'] + ' followers'}}</div>
                       <div>{{ta['genres']}}</div>
-                      <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('toptrack6',ta,32,'trackartist')">Recomended artists songs based on this</div>
+                      <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('toptrack6',ta,32,'trackartist')">Recommended artists songs based on this</div>
                       <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                        Follow<input type="checkbox" v-if="ta.followed" @click.once="followArtist(ta,$event)"  checked v-model="ta.followed">
+                        <input type="checkbox" v-else @click.once="followArtist(ta,$event)" v-model="ta.followed">
                       </div>
                     </div>
                   </div>
@@ -1331,6 +1380,8 @@
                     </div>
                     <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('toptrack6',d.track,32,'playlisttrack','d'+ d.id)">Recommended songs based on this</span>
                     <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                      Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                      <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                     </div>
                   </div>
                   <template v-for="(art,index) in d.artists">
@@ -1362,6 +1413,8 @@
                     </div>
                     <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('toptrack6',d,32,'playlisttrack','d' + d.id)">Recommended songs based on this</span>
                     <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                      Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                      <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                     </div>
                   </div>
                   <div class="artist-cirle con3" v-for="art in d.artists" v-bind:key="art.id" v-on:click="deeperartist('toptrack6',art,d,32,false,'playlisttrack')" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
@@ -1390,6 +1443,8 @@
                   </div>
                   <div style="margin-left: 4px; margin-right: 4px;">{{d.name}}
                     <div>{{d.release_date}}</div>
+                    Save<input type="checkbox" v-if="d.followed" @click.once="followAlbum(d,$event)"  checked v-model="d.followed">
+                    <input type="checkbox" v-else @click.once="followAlbum(d,$event)" v-model="d.followed">
                   </div>
                   <div style="display: block;" class="trackList">Tracks
                     <div v-for="(track,index) in d.tracks" v-bind:key="index">
@@ -1448,6 +1503,8 @@
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('toptrackall',d,33,'pl','d'+ d.id)">Recommended songs based on this</span>
                   <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                    <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                   </div>
                 </div>
                 <template v-for="(art,index) in d.artists">
@@ -1486,8 +1543,10 @@
                     <div >{{ta.name}}
                       <div>{{ta['followers']['total'] + ' followers'}}</div>
                       <div>{{ta['genres']}}</div>
-                      <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('toptrackall',ta,33,'trackartist')">Recomended artists songs based on this</div>
+                      <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('toptrackall',ta,33,'trackartist')">Recommended artists songs based on this</div>
                       <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                        Follow<input type="checkbox" v-if="ta.followed" @click.once="followArtist(ta,$event)"  checked v-model="ta.followed">
+                        <input type="checkbox" v-else @click.once="followArtist(ta,$event)" v-model="ta.followed">
                       </div>
                     </div>
                   </div>
@@ -1566,6 +1625,8 @@
                     </div>
                     <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('toptrackall',d.track,33,'playlisttrack','d'+ d.id)">Recommended songs based on this</span>
                     <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                      Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                      <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                     </div>
                   </div>
                   <template v-for="(art,index) in d.artists">
@@ -1597,6 +1658,8 @@
                     </div>
                     <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('toptrackall',d,33,'playlisttrack','d' + d.id)">Recommended songs based on this</span>
                     <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                      Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                      <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                     </div>
                   </div>
                   <template v-for="(art,index) in d.artists">
@@ -1621,6 +1684,8 @@
                   </div>
                   <div style="margin-left: 4px; margin-right: 4px;">{{d.name}}
                     <div>{{d.release_date}}</div>
+                    Save<input type="checkbox" v-if="d.followed" @click.once="followAlbum(d,$event)"  checked v-model="d.followed">
+                    <input type="checkbox" v-else @click.once="followAlbum(d,$event)" v-model="d.followed">
                   </div>
                   <div style="display: block;" class="trackList">Tracks
                     <div v-for="(track,index) in d.tracks" v-bind:key="index">
@@ -1689,6 +1754,8 @@
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('savedalbum',d.track,4)">Recommended songs based on this</span>
                 <div><button class="button"><a class="linkresset" v-bind:href="d['track']['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                  Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                  <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                 </div>
               </div>
               <div class="artist-cirle con3" v-for="(art,index) in d.track.artists" v-bind:key="index" v-on:click="deeperartist('savedalbum',art,d,4)" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">
@@ -1721,8 +1788,10 @@
                   <div >{{ta.name}}
                     <div>{{ta['followers']['total'] + ' followers'}}</div>
                     <div>{{ta['genres']}}</div>
-                    <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('savedalbum',ta,4)">Recomended artists songs based on this</div>
+                    <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('savedalbum',ta,4)">Recommended artists songs based on this</div>
                     <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                      Follow<input type="checkbox" v-if="ta.followed" @click.once="followArtist(ta,$event)"  checked v-model="ta.followed">
+                      <input type="checkbox" v-else @click.once="followArtist(ta,$event)" v-model="ta.followed">
                     </div>
                   </div>
                 </div>
@@ -1798,6 +1867,8 @@
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d.track,4)">Recommended songs based on this</span>
                   <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                    <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                   </div>
                 </div>
                 <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist('savedalbum',art,d,4)" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
@@ -1820,6 +1891,8 @@
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks(d,4)">Recommended songs based on this</span>
                   <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                    <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                   </div>
                 </div>
                 <div class="artist-cirle con3" v-for="(art,index) in d.artists" v-bind:key="index" v-on:click="deeperartist('savedalbum',art,d,4)" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
@@ -1838,6 +1911,8 @@
                 </div>
                 <div style="margin-left: 4px; margin-right: 4px;">{{d.album.name}}
                   <div>{{d.album.release_date}}</div>
+                  Save<input type="checkbox" v-if="d.followed" @click.once="followAlbum(d,$event)"  checked v-model="d.followed">
+                  <input type="checkbox" v-else @click.once="followAlbum(d,$event)" v-model="d.followed">
                 </div>
                 <div style="display: block;" class="trackList">Tracks
                   <div v-for="(track,index) in d.album.tracks.items" v-bind:key="index">
@@ -1901,6 +1976,8 @@
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('savedtrack',d,5,'pl','d'+ d.id)">Recommended songs based on this</span>
                 <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                  Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                  <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                 </div>
               </div>
               <template v-for="(art,index) in d.artists">
@@ -1939,8 +2016,10 @@
                   <div >{{ta.name}}
                     <div>{{ta['followers']['total'] + ' followers'}}</div>
                     <div>{{ta['genres']}}</div>
-                    <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('savedtrack',ta,5,'trackartist')">Recomended artists songs based on this</div>
+                    <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('savedtrack',ta,5,'trackartist')">Recommended artists songs based on this</div>
                     <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                      Follow<input type="checkbox" v-if="ta.followed" @click.once="followArtist(ta,$event)"  checked v-model="ta.followed">
+                      <input type="checkbox" v-else @click.once="followArtist(ta,$event)" v-model="ta.followed">
                     </div>
                   </div>
                 </div>
@@ -2018,6 +2097,8 @@
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('savedtrack',d.track,5,'playlisttrack','d'+ d.id)">Recommended songs based on this</span>
                   <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                    <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                   </div>
                 </div>
                 <template v-for="(art,index) in d.artists">
@@ -2049,6 +2130,8 @@
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('savedtrack',d,5,'playlisttrack','d' + d.id)">Recommended songs based on this</span>
                   <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                    <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                   </div>
                 </div>
                 <template v-for="(art,index) in d.artists">
@@ -2073,6 +2156,8 @@
                 </div>
                 <div style="margin-left: 4px; margin-right: 4px;">{{d.name}}
                   <div>{{d.release_date}}</div>
+                  Save<input type="checkbox" v-if="d.followed" @click.once="followAlbum(d,$event)"  checked v-model="d.followed">
+                  <input type="checkbox" v-else @click.once="followAlbum(d,$event)" v-model="d.followed">
                 </div>
                 <div style="display: block;" class="trackList">Tracks
                   <div v-for="(track,index) in d.tracks" v-bind:key="index">
@@ -2134,6 +2219,8 @@
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('followedartist',d[index],6,'pl')">Recommended songs based on this</span>
                   <div><button class="button"><a class="linkresset" v-bind:href="d['track']['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                    <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                   </div>
                 </div>
                 <div class="artist-cirle con3" v-for="(art,index) in d.track.artists" v-bind:key="index" v-on:click="deeperartist('followedartist',art,d,6,false,'pl')" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">
@@ -2168,6 +2255,8 @@
                       <div>{{ta.genres}}</div>
                       <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('followedartist',ta,6,'trackartist','art' +d[index].id)">Recommended artists songs based on this</div>
                       <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                        Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                        <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                       </div>
                     </div>
                   </div>
@@ -2246,6 +2335,8 @@
                     </div>
                     <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('followedartist',d,6,'playlisttrack','d'+d.id)">Recommended songs based on this</span>
                     <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                      Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                      <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                     </div>
                   </div>
                   <template v-for="(art,index) in d.artists">
@@ -2274,6 +2365,8 @@
                     </div>
                     <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('followedartist',d,6,'playlisttrack','d'+d.id)">Recommended songs based on this</span>
                     <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                      Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                      <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                     </div>
                   </div>
                   <template v-for="(art,index) in d.artists">
@@ -2302,6 +2395,8 @@
                       <div v-bind:key="index" style="margin-left: 4px; margin-right: 4px; cursor: pointer;display: flex;align-items: center" v-on:click="deeperartist('followedartist',art,d,6,false,'deep_albums')">{{art.name}}</div>
                     </template>
                     <div>{{d.release_date}}</div>
+                    Save<input type="checkbox" v-if="d.followed" @click.once="followAlbum(d,$event)"  checked v-model="d.followed">
+                    <input type="checkbox" v-else @click.once="followAlbum(d,$event)" v-model="d.followed">
                   </div>
                   <div style="display: block;" class="trackList">Tracks
                     <div v-for="(track,index) in d.tracks" v-bind:key="index">
@@ -2365,6 +2460,8 @@
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('newrelease',d,7,'pl','d'+ d.id)">Recommended songs based on this</span>
                 <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                  Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                  <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                 </div>
               </div>
               <template v-for="(art,index) in d.artists">
@@ -2403,8 +2500,10 @@
                   <div >{{ta.name}}
                     <div>{{ta['followers']['total'] + ' followers'}}</div>
                     <div>{{ta['genres']}}</div>
-                    <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('newrelease',ta,7,'trackartist')">Recomended artists songs based on this</div>
+                    <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('newrelease',ta,7,'trackartist')">Recommended artists songs based on this</div>
                     <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                      Follow<input type="checkbox" v-if="ta.followed" @click.once="followArtist(ta,$event)"  checked v-model="ta.followed">
+                      <input type="checkbox" v-else @click.once="followArtist(ta,$event)" v-model="ta.followed">
                     </div>
                   </div>
                 </div>
@@ -2482,6 +2581,8 @@
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('newrelease',d.track,7,'playlisttrack','d'+ d.id)">Recommended songs based on this</span>
                   <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                    <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                   </div>
                 </div>
                 <template v-for="(art,index) in d.artists">
@@ -2513,6 +2614,8 @@
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('newrelease',d,7,'playlisttrack','d' + d.id)">Recommended songs based on this</span>
                   <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                    <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                   </div>
                 </div>
                 <template v-for="(art,index) in d.artists">
@@ -2537,6 +2640,8 @@
                 </div>
                 <div style="margin-left: 4px; margin-right: 4px;">{{d.name}}
                   <div>{{d.release_date}}</div>
+                  Save<input type="checkbox" v-if="d.followed" @click.once="followAlbum(d,$event)"  checked v-model="d.followed">
+                  <input type="checkbox" v-else @click.once="followAlbum(d,$event)" v-model="d.followed">
                 </div>
                 <div style="display: block;" class="trackList">Tracks
                   <div v-for="(track,index) in d.tracks" v-bind:key="index">
@@ -2624,6 +2729,8 @@
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('sptplaylists',d,9,'pl','d'+ d.id)">Recommended songs based on this</span>
                 <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                  Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                  <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                 </div>
               </div>
               <template v-for="(art,index) in d.artists">
@@ -2662,8 +2769,10 @@
                   <div >{{ta.name}}
                     <div>{{ta['followers']['total'] + ' followers'}}</div>
                     <div>{{ta['genres']}}</div>
-                    <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('sptplaylists',ta,9,'trackartist')">Recomended artists songs based on this</div>
+                    <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('sptplaylists',ta,9,'trackartist')">Recommended artists songs based on this</div>
                     <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                      Follow<input type="checkbox" v-if="ta.followed" @click.once="followArtist(ta,$event)"  checked v-model="ta.followed">
+                      <input type="checkbox" v-else @click.once="followArtist(ta,$event)" v-model="ta.followed">
                     </div>
                   </div>
                 </div>
@@ -2741,6 +2850,8 @@
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('sptplaylists',d.track,9,'playlisttrack','d'+ d.id)">Recommended songs based on this</span>
                   <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                    <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                   </div>
                 </div>
                 <template v-for="(art,index) in d.artists">
@@ -2772,6 +2883,8 @@
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('sptplaylists',d,9,'playlisttrack','d' + d.id)">Recommended songs based on this</span>
                   <div><button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                    Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                    <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                   </div>
                 </div>
                 <template v-for="(art,index) in d.artists">
@@ -2796,6 +2909,8 @@
                 </div>
                 <div style="margin-left: 4px; margin-right: 4px;">{{d.name}}
                   <div>{{d.release_date}}</div>
+                  Save<input type="checkbox" v-if="d.followed" @click.once="followAlbum(d,$event)"  checked v-model="d.followed">
+                  <input type="checkbox" v-else @click.once="followAlbum(d,$event)" v-model="d.followed">
                 </div>
                 <div style="display: block;" class="trackList">Tracks
                   <div v-for="(track,index) in d.tracks" v-bind:key="index">
@@ -2896,6 +3011,8 @@
                 </div>
                 <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('search',d.track,10,'playlisttrack')">Recommended songs based on this</span>
                 <div><button class="button"><a class="linkresset" v-bind:href="d['track']['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
+                  Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
+                  <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">
                 </div>
               </div>
               <div class="artist-cirle con3" v-for="(art,index) in d.track.artists" v-bind:key="index" v-on:click="deeperartist(art,d,10)" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">
@@ -3045,6 +3162,8 @@
                 </div>
                 <div style="margin-left: 4px; margin-right: 4px;">{{d.name}}
                   <div>{{d.release_date}}</div>
+                  Save<input type="checkbox" v-if="d.followed" @click.once="followAlbum(d,$event)"  checked v-model="d.followed">
+                  <input type="checkbox" v-else @click.once="followAlbum(d,$event)" v-model="d.followed">
                 </div>
                 <div style="display: block;" class="trackList">Tracks
                   <div v-for="(track,index) in d.tracks" v-bind:key="index">
@@ -3166,8 +3285,9 @@ export default {
       artists:[],
       albums:[],
       splaylists:[],
-      current:null,
-      searchtimer:null
+      currentpl:null,
+      currentspl:null,
+      searchtimer:null,
     }
   },
   methods: {
@@ -3267,6 +3387,10 @@ export default {
         })
             .then((response) =>{
               tt.followed = response.data[0]
+              let indexing = this.deeper1.indexOf(tt)
+              if (indexing === -1){
+                this.deeper1.push(tt)
+              }
             })
             .catch(error =>{
               if (error.response.status === 401){
@@ -3277,11 +3401,6 @@ export default {
                 })
               }
             })
-        console.log(item.track)
-        let indexing = this.deeper1.indexOf(tt)
-        if (indexing === -1){
-          this.deeper1.push(tt)
-        }
         setTimeout(() => {
           window.scrollTo({
             top:(document.getElementById('d'+ tt.id)).offsetTop,
@@ -3628,6 +3747,23 @@ export default {
             let newarr = []
             let arr = response.data['items']
             console.log(arr)
+            axios.request({
+              url:'https://api.spotify.com/v1/me/albums/contains?ids=' + item.id,
+              method: 'get',
+              headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+            })
+                .then((response) =>{
+                  arr.followed = response.data[0]
+                })
+                .catch(error =>{
+                  if (error.response.status === 401){
+                    axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
+                      console.log(response.data)
+                      let new_token = response.data['new_token']
+                      document.cookie ='access_token=' + new_token
+                    })
+                  }
+                })
             // this.deeper1.push(data)
             for (let i=0;i <  arr.length;i++){
               // console.log('237 ' + arr.items[i].id)
@@ -3674,7 +3810,23 @@ export default {
           .then((response) =>{
             let single = []
             let arr = response.data['items']
-            console.log(arr)
+            axios.request({
+              url:'https://api.spotify.com/v1/me/albums/contains?ids=' + item.id,
+              method: 'get',
+              headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+            })
+                .then((response) =>{
+                  arr.followed = response.data[0]
+                })
+                .catch(error =>{
+                  if (error.response.status === 401){
+                    axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
+                      console.log(response.data)
+                      let new_token = response.data['new_token']
+                      document.cookie ='access_token=' + new_token
+                    })
+                  }
+                })
             // this.deeper1.push(data)
             for (let i=0;i <  arr.length;i++){
               // console.log('237 ' + arr.items[i].id)
@@ -3718,6 +3870,23 @@ export default {
           .then((response) =>{
             let appears = []
             let arr = response.data['items']
+            axios.request({
+              url:'https://api.spotify.com/v1/me/albums/contains?ids=' + item.id,
+              method: 'get',
+              headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+            })
+                .then((response) =>{
+                  arr.followed = response.data[0]
+                })
+                .catch(error =>{
+                  if (error.response.status === 401){
+                    axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
+                      console.log(response.data)
+                      let new_token = response.data['new_token']
+                      document.cookie ='access_token=' + new_token
+                    })
+                  }
+                })
             console.log(arr)
             // this.deeper1.push(data)
             for (let i=0;i <  arr.length;i++){
@@ -3844,23 +4013,6 @@ export default {
         }, 10);
         return
       }
-      axios.request({
-        url:'https://api.spotify.com/v1/me/albums/contains?ids=' + item.id,
-        method: 'get',
-        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
-      })
-          .then((response) =>{
-            item.followed = response.data[0]
-          })
-          .catch(error =>{
-            if (error.response.status === 401){
-              axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                console.log(response.data)
-                let new_token = response.data['new_token']
-                document.cookie ='access_token=' + new_token
-              })
-            }
-          })
       if (num === 1){
         let indexing = this.deeper1.indexOf(item)
         if (indexing === -1){
@@ -3898,19 +4050,37 @@ export default {
         }
       } else if (num === 4){
         if (item.album){
-          item.id = item.album.id
-          let albs = document.querySelectorAll(".rectrack > div")
-          for (let i=0;i < albs.length; i++){
-            if (albs[i].id === 'alb' + item.album.id){
-              albs[i].style.display = 'flex'
-            } else{
-              albs[i].style.display = 'none'
-            }
-          }
-          let indexing = this.deeper4.indexOf(item)
-          if (indexing === -1){
-            this.deeper4.push(item)
-          }
+          axios.request({
+            url:'https://api.spotify.com/v1/me/albums/contains?ids=' + item.album.id,
+            method: 'get',
+            headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+          })
+              .then((response) =>{
+                item.followed = response.data[0]
+                item.id = item.album.id
+                let albs = document.querySelectorAll(".rectrack > div")
+                for (let i=0;i < albs.length; i++){
+                  if (albs[i].id === 'alb' + item.album.id){
+                    albs[i].style.display = 'flex'
+                  } else{
+                    albs[i].style.display = 'none'
+                  }
+                }
+                let indexing = this.deeper4.indexOf(item)
+                if (indexing === -1){
+                  this.deeper4.push(item)
+                }
+              })
+              .catch(error =>{
+                if (error.response.status === 401){
+                  axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
+                    console.log(response.data)
+                    let new_token = response.data['new_token']
+                    document.cookie ='access_token=' + new_token
+                  })
+                }
+              })
+
         } else{
           if (document.getElementById('alb' + item.id)){
             document.getElementById('alb' + item.id).style.display = 'flex'
@@ -4844,11 +5014,20 @@ export default {
       if (document.getElementById('p'+ id)){
         console.log(document.getElementById('p'+ id))
         document.getElementById('p'+ id).style.display = 'block'
-        setTimeout(() => {
-          window.scrollTo({
-            top:(document.getElementById('p'+ id)).offsetTop,
-            behavior:'smooth'});
-        },1000)
+        console.log(this.currentpl)
+        if (this.currentpl){
+          this.currentpl.className = 'hr-line-dashed'
+          this.currentpl = document.getElementById(id)
+          this.currentpl.className = 'hr-line-dashed activetab'
+        } else {
+          this.currentpl = document.getElementById(id)
+          this.currentpl.className = 'hr-line-dashed activetab'
+        }
+        // setTimeout(() => {
+        //   window.scrollTo({
+        //     top:(document.getElementById('p'+ id)).offsetTop,
+        //     behavior:'smooth'});
+        // },10)
         return
       }
       axios.request({
@@ -4859,11 +5038,19 @@ export default {
           .then((response) =>{
             console.log(response.data)
             this.playlists.push(response.data)
-            setTimeout(() => {
-              window.scrollTo({
-                top:(document.getElementById('p'+ id)).offsetTop,
-                behavior:'smooth'});
-            },1000)
+            if (this.currentpl){
+              this.currentpl.className = 'hr-line-dashed'
+              this.currentpl = document.getElementById(id)
+              this.currentpl.className = 'hr-line-dashed activetab'
+            } else {
+              this.currentpl = document.getElementById(id)
+              this.currentpl.className = 'hr-line-dashed activetab'
+            }
+            // setTimeout(() => {
+            //   window.scrollTo({
+            //     top:(document.getElementById('p'+ id)).offsetTop,
+            //     behavior:'smooth'});
+            // },1000)
           })
           .catch(error =>{
             if (error.response.status){
@@ -5318,11 +5505,19 @@ export default {
       }
       if (document.getElementById('s'+ id)){
         document.getElementById('s'+ id).style.display = 'block'
-        setTimeout(() => {
-          window.scrollTo({
-            top:(document.getElementById('s'+ id)).offsetTop,
-            behavior:'smooth'});
-        },10)
+        if (this.currentspl){
+          this.currentspl.className = 'hr-line-dashed'
+          this.currentspl = document.getElementById(id)
+          this.currentspl.className = 'hr-line-dashed activetab'
+        } else {
+          this.currentspl = document.getElementById(id)
+          this.currentspl.className = 'hr-line-dashed activetab'
+        }
+        // setTimeout(() => {
+        //   window.scrollTo({
+        //     top:(document.getElementById('s'+ id)).offsetTop,
+        //     behavior:'smooth'});
+        // },10)
         return
       }
       axios.request({
@@ -5333,11 +5528,19 @@ export default {
           .then((response) =>{
             console.log(response.data)
             this.sptplaylists.push(response.data)
-            setTimeout(() => {
-              window.scrollTo({
-                top:(document.getElementById('s'+ id)).offsetTop,
-                behavior:'smooth'});
-            },1000)
+            if (this.currentspl){
+              this.currentspl.className = 'hr-line-dashed'
+              this.currentspl = document.getElementById(id)
+              this.currentspl.className = 'hr-line-dashed activetab'
+            } else {
+              this.currentspl = document.getElementById(id)
+              this.currentspl.className = 'hr-line-dashed activetab'
+            }
+            // setTimeout(() => {
+            //   window.scrollTo({
+            //     top:(document.getElementById('s'+ id)).offsetTop,
+            //     behavior:'smooth'});
+            // },1000)
           })
           .catch(error =>{
             if (error.response.status){
@@ -5823,7 +6026,8 @@ export default {
           names.join(', ') + ' & ' + finalName :
           finalName;
     },
-    followPlaylist(playlist){
+    followPlaylist(playlist,event){
+      event.target.disabled = true
       if (playlist.followed === false) {
         axios.request({
           url:'https://api.spotify.com/v1/playlists/' + playlist.id + '/followers',
@@ -5862,15 +6066,18 @@ export default {
             })
       }
     },
-    followArtist(artist){
+    followArtist(artist,event){
+      event.target.disabled = true
       if (artist.followed === false) {
         axios.request({
-          url:'https://api.spotify.com/v1/me/following?type=artists&ids=' + artist.id.replace('art',''),
+          url:'https://api.spotify.com/v1/me/following?type=artist&ids=' + artist.id,
           method: 'put',
           headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
         })
-            .then(() =>{
-              artist.followed = true
+            .then((response) =>{
+              if (response.status === 204){
+                artist.followed = true
+              }
             })
             .catch(error =>{
               if (error.response.status === 401){
@@ -5883,12 +6090,14 @@ export default {
             })
       } else {
         axios.request({
-          url:'https://api.spotify.com/v1/me/following?type=artists&ids=' + artist.id.replace('art',''),
+          url:'https://api.spotify.com/v1/me/following?type=artist&ids=' + artist.id,
           method: 'delete',
           headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
         })
-            .then(() =>{
-              artist.followed = false
+            .then((response) =>{
+              if (response.status === 204){
+                artist.followed = false
+              }
             })
             .catch(error =>{
               if (error.response.status === 401){
@@ -5901,15 +6110,19 @@ export default {
             })
       }
     },
-    followAlbum(album){
+    followAlbum(album,event){
+      console.log(album.followed)
+      event.target.disabled = true
       if (album.followed === false) {
         axios.request({
-          url:'https://api.spotify.com/v1/me/albums?ids=' + album.id.replace('alb',''),
+          url:'https://api.spotify.com/v1/me/albums?ids=' + album.id,
           method: 'put',
           headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
         })
-            .then(() =>{
-              album.followed = true
+            .then((response) =>{
+              if (response.status ===200){
+                album.followed = true
+              }
             })
             .catch(error =>{
               if (error.response.status === 401){
@@ -5922,12 +6135,14 @@ export default {
             })
       } else {
         axios.request({
-          url:'https://api.spotify.com/v1/me/albums?ids=' + album.id.replace('alb',''),
+          url:'https://api.spotify.com/v1/me/albums?ids=' + album.id,
           method: 'delete',
           headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
         })
-            .then(() =>{
-              album.followed = false
+            .then((response) =>{
+              if (response.status ===200) {
+                album.followed = false
+              }
             })
             .catch(error =>{
               if (error.response.status === 401){
@@ -5940,15 +6155,18 @@ export default {
             })
       }
     },
-    followTrack(track){
+    followTrack(track,event){
+      event.target.disabled = true
       if (track.followed === false) {
         axios.request({
-          url:'https://api.spotify.com/v1/me/tracks?ids=' + track.id.replace('d',''),
+          url:'https://api.spotify.com/v1/me/tracks?ids=' + track.id,
           method: 'put',
           headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
         })
-            .then(() =>{
-              track.followed = true
+            .then((response) =>{
+              if (response.status ===200){
+                track.followed = true
+              }
             })
             .catch(error =>{
               if (error.response.status === 401){
@@ -5961,12 +6179,14 @@ export default {
             })
       } else {
         axios.request({
-          url:'https://api.spotify.com/v1/me/tracks?ids=' + track.id.replace('d',''),
+          url:'https://api.spotify.com/v1/me/tracks?ids=' + track.id,
           method: 'delete',
           headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
         })
-            .then(() =>{
-              track.followed = false
+            .then((response) =>{
+              if (response.status ===200){
+                track.followed = false
+              }
             })
             .catch(error =>{
               if (error.response.status === 401){
@@ -5980,10 +6200,6 @@ export default {
       }
     },
   },
-  mounted() {
-    // localStorage.setItem('access_token')
-  }
-
 }
 
 
