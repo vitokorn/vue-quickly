@@ -18,6 +18,7 @@
     --input-color:white;
     --border-top:#e7eaec;
     --box-shadow:0 2px 4px 1px rgba(0,0,0,.18);
+    --search-color:black
 
 }
 :root.dark{
@@ -40,6 +41,7 @@
     --input-color:grey;
     --border-top:rgb(54, 59, 61);
     --box-shadow:0 2px 4px 1px #35393b;
+    --search-color:grey;
 
 }
 :root.dark-blue{
@@ -62,6 +64,7 @@
     --input-color:grey;
     --border-top:rgb(54, 59, 61);
     --box-shadow:0 2px 4px 1px #05AFF2;
+    --search-color:#05AFF2
     /*--con2-color:#42566D;*/
     /*#1F2D40*/
 }
@@ -85,6 +88,7 @@
     --input-color:#333;
     --border-top:#e7eaec;
     --box-shadow:0 2px 4px 1px rgba(0,0,0,.18);
+    --search-color:white
     /*--con2-color:#42566D;*/
 }
 body{
@@ -678,6 +682,7 @@ footer{
     align-content: center;
     margin-bottom: 5px;
     flex-basis: 100%;
+    color: var(--search-color)
     /*flex-direction: column;*/
     /*width: 250px;*/
     /*flex-basis: 0;*/
@@ -842,8 +847,12 @@ footer{
 .stitle{
     display: flex;
     margin: 16px 0 6px;
-    color:var(--pl-color)
+    color:var(--search-color)
 }
 .play{
     background-color: var(--pl-background-color);
+}
+.sp{
+    color: var(--pl-color);
+    background-color: var(--pl-background-color)
 }

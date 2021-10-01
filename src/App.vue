@@ -58,7 +58,11 @@ const pref = {
         console.log('54 prefered dark')
         return "dark"
       } else {
-        return "dq"
+        if (localStorage.getItem('user-theme')){
+          return localStorage.getItem('user-theme')
+        } else {
+          return "dq"
+        }
       }
     }
   }
@@ -77,7 +81,7 @@ export default {
   data(){
     return{
       username: document.cookie.replace(/(?:(?:^|.*;\s*)nickname\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
-      userTheme:"light"
+      userTheme:localStorage.getItem('user-theme')
     }
   },
   name: 'App',

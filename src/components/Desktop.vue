@@ -2,7 +2,8 @@
   <ul class="tabs">
     <li id="option1">
       <a id="playlistlist" href="#option1" v-on:click.self.once="fetchPlaylists">Playlists Pc</a>
-      <div id="yourplaylists" class="con2" style="display: block;width: 95%;">
+      <div style="display: block;width: 95%">
+      <div id="yourplaylists" class="con2" style="display: block;">
         <div class="rel"><button class="btn" v-on:click="reloadpl"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button>
         </div>
         <div class="pl">
@@ -251,6 +252,7 @@
             </div>
           </template>
         </div>
+      </div>
       </div>
     </li>
     <li id="option2">
@@ -1662,6 +1664,7 @@
     <!--        </li>-->
     <li id="option4">
       <a href="#option4" v-on:click.self.once="fetchAlbums">Saved albums</a>
+      <div>
       <div id="savedalbum" class="con2" >
         <div class="albumbody" v-for="(item,index) of savedalbums" v-bind:key="index">
           <div v-if="item.preview_url" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperAlbum(item,4)" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" >{{lists(item.album.artists)}}
@@ -1866,9 +1869,11 @@
           </template>
         </div>
       </div>
+      </div>
     </li>
     <li id="option5">
       <a href="#option5" v-on:click.self.once="fetchTracks(0)">Saved tracks</a>
+      <div>
       <div id="savedtrack" class="con2">
         <div class="albumbody" v-for="(item,index) of savedtracks" v-bind:key="index">
           <div v-if="item.track.preview_url" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeper(item,5)" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" >{{lists(item.track.artists)}} - {{item.track.name}}
@@ -2098,6 +2103,7 @@
             </div>
           </template>
         </div>
+      </div>
       </div>
     </li>
     <li id="option6">
@@ -2331,6 +2337,7 @@
     </li>
     <li id="option7">
       <a href="#option7" v-on:click.self.once="fetchNR(0)">New releases</a>
+      <div style="display: block;width: 95%">
       <div id="newrelease" class="con2">
         <div class="newbody" v-for="(item,index) of newreleases" v-bind:key="index">
           <div v-if="item.tracks.items[0].preview_url" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeper(item,7)" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }" >{{lists(item.artists)}} - {{item.name}}
@@ -2343,10 +2350,10 @@
         <div class="rectrack">
           <template v-for="(d,index) in deeper7">
             <div v-if="d.type==='pl'" v-bind:key="index" v-bind:id="'d'+d.id" class="pl card2" style="display: flex; margin-top: 12px; margin-bottom: 6px;">
-              <div class="con3" v-if="d.preview_url" v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
+              <div class="con3" v-if="d.preview_url" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
                 <audio preload="none" v-bind:src="d.preview_url"></audio>
               </div>
-              <div class="con3" v-else v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }" style="opacity: .5">{{d.name}}
+              <div class="con3" v-else v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" style="opacity: .5">{{d.name}}
                 <audio preload="none"></audio>
               </div>
               <div style="width: 50%;text-align: left;margin-left: 10px;">
@@ -2561,19 +2568,23 @@
           </template>
         </div>
       </div>
+      </div>
     </li>
     <li id="option8">
       <a href="#option8" id="spt" v-on:click.self.once="fetchSpotPlaylists(0)" >Spotify playlists</a>
+      <div style="display: block;width: 95%">
       <div id="sptplaylists" class="con2" style="display: block;width: 95%;">
         <div class="head">
           <input class="inp" type="text" v-on:keyup="filterres"
                  placeholder="Please enter a search term.." title="Type in a name">
 
         </div >
-        <div class="pl">
+        <div class="sp" style="display: block">
+        <div style="height: 300px;overflow-y: scroll">
           <template v-for="item of spotplaylists" >
             <div v-bind:id="item.id" v-on:click="SpotInit" v-bind:key="item.id" class="hr-line-dashed">{{ item.name }}</div>
           </template>
+        </div>
         </div>
         <div class="play" v-for="(item,index) of sptplaylists" v-bind:id="'s' + item.id" v-bind:key="index">
           <div class="con2" >
@@ -2588,7 +2599,7 @@
                 <div v-bind:id="spl.id" v-bind:key="index" v-if="spl.track.preview_url" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeper(spl,9)" v-bind:style="{ 'background-image': 'url(' + spl.track.album.images[0].url + ')' }" >{{lists(spl['track']['artists'])}} - {{spl.track.name}}
                   <audio preload="none" v-bind:src="spl.track.preview_url"></audio>
                 </div>
-                <div v-else tabindex="0" v-bind:key="index" class="con3" v-bind:style="{ 'background-image': 'url(' + spl.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(spl['track']['artists'])}} - {{spl.track.name}}
+                <div v-bind:id="spl.id" v-else tabindex="0" v-bind:key="index" class="con3" v-on:click="deeper(spl,9)" v-bind:style="{ 'background-image': 'url(' + spl.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(spl['track']['artists'])}} - {{spl.track.name}}
                   <audio preload="none"></audio>
                 </div>
               </template>
@@ -2815,6 +2826,7 @@
             </div>
           </template>
         </div>
+      </div>
       </div>
     </li>
     <li id="srch" class="srch"><a style="padding: 15px;"><input class="inp" v-on:keyup="search"></a>
@@ -3220,6 +3232,24 @@ export default {
       let tracktrack = []
       tracktrack = item
       tracktrack.type = 'pl'
+      if(num !== 1 && num !==5)
+      axios.request({
+        url:'https://api.spotify.com/v1/me/tracks/contains?ids=' + item.id,
+        method: 'get',
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+      })
+          .then((response) =>{
+            tracktrack.followed = response.data[0]
+          })
+          .catch(error =>{
+            if (error.response.status === 401){
+              axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
+                console.log(response.data)
+                let new_token = response.data['new_token']
+                document.cookie ='access_token=' + new_token
+              })
+            }
+          })
       if (num === 1){
         if (document.getElementById('d'+ item.track.id) !==null){
           document.getElementById('d'+ item.track.id).style.display = 'flex'
@@ -3228,6 +3258,25 @@ export default {
         let tt = []
         tt = item.track
         tt.type = 'pl'
+        console.log(tt)
+        console.log(item.track.id)
+        axios.request({
+          url:'https://api.spotify.com/v1/me/tracks/contains?ids=' + item.track.id,
+          method: 'get',
+          headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+        })
+            .then((response) =>{
+              tt.followed = response.data[0]
+            })
+            .catch(error =>{
+              if (error.response.status === 401){
+                axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
+                  console.log(response.data)
+                  let new_token = response.data['new_token']
+                  document.cookie ='access_token=' + new_token
+                })
+              }
+            })
         console.log(item.track)
         let indexing = this.deeper1.indexOf(tt)
         if (indexing === -1){
@@ -3297,6 +3346,23 @@ export default {
         let tt = []
         tt = item.track
         tt.type = 'pl'
+        axios.request({
+          url:'https://api.spotify.com/v1/me/tracks/contains?ids=' + tt.id,
+          method: 'get',
+          headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+        })
+            .then((response) =>{
+              tt.followed =  response.data[0]
+            })
+            .catch(error =>{
+              if (error.response.status === 401){
+                axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
+                  console.log(response.data)
+                  let new_token = response.data['new_token']
+                  document.cookie ='access_token=' + new_token
+                })
+              }
+            })
         console.log(item.track)
         let indexing = this.deeper5.indexOf(tt)
         if (indexing === -1){
@@ -3491,6 +3557,23 @@ export default {
             let trackartist = []
             trackartist = response.data
             trackartist.type = 'artist'
+            axios.request({
+              url:'https://api.spotify.com/v1/me/following/contains?type=artist&ids=' + item.id,
+              method: 'get',
+              headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+            })
+                .then((response) =>{
+                  trackartist.followed = response.data[0]
+                })
+                .catch(error =>{
+                  if (error.response.status === 401){
+                    axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
+                      console.log(response.data)
+                      let new_token = response.data['new_token']
+                      document.cookie ='access_token=' + new_token
+                    })
+                  }
+                })
             if (track[0] != null && track[0].preview_url){
               trackartist.preview_url = track[0].preview_url
             } else if (track.preview_url){
@@ -3729,7 +3812,7 @@ export default {
     },
     deeperAlbum(item,num,child,search){
       item.type ='deeperalbum'
-      console.log(item)
+      console.log(item.id)
       if (child){
         let par = document.getElementById(child).parentElement.nextElementSibling
         while (par != null) {
@@ -3761,6 +3844,23 @@ export default {
         }, 10);
         return
       }
+      axios.request({
+        url:'https://api.spotify.com/v1/me/albums/contains?ids=' + item.id,
+        method: 'get',
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+      })
+          .then((response) =>{
+            item.followed = response.data[0]
+          })
+          .catch(error =>{
+            if (error.response.status === 401){
+              axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
+                console.log(response.data)
+                let new_token = response.data['new_token']
+                document.cookie ='access_token=' + new_token
+              })
+            }
+          })
       if (num === 1){
         let indexing = this.deeper1.indexOf(item)
         if (indexing === -1){
@@ -3860,6 +3960,23 @@ export default {
     },
     deeperAlbum2(item){
       item.type ='deeperalbum2'
+      axios.request({
+        url:'https://api.spotify.com/v1/me/albums/contains?ids=' + item.id,
+        method: 'get',
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+      })
+          .then((response) =>{
+            item.followed = response.data[0]
+          })
+          .catch(error =>{
+            if (error.response.status === 401){
+              axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
+                console.log(response.data)
+                let new_token = response.data['new_token']
+                document.cookie ='access_token=' + new_token
+              })
+            }
+          })
       setTimeout(() => {
         window.scrollTo({
           top:(document.getElementById('alb'+ item.id)).offsetTop,
@@ -3921,6 +4038,23 @@ export default {
         }, 10);
         return
       }
+      axios.request({
+        url:'https://api.spotify.com/v1/me/tracks/contains?ids=' + item.id,
+        method: 'get',
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+      })
+          .then((response) =>{
+            item.followed = response.data[0]
+          })
+          .catch(error =>{
+            if (error.response.status === 401){
+              axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
+                console.log(response.data)
+                let new_token = response.data['new_token']
+                document.cookie ='access_token=' + new_token
+              })
+            }
+          })
       if (num === 1){
         let indexing = this.deeper1.indexOf(item)
         if (indexing === -1){
@@ -5177,13 +5311,18 @@ export default {
           allTracks[i].style.display = 'none'
         }
       }
-      let pl = document.querySelectorAll('#sptplaylists > div:not(.rectrack,.pl,.head)')
+      let pl = document.querySelectorAll('#sptplaylists > div:not(.rectrack,.pl,.head,.sp)')
       for (let i=0;i <  pl.length;i++){
         pl[i].style.display = 'none'
 
       }
       if (document.getElementById('s'+ id)){
         document.getElementById('s'+ id).style.display = 'block'
+        setTimeout(() => {
+          window.scrollTo({
+            top:(document.getElementById('s'+ id)).offsetTop,
+            behavior:'smooth'});
+        },10)
         return
       }
       axios.request({
@@ -5194,6 +5333,11 @@ export default {
           .then((response) =>{
             console.log(response.data)
             this.sptplaylists.push(response.data)
+            setTimeout(() => {
+              window.scrollTo({
+                top:(document.getElementById('s'+ id)).offsetTop,
+                behavior:'smooth'});
+            },1000)
           })
           .catch(error =>{
             if (error.response.status){
@@ -5679,15 +5823,162 @@ export default {
           names.join(', ') + ' & ' + finalName :
           finalName;
     },
-    findPos(obj) {
-      let curtop = 0;
-      if (obj.offsetParent) {
-        do {
-        curtop += obj.offsetTop;
-        } while (obj == obj.offsetParent);
-    return [curtop];
+    followPlaylist(playlist){
+      if (playlist.followed === false) {
+        axios.request({
+          url:'https://api.spotify.com/v1/playlists/' + playlist.id + '/followers',
+          method: 'put',
+          headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+        })
+            .then(() =>{
+              playlist.followed = true
+            })
+            .catch(error =>{
+              if (error.response.status === 401){
+                axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
+                  console.log(response.data)
+                  let new_token = response.data['new_token']
+                  document.cookie ='access_token=' + new_token
+                })
+              }
+            })
+      } else {
+        axios.request({
+          url:'https://api.spotify.com/v1/playlists/' + playlist.id + '/followers',
+          method: 'delete',
+          headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+        })
+            .then(() =>{
+              playlist.followed = false
+            })
+            .catch(error =>{
+              if (error.response.status === 401){
+                axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
+                  console.log(response.data)
+                  let new_token = response.data['new_token']
+                  document.cookie ='access_token=' + new_token
+                })
+              }
+            })
       }
-},
+    },
+    followArtist(artist){
+      if (artist.followed === false) {
+        axios.request({
+          url:'https://api.spotify.com/v1/me/following?type=artists&ids=' + artist.id.replace('art',''),
+          method: 'put',
+          headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+        })
+            .then(() =>{
+              artist.followed = true
+            })
+            .catch(error =>{
+              if (error.response.status === 401){
+                axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
+                  console.log(response.data)
+                  let new_token = response.data['new_token']
+                  document.cookie ='access_token=' + new_token
+                })
+              }
+            })
+      } else {
+        axios.request({
+          url:'https://api.spotify.com/v1/me/following?type=artists&ids=' + artist.id.replace('art',''),
+          method: 'delete',
+          headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+        })
+            .then(() =>{
+              artist.followed = false
+            })
+            .catch(error =>{
+              if (error.response.status === 401){
+                axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
+                  console.log(response.data)
+                  let new_token = response.data['new_token']
+                  document.cookie ='access_token=' + new_token
+                })
+              }
+            })
+      }
+    },
+    followAlbum(album){
+      if (album.followed === false) {
+        axios.request({
+          url:'https://api.spotify.com/v1/me/albums?ids=' + album.id.replace('alb',''),
+          method: 'put',
+          headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+        })
+            .then(() =>{
+              album.followed = true
+            })
+            .catch(error =>{
+              if (error.response.status === 401){
+                axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
+                  console.log(response.data)
+                  let new_token = response.data['new_token']
+                  document.cookie ='access_token=' + new_token
+                })
+              }
+            })
+      } else {
+        axios.request({
+          url:'https://api.spotify.com/v1/me/albums?ids=' + album.id.replace('alb',''),
+          method: 'delete',
+          headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+        })
+            .then(() =>{
+              album.followed = false
+            })
+            .catch(error =>{
+              if (error.response.status === 401){
+                axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
+                  console.log(response.data)
+                  let new_token = response.data['new_token']
+                  document.cookie ='access_token=' + new_token
+                })
+              }
+            })
+      }
+    },
+    followTrack(track){
+      if (track.followed === false) {
+        axios.request({
+          url:'https://api.spotify.com/v1/me/tracks?ids=' + track.id.replace('d',''),
+          method: 'put',
+          headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+        })
+            .then(() =>{
+              track.followed = true
+            })
+            .catch(error =>{
+              if (error.response.status === 401){
+                axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
+                  console.log(response.data)
+                  let new_token = response.data['new_token']
+                  document.cookie ='access_token=' + new_token
+                })
+              }
+            })
+      } else {
+        axios.request({
+          url:'https://api.spotify.com/v1/me/tracks?ids=' + track.id.replace('d',''),
+          method: 'delete',
+          headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+        })
+            .then(() =>{
+              track.followed = false
+            })
+            .catch(error =>{
+              if (error.response.status === 401){
+                axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
+                  console.log(response.data)
+                  let new_token = response.data['new_token']
+                  document.cookie ='access_token=' + new_token
+                })
+              }
+            })
+      }
+    },
   },
   mounted() {
     // localStorage.setItem('access_token')
