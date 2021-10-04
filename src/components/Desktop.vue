@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <div>{{queue}}</div>
   <ul class="tabs">
     <li id="option1">
       <a id="playlistlist" href="#option1" v-on:click.self.once="fetchPlaylists($event,0)">Playlists Pc</a>
@@ -23,13 +25,13 @@
           <div class="con2" style="display: flex;color: black" v-bind:key="index">
             <template v-if="item.tracks">
               <template v-for="(pl,ind) of item['tracks']['items']" >
-                <div v-bind:id="pl.id" v-bind:key="ind" v-if="pl.track.preview_url && pl.track.album.images[0]" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeper(pl,1,$event); queue(pl['track'])" v-bind:style="{ 'background-image': 'url(' + pl.track.album.images[0].url + ')' }" >{{lists(pl['track']['artists'])}} - {{pl.track.name}}
+                <div v-bind:id="pl.id" v-bind:key="ind" v-if="pl.track.preview_url && pl.track.album.images[0]" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeper(pl,1,$event); queuein(pl['track'])" v-bind:style="{ 'background-image': 'url(' + pl.track.album.images[0].url + ')' }" >{{lists(pl['track']['artists'])}} - {{pl.track.name}}
                   <audio preload="none" v-bind:src="pl.track.preview_url"></audio>
                 </div>
-                <div v-else-if="pl.track.album.images[0]" tabindex="0" v-bind:key="ind" class="con3" v-bind:style="{ 'background-image': 'url(' + pl.track.album.images[0].url + ')' }" v-on:click="deeper(pl,1,$event); queue(pl['track'])" style="opacity: .5">{{lists(pl['track']['artists'])}} - {{pl.track.name}}
+                <div v-else-if="pl.track.album.images[0]" tabindex="0" v-bind:key="ind" class="con3" v-bind:style="{ 'background-image': 'url(' + pl.track.album.images[0].url + ')' }" v-on:click="deeper(pl,1,$event); queuein(pl['track'])" style="opacity: .5">{{lists(pl['track']['artists'])}} - {{pl.track.name}}
                   <audio preload="none"></audio>
                 </div>
-                <div v-else v-bind:key="ind" class="con3" v-on:click="deeper(pl,1,$event); queue(pl['track'])" style="opacity: .5">{{lists(pl['track']['artists'])}} - {{pl.track.name}}></div>
+                <div v-else v-bind:key="ind" class="con3" v-on:click="deeper(pl,1,$event); queuein(pl['track'])" style="opacity: .5">{{lists(pl['track']['artists'])}} - {{pl.track.name}}></div>
               </template>
             </template>
           </div>
@@ -2721,7 +2723,7 @@
                 <div v-bind:id="spl.id" v-else-if="spl.track.album.images[0]" tabindex="0" v-bind:key="index" class="con3" v-on:click="deeper(spl,9,$event)" v-bind:style="{ 'background-image': 'url(' + spl.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(spl['track']['artists'])}} - {{spl.track.name}}
                   <audio preload="none"></audio>
                 </div>
-                <div v-else v-bind:key="index" class="con3" v-on:click="deeper(spl,9,$event); queue(pl['track'])" style="opacity: .5">{{lists(pl['track']['artists'])}} - {{pl.track.name}}></div>
+                <div v-else v-bind:key="index" class="con3" v-on:click="deeper(spl,9,$event); queuein(pl['track'])" style="opacity: .5">{{lists(pl['track']['artists'])}} - {{pl.track.name}}></div>
               </template>
             </template>
           </div>
@@ -3258,7 +3260,7 @@
       </div>
     </li>
   </ul>
-
+  </div>
 </template>
 
 <script>
@@ -3266,6 +3268,7 @@ import axios from 'axios'
 export default {
   data(){
     return{
+      queue: localStorage.getItem('queue') && JSON.parse(localStorage.getItem('queue')).length || null,
       listplaylists:[],
       playinfo:[],
       playlists:[],
@@ -6306,12 +6309,13 @@ export default {
     paginate(array,page_size,page_number){
       return array.slice((page_number -1) * page_size,page_number * page_size)
     },
-    queue(track){
+    queuein(track){
       let current = localStorage.getItem('queue')
       let newque = {}
       newque.id = track.id
       newque.name = track.name
       newque.artists = this.lists(track.artists)
+      newque.image = track.album.images[0]
       let arr = JSON.parse(current)
       if (arr !== null){
         let indexing = arr.findIndex((arr) => arr.id === track.id)
@@ -6319,12 +6323,14 @@ export default {
         if (indexing === -1){
           arr.push(newque)
           localStorage.setItem('queue',JSON.stringify(arr))
+          this.queue = arr.length
           console.log(JSON.stringify(arr))
         }
       } else {
         let newarr = []
         newarr.push(newque)
         localStorage.setItem('queue',JSON.stringify(newarr))
+        this.queue = newarr.length
         console.log(JSON.stringify(newarr))
       }
     }
