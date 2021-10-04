@@ -9,10 +9,10 @@
         <div class="dropdown-content">
           <Auth v-if="!isAuth()"/>
           <Logout v-else-if="isAuth()"/>
-          <div v-on:click="setTheme('light')">White</div>
-          <div v-on:click="setTheme('dark')">Dark</div>
-          <div v-on:click="setTheme('dark-blue')">Dark blue</div>
-          <div v-on:click="setTheme('dq')">DQ</div>
+          <div class="form_radio_btn"><input id="light" type="radio" name="theme" v-on:click="setTheme('light')"><label for="light">White</label></div>
+          <div class="form_radio_btn"><input id="dark" type="radio" name="theme" v-on:click="setTheme('dark')"><label for="dark">Dark</label></div>
+          <div class="form_radio_btn"><input id="dark-blue" type="radio" name="theme" v-on:click="setTheme('dark-blue')"><label for="dark-blue">Dark blue</label></div>
+          <div class="form_radio_btn"><input id="dq" type="radio" name="theme" v-on:click="setTheme('dq')"><label for="dq">DQ</label></div>
         </div>
 <!--        <div>-->
 <!--          <a href="/lang/en/">En</a>-->

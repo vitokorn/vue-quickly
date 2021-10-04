@@ -2962,7 +2962,7 @@
       </div>
       </div>
     </li>
-    <li id="srch" class="srch"><a style="padding: 15px;"><input class="inp" v-on:keyup="search"></a>
+    <li id="srch" class="srch"><a style="padding: 15px;"><input type="search" class="inp" v-on:keyup="search"></a>
       <div id="search" style="width: 100%">
         <div style="display: flex;height: auto; flex-flow: row wrap;">
           <div style="width: 50%">
