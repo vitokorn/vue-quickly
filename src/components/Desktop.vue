@@ -23,12 +23,13 @@
           <div class="con2" style="display: flex;color: black" v-bind:key="index">
             <template v-if="item.tracks">
               <template v-for="(pl,ind) of item['tracks']['items']" >
-                <div v-bind:id="pl.id" v-bind:key="ind" v-if="pl.track.preview_url" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeper(pl,1,$event)" v-bind:style="{ 'background-image': 'url(' + pl.track.album.images[0].url + ')' }" >{{lists(pl['track']['artists'])}} - {{pl.track.name}}
+                <div v-bind:id="pl.id" v-bind:key="ind" v-if="pl.track.preview_url && pl.track.album.images[0]" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeper(pl,1,$event); queue(pl['track'])" v-bind:style="{ 'background-image': 'url(' + pl.track.album.images[0].url + ')' }" >{{lists(pl['track']['artists'])}} - {{pl.track.name}}
                   <audio preload="none" v-bind:src="pl.track.preview_url"></audio>
                 </div>
-                <div v-else tabindex="0" v-bind:key="ind" class="con3" v-bind:style="{ 'background-image': 'url(' + pl.track.album.images[0].url + ')' }" v-on:click="deeper(pl,1,$event)" style="opacity: .5">{{lists(pl['track']['artists'])}} - {{pl.track.name}}
+                <div v-else-if="pl.track.album.images[0]" tabindex="0" v-bind:key="ind" class="con3" v-bind:style="{ 'background-image': 'url(' + pl.track.album.images[0].url + ')' }" v-on:click="deeper(pl,1,$event); queue(pl['track'])" style="opacity: .5">{{lists(pl['track']['artists'])}} - {{pl.track.name}}
                   <audio preload="none"></audio>
                 </div>
+                <div v-else v-bind:key="ind" class="con3" v-on:click="deeper(pl,1,$event); queue(pl['track'])" style="opacity: .5">{{lists(pl['track']['artists'])}} - {{pl.track.name}}></div>
               </template>
             </template>
           </div>
@@ -2714,12 +2715,13 @@
           <div class="con2" style="display: flex;color: black">
             <template v-if="item.tracks">
               <template v-for="(spl,index) of item['tracks']['items']" >
-                <div v-bind:id="spl.id" v-bind:key="index" v-if="spl.track.preview_url" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeper(spl,9,$event)" v-bind:style="{ 'background-image': 'url(' + spl.track.album.images[0].url + ')' }" >{{lists(spl['track']['artists'])}} - {{spl.track.name}}
+                <div v-bind:id="spl.id" v-bind:key="index" v-if="spl.track.preview_url && spl.track.album.images[0]" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeper(spl,9,$event)" v-bind:style="{ 'background-image': 'url(' + spl.track.album.images[0].url + ')' }" >{{lists(spl['track']['artists'])}} - {{spl.track.name}}
                   <audio preload="none" v-bind:src="spl.track.preview_url"></audio>
                 </div>
-                <div v-bind:id="spl.id" v-else tabindex="0" v-bind:key="index" class="con3" v-on:click="deeper(spl,9,$event)" v-bind:style="{ 'background-image': 'url(' + spl.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(spl['track']['artists'])}} - {{spl.track.name}}
+                <div v-bind:id="spl.id" v-else-if="spl.track.album.images[0]" tabindex="0" v-bind:key="index" class="con3" v-on:click="deeper(spl,9,$event)" v-bind:style="{ 'background-image': 'url(' + spl.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(spl['track']['artists'])}} - {{spl.track.name}}
                   <audio preload="none"></audio>
                 </div>
+                <div v-else v-bind:key="index" class="con3" v-on:click="deeper(spl,9,$event); queue(pl['track'])" style="opacity: .5">{{lists(pl['track']['artists'])}} - {{pl.track.name}}></div>
               </template>
             </template>
           </div>
@@ -3412,6 +3414,8 @@ export default {
             child[i].className = 'con3'
           }
         }
+        if (item.track.id === null)
+          return null
         axios.request({
           url:'https://api.spotify.com/v1/me/tracks/contains?ids=' + item.track.id,
           method: 'get',
@@ -6301,6 +6305,28 @@ export default {
     },
     paginate(array,page_size,page_number){
       return array.slice((page_number -1) * page_size,page_number * page_size)
+    },
+    queue(track){
+      let current = localStorage.getItem('queue')
+      let newque = {}
+      newque.id = track.id
+      newque.name = track.name
+      newque.artists = this.lists(track.artists)
+      let arr = JSON.parse(current)
+      if (arr !== null){
+        let indexing = arr.findIndex((arr) => arr.id === track.id)
+        console.log(indexing)
+        if (indexing === -1){
+          arr.push(newque)
+          localStorage.setItem('queue',JSON.stringify(arr))
+          console.log(JSON.stringify(arr))
+        }
+      } else {
+        let newarr = []
+        newarr.push(newque)
+        localStorage.setItem('queue',JSON.stringify(newarr))
+        console.log(JSON.stringify(newarr))
+      }
     }
   },
 }

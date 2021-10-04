@@ -6,6 +6,7 @@
       <div class="content">
 
         <div v-if="isAuth()" class="">Hello, {{username}}</div>
+        <div v-text="queuelength"></div>
         <div class="dropdown-content">
           <Auth v-if="!isAuth()"/>
           <Logout v-else-if="isAuth()"/>
@@ -22,7 +23,7 @@
       </div>
     </header>
     <br>
-    <Desktop style="text-align: center;" v-if="!isMobile() && isAuth()"/>
+    <Desktop v-if="!isMobile() && isAuth()"/>
     <Mobile v-else-if="isMobile() && isAuth()"/>
   </div>
 </template>
@@ -81,7 +82,8 @@ export default {
   data(){
     return{
       username: document.cookie.replace(/(?:(?:^|.*;\s*)nickname\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
-      userTheme:localStorage.getItem('user-theme')
+      userTheme:localStorage.getItem('user-theme'),
+      queue:null
     }
   },
   name: 'App',
@@ -97,8 +99,16 @@ export default {
       localStorage.setItem("user-theme", theme);
       this.userTheme = theme;
       document.documentElement.className = theme;
-    }
-  }
+    },
+  },
+  computed:{
+    queuelength(){
+      console.log('105')
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+      return this.queue = JSON.parse(localStorage.getItem('queue')).length
+
+    },
+  },
 }
 </script>
 
