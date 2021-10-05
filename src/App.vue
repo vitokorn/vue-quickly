@@ -9,16 +9,18 @@
         <div class="dropdown-content">
           <Auth v-if="!isAuth()"/>
           <Logout v-else-if="isAuth()"/>
-          <div class="form_radio_btn"><input id="light" type="radio" name="theme" v-on:click="setTheme('light')"><label for="light">White</label></div>
-          <div class="form_radio_btn"><input id="dark" type="radio" name="theme" v-on:click="setTheme('dark')"><label for="dark">Dark</label></div>
-          <div class="form_radio_btn"><input id="dark-blue" type="radio" name="theme" v-on:click="setTheme('dark-blue')"><label for="dark-blue">Dark blue</label></div>
-          <div class="form_radio_btn"><input id="dq" type="radio" name="theme" v-on:click="setTheme('dq')"><label for="dq">DQ</label></div>
         </div>
 <!--        <div>-->
 <!--          <a href="/lang/en/">En</a>-->
 <!--          <a href="/lang/ru/">Ru</a>-->
 <!--        </div>-->
 
+      </div>
+      <div style="display: flex;">
+        <div class="themesnav" ><div class="themes" style="background-color: white;"></div><input id="light" v-model="userTheme" type="radio"  v-on:click="setTheme('light')"><label for="light">White</label></div>
+        <div class="themesnav"><div class="themes" style="background-color: #181a1b;"></div><input id="dark" v-model="userTheme" type="radio"  v-on:click="setTheme('dark')"><label for="dark">Dark</label></div>
+        <div class="themesnav"><div class="themes" style="background-color: #001331;"></div><input id="dark-blue" v-model="userTheme" type="radio"  v-on:click="setTheme('dark-blue')"><label for="dark-blue">Dark blue</label></div>
+        <div class="themesnav"><div class="themes" style="background-color: #3f3d58;"></div><input id="dq" v-model="userTheme" type="radio"  v-on:click="setTheme('dq')"><label for="dq">DQ</label></div>
       </div>
     </header>
     <br>
