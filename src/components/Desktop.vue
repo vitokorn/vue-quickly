@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>{{queue}}</div>
+    <div><a style="color: white" v-on:click="checkPlaylists" href="#modal1">{{queue}}</a></div>
   <ul class="tabs">
     <li id="option1">
       <a id="playlistlist" href="#option1" v-on:click.self.once="fetchPlaylists($event,0)">Playlists Pc</a>
@@ -20,7 +20,7 @@
             <div style="width: 60%;display: flex;align-items: center;">{{item.description}}<button class="button"><a class="linkresset" v-bind:href="item['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
               Follow<input type="checkbox" v-if="item.followed" @click.once="followPlaylist(item,$event)"  checked v-model="item.followed">
               <input type="checkbox" v-else @click.once="followPlaylist(item,$event)" v-model="item.followed"></div>
-            <div v-if="item.images" class="con4" style="background-repeat: no-repeat;background-size: cover;" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }"></div>
+            <div v-if="item.images[0]" class="con4" style="background-repeat: no-repeat;background-size: cover;" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }"></div>
           </div>
           <div class="con2" style="display: flex;color: black" v-bind:key="index">
             <template v-if="item.tracks">
@@ -3260,6 +3260,41 @@
       </div>
     </li>
   </ul>
+    <div>
+      <div class="modal" id="modal1">
+        <a class="modal__close" href="#"></a>
+        <div class="modal__content">
+          <a class="modal__content__close" href="#">x</a>
+          <div style="margin-bottom: 10px;">Queue</div>
+          <div style="display: flex;">
+            <button v-on:click="savequeue">Save all tracks</button>
+            <select>
+              <option selected disabled>Add all to playlist</option>
+              <option v-on:click="createplaylist">New playlist</option>
+              <template  v-for="(playlist,index) of listplaylists">
+                <option v-bind:key="index" v-bind:id="playlist.id">{{playlist.name}}</option>
+              </template>
+            </select>
+            <div v-on:click="removequeue">Clear all</div>
+          </div>
+          <div style="height: 250px;overflow-y: auto;margin-top: 10px;">
+            <div v-for="(q,index) in queuearr" class="playable-search" style="color: var(--con2-color)" v-bind:key="index">
+              <div v-if="q.image" tabindex="0" class="itemImg itemImg-xs  itemImg-search" v-bind:style="{ 'background-image': 'url(' + q.image.url + ')' }">
+              </div>
+              <div v-else tabindex="0" class="itemImg itemImg-xs  itemImg-search" style="color: grey;opacity: .5">
+                <audio preload="none"></audio>
+              </div>
+              <div>
+                <div style="font-size: .9em;">{{q.name}}</div>
+                <div class="artist" style="font-size: .85em;">{{q.artists}}</div>
+              </div>
+              <div style="margin-left: auto;" v-on:click="removequeueitem(q.id)">Clear</div>
+            </div>
+          </div>
+          <p>Spotify Premium required to play the full song in Discover Mobily. Save these tracks above to listen in the main Spotify app.</p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -3269,6 +3304,7 @@ export default {
   data(){
     return{
       queue: localStorage.getItem('queue') && JSON.parse(localStorage.getItem('queue')).length || null,
+      queuearr:localStorage.getItem('queue') && JSON.parse(localStorage.getItem('queue')) || null,
       listplaylists:[],
       playinfo:[],
       playlists:[],
@@ -5058,10 +5094,19 @@ export default {
         headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) =>{
+            if (offset === 0){
+              this.listplaylists = []
               this.listplaylists.push(...response.data['items'])
               if (response.data['items'].length > 0){
                 this.fetchPlaylists(event,offset+=50)
               }
+            }else {
+              this.listplaylists.push(...response.data['items'])
+              if (response.data['items'].length > 0){
+                this.fetchPlaylists(event,offset+=50)
+              }
+            }
+
               // document.getElementById("loader").remove()
           })
           .catch(error =>{
@@ -6324,6 +6369,7 @@ export default {
           arr.push(newque)
           localStorage.setItem('queue',JSON.stringify(arr))
           this.queue = arr.length
+          this.queuearr = arr
           console.log(JSON.stringify(arr))
         }
       } else {
@@ -6331,8 +6377,79 @@ export default {
         newarr.push(newque)
         localStorage.setItem('queue',JSON.stringify(newarr))
         this.queue = newarr.length
+        this.queuearr = newarr
         console.log(JSON.stringify(newarr))
       }
+    },
+    savequeue(){
+      if (this.queuearr.length > 50){
+        for (let i=0;i <this.queuearr.length; i++)
+          axios.request({
+            url:'https://api.spotify.com/v1/me/tracks?ids=' + this.queuearr.slice(i,i+49).map(a => a.id).join(','),
+            method: 'put',
+            headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+          })
+              .then((response) =>{
+                if (response.status === 200){
+                  console.log('success 6379')
+                }
+              })
+              .catch()
+      } else {
+        axios.request({
+          url:'https://api.spotify.com/v1/me/tracks?ids=' + this.queuearr.map(a => a.id).join(','),
+          method: 'put',
+          headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+        })
+        .then((response) =>{
+          if (response.status === 200){
+            console.log('success 6379')
+          }
+        })
+        .catch()
+
+      }
+
+    },
+    removequeue(){
+      this.queuearr = localStorage.removeItem('queue')
+      this.queue = 0
+    },
+    removequeueitem(id){
+      let que = JSON.parse(localStorage.getItem('queue'))
+      const index = que.findIndex((arr) => arr.id === id)
+      console.log(index)
+      if (index > -1) {
+        que.splice(index, 1);
+        let newa = JSON.stringify(que)
+        localStorage.setItem('queue',newa)
+        this.queuearr = que
+      }
+    },
+    checkPlaylists(){
+      if (this.listplaylists.length === 0 ){
+        let ne = {}
+        ne.target = document.getElementById('playlistlist')
+        this.fetchPlaylists(ne,0)
+      }
+    },
+    createplaylist(){
+      let name = prompt('Name for your playlist:', 'Discovered')
+      axios.request({
+        url:'https://api.spotify.com/v1/users/'+ document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1") +'/playlists',
+        method: 'post',
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")},
+        data:{
+          name:name
+        }
+      })
+      .then(() =>{
+        let ne = {}
+        ne.target = document.getElementById('playlistlist')
+        this.fetchPlaylists(ne,0)
+        console.log(this.listplaylists)
+      })
+
     }
   },
 }

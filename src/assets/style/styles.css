@@ -695,7 +695,7 @@ footer{
     text-align: left;
     margin-top: auto;
     margin-bottom: auto;
-    color: var(--pl-color);
+    /*color: var(--pl-color);*/
     /*left: 3%;*/
 }
 
@@ -864,28 +864,6 @@ input[type=checkbox]{
 .selected{
     box-shadow: inset 0 0 0 6px var(--active-tab);
 }
-#queueContainer{
-    position: fixed;
-    width: 100%;
-    height: calc(100vh - 88px);
-    top: 88px;
-    z-index: 2001;
-}
-#queueContainer div{
-    z-index: 999;
-    position: absolute;
-}
-.modal-transparency{
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(20,20,20,.8);
-    cursor: pointer;
-}
-.modal-queue{
-    z-index: 999;
-}
 
 /*https://snipp.ru/html-css/style-radio*/
 .themes{
@@ -902,6 +880,55 @@ input[type=checkbox]{
 .themesnav input[type=radio]{
     display: none;
 }
-.themesnav input[type=radio]:checked + label{
-    background: var(--tabs-target);
+/*.themesnav input[type=radio]:checked + label{*/
+/*    background: var(--tabs-target);*/
+/*}*/
+
+/* Modal styles */
+.modal {
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+    height: 0;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    background: rgba(20,20,20,.8);
+    transition: opacity linear 0.2s;
+}
+.modal:target {
+    height: 100%;
+    opacity: 1;
+}
+.modal__content {
+    position: relative;
+    background: white;
+    padding: 20px;
+    width: 60%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 200;
+    color:var(--main-color)
+}
+.modal__content__close {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 20px;
+    line-height: 20px;
+    border-radius: 20px;
+    text-align: center;
+    padding: 5px;
+    background: #2980b9;
+    color: #fff;
+}
+.modal__close::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
 }
