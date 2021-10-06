@@ -23,6 +23,11 @@ npm run lint
 ```
 npx sequelize-cli db:migrate
 ```
+Generate
+### Sequelize generate migration
+```
+npx sequelize-cli migration:generate --name migrationname
+```
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
