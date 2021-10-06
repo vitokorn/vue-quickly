@@ -4,8 +4,10 @@ const Sequelize = require("sequelize");
 const sequelize = new Sequelize(process.env.db, process.env.user, process.env.password, {
     host: process.env.host,
     dialect: "postgres",
+    dialectOptions: {
+        "ssl": true
+    },
     operatorsAliases: false,
-    ssl:true,
     pool: {
         max: 5,
         min: 0,
