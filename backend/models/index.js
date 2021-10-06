@@ -6,7 +6,7 @@ const sequelize = new Sequelize(process.env.db, process.env.user, process.env.pa
     dialect: "postgres",
     dialectOptions: {
         "ssl": true,
-        rejectUnauthorized: false
+        "rejectUnauthorized": false
     },
     operatorsAliases: false,
     pool: {
