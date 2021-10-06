@@ -10,7 +10,7 @@ module.exports = app => {
     router.get("/spotify/login",function (req,res) {
         let url = 'https://accounts.spotify.com/authorize?'
             let params = "client_id=" + client_id + "&client_secret=" + client_secret + "&redirect_uri=" + redirect_uri +
-            "&scope=user-library-read user-read-private playlist-read-collaborative playlist-read-private playlist-modify-public user-top-read user-follow-read user-follow-modify user-library-modify playlist-modify-public&response_type=code&show_dialog=true"
+            "&scope=user-library-read user-read-private playlist-read-collaborative playlist-read-private playlist-modify-public playlist-modify-private user-top-read user-follow-read user-follow-modify user-library-modify playlist-modify-public&response_type=code&show_dialog=true"
         res.redirect(url + params)
     })
 
