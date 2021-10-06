@@ -997,10 +997,10 @@
         </div>
         <div id="toptrack" class="con2" style="display: flex;color: black;width: auto;">
           <div class="trackbody" v-for="(item,index) of items" v-bind:key="index">
-            <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="deeper(item,3); click" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }">{{lists(item.artists)}} - {{item.name}}
+            <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="deeper(item,3,$event); click" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }">{{lists(item.artists)}} - {{item.name}}
               <audio preload="none" v-bind:src="item.preview_url"></audio>
             </div>
-            <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" style="opacity: .5">{{lists(item.artists)}} - {{item.name}}
+            <div v-else tabindex="0" class="con3" v-on:click="deeper(item,3,$event);" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" style="opacity: .5">{{lists(item.artists)}} - {{item.name}}
               <audio preload="none"></audio>
             </div>
           </div>
@@ -1239,10 +1239,10 @@
         </div>
         <div id="toptrack6" class="con2" style="display: flex;color: black;width: auto;" >
           <div class="trackbody" v-for="(item,index) of itemsm" v-bind:key="index">
-            <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="deeper(item,32); click" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" >{{lists(item.artists)}} - {{item.name}}
+            <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="deeper(item,32,$event); click" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" >{{lists(item.artists)}} - {{item.name}}
               <audio preload="none" v-bind:src="item.preview_url"></audio>
             </div>
-            <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" style="opacity: .5">{{lists(item.artists)}} - {{item.name}}
+            <div v-else tabindex="0" class="con3" v-on:click="deeper(item,32,$event);" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" style="opacity: .5">{{lists(item.artists)}} - {{item.name}}
               <audio preload="none"></audio>
             </div>
           </div>
@@ -1485,10 +1485,10 @@
         </div>
         <div id="toptrackall" class="con2" style="display: flex;color: black;width: auto;" >
           <div class="trackbody" v-for="(item,index) of itemsl" v-bind:key="index">
-            <div v-if="item.preview_url" tabindex="0" class="con3"  v-on:click="deeper(item,33); click" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" >{{lists(item.artists)}} - {{item.name}}
+            <div v-if="item.preview_url" tabindex="0" class="con3"  v-on:click="deeper(item,33,$event); click" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" >{{lists(item.artists)}} - {{item.name}}
               <audio preload="none" v-bind:src="item.preview_url"></audio>
             </div>
-            <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" style="opacity: .5">{{lists(item.artists)}} - {{item.name}}
+            <div v-else tabindex="0" class="con3" v-on:click="deeper(item,33,$event);" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" style="opacity: .5">{{lists(item.artists)}} - {{item.name}}
               <audio preload="none"></audio>
             </div>
           </div>
@@ -2445,10 +2445,10 @@
       <div style="display: block;width: 95%">
         <div id="newrelease" class="con2">
           <div class="newbody" v-for="(item,index) of newreleases" v-bind:key="index">
-            <div v-if="item.tracks.items[0].preview_url" tabindex="0" class="con3" v-on:click="deeper(item,7); click" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }" >{{lists(item.artists)}} - {{item.name}}
+            <div v-if="item.tracks.items[0].preview_url" tabindex="0" class="con3" v-on:click="deeper(item,7,$event); click" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }" >{{lists(item.artists)}} - {{item.name}}
               <audio preload="none" v-bind:src="item.tracks.items[0].preview_url"></audio>
             </div>
-            <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }" style="opacity: .5" v-on:click="deeper(item,7)">{{lists(item.artists)}}
+            <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }" style="opacity: .5" v-on:click="deeper(item,7,$event)">{{lists(item.artists)}}
               <audio preload="none"></audio>
             </div>
           </div>
@@ -3242,10 +3242,10 @@
               </div>
               <div class="con2" style="display: flex;color: black">
                 <div class="trackbody" v-for="(item,index) of d['tracks']['items']" v-bind:key="index">
-                  <div v-bind:id="item.id" v-if="item.track.preview_url" tabindex="0" class="con3" v-on:click="deeper(item,10); click" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" >{{lists(item['track']['artists'])}} - {{item.track.name}}
+                  <div v-bind:id="item.id" v-if="item.track.preview_url" tabindex="0" class="con3" v-on:click="deeper(item,10,$event); click" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" >{{lists(item['track']['artists'])}} - {{item.track.name}}
                     <audio preload="none" v-bind:src="item.track.preview_url"></audio>
                   </div>
-                  <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(item['track']['artists'])}} - {{item.track.name}}
+                  <div v-else tabindex="0" class="con3" v-on:click="deeper(item,10,$event);" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(item['track']['artists'])}} - {{item.track.name}}
                     <audio preload="none"></audio>
                   </div>
                 </div>
@@ -3329,7 +3329,7 @@ export default {
       }
     },
     deeper: function(item,num,event){
-      console.log(item)
+      // console.log(item)
       let target = event.target
       if (num === 10){
         let allTracks = document.querySelectorAll(".rectrack > div:not(.playlist)");
@@ -3381,7 +3381,7 @@ export default {
             .catch(error =>{
               if (error.response.status === 401){
                 axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                  console.log(response.data)
+                  // console.log(response.data)
                   let new_token = response.data['new_token']
                   document.cookie ='access_token=' + new_token
                 })
@@ -3403,8 +3403,8 @@ export default {
         let tt = []
         tt = item.track
         tt.type = 'pl'
-        console.log(tt)
-        console.log(item.track.id)
+        // console.log(tt)
+        // console.log(item.track.id)
         let child = target.parentElement.children
         for (let i = 0; i < child.length; i++) {
           if (child[i] === target){
@@ -3423,11 +3423,11 @@ export default {
               let indexing = this.deeper1.indexOf(tt)
               if (indexing === -1){
                 this.deeper1.push(tt)
-                setTimeout(() => {
-                  window.scrollTo({
-                    top:(document.getElementById('d'+ tt.id)).offsetTop,
-                    behavior:'smooth'});
-                }, 10);
+                // setTimeout(() => {
+                //   window.scrollTo({
+                //     top:(document.getElementById('d'+ tt.id)).offsetTop,
+                //     behavior:'smooth'});
+                // }, 10);
               }
             })
             .catch(error =>{
@@ -3439,57 +3439,57 @@ export default {
                 })
               }
             })
-        console.log(tracktrack)
-        console.log(this.deeper1)
+        // console.log(tracktrack)
+        // console.log(this.deeper1)
       } else if (num === 2){
         let indexing = this.deeper2.indexOf(tracktrack)
         if (indexing === -1){
           this.deeper2.push(tracktrack)
         }
-        console.log(tracktrack)
-        console.log(this.deeper2)
+        // console.log(tracktrack)
+        // console.log(this.deeper2)
       } else if (num === 22){
         let indexing = this.deeper22.indexOf(tracktrack)
         if (indexing === -1){
           this.deeper22.push(tracktrack)
         }
-        console.log(tracktrack)
-        console.log(this.deeper22)
+        // console.log(tracktrack)
+        // console.log(this.deeper22)
       } else if (num === 23){
         let indexing = this.deeper23.indexOf(tracktrack)
         if (indexing === -1){
           this.deeper23.push(tracktrack)
         }
-        console.log(tracktrack)
-        console.log(this.deeper23)
+        // console.log(tracktrack)
+        // console.log(this.deeper23)
       } else if (num === 3){
         let indexing = this.deeper3.indexOf(tracktrack)
         if (indexing === -1){
           this.deeper3.push(tracktrack)
         }
-        console.log(tracktrack)
-        console.log(this.deeper3)
+        // console.log(tracktrack)
+        // console.log(this.deeper3)
       } else if (num === 32){
         let indexing = this.deeper32.indexOf(tracktrack)
         if (indexing === -1){
           this.deeper32.push(tracktrack)
         }
-        console.log(tracktrack)
-        console.log(this.deeper32)
+        // console.log(tracktrack)
+        // console.log(this.deeper32)
       } else if (num === 33){
         let indexing = this.deeper33.indexOf(tracktrack)
         if (indexing === -1){
           this.deeper33.push(tracktrack)
         }
-        console.log(tracktrack)
-        console.log(this.deeper33)
+        // console.log(tracktrack)
+        // console.log(this.deeper33)
       } else if (num === 4){
         let indexing = this.deeper4.indexOf(tracktrack)
         if (indexing === -1){
           this.deeper4.push(tracktrack)
         }
-        console.log(tracktrack)
-        console.log(this.deeper4)
+        // console.log(tracktrack)
+        // console.log(this.deeper4)
       } else if (num === 5){
         if (document.getElementById('d'+ item.track.id) !==null){
           document.getElementById('d'+ item.track.id).style.display = 'flex'
@@ -3531,38 +3531,38 @@ export default {
                 })
               }
             })
-        console.log(item.track)
+        // console.log(item.track)
         let indexing = this.deeper5.indexOf(tt)
         if (indexing === -1){
           this.deeper5.push(tt)
         }
-        setTimeout(() => {
-          window.scrollTo({
-            top:(document.getElementById('d'+ tt.id)).offsetTop,
-            behavior:'smooth'});
-        }, 10);
-        console.log(this.deeper5)
+        // setTimeout(() => {
+        //   window.scrollTo({
+        //     top:(document.getElementById('d'+ tt.id)).offsetTop,
+        //     behavior:'smooth'});
+        // }, 10);
+        // console.log(this.deeper5)
       } else if (num === 6){
         let indexing = this.deeper6.indexOf(tracktrack)
         if (indexing === -1){
           this.deeper6.push(tracktrack)
         }
-        console.log(tracktrack)
-        console.log(this.deeper6)
+        // console.log(tracktrack)
+        // console.log(this.deeper6)
       } else if (num === 7){
         tracktrack.preview_url = item.tracks.items[0].preview_url
         let indexing = this.deeper7.indexOf(tracktrack)
         if (indexing === -1){
           this.deeper7.push(tracktrack)
         }
-        console.log(this.deeper7)
+        // console.log(this.deeper7)
       } else if (num === 8){
         let indexing = this.deeper8.indexOf(tracktrack)
         if (indexing === -1){
           this.deeper8.push(tracktrack)
         }
-        console.log(tracktrack)
-        console.log(this.deeper8)
+        // console.log(tracktrack)
+        // console.log(this.deeper8)
       } else if (num === 9){
         if (document.getElementById('d'+ item.track.id) !==null){
           document.getElementById('d'+ item.track.id).style.display = 'flex'
@@ -3591,29 +3591,29 @@ export default {
         if (indexing === -1){
           this.deeper9.push(tt)
         }
-        console.log(tt)
-        console.log(this.deeper9)
+        // console.log(tt)
+        // console.log(this.deeper9)
       } else if (num === 10){
         let indexing = this.deepers.indexOf(tracktrack)
         if (indexing === -1){
           this.deepers.push(tracktrack)
         }
-        console.log(this.deepers)
+        // console.log(this.deepers)
       }
-      if (num !== 1 && num !==5){
-        setTimeout(() => {
-          window.scrollTo({
-            top:(document.getElementById('d'+ tracktrack.id)).offsetTop,
-            behavior:'smooth'});
-        }, 10);
-      }
+      // if (num !== 1 && num !==5){
+      //   setTimeout(() => {
+      //     window.scrollTo({
+      //       top:(document.getElementById('d'+ tracktrack.id)).offsetTop,
+      //       behavior:'smooth'});
+      //   }, 10);
+      // }
     },
     deeperartist: async function (pointer,item,track,num,flag,sib,related){
       let trackartist = []
       trackartist.type = 'trackartist'
-      console.log(item.id)
-      console.log(item)
-      console.log(track)
+      // console.log(item.id)
+      // console.log(item)
+      // console.log(track)
       // if (document.getElementById('art'+ item.id)){
       //   document.getElementById('art'+ item.id).style.display = 'flex'
       //
@@ -3639,17 +3639,17 @@ export default {
       let all = document.querySelectorAll('#'+pointer +'> .rectrack > div')
       let alltop = document.querySelectorAll('#'+pointer +'> .rectrack > div.' + sib)
       let last = document.querySelector('#'+pointer +'> .rectrack > div.trackartist > div[id="art' + item.id + '"]')
-      console.log(last)
-      console.log(item.id)
+      //  console.log(last)
+      // console.log(item.id)
       if (flag === true){
-        console.log(item.id)
+        // console.log(item.id)
         if (all.length !==0 && all.length !==0){
           for (let i=0;i < all.length;i++){
-            console.log(all[i])
+            // console.log(all[i])
             if (last !== null && all[i].firstChild.id === last.id && last.id === item.id){
               last.parentElement.style.display = 'block'
             } else {
-              console.log(all[i])
+              // console.log(all[i])
               all[i].style.display = 'none'
             }
           }
@@ -3682,11 +3682,11 @@ export default {
       if (last !== null && last.id === 'art' + item.id){
         if (document.getElementById('art'+ item.id)){
           document.getElementById('art'+ item.id).parentElement.style.display = 'flex'}
-        setTimeout(() => {
-          window.scrollTo({
-            top:(document.getElementById('art'+ item.id)).offsetTop,
-            behavior:'smooth'});
-        }, 10);
+        // setTimeout(() => {
+        //   window.scrollTo({
+        //     top:(document.getElementById('art'+ item.id)).offsetTop,
+        //     behavior:'smooth'});
+        // }, 10);
         return
       }
       await this.deeperArtistself(item,track).then(result => trackartist.push(result))
@@ -3724,12 +3724,12 @@ export default {
       } else if (num === 10){
         this.deepers.push(trackartist)
       }
-      setTimeout(() => {
-        window.scrollTo({
-          top:(document.getElementById('art'+ item.id)).offsetTop,
-          behavior:'smooth'});
-      }, 10);
-      console.log(trackartist)
+      // setTimeout(() => {
+      //   window.scrollTo({
+      //     top:(document.getElementById('art'+ item.id)).offsetTop,
+      //     behavior:'smooth'});
+      // }, 10);
+      // console.log(trackartist)
     },
     deeperArtistself(item,track){
       return axios.request({
@@ -3752,7 +3752,7 @@ export default {
                 .catch(error =>{
                   if (error.response.status === 401){
                     axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                      console.log(response.data)
+                      // console.log(response.data)
                       let new_token = response.data['new_token']
                       document.cookie ='access_token=' + new_token
                     })
@@ -3774,8 +3774,8 @@ export default {
 
           })
           .catch(error =>{
-            console.log(error)
-            console.log(error.response.data)
+            // console.log(error)
+            // console.log(error.response.data)
             if (error.response.status === 401){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1"))
             }
@@ -3792,7 +3792,7 @@ export default {
             let tt = []
             tt = response.data
             tt.type = 'top_tracks'
-            console.log(tt)
+            // console.log(tt)
             return tt
           })
           .catch(error =>{
@@ -3811,7 +3811,7 @@ export default {
           .then((response) =>{
             let newarr = []
             let arr = response.data['items']
-            console.log(arr)
+            // console.log(arr)
             // this.deeper1.push(data)
             for (let i=0;i <  arr.length;i++){
               // console.log('237 ' + arr.items[i].id)
@@ -3838,7 +3838,7 @@ export default {
                   })
             }
             newarr.type = 'albums'
-            console.log(newarr)
+            // console.log(newarr)
             return newarr
 
           })
@@ -3901,7 +3901,7 @@ export default {
           .then((response) =>{
             let appears = []
             let arr = response.data['items']
-            console.log(arr)
+            // console.log(arr)
             // this.deeper1.push(data)
             for (let i=0;i <  arr.length;i++){
               // console.log('237 ' + arr.items[i].id)
@@ -3983,8 +3983,8 @@ export default {
             }
             fin = relatedartist
             fin.type = 'related-artists'
-            console.log(3451)
-            console.log(fin)
+            // console.log(3451)
+            // console.log(fin)
             return fin
           })
           .catch(error =>{
@@ -3995,7 +3995,7 @@ export default {
     },
     deeperAlbum(item,num,child,search){
       item.type ='deeperalbum'
-      console.log(item.id)
+      // console.log(item.id)
       if (child){
         let par = document.getElementById(child).parentElement.nextElementSibling
         while (par != null) {
@@ -4020,11 +4020,11 @@ export default {
       }
       if (num !== 4 && document.getElementById('alb' + item.id)){
         document.getElementById('alb' + item.id).style.display = 'flex'
-        setTimeout(() => {
-          window.scrollTo({
-            top:(document.getElementById('alb'+ item.id)).offsetTop,
-            behavior:'smooth'});
-        }, 10);
+        // setTimeout(() => {
+        //   window.scrollTo({
+        //     top:(document.getElementById('alb'+ item.id)).offsetTop,
+        //     behavior:'smooth'});
+        // }, 10);
         return
       }
       if (num !== 4){
@@ -4101,16 +4101,16 @@ export default {
                   this.deepers.push(item)
                 }
               }
-              setTimeout(() => {
-                window.scrollTo({
-                  top:(document.getElementById('alb'+ item.id)).offsetTop,
-                  behavior:'smooth'});
-              }, 100);
+              // setTimeout(() => {
+              //   window.scrollTo({
+              //     top:(document.getElementById('alb'+ item.id)).offsetTop,
+              //     behavior:'smooth'});
+              // }, 100);
             })
             .catch(error =>{
               if (error.response.status === 401){
                 axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                  console.log(response.data)
+                  // console.log(response.data)
                   let new_token = response.data['new_token']
                   document.cookie ='access_token=' + new_token
                 })
@@ -4144,7 +4144,7 @@ export default {
               .catch(error =>{
                 if (error.response.status === 401){
                   axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                    console.log(response.data)
+                    // console.log(response.data)
                     let new_token = response.data['new_token']
                     document.cookie ='access_token=' + new_token
                   })
@@ -4176,24 +4176,24 @@ export default {
           .catch(error =>{
             if (error.response.status === 401){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                console.log(response.data)
+                // console.log(response.data)
                 let new_token = response.data['new_token']
                 document.cookie ='access_token=' + new_token
               })
             }
           })
-      setTimeout(() => {
-        window.scrollTo({
-          top:(document.getElementById('alb'+ item.id)).offsetTop,
-          behavior:'smooth'});
-      }, 10);
-      console.log(item)
+      // setTimeout(() => {
+      //   window.scrollTo({
+      //     top:(document.getElementById('alb'+ item.id)).offsetTop,
+      //     behavior:'smooth'});
+      // }, 10);
+      // console.log(item)
     },
     deeperTracks(pointer,item,num,flag,sib,child){
       item.type ='deepertracks'
-      console.log(item)
-      console.log(flag)
-      console.log(sib)
+      // console.log(item)
+      // console.log(flag)
+      // console.log(sib)
       let all = document.querySelectorAll('#'+ pointer +'> .rectrack > div')
       if (child){
         let par = document.getElementById(child).parentElement.nextElementSibling
@@ -4210,7 +4210,7 @@ export default {
         let alltop = document.querySelectorAll('#'+ pointer +'> .rectrack > div.' + sib)
         let current = alltop[alltop.length-1].nextElementSibling
         while (current != null) {
-          console.log(current)
+          // console.log(current)
           current.style.display = 'none'
           if (current.nextElementSibling !== null && current.nextElementSibling.style.display !== 'none'){
             current = current.nextElementSibling
@@ -4224,7 +4224,7 @@ export default {
         let newall = Array.from(all)
         let track = newall.indexOf(document.getElementById('d'+item.id))
         let album = newall.indexOf(alltop[alltop.length-1])
-        console.log(track)
+        // console.log(track)
         if (track!== -1 && track < album){
           alltop[alltop.length-1].insertAdjacentElement('afterend', document.getElementById('d'+item.id));
           // all.parentNode.insertBefore(newall[album],newall[track])
@@ -4236,11 +4236,11 @@ export default {
         }}
       if (document.getElementById('d'+item.id)){
         document.getElementById('d'+item.id).style.display = 'flex'
-        setTimeout(() => {
-          window.scrollTo({
-            top:(document.getElementById('d'+ item.id)).offsetTop,
-            behavior:'smooth'});
-        }, 10);
+        // setTimeout(() => {
+        //   window.scrollTo({
+        //     top:(document.getElementById('d'+ item.id)).offsetTop,
+        //     behavior:'smooth'});
+        // }, 10);
         return
       }
       axios.request({
@@ -4254,7 +4254,7 @@ export default {
           .catch(error =>{
             if (error.response.status === 401){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                console.log(response.data)
+                // console.log(response.data)
                 let new_token = response.data['new_token']
                 document.cookie ='access_token=' + new_token
               })
@@ -4331,11 +4331,11 @@ export default {
           this.deepers.push(item)
         }
       }
-      setTimeout(() => {
-        window.scrollTo({
-          top:(document.getElementById('alb'+ item.id)).offsetTop,
-          behavior:'smooth'});
-      }, 10);
+      // setTimeout(() => {
+      //   window.scrollTo({
+      //     top:(document.getElementById('alb'+ item.id)).offsetTop,
+      //     behavior:'smooth'});
+      // }, 10);
     },
     deeperTracks2(pointer,item,d,num,flag,sib,child){
       item.images = d.images
@@ -4356,7 +4356,7 @@ export default {
         let alltop = document.querySelectorAll('#'+ pointer + '> .rectrack > div.' + sib)
         let current = alltop[alltop.length-1].nextElementSibling
         while (current != null) {
-          console.log(current)
+          // console.log(current)
           current.style.display = 'none'
           if (current.nextElementSibling !== null && current.nextElementSibling.style.display !== 'none'){
             current = current.nextElementSibling
@@ -4370,18 +4370,18 @@ export default {
         let newall = Array.from(all)
         let track = newall.indexOf(document.getElementById('d'+item.id))
         let album = newall.indexOf(alltop[alltop.length-1])
-        console.log(track)
+        // console.log(track)
         if (track!== -1 && track < album){
           alltop[alltop.length-1].insertAdjacentElement('afterend', document.getElementById('d'+item.id));
           // all.parentNode.insertBefore(newall[album],newall[track])
         }}
       if (document.getElementById('d'+item.id)){
         document.getElementById('d'+item.id).style.display = 'flex'
-        setTimeout(() => {
-          window.scrollTo({
-            top:(document.getElementById('d'+ item.id)).offsetTop,
-            behavior:'smooth'});
-        }, 10);
+        // setTimeout(() => {
+        //   window.scrollTo({
+        //     top:(document.getElementById('d'+ item.id)).offsetTop,
+        //     behavior:'smooth'});
+        // }, 10);
         return
       }
       if (num === 1){
@@ -4455,18 +4455,18 @@ export default {
           this.deepers.push(item)
         }
       }
-      setTimeout(() => {
-        window.scrollTo({
-          top:(document.getElementById('d'+ item.id)).offsetTop,
-          behavior:'smooth'});
-      }, 10);
+      // setTimeout(() => {
+      //   window.scrollTo({
+      //     top:(document.getElementById('d'+ item.id)).offsetTop,
+      //     behavior:'smooth'});
+      // }, 10);
     },
     seedArtist(pointer,item,num,sib,child) {
       let alltop = document.querySelectorAll('#'+ pointer +'> .rectrack > div.' + sib)
-      console.log(child)
+      // console.log(child)
       if (child){
         let par = document.getElementById(child).parentElement.nextElementSibling
-        console.log(par)
+        // console.log(par)
         while (par != null) {
           par.style.display = 'none'
           if (par.nextElementSibling !== null && par.nextElementSibling.style.display !== 'none'){
@@ -4491,11 +4491,11 @@ export default {
       }
       if(document.getElementById('sa'+item.id)){
         document.getElementById('sa'+item.id).style.display = 'flex'
-        setTimeout(() => {
-          window.scrollTo({
-            top:(document.getElementById('sa'+ item.id)).offsetTop,
-            behavior:'smooth'});
-        }, 10);
+        // setTimeout(() => {
+        //   window.scrollTo({
+        //     top:(document.getElementById('sa'+ item.id)).offsetTop,
+        //     behavior:'smooth'});
+        // }, 10);
         return
       }
       axios.request({
@@ -4509,7 +4509,7 @@ export default {
             data.type = 'seed_artists'
             data.id = 'sa' + item.id
             data.name = item.name
-            console.log(data)
+            // console.log(data)
             if (num === 1){
               let indexing = this.deeper1.indexOf(data)
               if (indexing === -1){
@@ -4581,22 +4581,22 @@ export default {
                 this.deepers.push(data)
               }
             }
-            setTimeout(() => {
-              window.scrollTo({
-                top:(document.getElementById('sa'+ item.id)).offsetTop,
-                behavior:'smooth'});
-            }, 10);
+            // setTimeout(() => {
+            //   window.scrollTo({
+            //     top:(document.getElementById('sa'+ item.id)).offsetTop,
+            //     behavior:'smooth'});
+            // }, 10);
           })
           .catch()
     },
     seedTracks(pointer,item,num,sib,child) {
       let alltop = document.querySelectorAll('#'+ pointer+ '> .rectrack > div.' + sib)
-      console.log(alltop)
-      console.log(sib)
-      console.log(child)
+      // console.log(alltop)
+      // console.log(sib)
+      // console.log(child)
       if (child){
         let par = document.getElementById(child).nextElementSibling
-        console.log(par)
+        // console.log(par)
         while (par != null) {
           par.style.display = 'none'
           if (par.nextElementSibling !== null && par.nextElementSibling.style.display !== 'none'){
@@ -4621,11 +4621,11 @@ export default {
       }
       if(document.getElementById('st'+item.id)){
         document.getElementById('st'+item.id).style.display = 'flex'
-        setTimeout(() => {
-          window.scrollTo({
-            top:(document.getElementById('st'+ item.id)).offsetTop,
-            behavior:'smooth'});
-        }, 10);
+        // setTimeout(() => {
+        //   window.scrollTo({
+        //     top:(document.getElementById('st'+ item.id)).offsetTop,
+        //     behavior:'smooth'});
+        // }, 10);
         return
       }
       axios.request({
@@ -4635,12 +4635,12 @@ export default {
       })
           .then((response) => {
             let data = []
-            console.log(response.data['tracks'])
+            // console.log(response.data['tracks'])
             data.tracks = response.data['tracks']
             data.type = 'seed_tracks'
             data.id = 'st' + item.id
             data.name = item.name
-            console.log(data)
+            // console.log(data)
             if (num === 1){
               let indexing = this.deeper1.indexOf(data)
               if (indexing === -1){
@@ -4712,11 +4712,11 @@ export default {
                 this.deepers.push(data)
               }
             }
-            setTimeout(() => {
-              window.scrollTo({
-                top:(document.getElementById('st'+ item.id)).offsetTop,
-                behavior:'smooth'});
-            }, 10);
+            // setTimeout(() => {
+            //   window.scrollTo({
+            //     top:(document.getElementById('st'+ item.id)).offsetTop,
+            //     behavior:'smooth'});
+            // }, 10);
           })
           .catch()
     },
@@ -4771,7 +4771,7 @@ export default {
         let sa = this.deepers.findIndex((deepers) => {return deepers.id === id})
         this.deepers.splice(sa, 9e9)
       }
-      console.log(id.replace('sa',''))
+      // console.log(id.replace('sa',''))
       axios.request({
         url: 'https://api.spotify.com/v1/recommendations?seed_artists=' + id.replace('sa','') + '&limit=50&offset=0&market=' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
         method: 'get',
@@ -4779,12 +4779,12 @@ export default {
       })
           .then((response) => {
             let data = []
-            console.log(response.data['tracks'])
+            // console.log(response.data['tracks'])
             data.tracks = response.data['tracks']
             data.type = 'seed_artists'
             data.id = id
             data.name = name
-            console.log(data)
+            // console.log(data)
             if (num === 1){
               let indexing = this.deeper1.indexOf(data)
               if (indexing === -1){
@@ -4856,11 +4856,11 @@ export default {
                 this.deepers.push(data)
               }
             }
-            setTimeout(() => {
-              window.scrollTo({
-                top:(document.getElementById(id)).offsetTop,
-                behavior:'smooth'});
-            }, 10);
+            // setTimeout(() => {
+            //   window.scrollTo({
+            //     top:(document.getElementById(id)).offsetTop,
+            //     behavior:'smooth'});
+            // }, 10);
           })
           .catch()
     },
@@ -4916,7 +4916,7 @@ export default {
         let st = this.deepers.findIndex((deepers) => {return deepers.id === id})
         this.deepers.splice(st, 9e9)
       }
-      console.log(id.replace('st',''))
+      // console.log(id.replace('st',''))
       axios.request({
         url: 'https://api.spotify.com/v1/recommendations?seed_tracks=' + id.replace('st','') + '&limit=50&offset=0&market=' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
         method: 'get',
@@ -4928,7 +4928,7 @@ export default {
             data.type = 'seed_tracks'
             data.id = id
             data.name = name
-            console.log(data)
+            // console.log(data)
             if (num === 1){
               let indexing = this.deeper1.indexOf(data)
               if (indexing === -1){
@@ -5000,11 +5000,11 @@ export default {
                 this.deepers.push(data)
               }
             }
-            setTimeout(() => {
-              window.scrollTo({
-                top:(document.getElementById(id)).offsetTop,
-                behavior:'smooth'});
-            }, 10);
+            // setTimeout(() => {
+            //   window.scrollTo({
+            //     top:(document.getElementById(id)).offsetTop,
+            //     behavior:'smooth'});
+            // }, 10);
           })
           .catch()
     },
@@ -5034,7 +5034,7 @@ export default {
           })
     },
     fetchInit:function(event){
-      console.log('167 '  + event.currentTarget.id)
+      // console.log('167 '  + event.currentTarget.id)
       let id = event.currentTarget.id
       let allTracks = document.querySelectorAll("#yourplaylists > .rectrack > div");
       if (allTracks != null) {
@@ -5048,9 +5048,9 @@ export default {
 
       }
       if (document.getElementById('p'+ id)){
-        console.log(document.getElementById('p'+ id))
+        // console.log(document.getElementById('p'+ id))
         document.getElementById('p'+ id).style.display = 'block'
-        console.log(this.currentpl)
+        // console.log(this.currentpl)
         if (this.currentpl){
           this.currentpl.className = 'hr-line-dashed'
           this.currentpl = document.getElementById(id)
@@ -5072,7 +5072,7 @@ export default {
         headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) =>{
-            console.log(response.data)
+            // console.log(response.data)
             let data = response.data
             axios.request({
               url:'https://api.spotify.com/v1/playlists/'+ id + '/followers/contains?ids=' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
@@ -5100,7 +5100,7 @@ export default {
           .catch(error =>{
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                console.log(response.data)
+                // console.log(response.data)
                 let new_token = response.data['new_token']
                 document.cookie ='access_token=' + new_token
               })
@@ -5123,7 +5123,7 @@ export default {
           .then((response) =>{
             let newarr = []
             let items =response.data['items']
-            console.log('235' + items[0].id)
+            // console.log('235' + items[0].id)
             for (let i=0;i <  items.length;i++){
               // console.log('237' + items[i].id)
               axios.request({
@@ -5148,7 +5148,7 @@ export default {
           .catch(error =>{
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                console.log(response.data)
+                // console.log(response.data)
                 let new_token = response.data['new_token']
                 document.cookie ='access_token=' + new_token
               })
@@ -5166,7 +5166,7 @@ export default {
           .then((response) =>{
             let newarr = []
             let items =response.data['items']
-            console.log('235' + items[0].id)
+            // console.log('235' + items[0].id)
             for (let i=0;i <  items.length;i++){
               // console.log('237' + items[i].id)
               axios.request({
@@ -5191,7 +5191,7 @@ export default {
           .catch(error =>{
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                console.log(response.data)
+                // console.log(response.data)
                 let new_token = response.data['new_token']
                 document.cookie ='access_token=' + new_token
               })
@@ -5209,7 +5209,7 @@ export default {
           .then((response) =>{
             let newarr = []
             let items =response.data['items']
-            console.log('235' + items[0].id)
+            // console.log('235' + items[0].id)
             for (let i=0;i <  items.length;i++){
               // console.log('237' + items[i].id)
               axios.request({
@@ -5218,7 +5218,7 @@ export default {
                 headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
               })
                   .then((response) =>{
-                    console.log('247' + response.data)
+                    // console.log('247' + response.data)
                     let tracks = response.data['tracks']
                     if (tracks[0]['preview_url']){
                       items[i].preview_url = tracks[0]['preview_url']
@@ -5234,7 +5234,7 @@ export default {
           .catch(error =>{
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                console.log(response.data)
+                // console.log(response.data)
                 let new_token = response.data['new_token']
                 document.cookie ='access_token=' + new_token
               })
@@ -5288,7 +5288,7 @@ export default {
           .catch(error =>{
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                console.log(response.data)
+                // console.log(response.data)
                 let new_token = response.data['new_token']
                 document.cookie ='access_token=' + new_token
               })
@@ -5310,7 +5310,7 @@ export default {
           .catch(error =>{
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                console.log(response.data)
+                // console.log(response.data)
                 let new_token = response.data['new_token']
                 document.cookie ='access_token=' + new_token
               })
@@ -5332,7 +5332,7 @@ export default {
           .catch(error =>{
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                console.log(response.data)
+                // console.log(response.data)
                 let new_token = response.data['new_token']
                 document.cookie ='access_token=' + new_token
               })
@@ -5377,7 +5377,7 @@ export default {
           .then((response) =>{
             let newarr = []
             let items =response.data['items']
-            console.log('235' + items[0].id)
+            // console.log('235' + items[0].id)
             for (let i=0;i <  items.length;i++){
               // console.log('237' + items[i].id)
               axios.request({
@@ -5386,7 +5386,7 @@ export default {
                 headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
               })
                   .then((response) =>{
-                    console.log('247' + response.data)
+                    // console.log('247' + response.data)
                     let tracks = response.data['items']
                     if (tracks[0]['preview_url']){
                       items[i].preview_url = tracks[0]['preview_url']
@@ -5401,7 +5401,7 @@ export default {
           .catch(error =>{
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                console.log(response.data)
+                // console.log(response.data)
                 let new_token = response.data['new_token']
                 document.cookie ='access_token=' + new_token
               })
@@ -5424,7 +5424,7 @@ export default {
           .catch(error =>{
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                console.log(response.data)
+                // console.log(response.data)
                 let new_token = response.data['new_token']
                 document.cookie ='access_token=' + new_token
               })
@@ -5440,7 +5440,7 @@ export default {
           .then((response) =>{
             let newarr = []
             let items = response.data['albums']['items']
-            console.log('235' + items[0].id)
+            // console.log('235' + items[0].id)
             for (let i=0;i <  items.length;i++){
               newarr.push(items[i].id)
             }
@@ -5449,7 +5449,7 @@ export default {
           .catch(error =>{
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                console.log(response.data)
+                // console.log(response.data)
                 let new_token = response.data['new_token']
                 document.cookie ='access_token=' + new_token
               })
@@ -5464,7 +5464,7 @@ export default {
         headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) => {
-                console.log('452 ' + this.newreleases)
+            // console.log('452 ' + this.newreleases)
                 // let old = this.newreleases
                 // old.push(response.data['albums'])
                 this.newreleases.push(...response.data['albums'])
@@ -5477,7 +5477,7 @@ export default {
           .catch(error =>{
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                console.log(response.data)
+                // console.log(response.data)
                 let new_token = response.data['new_token']
                 document.cookie ='access_token=' + new_token
               })
@@ -5515,7 +5515,7 @@ export default {
           .catch(error =>{
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                console.log(response.data)
+                // console.log(response.data)
                 let new_token = response.data['new_token']
                 document.cookie ='access_token=' + new_token
               })
@@ -5537,7 +5537,7 @@ export default {
           .catch(error =>{
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                console.log(response.data)
+                // console.log(response.data)
                 let new_token = response.data['new_token']
                 document.cookie ='access_token=' + new_token
               })
@@ -5545,7 +5545,7 @@ export default {
           })
     },
     SpotInit:function(event){
-      console.log('167'  + event.currentTarget.id)
+      // console.log('167'  + event.currentTarget.id)
       let id = event.currentTarget.id
       let allTracks = document.querySelectorAll("#sptplaylists > .rectrack > div");
       if (allTracks != null) {
@@ -5581,7 +5581,7 @@ export default {
         headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) =>{
-            console.log(response.data)
+            // console.log(response.data)
             let data = response.data
             axios.request({
               url:'https://api.spotify.com/v1/playlists/'+ id + '/followers/contains?ids=' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
@@ -5611,7 +5611,7 @@ export default {
           .catch(error =>{
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                console.log(response.data)
+                // console.log(response.data)
                 let new_token = response.data['new_token']
                 document.cookie ='access_token=' + new_token
               })
@@ -5634,7 +5634,7 @@ export default {
         headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
           .then((response) =>{
-            console.log(response.data)
+            // console.log(response.data)
             this.playinfo = []
             this.playinfo.push(response.data)
             this.playlists = response.data['tracks']['items']
@@ -5650,14 +5650,14 @@ export default {
           })
     },
     search(e){
-      console.log(window.location.href)
+      // console.log(window.location.href)
       clearTimeout(this.searchtimer)
       this.searchtimer = setTimeout(() => {
 
 
         if (e.target.value) {
           let value = e.target.value
-          console.log(value)
+          // console.log(value)
 
           axios.request({
             url: 'https://api.spotify.com/v1/search/?q=' + value + '&type=album,artist,playlist,track&limit=5',
@@ -5665,7 +5665,7 @@ export default {
             headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
           })
               .then((response) => {
-                console.log(response.data)
+                // console.log(response.data)
                 this.tracks = []
                 this.artists = []
                 this.albums = []
@@ -5675,10 +5675,10 @@ export default {
                 let playlists = response.data['playlists']['items']
                 this.tracks = response.data['tracks']['items']
 
-                console.log(albums)
-                console.log(artists)
-                console.log(playlists)
-                console.log(response.data['tracks']['items'])
+                // console.log(albums)
+                // console.log(artists)
+                // console.log(playlists)
+                // console.log(response.data['tracks']['items'])
                 let albarr = []
                 for (let i = 0; i < albums.length; i++) {
                   // console.log('237' + albums[i].id)
@@ -5719,7 +5719,7 @@ export default {
                       })
                 }
                 this.artists = artarr
-                console.log(this.artists)
+                // console.log(this.artists)
                 let playlist = []
                 for (let i = 0; i < playlists.length; i++) {
                   // console.log('237' + playlists[i].id)
@@ -5729,7 +5729,7 @@ export default {
                     headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                   })
                       .then((response) => {
-                        console.log(response.data['tracks'])
+                        // console.log(response.data['tracks'])
                         let tracks = response.data['tracks']
                         if (tracks['items'][0]['track']['preview_url']) {
                           playlists[i].preview_url = tracks['items'][0]['track']['preview_url']
@@ -5740,12 +5740,12 @@ export default {
                       })
                 }
                 this.splaylists = playlist
-                console.log(this.splaylists)
+                // console.log(this.splaylists)
 
               }).catch(error =>{
             if (error.response.status === 401){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                console.log(response.data)
+                // console.log(response.data)
                 let new_token = response.data['new_token']
                 document.cookie ='access_token=' + new_token
               })
@@ -5773,39 +5773,39 @@ export default {
     },
     reloader(num,event){
       // console.log(id)
-      console.log(num)
-      console.log(event.target)
-      console.log(this.playlists)
+      // console.log(num)
+      // console.log(event.target)
+      // console.log(this.playlists)
       let parent = event.target.parentNode.parentNode.parentNode
       let target = event.target
-      console.log(target)
+      // console.log(target)
       target.className = 'refresh-start'
       if (num ===1){
         let div = "<div id='reloader' class='loading waitingForConnection'>Reloading<span>.</span><span>.</span><span>.</span></div>"
         document.querySelector('#yourplaylists > div.pl').insertAdjacentHTML("afterend",div)
-        console.log(document.getElementById('loader'))
+        // console.log(document.getElementById('loader'))
         let nid = parent.id.replace('p','')
-        console.log(nid)
+        // console.log(nid)
         // let sea = this.playlists.find((playlists) => {return playlists.id === nid})
         let sea = this.playlists.findIndex((playlists) => {return playlists.id === nid})
         this.playlists.splice(sea, 1)
         document.getElementById('p'+ nid).remove()
-        console.log(this.playlists)
+        // console.log(this.playlists)
         let test = {}
         let currentTarget = {}
         currentTarget.id = nid
         test.currentTarget = currentTarget
-        console.log(test)
+        // console.log(test)
         setTimeout(() => {
           this.fetchInit(test)
           document.getElementById("reloader").remove()
         },1000)
-        console.log(sea)
+        // console.log(sea)
       } else if (num === 9){
         let div = "<div id='reloader' class='loading waitingForConnection'>Reloading<span>.</span><span>.</span><span>.</span></div>"
         document.querySelector('#sptplaylists > div.pl').insertAdjacentHTML("afterend",div)
         let nid = parent.id.replace('s','')
-        console.log(nid)
+        // console.log(nid)
         let sea = this.sptplaylists.findIndex((sptplaylists) => {return sptplaylists.id === nid})
         this.sptplaylists.splice(sea, 1)
         let test = {}
@@ -5919,7 +5919,7 @@ export default {
     },
     reloadartists(num,event){
       let target = event.target
-      console.log(target.previousSibling)
+      // console.log(target.previousSibling)
       target.className = 'refresh-start'
       if (num === 1){
         let div = "<div id='reloader' class='loading waitingForConnection'>Reloading<span>.</span><span>.</span><span>.</span></div>"
@@ -5993,7 +5993,7 @@ export default {
     },
     reloadtracks(num,event){
       let target = event.target
-      console.log(target.previousSibling)
+      // console.log(target.previousSibling)
       target.className = 'refresh-start'
       if (num === 1){
         let div = "<div id='reloader' class='loading waitingForConnection'>Reloading<span>.</span><span>.</span><span>.</span></div>"
@@ -6121,7 +6121,7 @@ export default {
             .catch(error =>{
               if (error.response.status === 401){
                 axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                  console.log(response.data)
+                  // console.log(response.data)
                   let new_token = response.data['new_token']
                   document.cookie ='access_token=' + new_token
                 })
@@ -6139,7 +6139,7 @@ export default {
             .catch(error =>{
               if (error.response.status === 401){
                 axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                  console.log(response.data)
+                  // console.log(response.data)
                   let new_token = response.data['new_token']
                   document.cookie ='access_token=' + new_token
                 })
@@ -6163,7 +6163,7 @@ export default {
             .catch(error =>{
               if (error.response.status === 401){
                 axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                  console.log(response.data)
+                  //  console.log(response.data)
                   let new_token = response.data['new_token']
                   document.cookie ='access_token=' + new_token
                 })
@@ -6183,7 +6183,7 @@ export default {
             .catch(error =>{
               if (error.response.status === 401){
                 axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                  console.log(response.data)
+                  // console.log(response.data)
                   let new_token = response.data['new_token']
                   document.cookie ='access_token=' + new_token
                 })
@@ -6192,7 +6192,7 @@ export default {
       }
     },
     followAlbum(album,event){
-      console.log(album.followed)
+      // console.log(album.followed)
       event.target.disabled = true
       if (album.followed === false) {
         axios.request({
@@ -6208,7 +6208,7 @@ export default {
             .catch(error =>{
               if (error.response.status === 401){
                 axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                  console.log(response.data)
+                  // console.log(response.data)
                   let new_token = response.data['new_token']
                   document.cookie ='access_token=' + new_token
                 })
@@ -6228,7 +6228,7 @@ export default {
             .catch(error =>{
               if (error.response.status === 401){
                 axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                  console.log(response.data)
+                  // console.log(response.data)
                   let new_token = response.data['new_token']
                   document.cookie ='access_token=' + new_token
                 })
@@ -6252,7 +6252,7 @@ export default {
             .catch(error =>{
               if (error.response.status === 401){
                 axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                  console.log(response.data)
+                  // console.log(response.data)
                   let new_token = response.data['new_token']
                   document.cookie ='access_token=' + new_token
                 })
@@ -6272,7 +6272,7 @@ export default {
             .catch(error =>{
               if (error.response.status === 401){
                 axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                  console.log(response.data)
+                  // console.log(response.data)
                   let new_token = response.data['new_token']
                   document.cookie ='access_token=' + new_token
                 })

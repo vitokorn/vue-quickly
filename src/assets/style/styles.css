@@ -18,7 +18,9 @@
     --input-color:white;
     --border-top:#e7eaec;
     --box-shadow:0 2px 4px 1px rgba(0,0,0,.18);
-    --search-color:black
+    --search-color:blackk;
+    --modal-background:white;
+    --modal-color:black
 
 }
 :root.dark{
@@ -42,7 +44,9 @@
     --border-top:rgb(54, 59, 61);
     --box-shadow:0 2px 4px 1px #35393b;
     --search-color:grey;
-    --checkbox-color: grayscale(100%) brightness(75%);;
+    --checkbox-color: grayscale(100%) brightness(75%);
+    --modal-background:#2a2e2f;
+    --modal-color:grey
 
 }
 :root.dark-blue{
@@ -67,7 +71,9 @@
     --box-shadow:0 2px 4px 1px #05AFF2;
     --search-color:#05AFF2;
     --checkbox-color: invert(0%) hue-rotate(220.1deg) brightness(150.1%);
-    --selected-color:#f037a5
+    --selected-color:#f037a5;
+    --modal-background:#001331;
+    --modal-color:grey
     /*--con2-color:#42566D;*/
     /*#1F2D40*/
 }
@@ -88,11 +94,13 @@
     --h1-color:white;
     --root-color:white;
     --border-color:transparent;
-    --input-color:#333;
+    --input-color:grey;
     --border-top:#e7eaec;
     --box-shadow:0 2px 4px 1px rgba(0,0,0,.18);
     --search-color:white;
-    --checkbox-color: invert(0%) hue-rotate(70deg) brightness(150.1%)
+    --checkbox-color: invert(0%) hue-rotate(70deg) brightness(150.1%);
+    --modal-background:white;
+    --modal-color:black
     /* invert(0%) hue-rotate(235deg) brightness(150.1%)*/
     /*--con2-color:#42566D;*/
 }
@@ -880,9 +888,9 @@ input[type=checkbox]{
 .themesnav input[type=radio]{
     display: none;
 }
-/*.themesnav input[type=radio]:checked + label{*/
-/*    background: var(--tabs-target);*/
-/*}*/
+.themesnav input[type=radio]:checked + label{
+    background: var(--tabs-target);
+}
 
 /* Modal styles */
 .modal {
@@ -902,14 +910,14 @@ input[type=checkbox]{
 }
 .modal__content {
     position: relative;
-    background: white;
+    background: var(--modal-background);
     padding: 20px;
     width: 60%;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 200;
-    color:var(--main-color)
+    color:var(--modal-color)
 }
 .modal__content__close {
     position: absolute;

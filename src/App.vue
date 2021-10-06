@@ -17,10 +17,10 @@
 
       </div>
       <div style="display: flex;">
-        <div class="themesnav" ><div class="themes" style="background-color: white;"></div><input id="light" type="radio"  v-on:click="setTheme('light')"><label for="light">White</label></div>
-        <div class="themesnav"><div class="themes" style="background-color: #181a1b;"></div><input id="dark" type="radio"  v-on:click="setTheme('dark')"><label for="dark">Dark</label></div>
-        <div class="themesnav"><div class="themes" style="background-color: #001331;"></div><input id="dark-blue" type="radio" v-on:click="setTheme('dark-blue')"><label for="dark-blue">Dark blue</label></div>
-        <div class="themesnav"><div class="themes" style="background-color: #3f3d58;"></div><input id="dq" type="radio"  v-on:click="setTheme('dq')"><label for="dq">DQ</label></div>
+        <div class="themesnav" ><div class="themes" style="background-color: white;"></div><input id="light" type="radio" v-model="userTheme" value="light" v-on:click="setTheme('light')"><label for="light">White</label></div>
+        <div class="themesnav"><div class="themes" style="background-color: #181a1b;"></div><input id="dark" type="radio"  v-model="userTheme" value="dark" v-on:click="setTheme('dark')"><label for="dark">Dark</label></div>
+        <div class="themesnav"><div class="themes" style="background-color: #001331;"></div><input id="dark-blue" type="radio" v-model="userTheme" value="dark-blue" v-on:click="setTheme('dark-blue')"><label for="dark-blue">Dark blue</label></div>
+        <div class="themesnav"><div class="themes" style="background-color: #3f3d58;"></div><input id="dq" type="radio" v-model="userTheme" value="dq" v-on:click="setTheme('dq')"><label for="dq">DQ</label></div>
       </div>
     </header>
     <br>
