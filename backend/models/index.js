@@ -5,9 +5,10 @@ const sequelize = new Sequelize(process.env.db, process.env.user, process.env.pa
     host: process.env.host,
     dialect: "postgres",
     dialectOptions: {
-        "ssl": true,
-        "rejectUnauthorized": false
-    },
+        ssl: {
+            require: true,
+            rejectUnauthorized: false // <<<<<<< YOU NEED THIS
+        }},
     operatorsAliases: false,
     pool: {
         max: 5,
