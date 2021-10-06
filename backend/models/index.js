@@ -5,7 +5,8 @@ const sequelize = new Sequelize(process.env.db, process.env.user, process.env.pa
     host: process.env.host,
     dialect: "postgres",
     dialectOptions: {
-        "ssl": true
+        "ssl": true,
+        rejectUnauthorized: false
     },
     operatorsAliases: false,
     pool: {
