@@ -801,7 +801,9 @@ footer{
     }
 
 }
-
+.tabs_target {
+    background: var(--tabs-target) !important;
+}
 .rectrack{
     width: 100%;
 }

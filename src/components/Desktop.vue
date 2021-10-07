@@ -3,7 +3,7 @@
     <div><a style="color: var(--h1-color)" v-on:click="checkPlaylists" href="#modal1">{{queue}}</a></div>
   <ul class="tabs">
     <li id="option1">
-      <a id="playlistlist" href="#option1" v-on:click.self.once="fetchPlaylists($event,0)">Playlists Pc</a>
+      <a id="playlistlist" v-on:click="switchTabs" v-on:click.self.once="fetchPlaylists($event,0)">Playlists Pc</a>
       <div style="display: block;width: 95%">
       <div id="yourplaylists" class="con2" style="display: block;">
         <div class="rel"><button class="btn" v-on:click="reloadpl"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button>
@@ -271,7 +271,7 @@
       </div>
     </li>
     <li id="option2">
-      <a href="#option2" v-on:click.self.once="fetchArtist">Top artists</a>
+      <a id="ta" v-on:click="switchTabs" v-on:click.self.once="fetchArtist">Top artists</a>
       <div>
         <div style="display: flex;">
           <span id="topartists" v-on:click="switchArtist(1)" v-on:click.self.once="fetchArtist">Last month</span>
@@ -984,7 +984,7 @@
     <!--      -->
     <!--        </li>-->
     <li id="option3">
-      <a href="#option3" v-on:click.self.once="fetchApi">Top tracks</a>
+      <a v-on:click="switchTabs" id="tt" v-on:click.self.once="fetchApi">Top tracks</a>
       <div>
         <div style="display: flex;">
           <span id="toptracks" v-on:click="switchTracks(1)" v-on:click.self.once="fetchApi">Last month</span>
@@ -1732,7 +1732,7 @@
     <!--      -->
     <!--        </li>-->
     <li id="option4">
-      <a href="#option4" v-on:click.self.once="fetchAlbums">Saved albums</a>
+      <a v-on:click="switchTabs" id="sa" v-on:click.self.once="fetchAlbums">Saved albums</a>
       <div>
       <div id="savedalbum" class="con2" >
         <div class="albumbody" v-for="(item,index) of savedalbums" v-bind:key="index">
@@ -1951,7 +1951,7 @@
       </div>
     </li>
     <li id="option5">
-      <a href="#option5" v-on:click.self.once="fetchTracks(0)">Saved tracks</a>
+      <a v-on:click="switchTabs" id="st" v-on:click.self.once="fetchTracks(0)">Saved tracks</a>
       <div>
       <div id="savedtrack" class="con2">
         <div class="albumbody" v-for="(item,index) of savedtracks" v-bind:key="index">
@@ -2196,7 +2196,7 @@
       </div>
     </li>
     <li id="option6">
-      <a href="#option6" v-on:click.self.once="fetchFA">Followed artists</a>
+      <a v-on:click="switchTabs" id="fa" v-on:click.self.once="fetchFA">Followed artists</a>
       <div>
         <div style="display: flex;"><button class="btn" v-on:click="reloadartists(4,$event)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
         <div id="followedartist" style="width: 95%;" class="con2">
@@ -2434,7 +2434,7 @@
       </div>
     </li>
     <li id="option7">
-      <a href="#option7" v-on:click.self.once="fetchNR(0)">New releases</a>
+      <a v-on:click="switchTabs" id="nr" v-on:click.self.once="fetchNR(0)">New releases</a>
       <div style="display: block;width: 95%">
       <div id="newrelease" class="con2">
         <div class="newbody" v-for="(item,index) of newreleases" v-bind:key="index">
@@ -2679,7 +2679,7 @@
       </div>
     </li>
     <li id="option8">
-      <a href="#option8" id="spt" v-on:click.self.once="fetchSpotPlaylists(0)" >Spotify playlists</a>
+      <a v-on:click="switchTabs" id="spt" v-on:click.self.once="fetchSpotPlaylists(0)" >Spotify playlists</a>
       <div style="display: block;width: 95%">
       <div id="sptplaylists" class="con2" style="display: block;width: 95%;">
         <div class="head">
@@ -5340,6 +5340,146 @@ export default {
         document.getElementById('topartista').style.display = 'flex'
         document.getElementById('topartistsall').className = 'activetab'
         this.taactivetab = document.getElementById('topartista')
+      }
+    },
+    switchTabs(event){
+      let target = event.target
+      if (target.id === 'playlistlist'){
+        document.getElementById('playlistlist').className = 'tabs_target'
+        document.getElementById('playlistlist').nextElementSibling.style.height = 'auto'
+        document.getElementById('ta').className = ''
+        document.getElementById('ta').nextElementSibling.style.height = 0
+        document.getElementById('tt').className = ''
+        document.getElementById('tt').nextElementSibling.style.height = 0
+        document.getElementById('sa').className = ''
+        document.getElementById('sa').nextElementSibling.style.height = 0
+        document.getElementById('st').className = ''
+        document.getElementById('st').nextElementSibling.style.height = 0
+        document.getElementById('fa').className = ''
+        document.getElementById('fa').nextElementSibling.style.height = 0
+        document.getElementById('nr').className = ''
+        document.getElementById('nr').nextElementSibling.style.height = 0
+        document.getElementById('spt').className = ''
+        document.getElementById('spt').nextElementSibling.style.height = 0
+      } else if (target.id === 'ta'){
+        document.getElementById('playlistlist').className = ''
+        document.getElementById('playlistlist').nextElementSibling.style.height = 0
+        document.getElementById('ta').className = 'tabs_target'
+        document.getElementById('ta').nextElementSibling.style.height = 'auto'
+        document.getElementById('tt').className = ''
+        document.getElementById('tt').nextElementSibling.style.height = 0
+        document.getElementById('sa').className = ''
+        document.getElementById('sa').nextElementSibling.style.height = 0
+        document.getElementById('st').className = ''
+        document.getElementById('st').nextElementSibling.style.height = 0
+        document.getElementById('fa').className = ''
+        document.getElementById('fa').nextElementSibling.style.height = 0
+        document.getElementById('nr').className = ''
+        document.getElementById('nr').nextElementSibling.style.height = 0
+        document.getElementById('spt').className = ''
+        document.getElementById('spt').nextElementSibling.style.height = 0
+      } else if (target.id === 'tt'){
+        document.getElementById('playlistlist').className = ''
+        document.getElementById('playlistlist').nextElementSibling.style.height = 0
+        document.getElementById('ta').className = ''
+        document.getElementById('ta').nextElementSibling.style.height = 0
+        document.getElementById('tt').className = 'tabs_target'
+        document.getElementById('tt').nextElementSibling.style.height = 'auto'
+        document.getElementById('sa').className = ''
+        document.getElementById('sa').nextElementSibling.style.height = 0
+        document.getElementById('st').className = ''
+        document.getElementById('st').nextElementSibling.style.height = 0
+        document.getElementById('fa').className = ''
+        document.getElementById('fa').nextElementSibling.style.height = 0
+        document.getElementById('nr').className = ''
+        document.getElementById('nr').nextElementSibling.style.height = 0
+        document.getElementById('spt').className = ''
+        document.getElementById('spt').nextElementSibling.style.height = 0
+      } else if (target.id === 'sa'){
+        document.getElementById('playlistlist').className = ''
+        document.getElementById('playlistlist').nextElementSibling.style.height = 0
+        document.getElementById('ta').className = ''
+        document.getElementById('ta').nextElementSibling.style.height = 0
+        document.getElementById('tt').className = ''
+        document.getElementById('tt').nextElementSibling.style.height = 0
+        document.getElementById('sa').className = 'tabs_target'
+        document.getElementById('sa').nextElementSibling.style.height = 'auto'
+        document.getElementById('st').className = ''
+        document.getElementById('st').nextElementSibling.style.height = 0
+        document.getElementById('fa').className = ''
+        document.getElementById('fa').nextElementSibling.style.height = 0
+        document.getElementById('nr').className = ''
+        document.getElementById('nr').nextElementSibling.style.height = 0
+        document.getElementById('spt').className = ''
+        document.getElementById('spt').nextElementSibling.style.height = 0
+      } else if (target.id === 'st'){
+        document.getElementById('playlistlist').className = ''
+        document.getElementById('playlistlist').nextElementSibling.style.height = 0
+        document.getElementById('ta').className = ''
+        document.getElementById('ta').nextElementSibling.style.height =0
+        document.getElementById('tt').className = ''
+        document.getElementById('tt').nextElementSibling.style.height = 0
+        document.getElementById('sa').className = ''
+        document.getElementById('sa').nextElementSibling.style.height = 0
+        document.getElementById('st').className = 'tabs_target'
+        document.getElementById('st').nextElementSibling.style.height = 'auto'
+        document.getElementById('fa').className = ''
+        document.getElementById('fa').nextElementSibling.style.height = 0
+        document.getElementById('nr').className = ''
+        document.getElementById('nr').nextElementSibling.style.height = 0
+        document.getElementById('spt').className = ''
+        document.getElementById('spt').nextElementSibling.style.height = 0
+      } else if (target.id === 'fa'){
+        document.getElementById('playlistlist').className = ''
+        document.getElementById('playlistlist').nextElementSibling.style.height = 0
+        document.getElementById('ta').className = ''
+        document.getElementById('ta').nextElementSibling.style.height = 0
+        document.getElementById('tt').className = ''
+        document.getElementById('tt').nextElementSibling.style.height = 0
+        document.getElementById('sa').className = ''
+        document.getElementById('sa').nextElementSibling.style.height = 0
+        document.getElementById('st').className = ''
+        document.getElementById('st').nextElementSibling.style.height = 0
+        document.getElementById('fa').className = 'tabs_target'
+        document.getElementById('fa').nextElementSibling.style.height = 'auto'
+        document.getElementById('nr').className = ''
+        document.getElementById('nr').nextElementSibling.style.height = 0
+        document.getElementById('spt').className = ''
+        document.getElementById('spt').nextElementSibling.style.height = 0
+      } else if (target.id === 'nr'){
+        document.getElementById('playlistlist').className = ''
+        document.getElementById('playlistlist').nextElementSibling.style.height = 0
+        document.getElementById('ta').className = ''
+        document.getElementById('ta').nextElementSibling.style.height = 0
+        document.getElementById('tt').className = ''
+        document.getElementById('tt').nextElementSibling.style.height = 0
+        document.getElementById('sa').className = ''
+        document.getElementById('sa').nextElementSibling.style.height = 0
+        document.getElementById('st').className = ''
+        document.getElementById('st').nextElementSibling.style.height = 0
+        document.getElementById('fa').className = ''
+        document.getElementById('fa').nextElementSibling.style.height = 0
+        document.getElementById('nr').className = 'tabs_target'
+        document.getElementById('nr').nextElementSibling.style.height = 'auto'
+        document.getElementById('spt').className = ''
+        document.getElementById('spt').nextElementSibling.style.height = 0
+      } else if (target.id === 'spt'){
+        document.getElementById('playlistlist').className = ''
+        document.getElementById('playlistlist').nextElementSibling.style.height = 0
+        document.getElementById('ta').className = ''
+        document.getElementById('ta').nextElementSibling.style.height = 0
+        document.getElementById('tt').className = ''
+        document.getElementById('tt').nextElementSibling.style.height = 0
+        document.getElementById('sa').className = ''
+        document.getElementById('sa').nextElementSibling.style.height = 0
+        document.getElementById('st').className = ''
+        document.getElementById('st').nextElementSibling.style.height = 0
+        document.getElementById('fa').className = ''
+        document.getElementById('fa').nextElementSibling.style.height = 0
+        document.getElementById('nr').className = ''
+        document.getElementById('nr').nextElementSibling.style.height = 0
+        document.getElementById('spt').className = 'tabs_target'
+        document.getElementById('spt').nextElementSibling.style.height = 'auto'
       }
     },
     fetchApi(event){
