@@ -23,7 +23,7 @@
             <div class="con2" style="display: flex;color: black" v-bind:key="index">
               <template v-if="item.tracks">
                 <template v-for="(pl,ind) of item['tracks']['items']" >
-                  <div v-bind:id="pl.id" v-bind:key="ind" v-if="pl.track.preview_url" tabindex="0" class="con3" v-on:click="deeper(pl,1,$event); click" v-bind:style="{ 'background-image': 'url(' + pl.track.album.images[0].url + ')' }" >{{lists(pl['track']['artists'])}} - {{pl.track.name}}
+                  <div v-bind:id="pl.id" v-bind:key="ind" v-if="pl.track.preview_url" tabindex="0" class="con3" v-on:click="deeper(pl,1,$event),click($event)" v-bind:style="{ 'background-image': 'url(' + pl.track.album.images[0].url + ')' }" >{{lists(pl['track']['artists'])}} - {{pl.track.name}}
                     <audio preload="none" v-bind:src="pl.track.preview_url"></audio>
                   </div>
                   <div v-else tabindex="0" v-bind:key="ind" class="con3" v-bind:style="{ 'background-image': 'url(' + pl.track.album.images[0].url + ')' }" v-on:click="deeper(pl,1,$event)" style="opacity: .5">{{lists(pl['track']['artists'])}} - {{pl.track.name}}
@@ -71,7 +71,7 @@
                 <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadST(1,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
                 <div class="card2">
                   <template v-for="(s,index) in d.tracks">
-                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('yourplaylists',s,1,false,'seed_tracks'); click">{{s.name}}
+                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('yourplaylists',s,1,false,'seed_tracks'),click($event)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('yourplaylists',s,1,false,'seed_tracks')">{{s.name}}
@@ -102,7 +102,7 @@
                   <div v-if="ta.type==='top_tracks'" class="break" v-bind:key="index" >Top tracks</div>
                   <div v-if="ta.type==='top_tracks'" v-bind:key="index" tabindex="0" class="top-tracks card2">
                     <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
-                      <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('yourplaylists',tt,1,false,'trackartist','art' + d[0].id); click">{{tt.name}}
+                      <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('yourplaylists',tt,1,false,'trackartist','art' + d[0].id),click($event)">{{tt.name}}
                         <audio v-bind:src="tt.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('yourplaylists',tt,1,false,'trackartist','art' + d[0].id)">{{tt.name}}
@@ -113,7 +113,7 @@
                   <div v-if="ta.type==='albums' && ta.length > 0" class="break" v-bind:key="index" >Albums</div>
                   <div v-if="ta.type==='albums' && ta.length > 0" v-bind:key="index" tabindex="0" class="album card2">
                     <div v-for="(alb,index) in ta" v-bind:key="index">
-                      <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,1,'art' + d[0].id); click">{{alb.name}}
+                      <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,1,'art' + d[0].id),click($event)">{{alb.name}}
                         <audio v-bind:src="alb.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(alb,1,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" style="opacity: .5">{{alb.name}}
@@ -124,7 +124,7 @@
                   <div v-if="ta.type==='single' && ta.length > 0" class="break" v-bind:key="index" >Single</div>
                   <div v-if="ta.type==='single' && ta.length > 0" v-bind:key="index" tabindex="0" class="single card2">
                     <div v-for="(s,index) in ta" v-bind:key="index">
-                      <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,1,'art' + d[0].id); click" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }">{{s.name}}
+                      <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,1,'art' + d[0].id),click($event)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }">{{s.name}}
                         <audio v-bind:src="s.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(s,1,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" style="opacity: .5">{{s.name}}
@@ -136,7 +136,7 @@
                   <div v-if="ta.type==='appears_on' && ta.length > 0" class="break" v-bind:key="index" >Appears on</div>
                   <div v-if="ta.type==='appears_on' && ta.length > 0" v-bind:key="index" tabindex="0" class="appear card2">
                     <div v-for="(a,index) in ta" v-bind:key="index">
-                      <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,1,'art' + d[0].id); click" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{a.name}}
+                      <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,1,'art' + d[0].id),click($event)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{a.name}}
                         <audio v-bind:src="a.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(a,1,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" style="opacity: .5">{{a.name}}
@@ -147,7 +147,7 @@
                   <div v-if="ta.type==='related-artists'" class="break" v-bind:key="index" >Related Artist</div>
                   <div v-if="ta.type==='related-artists'" v-bind:key="index" class="card2">
                     <div v-for="(r,index) in ta" v-bind:key="index">
-                      <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;"  v-on:click="deeperartist('yourplaylists',r,ta[index],1,false,'trackartist','art' + d[0].id); click">
+                      <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;"  v-on:click="deeperartist('yourplaylists',r,ta[index],1,false,'trackartist','art' + d[0].id),click($event)">
                         <audio v-bind:src="r.preview_url"></audio>
                       </div>
                       <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5" v-on:click="deeperartist('yourplaylists',r,ta[index],1,false,'trackartist','art' + d[0].id)">
@@ -238,7 +238,7 @@
                   </div>
                   <div style="display: block;" class="trackList">Tracks
                     <div v-for="(track,index) in d.tracks" v-bind:key="index">
-                      <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  v-on:click="deeperTracks2('yourplaylists',track,d,1,false,'deep_albums'); click">
+                      <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  v-on:click="deeperTracks2('yourplaylists',track,d,1,false,'deep_albums'),click($event)">
                         <div class="trackTitle">{{track.name}}</div>
                         <audio preload="none" v-bind:src="track.preview_url"></audio>
                       </div>
@@ -254,7 +254,7 @@
                 <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadSA(1,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
                 <div class="card2">
                   <template v-for="(s,index) in d.tracks" >
-                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('yourplaylists',s,1,false,'seed_artists'); click">{{s.name}}
+                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('yourplaylists',s,1,false,'seed_artists'),click($event)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('yourplaylists',s,1,false,'seed_artists')">{{s.name}}
@@ -281,7 +281,7 @@
         </div>
         <div id="topartist" class="con2" style="display: flex;color: black;width: auto;">
           <div class="trackbody" v-for="(item,index) of topartist" v-bind:key="index">
-            <div v-if="item.preview_url" tabindex="0" class="con3"  v-on:click="deeperartist('topartist',item,item.tracks,2,true); click" v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }" >{{item.name}}
+            <div v-if="item.preview_url" tabindex="0" class="con3"  v-on:click="deeperartist('topartist',item,item.tracks,2,true),click($event)" v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }" >{{item.name}}
               <audio preload="none" v-bind:src="item.preview_url"></audio>
             </div>
             <div v-else tabindex="0" class="con3" v-on:click="deeperartist('topartist',item,item.tracks,2,true)" v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }" style="opacity: .5">{{item.name}}
@@ -298,7 +298,7 @@
                   <div>{{d.track.name}}</div>
                   <div style="display: flex; align-items: center;"><p>By </p>
                     <div v-for="(art,index) in d.track.artists" v-bind:key="index" style="display: flex;align-items: center">
-                      <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist('topartist',art,d,2,false,'pl'); click">{{art.name}}</div>
+                      <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;" v-on:click="deeperartist('topartist',art,d,2,false,'pl'),click($event)">{{art.name}}</div>
                     </div>
                   </div>
                   <span style="color: rgb(240, 55, 165);" v-on:click="seedTracks('topartist',d[index],2,'pl')">Recommended songs based on this</span>
@@ -306,7 +306,7 @@
                     <button class="button"><a class="linkresset" v-bind:href="d['track']['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                   </div>
                 </div>
-                <div class="artist-cirle con3" v-for="(art,index) in d.track.artists" v-bind:key="index" v-on:click="deeperartist('topartist',art,d,2); click" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">
+                <div class="artist-cirle con3" v-for="(art,index) in d.track.artists" v-bind:key="index" v-on:click="deeperartist('topartist',art,d,2),click($event)" v-bind:style="{ 'background-image': 'url(' + d.track.album.images[0].url + ')' }">
                   <audio preload="none" v-bind:src="d.track.preview_url"></audio>
                   <div style="float: left; position: absolute; font-size: 0.7em;">{{art.name}}</div>
                 </div>
@@ -315,7 +315,7 @@
                 <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadST(2,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
                 <div class="card2">
                   <template v-for="(s,index) in d.tracks" >
-                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('topartist',s,2,false,'seed_tracks'); click">{{s.name}}
+                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('topartist',s,2,false,'seed_tracks'),click($event)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5">{{s.name}}
@@ -346,7 +346,7 @@
                   <div v-if="ta.type==='top_tracks'" class="break" v-bind:key="index" >Top tracks</div>
                   <div v-if="ta.type==='top_tracks'" v-bind:key="index" tabindex="0" class="top-tracks card2">
                     <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
-                      <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('topartist',tt,2,false,'trackartist','art' + d[0].id); click">{{tt.name}}
+                      <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('topartist',tt,2,false,'trackartist','art' + d[0].id),click($event)">{{tt.name}}
                         <audio v-bind:src="tt.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('topartist',tt,2,false,'trackartist','art' + d[0].id)">{{tt.name}}
@@ -357,7 +357,7 @@
                   <div v-if="ta.type==='albums' && ta.length > 0" class="break" v-bind:key="index" >Albums</div>
                   <div v-if="ta.type==='albums' && ta.length > 0" v-bind:key="index" tabindex="0" class="album card2">
                     <div v-for="(alb,index) in ta" v-bind:key="index">
-                      <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,2,'art' +d[0].id); click">{{alb.name}}
+                      <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,2,'art' +d[0].id),click($event)">{{alb.name}}
                         <audio v-bind:src="alb.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(alb,2,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" style="opacity: .5">{{alb.name}}
@@ -368,7 +368,7 @@
                   <div v-if="ta.type==='single' && ta.length > 0" class="break" v-bind:key="index" >Single</div>
                   <div v-if="ta.type==='single' && ta.length > 0" v-bind:key="index" tabindex="0" class="single card2">
                     <div v-for="(s,index) in ta" v-bind:key="index">
-                      <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,2,'art' + d[0].id); click" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }">{{s.name}}
+                      <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,2,'art' + d[0].id),click($event)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }">{{s.name}}
                         <audio v-bind:src="s.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(s,2,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" style="opacity: .5">{{s.name}}
@@ -380,7 +380,7 @@
                   <div v-if="ta.type==='appears_on' && ta.length > 0" class="break" v-bind:key="index" >Appears on</div>
                   <div v-if="ta.type==='appears_on' && ta.length > 0" v-bind:key="index" tabindex="0" class="appear card2">
                     <div v-for="(a,index) in ta" v-bind:key="index">
-                      <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,2,'art' + d[0].id); click" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{a.name}}
+                      <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,2,'art' + d[0].id),click($event)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{a.name}}
                         <audio v-bind:src="a.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(a,2,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" style="opacity: .5">{{a.name}}
@@ -391,7 +391,7 @@
                   <div v-if="ta.type==='related-artists'" class="break" v-bind:key="index" >Related Artist</div>
                   <div v-if="ta.type==='related-artists'" v-bind:key="index" class="related card2">
                     <div v-for="(r,index) in ta" v-bind:key="index">
-                      <div v-if="r.preview_url && r.images[0].url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:click="deeperartist('topartist',r,ta[index],2,false,'trackartist','art'+d[0].id); click">
+                      <div v-if="r.preview_url && r.images[0].url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:click="deeperartist('topartist',r,ta[index],2,false,'trackartist','art'+d[0].id),click($event)">
                         <audio v-bind:src="r.preview_url"></audio>
                       </div>
                       <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5">
@@ -484,7 +484,7 @@
                   </div>
                   <div style="display: block;" class="trackList">Tracks
                     <div v-for="(track,index) in d.tracks" v-bind:key="index">
-                      <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  v-on:click="deeperTracks2('topartist',track,d,2,false,'deep_albums'); click">
+                      <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  v-on:click="deeperTracks2('topartist',track,d,2,false,'deep_albums'),click($event)">
                         <div class="trackTitle">{{track.name}}</div>
                         <audio preload="none" v-bind:src="track.preview_url"></audio>
                       </div>
@@ -500,7 +500,7 @@
                 <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadSA(2,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
                 <div class="card2">
                   <template v-for="(s,index) in d.tracks" >
-                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('topartist',s,2); click">{{s.name}}
+                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('topartist',s,2),click($event)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5">{{s.name}}
@@ -514,7 +514,7 @@
         </div>
         <div id="topartist6" class="con2" style="display: flex;color: black;width: auto;">
           <div class="trackbody" v-for="(item,index) of topartist6" v-bind:key="index">
-            <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="deeperartist('topartist6',item,item.tracks,22,true); click"  v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">{{item.name}}
+            <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="deeperartist('topartist6',item,item.tracks,22,true),click($event)"  v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">{{item.name}}
               <audio preload="none" v-bind:src="item.preview_url"></audio>
             </div>
             <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }" style="opacity: .5">{{item.name}}
@@ -549,7 +549,7 @@
                 <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadST(22,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
                 <div class="card2">
                   <template v-for="(s,index) in d.tracks">
-                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('topartist6',s,22,false,'seed_tracks'); click">{{s.name}}
+                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('topartist6',s,22,false,'seed_tracks'),click($event)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('topartist6',s,22,false,'seed_tracks')">{{s.name}}
@@ -580,7 +580,7 @@
                   <div v-if="ta.type==='top_tracks'" class="break" v-bind:key="index" >Top tracks</div>
                   <div v-if="ta.type==='top_tracks'" v-bind:key="index" tabindex="0" class="top-tracks card2">
                     <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
-                      <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('topartist6',tt,22,false,'trackartist','art'+ d[0].id); click">{{tt.name}}
+                      <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('topartist6',tt,22,false,'trackartist','art'+ d[0].id),click($event)">{{tt.name}}
                         <audio v-bind:src="tt.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('topartist6',tt,22,false,'trackartist','art'+ d[0].id)">{{tt.name}}
@@ -591,7 +591,7 @@
                   <div v-if="ta.type==='albums' && ta.length > 0" class="break" v-bind:key="index" >Albums</div>
                   <div v-if="ta.type==='albums' && ta.length > 0" v-bind:key="index" tabindex="0" class="album card2">
                     <div v-for="(alb,index) in ta" v-bind:key="index">
-                      <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,22,'art' + d[0].id); click">{{alb.name}}
+                      <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,22,'art' + d[0].id),click($event)">{{alb.name}}
                         <audio v-bind:src="alb.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(alb,22,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" style="opacity: .5">{{alb.name}}
@@ -602,7 +602,7 @@
                   <div v-if="ta.type==='single' && ta.length > 0" class="break" v-bind:key="index" >Single</div>
                   <div v-if="ta.type==='single' && ta.length > 0" v-bind:key="index" tabindex="0" class="single card2">
                     <div v-for="(s,index) in ta" v-bind:key="index">
-                      <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,22,'art' + d[0].id); click" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }">{{s.name}}
+                      <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,22,'art' + d[0].id),click($event)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }">{{s.name}}
                         <audio v-bind:src="s.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(s,22,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" style="opacity: .5">{{s.name}}
@@ -614,7 +614,7 @@
                   <div v-if="ta.type==='appears_on' && ta.length > 0" class="break" v-bind:key="index" >Appears on</div>
                   <div v-if="ta.type==='appears_on' && ta.length > 0" v-bind:key="index" tabindex="0" class="appear card2">
                     <div v-for="(a,index) in ta" v-bind:key="index">
-                      <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,22,'art' + d[0].id); click" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{a.name}}
+                      <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,22,'art' + d[0].id),click($event)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{a.name}}
                         <audio v-bind:src="a.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(a,22,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" style="opacity: .5">{{a.name}}
@@ -625,7 +625,7 @@
                   <div v-if="ta.type==='related-artists'" class="break" v-bind:key="index" >Related Artist</div>
                   <div v-if="ta.type==='related-artists'" v-bind:key="index" class="related card2">
                     <div v-for="(r,index) in ta" v-bind:key="index">
-                      <div v-if="r.preview_url && r.images[0].url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:click="deeperartist('topartist6',r,ta[index],22,false,'trackartist','art' + d[0].id); click">
+                      <div v-if="r.preview_url && r.images[0].url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:click="deeperartist('topartist6',r,ta[index],22,false,'trackartist','art' + d[0].id),click($event)">
                         <audio v-bind:src="r.preview_url"></audio>
                       </div>
                       <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5" v-on:click="deeperartist('topartist6',r,ta[i],22,false,'trackartist','art' + d[0].id)">
@@ -717,7 +717,7 @@
                   </div>
                   <div style="display: block;" class="trackList">Tracks
                     <div v-for="(track,index) in d.tracks" v-bind:key="index">
-                      <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  v-on:click="deeperTracks2('topartist6',track,d,22,false,'deep_albums'); click">
+                      <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  v-on:click="deeperTracks2('topartist6',track,d,22,false,'deep_albums'),click($event)">
                         <div class="trackTitle">{{track.name}}</div>
                         <audio preload="none" v-bind:src="track.preview_url"></audio>
                       </div>
@@ -733,7 +733,7 @@
                 <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadSA(22,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
                 <div class="card2">
                   <template v-for="(s,index) in d.tracks" >
-                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('topartist6',s,22,false,'seed_artists'); click">{{s.name}}
+                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('topartist6',s,22,false,'seed_artists'),click($event)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('topartist6',s,22,false,'seed_artists')">{{s.name}}
@@ -747,7 +747,7 @@
         </div>
         <div id="topartista" class="con2" style="display: flex;color: black;width: auto;">
           <template v-for="(item,index) of topartista" >
-            <div v-if="item.preview_url" tabindex="0" v-bind:key="index" class="con3" v-on:click="deeperartist('topartista',item,item.tracks,23,true); click"   v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">{{item.name}}
+            <div v-if="item.preview_url" tabindex="0" v-bind:key="index" class="con3" v-on:click="deeperartist('topartista',item,item.tracks,23,true),click($event)"   v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">{{item.name}}
               <audio preload="none" v-bind:src="item.preview_url"></audio>
             </div>
             <div v-else tabindex="0" class="con3" v-bind:key="index" v-on:click="deeperartist('topartista',item,item.tracks,23,true)" v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }" style="opacity: .5">{{item.name}}
@@ -780,7 +780,7 @@
               <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadST(23,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
               <div class="card2">
                 <template v-for="(s,index) in d.tracks">
-                  <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('topartista',s,23,false,'seed_tracks'); click">{{s.name}}
+                  <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('topartista',s,23,false,'seed_tracks'),click($event)">{{s.name}}
                     <audio preload="none" v-bind:src="s.preview_url"></audio>
                   </div>
                   <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('topartista',s,23,false,'seed_tracks')">{{s.name}}
@@ -810,7 +810,7 @@
                 <div v-if="ta.type==='top_tracks'" class="break" v-bind:key="index" >Top tracks</div>
                 <div v-if="ta.type==='top_tracks'" v-bind:key="index" tabindex="0" class="top-tracks card2">
                   <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
-                    <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('topartista',tt,23,false,'trackartist','art'+ d[0].id); click">{{tt.name}}
+                    <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('topartista',tt,23,false,'trackartist','art'+ d[0].id),click($event)">{{tt.name}}
                       <audio v-bind:src="tt.preview_url"></audio>
                     </div>
                     <div v-else class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('topartista',tt,23,false,'trackartist','art'+ d[0].id)">{{tt.name}}
@@ -821,7 +821,7 @@
                 <div v-if="ta.type==='albums' && ta.length > 0" class="break" v-bind:key="index" >Albums</div>
                 <div v-if="ta.type==='albums' && ta.length > 0" v-bind:key="index" tabindex="0" class="album card2">
                   <div v-for="(alb,index) in ta" v-bind:key="index">
-                    <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,23,'art' + d[0].id); click">{{alb.name}}
+                    <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,23,'art' + d[0].id),click($event)">{{alb.name}}
                       <audio v-bind:src="alb.preview_url"></audio>
                     </div>
                     <div v-else class="con3" v-on:click="deeperAlbum(alb,23,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" style="opacity: .5">{{alb.name}}
@@ -832,7 +832,7 @@
                 <div v-if="ta.type==='single' && ta.length > 0" class="break" v-bind:key="index" >Single</div>
                 <div v-if="ta.type==='single' && ta.length > 0" v-bind:key="index" tabindex="0" class="single card2">
                   <div v-for="(s,index) in ta" v-bind:key="index">
-                    <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,23,'art' + d[0].id); click" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }">{{s.name}}
+                    <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,23,'art' + d[0].id),click($event)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }">{{s.name}}
                       <audio v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else class="con3" v-on:click="deeperAlbum(s,23,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" style="opacity: .5">{{s.name}}
@@ -844,7 +844,7 @@
                 <div v-if="ta.type==='appears_on' && ta.length > 0" class="break" v-bind:key="index" >Appears on</div>
                 <div v-if="ta.type==='appears_on' && ta.length > 0" v-bind:key="index" tabindex="0" class="appear card2">
                   <div v-for="(a,index) in ta" v-bind:key="index">
-                    <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,23,'art' + d[0].id); click" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{a.name}}
+                    <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,23,'art' + d[0].id),click($event)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{a.name}}
                       <audio v-bind:src="a.preview_url"></audio>
                     </div>
                     <div v-else class="con3" v-on:click="deeperAlbum(a,23,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" style="opacity: .5">{{a.name}}
@@ -855,7 +855,7 @@
                 <div v-if="ta.type==='related-artists'" class="break" v-bind:key="index" >Related Artist</div>
                 <div v-if="ta.type==='related-artists'" v-bind:key="index" class="related card2">
                   <div v-for="(r,index) in ta" v-bind:key="index">
-                    <div v-if="r.preview_url && r.images[0].url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:click="deeperartist('topartista',r,ta[index],23,false,'trackartist','art' + d[0].id); click">
+                    <div v-if="r.preview_url && r.images[0].url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:click="deeperartist('topartista',r,ta[index],23,false,'trackartist','art' + d[0].id),click($event)">
                       <audio v-bind:src="r.preview_url"></audio>
                     </div>
                     <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5" v-on:click="deeperartist('topartista',r,ta[i],23,false,'trackartist','art' + d[0].id)">
@@ -946,7 +946,7 @@
                 </div>
                 <div style="display: block;" class="trackList">Tracks
                   <div v-for="(track,index) in d.tracks" v-bind:key="index">
-                    <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }" v-on:click="deeperTracks2('topartista',track,d,23,false,'deep_albums'); click">
+                    <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }" v-on:click="deeperTracks2('topartista',track,d,23,false,'deep_albums'),click($event)">
                       <div class="trackTitle">{{track.name}}</div>
                       <audio preload="none" v-bind:src="track.preview_url"></audio>
                     </div>
@@ -962,7 +962,7 @@
               <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadSA(23,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
               <div class="card2">
                 <template v-for="(s,index) in d.tracks" >
-                  <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('topartista',s,23,false,'seed_artists'); click">{{s.name}}
+                  <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('topartista',s,23,false,'seed_artists'),click($event)">{{s.name}}
                     <audio preload="none" v-bind:src="s.preview_url"></audio>
                   </div>
                   <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('topartista',s,23,false,'seed_artists')">{{s.name}}
@@ -997,7 +997,7 @@
         </div>
         <div id="toptrack" class="con2" style="display: flex;color: black;width: auto;">
           <div class="trackbody" v-for="(item,index) of items" v-bind:key="index">
-            <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="deeper(item,3,$event); click" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }">{{lists(item.artists)}} - {{item.name}}
+            <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="deeper(item,3,$event),click($event)" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }">{{lists(item.artists)}} - {{item.name}}
               <audio preload="none" v-bind:src="item.preview_url"></audio>
             </div>
             <div v-else tabindex="0" class="con3" v-on:click="deeper(item,3,$event);" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" style="opacity: .5">{{lists(item.artists)}} - {{item.name}}
@@ -1041,7 +1041,7 @@
                 <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadST(3,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
                 <div class="card2">
                   <template v-for="(s,index) in d.tracks" >
-                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('toptrack',s,3,false,'seed_tracks'); click">{{s.name}}
+                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('toptrack',s,3,false,'seed_tracks'),click($event)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('toptrack',s,3,false,'seed_tracks')">{{s.name}}
@@ -1072,7 +1072,7 @@
                   <div v-if="ta.type==='top_tracks'" class="break" v-bind:key="index" >Top tracks</div>
                   <div v-if="ta.type==='top_tracks'" v-bind:key="index" tabindex="0" class="top-tracks card2">
                     <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
-                      <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('toptrack',tt,3,false,'trackartist','art' + d[0].id); click">{{tt.name}}
+                      <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('toptrack',tt,3,false,'trackartist','art' + d[0].id),click($event)">{{tt.name}}
                         <audio v-bind:src="tt.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('toptrack',tt,3,false,'trackartist','art' + d[0].id)">{{tt.name}}
@@ -1083,7 +1083,7 @@
                   <div v-if="ta.type==='albums' && ta.length > 0" class="break" v-bind:key="index" >Albums</div>
                   <div v-if="ta.type==='albums' && ta.length > 0" v-bind:key="index" tabindex="0" class="album card2">
                     <div v-for="(alb,index) in ta" v-bind:key="index">
-                      <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,3,'art' + d[0].id); click">{{alb.name}}
+                      <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,3,'art' + d[0].id),click($event)">{{alb.name}}
                         <audio v-bind:src="alb.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(alb,3,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" style="opacity: .5">{{alb.name}}
@@ -1094,7 +1094,7 @@
                   <div v-if="ta.type==='single' && ta.length > 0" class="break" v-bind:key="index" >Single</div>
                   <div v-if="ta.type==='single' && ta.length > 0" v-bind:key="index" tabindex="0" class="single card2">
                     <div v-for="(s,index) in ta" v-bind:key="index">
-                      <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,3,'art' + d[0].id); click" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }">{{s.name}}
+                      <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,3,'art' + d[0].id),click($event)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }">{{s.name}}
                         <audio v-bind:src="s.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(s,3,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" style="opacity: .5">{{s.name}}
@@ -1106,7 +1106,7 @@
                   <div v-if="ta.type==='appears_on' && ta.length > 0" class="break" v-bind:key="index" >Appears on</div>
                   <div v-if="ta.type==='appears_on' && ta.length > 0" v-bind:key="index" tabindex="0" class="appear card2">
                     <div v-for="(a,index) in ta" v-bind:key="index">
-                      <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,3,'art' + d[0].id); click" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{a.name}}
+                      <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,3,'art' + d[0].id),click($event)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{a.name}}
                         <audio v-bind:src="a.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(a,3,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" style="opacity: .5">{{a.name}}
@@ -1117,7 +1117,7 @@
                   <div v-if="ta.type==='related-artists'" class="break" v-bind:key="index">Related Artist</div>
                   <div v-if="ta.type==='related-artists'" v-bind:key="index" class="card2">
                     <div v-for="(r,index) in ta" v-bind:key="index">
-                      <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;"  v-on:click="deeperartist('toptrack',r,ta[index],3,false,'trackartist','art' + d[0].id); click">
+                      <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;"  v-on:click="deeperartist('toptrack',r,ta[index],3,false,'trackartist','art' + d[0].id),click($event)">
                         <audio v-bind:src="r.preview_url"></audio>
                       </div>
                       <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5" v-on:click="deeperartist('toptrack',r,ta[index],3,false,'trackartist','art' + d[0].id)">
@@ -1209,7 +1209,7 @@
                   </div>
                   <div style="display: block;" class="trackList">Tracks
                     <div v-for="(track,index) in d.tracks" v-bind:key="index">
-                      <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }" v-on:click="deeperTracks2('toptrack',track,d,3,false,'deep_albums'); click">
+                      <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }" v-on:click="deeperTracks2('toptrack',track,d,3,false,'deep_albums'),click($event)">
                         <div class="trackTitle">{{track.name}}</div>
                         <audio preload="none" v-bind:src="track.preview_url"></audio>
                       </div>
@@ -1225,7 +1225,7 @@
                 <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadSA(3,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
                 <div class="card2">
                   <template v-for="(s,index) in d.tracks" >
-                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('toptrack',s,3,false,'seed_artists'); click">{{s.name}}
+                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('toptrack',s,3,false,'seed_artists'),click($event)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('toptrack',s,3,false,'seed_artists')">{{s.name}}
@@ -1239,7 +1239,7 @@
         </div>
         <div id="toptrack6" class="con2" style="display: flex;color: black;width: auto;" >
           <div class="trackbody" v-for="(item,index) of itemsm" v-bind:key="index">
-            <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="deeper(item,32,$event); click" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" >{{lists(item.artists)}} - {{item.name}}
+            <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="deeper(item,32,$event),click($event)" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" >{{lists(item.artists)}} - {{item.name}}
               <audio preload="none" v-bind:src="item.preview_url"></audio>
             </div>
             <div v-else tabindex="0" class="con3" v-on:click="deeper(item,32,$event);" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" style="opacity: .5">{{lists(item.artists)}} - {{item.name}}
@@ -1283,7 +1283,7 @@
                 <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadST(32,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
                 <div class="card2">
                   <template v-for="(s,index) in d.tracks" >
-                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('toptrack6',s,32,false,'seed_tracks'); click">{{s.name}}
+                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('toptrack6',s,32,false,'seed_tracks'),click($event)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('toptrack6',s,32,false,'seed_tracks')">{{s.name}}
@@ -1314,7 +1314,7 @@
                   <div v-if="ta.type==='top_tracks'" class="break" v-bind:key="index" >Top tracks</div>
                   <div v-if="ta.type==='top_tracks'" v-bind:key="index" tabindex="0" class="top-tracks card2">
                     <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
-                      <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('toptrack6',tt,32,false,'trackartist','art' + d[0].id); click">{{tt.name}}
+                      <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('toptrack6',tt,32,false,'trackartist','art' + d[0].id),click($event)">{{tt.name}}
                         <audio v-bind:src="tt.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('toptrack6',tt,32,false,'trackartist','art' + d[0].id)">{{tt.name}}
@@ -1325,7 +1325,7 @@
                   <div v-if="ta.type==='albums' && ta.length > 0" class="break" v-bind:key="index" >Albums</div>
                   <div v-if="ta.type==='albums' && ta.length > 0" v-bind:key="index" tabindex="0" class="album card2">
                     <div v-for="(alb,index) in ta" v-bind:key="index">
-                      <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,32,'art' + d[0].id); click">{{alb.name}}
+                      <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,32,'art' + d[0].id),click($event)">{{alb.name}}
                         <audio v-bind:src="alb.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(alb,32,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" style="opacity: .5">{{alb.name}}
@@ -1336,7 +1336,7 @@
                   <div v-if="ta.type==='single' && ta.length > 0" class="break" v-bind:key="index" >Single</div>
                   <div v-if="ta.type==='single' && ta.length > 0" v-bind:key="index" tabindex="0" class="single card2">
                     <div v-for="(s,index) in ta" v-bind:key="index">
-                      <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,32,'art' + d[0].id); click" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }">{{s.name}}
+                      <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,32,'art' + d[0].id),click($event)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }">{{s.name}}
                         <audio v-bind:src="s.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(s,32,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" style="opacity: .5">{{s.name}}
@@ -1348,7 +1348,7 @@
                   <div v-if="ta.type==='appears_on' && ta.length > 0" class="break" v-bind:key="index" >Appears on</div>
                   <div v-if="ta.type==='appears_on' && ta.length > 0" v-bind:key="index" tabindex="0" class="appear card2">
                     <div v-for="(a,index) in ta" v-bind:key="index">
-                      <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,32,'art' + d[0].id); click" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{a.name}}
+                      <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,32,'art' + d[0].id),click($event)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{a.name}}
                         <audio v-bind:src="a.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(a,32,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" style="opacity: .5">{{a.name}}
@@ -1359,7 +1359,7 @@
                   <div v-if="ta.type==='related-artists'" class="break" v-bind:key="index" >Related Artist</div>
                   <div v-if="ta.type==='related-artists'" v-bind:key="index" class="card2">
                     <div v-for="(r,index) in ta" v-bind:key="index">
-                      <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;"  v-on:click="deeperartist('toptrack6',r,ta[index],32,false,'trackartist','art' + d[0].id); click">
+                      <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;"  v-on:click="deeperartist('toptrack6',r,ta[index],32,false,'trackartist','art' + d[0].id),click($event)">
                         <audio v-bind:src="r.preview_url"></audio>
                       </div>
                       <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5" v-on:click="deeperartist('toptrack6',r,ta[index],32,false,'trackartist','art' + d[0].id)">
@@ -1455,7 +1455,7 @@
                   </div>
                   <div style="display: block;" class="trackList">Tracks
                     <div v-for="(track,index) in d.tracks" v-bind:key="index">
-                      <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }" v-on:click="deeperTracks2('toptrack6',track,d,32,false,'deep_albums'); click">
+                      <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }" v-on:click="deeperTracks2('toptrack6',track,d,32,false,'deep_albums'),click($event)">
                         <div class="trackTitle">{{track.name}}</div>
                         <audio preload="none" v-bind:src="track.preview_url"></audio>
                       </div>
@@ -1471,7 +1471,7 @@
                 <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadSA(32,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
                 <div class="card2">
                   <template v-for="(s,index) in d.tracks" >
-                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('toptrack6',s,32,false,'seed_artists'); click">{{s.name}}
+                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('toptrack6',s,32,false,'seed_artists'),click($event)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('toptrack6',s,32,false,'seed_artists')">{{s.name}}
@@ -1485,7 +1485,7 @@
         </div>
         <div id="toptrackall" class="con2" style="display: flex;color: black;width: auto;" >
           <div class="trackbody" v-for="(item,index) of itemsl" v-bind:key="index">
-            <div v-if="item.preview_url" tabindex="0" class="con3"  v-on:click="deeper(item,33,$event); click" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" >{{lists(item.artists)}} - {{item.name}}
+            <div v-if="item.preview_url" tabindex="0" class="con3"  v-on:click="deeper(item,33,$event),click($event)" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" >{{lists(item.artists)}} - {{item.name}}
               <audio preload="none" v-bind:src="item.preview_url"></audio>
             </div>
             <div v-else tabindex="0" class="con3" v-on:click="deeper(item,33,$event);" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" style="opacity: .5">{{lists(item.artists)}} - {{item.name}}
@@ -1529,7 +1529,7 @@
                 <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadST(33,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
                 <div class="card2">
                   <template v-for="(s,index) in d.tracks" >
-                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('toptrackall',s,33,false,'seed_tracks'); click">{{s.name}}
+                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('toptrackall',s,33,false,'seed_tracks'),click($event)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('toptrackall',s,33,false,'seed_tracks')">{{s.name}}
@@ -1560,7 +1560,7 @@
                   <div v-if="ta.type==='top_tracks'" class="break" v-bind:key="index" >Top tracks</div>
                   <div v-if="ta.type==='top_tracks'" v-bind:key="index" tabindex="0" class="top-tracks card2">
                     <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
-                      <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('toptrackall',tt,33,false,'trackartist','art' + d[0].id); click">{{tt.name}}
+                      <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('toptrackall',tt,33,false,'trackartist','art' + d[0].id),click($event)">{{tt.name}}
                         <audio v-bind:src="tt.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('toptrackall',tt,33,false,'trackartist','art' + d[0].id)">{{tt.name}}
@@ -1571,7 +1571,7 @@
                   <div v-if="ta.type==='albums' && ta.length > 0" class="break" v-bind:key="index" >Albums</div>
                   <div v-if="ta.type==='albums' && ta.length > 0" v-bind:key="index" tabindex="0" class="album card2">
                     <div v-for="(alb,index) in ta" v-bind:key="index">
-                      <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,33,'art' + d[0].id); click">{{alb.name}}
+                      <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,33,'art' + d[0].id),click($event)">{{alb.name}}
                         <audio v-bind:src="alb.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(alb,33,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" style="opacity: .5">{{alb.name}}
@@ -1582,7 +1582,7 @@
                   <div v-if="ta.type==='single' && ta.length > 0" class="break" v-bind:key="index" >Single</div>
                   <div v-if="ta.type==='single' && ta.length > 0" v-bind:key="index" tabindex="0" class="single card2">
                     <div v-for="(s,index) in ta" v-bind:key="index">
-                      <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,33,'art' + d[0].id); click" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" >{{s.name}}
+                      <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,33,'art' + d[0].id),click($event)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" >{{s.name}}
                         <audio v-bind:src="s.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(s,33,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" style="opacity: .5">{{s.name}}
@@ -1594,7 +1594,7 @@
                   <div v-if="ta.type==='appears_on' && ta.length > 0" class="break" v-bind:key="index" >Appears on</div>
                   <div v-if="ta.type==='appears_on' && ta.length > 0" v-bind:key="index" tabindex="0" class="appear card2">
                     <div v-for="(a,index) in ta" v-bind:key="index">
-                      <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,33,'art' + d[0].id); click" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" >{{a.name}}
+                      <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,33,'art' + d[0].id),click($event)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" >{{a.name}}
                         <audio v-bind:src="a.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(a,33,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" style="opacity: .5">{{a.name}}
@@ -1605,7 +1605,7 @@
                   <div v-if="ta.type==='related-artists'" class="break" v-bind:key="index" >Related Artist</div>
                   <div v-if="ta.type==='related-artists'" v-bind:key="index" class="card2">
                     <div v-for="(r,index) in ta" v-bind:key="index">
-                      <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:click="deeperartist('toptrackall',r,ta[index],33,false,'trackartist','art' + d[0].id); click">
+                      <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:click="deeperartist('toptrackall',r,ta[index],33,false,'trackartist','art' + d[0].id),click($event)">
                         <audio v-bind:src="r.preview_url"></audio>
                       </div>
                       <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5" v-on:click="deeperartist('toptrackall',r,ta[index],33,false,'trackartist','art' + d[0].id)">
@@ -1697,7 +1697,7 @@
                   </div>
                   <div style="display: block;" class="trackList">Tracks
                     <div v-for="(track,index) in d.tracks" v-bind:key="index">
-                      <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }" v-on:click="deeperTracks2('toptrackall',track,d,33,false,'deep_albums'); click">
+                      <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }" v-on:click="deeperTracks2('toptrackall',track,d,33,false,'deep_albums'),click($event)">
                         <div class="trackTitle">{{track.name}}</div>
                         <audio preload="none" v-bind:src="track.preview_url"></audio>
                       </div>
@@ -1713,7 +1713,7 @@
                 <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadSA(33,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
                 <div class="card2">
                   <template v-for="(s,index) in d.tracks" >
-                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('toptrackall',s,33,false,'seed_artists'); click">{{s.name}}
+                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('toptrackall',s,33,false,'seed_artists'),click($event)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('toptrackall',s,33,false,'seed_artists')">{{s.name}}
@@ -1740,7 +1740,7 @@
       <div>
         <div id="savedalbum" class="con2" >
           <div class="albumbody" v-for="(item,index) of savedalbums" v-bind:key="index">
-            <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="deeperAlbum(item,4); click" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" >{{lists(item.album.artists)}}
+            <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="deeperAlbum(item,4),click($event)" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" >{{lists(item.album.artists)}}
               <audio preload="none" v-bind:src="item.preview_url"></audio>
             </div>
             <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" style="opacity: .5">{{lists(item.album.artists)}}
@@ -1775,7 +1775,7 @@
                 <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadST(4,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
                 <div class="card2">
                   <template v-for="(s,index) in d.tracks" >
-                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('savedalbum',s,4); click">{{s.name}}
+                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('savedalbum',s,4),click($event)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5">{{s.name}}
@@ -1806,7 +1806,7 @@
                   <div v-if="ta.type==='top_tracks'" class="break" v-bind:key="index" >Top tracks</div>
                   <div v-if="ta.type==='top_tracks'" v-bind:key="index" tabindex="0" class="top-tracks card2">
                     <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
-                      <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('savedalbum',tt,4); click">{{tt.name}}
+                      <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('savedalbum',tt,4),click($event)">{{tt.name}}
                         <audio v-bind:src="tt.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" style="opacity: .5">{{tt.name}}
@@ -1817,7 +1817,7 @@
                   <div v-if="ta.type==='albums' && ta.length > 0" class="break" v-bind:key="index" >Albums</div>
                   <div v-if="ta.type==='albums' && ta.length > 0" v-bind:key="index" tabindex="0" class="album card2">
                     <div v-for="(alb,index) in ta" v-bind:key="index">
-                      <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,4); click">{{alb.name}}
+                      <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,4),click($event)">{{alb.name}}
                         <audio v-bind:src="alb.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(alb,4)" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" style="opacity: .5">{{alb.name}}
@@ -1828,7 +1828,7 @@
                   <div v-if="ta.type==='single' && ta.length > 0" class="break" v-bind:key="index" >Single</div>
                   <div v-if="ta.type==='single' && ta.length > 0" v-bind:key="index" tabindex="0" class="single card2">
                     <div v-for="(s,index) in ta" v-bind:key="index">
-                      <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,4); click" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }">{{s.name}}
+                      <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,4),click($event)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }">{{s.name}}
                         <audio v-bind:src="s.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(s,4)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" style="opacity: .5">{{s.name}}
@@ -1840,7 +1840,7 @@
                   <div v-if="ta.type==='appears_on' && ta.length > 0" class="break" v-bind:key="index" >Appears on</div>
                   <div v-if="ta.type==='appears_on' && ta.length > 0" v-bind:key="index" tabindex="0" class="appear card2">
                     <div v-for="(a,index) in ta" v-bind:key="index">
-                      <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,4); click" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" >{{a.name}}
+                      <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,4),click($event)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" >{{a.name}}
                         <audio v-bind:src="a.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(a,4)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" style="opacity: .5">{{a.name}}
@@ -1851,7 +1851,7 @@
                   <div v-if="ta.type==='related-artists'" class="break" v-bind:key="index" >Related Artist</div>
                   <div v-if="ta.type==='related-artists'" v-bind:key="index" class="card2">
                     <div v-for="(r,index) in ta" v-bind:key="index">
-                      <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:click="deeperartist('savedalbum',r,ta[index],4); click">
+                      <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:click="deeperartist('savedalbum',r,ta[index],4),click($event)">
                         <audio v-bind:src="r.preview_url"></audio>
                       </div>
                       <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5">
@@ -1925,7 +1925,7 @@
                   </div>
                   <div style="display: block;" class="trackList">Tracks
                     <div v-for="(track,index) in d.album.tracks.items" v-bind:key="index">
-                      <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.album.images[1].url + ')' }"  v-on:click="deeperTracks2('savedalbum',track,d.album,4,false,'deep_albums'); click">
+                      <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.album.images[1].url + ')' }"  v-on:click="deeperTracks2('savedalbum',track,d.album,4,false,'deep_albums'),click($event)">
                         <div class="trackTitle">{{track.name}}</div>
                         <audio preload="none" v-bind:src="track.preview_url"></audio>
                       </div>
@@ -1941,7 +1941,7 @@
                 <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadSA(4,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
                 <div class="card2">
                   <template v-for="(s,index) in d.tracks" >
-                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('savedalbum',s,4); click">{{s.name}}
+                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('savedalbum',s,4),click($event)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5">{{s.name}}
@@ -1960,7 +1960,7 @@
       <div>
         <div id="savedtrack" class="con2">
           <div class="albumbody" v-for="(item,index) of savedtracks" v-bind:key="index">
-            <div v-if="item.track.preview_url" tabindex="0" class="con3" v-on:click="deeper(item,5,$event); click" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" >{{lists(item.track.artists)}} - {{item.track.name}}
+            <div v-if="item.track.preview_url" tabindex="0" class="con3" v-on:click="deeper(item,5,$event),click($event)" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" >{{lists(item.track.artists)}} - {{item.track.name}}
               <audio preload="none" v-bind:src="item.track.preview_url"></audio>
             </div>
             <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" style="opacity: .5" v-on:click="deeper(item,5,$event)">{{lists(item.track.artists)}} - {{item.track.name}}
@@ -2004,7 +2004,7 @@
                 <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadST(5,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
                 <div class="card2">
                   <template v-for="(s,index) in d.tracks">
-                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('savedtrack',s,5,false,'seed_tracks'); click">{{s.name}}
+                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('savedtrack',s,5,false,'seed_tracks'),click($event)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('savedtrack',s,5,false,'seed_tracks')">{{s.name}}
@@ -2035,7 +2035,7 @@
                   <div v-if="ta.type==='top_tracks'" class="break" v-bind:key="index" >Top tracks</div>
                   <div v-if="ta.type==='top_tracks'" v-bind:key="index" tabindex="0" class="top-tracks card2">
                     <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
-                      <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('savedtrack',tt,5,false,'trackartist','art' + d[0].id); click">{{tt.name}}
+                      <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('savedtrack',tt,5,false,'trackartist','art' + d[0].id),click($event)">{{tt.name}}
                         <audio v-bind:src="tt.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('savedtrack',tt,5,false,'trackartist','art' + d[0].id)">{{tt.name}}
@@ -2046,7 +2046,7 @@
                   <div v-if="ta.type==='albums' && ta.length > 0" class="break" v-bind:key="index" >Albums</div>
                   <div v-if="ta.type==='albums' && ta.length > 0" v-bind:key="index" tabindex="0" class="album card2">
                     <div v-for="(alb,index) in ta" v-bind:key="index">
-                      <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,5,'art' + d[0].id); click" >{{alb.name}}
+                      <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,5,'art' + d[0].id),click($event)" >{{alb.name}}
                         <audio v-bind:src="alb.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(alb,5,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" style="opacity: .5">{{alb.name}}
@@ -2057,7 +2057,7 @@
                   <div v-if="ta.type==='single' && ta.length > 0" class="break" v-bind:key="index" >Single</div>
                   <div v-if="ta.type==='single' && ta.length > 0" v-bind:key="index" tabindex="0" class="single card2">
                     <div v-for="(s,index) in ta" v-bind:key="index">
-                      <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,5,'art' + d[0].id); click" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" >{{s.name}}
+                      <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,5,'art' + d[0].id),click($event)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" >{{s.name}}
                         <audio v-bind:src="s.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(s,5,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" style="opacity: .5">{{s.name}}
@@ -2069,7 +2069,7 @@
                   <div v-if="ta.type==='appears_on' && ta.length > 0" class="break" v-bind:key="index" >Appears on</div>
                   <div v-if="ta.type==='appears_on' && ta.length > 0" v-bind:key="index" tabindex="0" class="appear card2">
                     <div v-for="(a,index) in ta" v-bind:key="index">
-                      <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,5,'art' + d[0].id); click" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" >{{a.name}}
+                      <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,5,'art' + d[0].id),click($event)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" >{{a.name}}
                         <audio v-bind:src="a.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(a,5,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" style="opacity: .5">{{a.name}}
@@ -2080,7 +2080,7 @@
                   <div v-if="ta.type==='related-artists'" class="break" v-bind:key="index" >Related Artist</div>
                   <div v-if="ta.type==='related-artists'" v-bind:key="index" class="card2">
                     <div v-for="(r,index) in ta" v-bind:key="index">
-                      <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:click="deeperartist('savedtrack',r,ta[index],5,false,'trackartist','art' + d[0].id); click">
+                      <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:click="deeperartist('savedtrack',r,ta[index],5,false,'trackartist','art' + d[0].id),click($event)">
                         <audio v-bind:src="r.preview_url"></audio>
                       </div>
                       <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5" v-on:click="deeperartist('savedtrack',r,ta[index],5,false,'trackartist','art' + d[0].id)">
@@ -2171,7 +2171,7 @@
                   </div>
                   <div style="display: block;" class="trackList">Tracks
                     <div v-for="(track,index) in d.tracks" v-bind:key="index">
-                      <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  v-on:click="deeperTracks2('savedtrack',track,d,5,false,'deep_albums'); click">
+                      <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  v-on:click="deeperTracks2('savedtrack',track,d,5,false,'deep_albums'),click($event)">
                         <div class="trackTitle">{{track.name}}</div>
                         <audio preload="none" v-bind:src="track.preview_url"></audio>
                       </div>
@@ -2187,7 +2187,7 @@
                 <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadSA(5,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
                 <div class="card2">
                   <template v-for="(s,index) in d.tracks" >
-                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('savedtrack',s,5,false,'seed_artists'); click">{{s.name}}
+                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('savedtrack',s,5,false,'seed_artists'),click($event)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('savedtrack',s,5,false,'seed_artists')">{{s.name}}
@@ -2207,7 +2207,7 @@
         <div style="display: flex;"><button class="btn" v-on:click="reloadartists(4,$event)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
         <div id="followedartist" style="width: 95%;" class="con2">
           <div class="fabody" v-for="(item,index) of followedartists" v-bind:key="index">
-            <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="deeperartist('followedartist',item,item.tracks,6,true); click" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }" >{{item.name}}
+            <div v-if="item.preview_url" tabindex="0" class="con3" v-on:click="deeperartist('followedartist',item,item.tracks,6,true),click($event)" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }" >{{item.name}}
               <audio preload="none" v-bind:src="item.preview_url"></audio>
             </div>
             <div v-else tabindex="0" class="con3"  v-on:click="deeperartist('followedartist',item,item.tracks,6,true)" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }" style="opacity: .5">{{item.name}}
@@ -2242,7 +2242,7 @@
                 <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadST(6,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
                 <div class="card2">
                   <template v-for="(s,index) in d.tracks" >
-                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('followedartist',s,6,false,'seed_tracks'); click">{{s.name}}
+                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('followedartist',s,6,false,'seed_tracks'),click($event)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5">{{s.name}}
@@ -2273,7 +2273,7 @@
                   <div v-if="ta.type==='top_tracks'" class="break" v-bind:key="index" >Top tracks</div>
                   <div v-if="ta.type==='top_tracks'" v-bind:key="index" tabindex="0" class="top-tracks card2">
                     <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
-                      <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('followedartist',tt,6,false,'trackartist','art' + d[0].id); click">{{tt.name}}
+                      <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('followedartist',tt,6,false,'trackartist','art' + d[0].id),click($event)">{{tt.name}}
                         <audio v-bind:src="tt.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('followedartist',tt,6,false,'trackartist','art' + d[0].id)">{{tt.name}}
@@ -2284,7 +2284,7 @@
                   <div v-if="ta.type==='albums' && ta.length > 0" class="break" v-bind:key="index" >Albums</div>
                   <div v-if="ta.type==='albums' && ta.length > 0" v-bind:key="index" tabindex="0" class="album card2">
                     <div v-for="(alb,index) in ta" v-bind:key="index">
-                      <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,6,'art' +d[0].id); click" >{{alb.name}}
+                      <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,6,'art' +d[0].id),click($event)" >{{alb.name}}
                         <audio v-bind:src="alb.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(alb,6,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" style="opacity: .5">{{alb.name}}
@@ -2295,7 +2295,7 @@
                   <div v-if="ta.type==='single' && ta.length > 0" class="break" v-bind:key="index" >Single</div>
                   <div v-if="ta.type==='single' && ta.length > 0" v-bind:key="index" tabindex="0" class="single card2">
                     <div v-for="(s,index) in ta" v-bind:key="index">
-                      <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,6,'art' + d[0].id); click" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }">{{s.name}}
+                      <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,6,'art' + d[0].id),click($event)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }">{{s.name}}
                         <audio v-bind:src="s.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(s,6,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" style="opacity: .5">{{s.name}}
@@ -2307,7 +2307,7 @@
                   <div v-if="ta.type==='appears_on' && ta.length > 0" class="break" v-bind:key="index" >Appears on</div>
                   <div v-if="ta.type==='appears_on' && ta.length > 0" v-bind:key="index" tabindex="0" class="appear card2">
                     <div v-for="(a,index) in ta" v-bind:key="index">
-                      <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,6,'art' + d[0].id); click" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{a.name}}
+                      <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,6,'art' + d[0].id),click($event)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{a.name}}
                         <audio v-bind:src="a.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(a,6,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" style="opacity: .5">{{a.name}}
@@ -2318,7 +2318,7 @@
                   <div v-if="ta.type==='related-artists' && ta.length > 0" class="break" v-bind:key="index" >Related Artist</div>
                   <div v-if="ta.type==='related-artists' && ta.length > 0" v-bind:key="index" class="related card2">
                     <div v-for="(r,index) in ta" v-bind:key="index">
-                      <div v-if="r.preview_url && r.images[0].url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:click="deeperartist('followedartist',r,ta[index],6,false,'trackartist','art'+d[0].id); click">
+                      <div v-if="r.preview_url && r.images[0].url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:click="deeperartist('followedartist',r,ta[index],6,false,'trackartist','art'+d[0].id),click($event)">
                         <audio v-bind:src="r.preview_url"></audio>
                       </div>
                       <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5" v-on:click="deeperartist('followedartist',r,ta[index],6,false,'trackartist','art'+d[0].id)">
@@ -2410,7 +2410,7 @@
                   </div>
                   <div style="display: block;" class="trackList">Tracks
                     <div v-for="(track,index) in d.tracks" v-bind:key="index">
-                      <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }" v-on:click="deeperTracks2('followedartist',track,d,6,false,'deep_albums'); click">
+                      <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }" v-on:click="deeperTracks2('followedartist',track,d,6,false,'deep_albums'),click($event)">
                         <div class="trackTitle">{{track.name}}</div>
                         <audio preload="none" v-bind:src="track.preview_url"></audio>
                       </div>
@@ -2426,7 +2426,7 @@
                 <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadSA(6,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
                 <div class="card2">
                   <template v-for="(s,index) in d.tracks" >
-                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('followedartist',s,6); click">{{s.name}}
+                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('followedartist',s,6),click($event)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5">{{s.name}}
@@ -2445,7 +2445,7 @@
       <div style="display: block;width: 95%">
         <div id="newrelease" class="con2">
           <div class="newbody" v-for="(item,index) of newreleases" v-bind:key="index">
-            <div v-if="item.tracks.items[0].preview_url" tabindex="0" class="con3" v-on:click="deeper(item,7,$event); click" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }" >{{lists(item.artists)}} - {{item.name}}
+            <div v-if="item.tracks.items[0].preview_url" tabindex="0" class="con3" v-on:click="deeper(item,7,$event),click($event)" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }" >{{lists(item.artists)}} - {{item.name}}
               <audio preload="none" v-bind:src="item.tracks.items[0].preview_url"></audio>
             </div>
             <div v-else tabindex="0" class="con3" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }" style="opacity: .5" v-on:click="deeper(item,7,$event)">{{lists(item.artists)}}
@@ -2489,7 +2489,7 @@
                 <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadST(7,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
                 <div class="card2">
                   <template v-for="(s,index) in d.tracks">
-                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('newrelease',s,7,false,'seed_tracks'); click">{{s.name}}
+                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('newrelease',s,7,false,'seed_tracks'),click($event)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('newrelease',s,7,false,'seed_tracks')">{{s.name}}
@@ -2520,7 +2520,7 @@
                   <div v-if="ta.type==='top_tracks'" class="break" v-bind:key="index" >Top tracks</div>
                   <div v-if="ta.type==='top_tracks'" v-bind:key="index" tabindex="0" class="top-tracks card2">
                     <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
-                      <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('newrelease',tt,7,false,'trackartist','art' + d[0].id); click">{{tt.name}}
+                      <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('newrelease',tt,7,false,'trackartist','art' + d[0].id),click($event)">{{tt.name}}
                         <audio v-bind:src="tt.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('newrelease',tt,7,false,'trackartist','art' + d[0].id)">{{tt.name}}
@@ -2531,7 +2531,7 @@
                   <div v-if="ta.type==='albums' && ta.length > 0" class="break" v-bind:key="index" >Albums</div>
                   <div v-if="ta.type==='albums' && ta.length > 0" v-bind:key="index" tabindex="0" class="album card2">
                     <div v-for="(alb,index) in ta" v-bind:key="index">
-                      <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,7,'art' + d[0].id); click">{{alb.name}}
+                      <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,7,'art' + d[0].id),click($event)">{{alb.name}}
                         <audio v-bind:src="alb.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(alb,7,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" style="opacity: .5">{{alb.name}}
@@ -2542,7 +2542,7 @@
                   <div v-if="ta.type==='single' && ta.length > 0" class="break" v-bind:key="index" >Single</div>
                   <div v-if="ta.type==='single' && ta.length > 0" v-bind:key="index" tabindex="0" class="single card2">
                     <div v-for="(s,index) in ta" v-bind:key="index">
-                      <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,7,'art' + d[0].id); click" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }">{{s.name}}
+                      <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,7,'art' + d[0].id),click($event)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }">{{s.name}}
                         <audio v-bind:src="s.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(s,7,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" style="opacity: .5">{{s.name}}
@@ -2554,7 +2554,7 @@
                   <div v-if="ta.type==='appears_on' && ta.length > 0" class="break" v-bind:key="index" >Appears on</div>
                   <div v-if="ta.type==='appears_on' && ta.length > 0" v-bind:key="index" tabindex="0" class="appear card2">
                     <div v-for="(a,index) in ta" v-bind:key="index">
-                      <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,7,'art' + d[0].id); click" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" >{{a.name}}
+                      <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,7,'art' + d[0].id),click($event)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" >{{a.name}}
                         <audio v-bind:src="a.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(a,7,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" style="opacity: .5">{{a.name}}
@@ -2565,7 +2565,7 @@
                   <div v-if="ta.type==='related-artists'" class="break" v-bind:key="index" >Related Artist</div>
                   <div v-if="ta.type==='related-artists'" v-bind:key="index" class="card2">
                     <div v-for="(r,index) in ta" v-bind:key="index">
-                      <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:click="deeperartist('newrelease',r,ta[index],7,false,'trackartist','art' + d[0].id); click">
+                      <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:click="deeperartist('newrelease',r,ta[index],7,false,'trackartist','art' + d[0].id),click($event)">
                         <audio v-bind:src="r.preview_url"></audio>
                       </div>
                       <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5" v-on:click="deeperartist('newrelease',r,ta[index],7,false,'trackartist','art' + d[0].id)">
@@ -2656,7 +2656,7 @@
                   </div>
                   <div style="display: block;" class="trackList">Tracks
                     <div v-for="(track,index) in d.tracks" v-bind:key="index">
-                      <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }" v-on:click="deeperTracks2('newrelease',track,d,7,false,'deep_albums'); click">
+                      <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }" v-on:click="deeperTracks2('newrelease',track,d,7,false,'deep_albums'),click($event)">
                         <div class="trackTitle">{{track.name}}</div>
                         <audio preload="none" v-bind:src="track.preview_url"></audio>
                       </div>
@@ -2672,7 +2672,7 @@
                 <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadSA(7,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
                 <div class="card2">
                   <template v-for="(s,index) in d.tracks">
-                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('newrelease',s,7,false,'seed_artists'); click">{{s.name}}
+                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('newrelease',s,7,false,'seed_artists'),click($event)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('newrelease',s,7,false,'seed_artists')">{{s.name}}
@@ -2714,7 +2714,7 @@
             <div class="con2" style="display: flex;color: black">
               <template v-if="item.tracks">
                 <template v-for="(spl,index) of item['tracks']['items']" >
-                  <div v-bind:id="spl.id" v-bind:key="index" v-if="spl.track.preview_url" tabindex="0" class="con3" v-on:click="deeper(spl,9,$event); click" v-bind:style="{ 'background-image': 'url(' + spl.track.album.images[0].url + ')' }" >{{lists(spl['track']['artists'])}} - {{spl.track.name}}
+                  <div v-bind:id="spl.id" v-bind:key="index" v-if="spl.track.preview_url" tabindex="0" class="con3" v-on:click="deeper(spl,9,$event),click($event)" v-bind:style="{ 'background-image': 'url(' + spl.track.album.images[0].url + ')' }" >{{lists(spl['track']['artists'])}} - {{spl.track.name}}
                     <audio preload="none" v-bind:src="spl.track.preview_url"></audio>
                   </div>
                   <div v-bind:id="spl.id" v-else tabindex="0" v-bind:key="index" class="con3" v-on:click="deeper(spl,9,$event)" v-bind:style="{ 'background-image': 'url(' + spl.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(spl['track']['artists'])}} - {{spl.track.name}}
@@ -2761,7 +2761,7 @@
                 <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadST(9,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
                 <div class="card2">
                   <template v-for="(s,index) in d.tracks" >
-                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('sptplaylists',s,9,false,'seed_tracks'); click">{{s.name}}
+                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('sptplaylists',s,9,false,'seed_tracks'),click($event)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('sptplaylists',s,9,false,'seed_tracks')">{{s.name}}
@@ -2792,7 +2792,7 @@
                   <div v-if="ta.type==='top_tracks'" class="break" v-bind:key="index" >Top tracks</div>
                   <div v-if="ta.type==='top_tracks'" v-bind:key="index" tabindex="0" class="top-tracks card2">
                     <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
-                      <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('sptplaylists',tt,9,false,'trackartist','art' + d[0].id); click">{{tt.name}}
+                      <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('sptplaylists',tt,9,false,'trackartist','art' + d[0].id),click($event)">{{tt.name}}
                         <audio v-bind:src="tt.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('sptplaylists',tt,9,false,'trackartist','art' + d[0].id)">{{tt.name}}
@@ -2803,7 +2803,7 @@
                   <div v-if="ta.type==='albums' && ta.length > 0" class="break" v-bind:key="index" >Albums</div>
                   <div v-if="ta.type==='albums' && ta.length > 0" v-bind:key="index" tabindex="0" class="album card2">
                     <div v-for="(alb,index) in ta" v-bind:key="index">
-                      <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,9,'art' + d[0].id); click">{{alb.name}}
+                      <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,9,'art' + d[0].id),click($event)">{{alb.name}}
                         <audio v-bind:src="alb.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(alb,9,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" style="opacity: .5">{{alb.name}}
@@ -2814,7 +2814,7 @@
                   <div v-if="ta.type==='single' && ta.length > 0" class="break" v-bind:key="index" >Single</div>
                   <div v-if="ta.type==='single' && ta.length > 0" v-bind:key="index" tabindex="0" class="single card2">
                     <div v-for="(s,index) in ta" v-bind:key="index">
-                      <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,9,'art' + d[0].id); click" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }">{{s.name}}
+                      <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,9,'art' + d[0].id),click($event)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }">{{s.name}}
                         <audio v-bind:src="s.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(s,9,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" style="opacity: .5">{{s.name}}
@@ -2826,7 +2826,7 @@
                   <div v-if="ta.type==='appears_on' && ta.length > 0" class="break" v-bind:key="index" >Appears on</div>
                   <div v-if="ta.type==='appears_on' && ta.length > 0" v-bind:key="index" tabindex="0" class="appear card2">
                     <div v-for="(a,index) in ta" v-bind:key="index">
-                      <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,9,'art' + d[0].id); click" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{a.name}}
+                      <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,9,'art' + d[0].id),click($event)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{a.name}}
                         <audio v-bind:src="a.preview_url"></audio>
                       </div>
                       <div v-else class="con3" v-on:click="deeperAlbum(a,9,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" style="opacity: .5">{{a.name}}
@@ -2837,7 +2837,7 @@
                   <div v-if="ta.type==='related-artists'" class="break" v-bind:key="index" >Related Artist</div>
                   <div v-if="ta.type==='related-artists'" v-bind:key="index" class="card2">
                     <div v-for="(r,index) in ta" v-bind:key="index">
-                      <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:click="deeperartist('sptplaylists',r,ta[index],9,false,'trackartist','art' + d[0].id); click">
+                      <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:click="deeperartist('sptplaylists',r,ta[index],9,false,'trackartist','art' + d[0].id),click($event)">
                         <audio v-bind:src="r.preview_url"></audio>
                       </div>
                       <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5" v-on:click="deeperartist('sptplaylists',r,ta[index],9,false,'trackartist','art' + d[0].id)">
@@ -2928,7 +2928,7 @@
                   </div>
                   <div style="display: block;" class="trackList">Tracks
                     <div v-for="(track,index) in d.tracks" v-bind:key="index">
-                      <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  v-on:click="deeperTracks2('sptplaylists',track,d,9,false,'deep_albums'); click">
+                      <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }"  v-on:click="deeperTracks2('sptplaylists',track,d,9,false,'deep_albums'),click($event)">
                         <div class="trackTitle">{{track.name}}</div>
                         <audio preload="none" v-bind:src="track.preview_url"></audio>
                       </div>
@@ -2944,7 +2944,7 @@
                 <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadSA(9,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
                 <div class="card2">
                   <template v-for="(s,index) in d.tracks" >
-                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('sptplaylists',s,9,false,'seed_artists'); click">{{s.name}}
+                    <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('sptplaylists',s,9,false,'seed_artists'),click($event)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('sptplaylists',s,9,false,'seed_artists')">{{s.name}}
@@ -2964,7 +2964,7 @@
           <div style="width: 50%">
             <div class="stitle">Songs</div>
             <div v-for="(item,index) in tracks" class="playable-search" v-on:click="parentClick" v-bind:key="index">
-              <div v-if="item.preview_url" tabindex="0" class="itemImg itemImg-xs  itemImg-search" v-on:click="deeperTracks('search',item,10,true); click" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }">
+              <div v-if="item.preview_url" tabindex="0" class="itemImg itemImg-xs  itemImg-search" v-on:click="deeperTracks('search',item,10,true),click($event)" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }">
                 <audio preload="none" v-bind:src="item.preview_url"></audio>
               </div>
               <div v-else tabindex="0" class="itemImg itemImg-xs  itemImg-search" v-on:click="deeperTracks('search',item,10,true)" v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" style="opacity: .5">
@@ -2976,7 +2976,7 @@
           <div style="width: 50%">
             <div class="stitle">Artists</div>
             <div v-for="(item,index) in artists" class="playable-search" v-on:click="parentClick" v-bind:key="index">
-              <div v-if="item.tracks[0].preview_url" tabindex="0" class="itemImg itemImg-xs  itemImg-search" v-on:click="deeperartist('search',item,item.tracks,10,true); click" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }">
+              <div v-if="item.tracks[0].preview_url" tabindex="0" class="itemImg itemImg-xs  itemImg-search" v-on:click="deeperartist('search',item,item.tracks,10,true),click($event)" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }">
                 <audio preload="none" v-bind:src="item.tracks[0].preview_url"></audio>
               </div>
               <div v-else tabindex="0" class="itemImg itemImg-xs  itemImg-search" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }" style="opacity: .5">
@@ -2988,7 +2988,7 @@
           <div style="width: 50%">
             <div class="stitle">Albums</div>
             <div v-for="(item,index) in albums" class="playable-search" v-on:click="parentClick" v-bind:key="index">
-              <div v-if="item.preview_url" tabindex="0" class="itemImg itemImg-xs  itemImg-search" v-on:click="deeperAlbum(item,10,false,true); click" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }">
+              <div v-if="item.preview_url" tabindex="0" class="itemImg itemImg-xs  itemImg-search" v-on:click="deeperAlbum(item,10,false,true),click($event)" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }">
                 <audio preload="none" v-bind:src="item.preview_url"></audio>
               </div>
               <div v-else tabindex="0" class="itemImg itemImg-xs  itemImg-search" v-on:click="deeperAlbum(item,10,false,true)" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }" style="opacity: .5">
@@ -3000,7 +3000,7 @@
           <div style="width: 50%">
             <div class="stitle">Playlists</div>
             <div v-for="(item,index) in splaylists" class="playable-search" v-on:click="parentClick" v-bind:key="index">
-              <div v-if="item.preview_url" tabindex="0" class="itemImg itemImg-xs  itemImg-search" v-on:click="playl(item); click" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }">
+              <div v-if="item.preview_url" tabindex="0" class="itemImg itemImg-xs  itemImg-search" v-on:click="playl(item),click($event)" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }">
                 <audio preload="none" v-bind:src="item.preview_url"></audio>
               </div>
               <div v-else tabindex="0" class="itemImg itemImg-xs  itemImg-search" v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }" v-on:click="playl(item)" style="opacity: .5">
@@ -3038,7 +3038,7 @@
               <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadST(10,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
               <div class="card2">
                 <template v-for="(s,index) in d.tracks" >
-                  <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('search',s,10,false,'seed_tracks'); click">{{s.name}}
+                  <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('search',s,10,false,'seed_tracks'),click($event)">{{s.name}}
                     <audio preload="none" v-bind:src="s.preview_url"></audio>
                   </div>
                   <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" v-on:click="deeperTracks('search',s,10,false,'seed_tracks')" style="opacity: .5">{{s.name}}
@@ -3065,7 +3065,7 @@
                 <div v-if="ta.type==='top_tracks'" class="break" v-bind:key="index">Top tracks</div>
                 <div v-if="ta.type==='top_tracks'" tabindex="0" v-bind:key="index" class="top-tracks card2">
                   <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
-                    <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('search',tt,10,false,'trackartist','art' + d[0].id); click">{{tt.name}}
+                    <div v-if="tt.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" v-on:click="deeperTracks('search',tt,10,false,'trackartist','art' + d[0].id),click($event)">{{tt.name}}
                       <audio v-bind:src="tt.preview_url"></audio>
                     </div>
                     <div v-else class="con3" v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }" style="opacity: .5">{{tt.name}}
@@ -3076,7 +3076,7 @@
                 <div v-if="ta.type==='albums'" class="break" v-bind:key="index">Albums</div>
                 <div v-if="ta.type==='albums'" tabindex="0" v-bind:key="index" class="album card2">
                   <div v-for="(alb,index) in ta" v-bind:key="index">
-                    <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,10,'art' + d[0].id); click">{{alb.name}}
+                    <div v-if="alb.preview_url" class="con3" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" v-on:click="deeperAlbum(alb,10,'art' + d[0].id),click($event)">{{alb.name}}
                       <audio v-bind:src="alb.preview_url"></audio>
                     </div>
                     <div v-else class="con3" v-on:click="deeperAlbum(alb,10)" v-bind:style="{ 'background-image': 'url(' + alb.images[0].url + ')' }" style="opacity: .5">{{alb.name}}
@@ -3087,7 +3087,7 @@
                 <div v-if="ta.type==='single'" v-bind:key="index" class="break" >Single</div>
                 <div v-if="ta.type==='single'" v-bind:key="index" tabindex="0" class="single card2">
                   <div v-for="(s,index) in ta" v-bind:key="index">
-                    <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,10,'art' + d[0].id); click" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }">{{s.name}}
+                    <div v-if="s.preview_url" class="con3" v-on:click="deeperAlbum(s,10,'art' + d[0].id),click($event)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }">{{s.name}}
                       <audio v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else class="con3" v-on:click="deeperAlbum(s,10,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + s.images[0].url + ')' }" style="opacity: .5">{{s.name}}
@@ -3099,7 +3099,7 @@
                 <div v-if="ta.type==='appears_on'" v-bind:key="index" class="break" >Appears on</div>
                 <div v-if="ta.type==='appears_on'" v-bind:key="index" tabindex="0" class="appear card2">
                   <div v-for="(a,index) in ta" v-bind:key="index">
-                    <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,10,'art' + d[0].id); click" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{a.name}}
+                    <div v-if="a.preview_url" class="con3" v-on:click="deeperAlbum(a,10,'art' + d[0].id),click($event)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{a.name}}
                       <audio v-bind:src="a.preview_url"></audio>
                     </div>
                     <div v-else class="con3" v-on:click="deeperAlbum(a,10,'art' + d[0].id)" v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }" style="opacity: .5">{{a.name}}
@@ -3110,7 +3110,7 @@
                 <div v-if="ta.type==='related-artists'" class="break" v-bind:key="index">Related Artist</div>
                 <div v-if="ta.type==='related-artists'" v-bind:key="index" class="card2">
                   <div v-for="(r,index) in ta" v-bind:key="index">
-                    <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:click="deeperartist('search',r,ta[index],10,'trackartist','art' + d[0].id); click">
+                    <div v-if="r.preview_url" tabindex="0" class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="background-repeat: no-repeat; background-size: cover;" v-on:click="deeperartist('search',r,ta[index],10,'trackartist','art' + d[0].id),click($event)">
                       <audio v-bind:src="r.preview_url"></audio>
                     </div>
                     <div v-else class="img-xs" v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }" style="opacity: .5">
@@ -3182,7 +3182,7 @@
                 </div>
                 <div style="display: block;" class="trackList">Tracks
                   <div v-for="(track,index) in d.tracks" v-bind:key="index">
-                    <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }" v-on:click="deeperTracks2('search',track,d,10,false,'deep_albums'); click">
+                    <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }" v-on:click="deeperTracks2('search',track,d,10,false,'deep_albums'),click($event)">
                       <div class="trackTitle">{{track.name}}</div>
                       <audio preload="none" v-bind:src="track.preview_url"></audio>
                     </div>
@@ -3208,7 +3208,7 @@
                 </div>
                 <div style="display: block;" class="trackList">Tracks
                   <div v-for="(track,index) in d.items" v-bind:key="index">
-                    <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }" v-on:click="deeperTracks2('search',track,d,10,false,'deep_albums2'); click">
+                    <div v-if="track.preview_url" class="img-xs" v-bind:style="{ 'background-image': 'url(' + d.images[1].url + ')' }" v-on:click="deeperTracks2('search',track,d,10,false,'deep_albums2'),click($event)">
                       <div class="trackTitle">{{track.name}}</div>
                       <audio preload="none" v-bind:src="track.preview_url"></audio>
                     </div>
@@ -3224,7 +3224,7 @@
               <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="reloadSA(9,d.id,d.name)"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
               <div class="card2">
                 <template v-for="(s,index) in d.tracks" >
-                  <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('search',s,10,false,'seed_artists'); click">{{s.name}}
+                  <div v-if="s.preview_url" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:click="deeperTracks('search',s,10,false,'seed_artists'),click($event)">{{s.name}}
                     <audio preload="none" v-bind:src="s.preview_url"></audio>
                   </div>
                   <div v-else tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5">{{s.name}}
@@ -3242,7 +3242,7 @@
               </div>
               <div class="con2" style="display: flex;color: black">
                 <div class="trackbody" v-for="(item,index) of d['tracks']['items']" v-bind:key="index">
-                  <div v-bind:id="item.id" v-if="item.track.preview_url" tabindex="0" class="con3" v-on:click="deeper(item,10,$event); click" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" >{{lists(item['track']['artists'])}} - {{item.track.name}}
+                  <div v-bind:id="item.id" v-if="item.track.preview_url" tabindex="0" class="con3" v-on:click="deeper(item,10,$event),click($event)($event)" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" >{{lists(item['track']['artists'])}} - {{item.track.name}}
                     <audio preload="none" v-bind:src="item.track.preview_url"></audio>
                   </div>
                   <div v-else tabindex="0" class="con3" v-on:click="deeper(item,10,$event);" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(item['track']['artists'])}} - {{item.track.name}}
