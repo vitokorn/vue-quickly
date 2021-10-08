@@ -942,3 +942,16 @@ input[type=checkbox]{
     left: 0;
     z-index: 1;
 }
+
+.con3-mob{
+    cursor: pointer;
+    display: flex;
+    align-content: center;
+    margin-bottom: 5px;
+    color: var(--search-color);
+    justify-content: center;
+}
+.con3-child-title{
+    position: absolute;
+    padding: 85px 0;
+}
