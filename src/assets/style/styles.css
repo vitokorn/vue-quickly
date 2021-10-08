@@ -609,7 +609,7 @@ position: relative;
     display: flex;
 }
 a{
-    color: antiquewhite;
+    color: var(--pl-color);
 }
 /*.header{*/
 /*    overflow: hidden;*/
@@ -958,4 +958,14 @@ input[type=checkbox]{
 .con3-child-title{
     position: absolute;
     padding: 85px 0;
+}
+
+.aresset a{
+    display: initial !important;
+    padding: initial !important;
+    background: initial !important;
+    color: var(--con2-color) !important;
+    text-decoration: underline !important;
+    margin-left: 2px;
+    margin-right: 2px;
 }
