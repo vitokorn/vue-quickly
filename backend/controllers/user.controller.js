@@ -80,9 +80,8 @@ exports.refresh = (req,res) => {
         axios.post(url,params)
             .then(response =>{
                 let r = response.data
-
-                user.update({access_token: r['access_token']}).then(r => res.cookie('access_token',r['access_token']))
-                    .then(res.json({'new_token':r['access_token']}))
+                res.cookie('access_token',r['access_token'],{sameSite:'strict',expires:new Date(Date.now() + 3600000*24*7)})
+                user.update({access_token: r['access_token']}).then(res.json({'status':'success'}))
             })
             .catch(error => error.response)
     }).catch(error => console.log(error));

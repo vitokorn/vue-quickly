@@ -91,7 +91,13 @@
                     </div>
                     <div >{{ta.name}}
                       <div>{{ta['followers']['total'] + ' followers'}}</div>
-                      <div>{{ta['genres']}}</div>
+                      <div style="display: flex">
+                        <template v-for="(g,index) in ta['genres']">
+                          <div v-if="g === ta['genres'][ta['genres'].length - 1]" style="margin-left: 4px;" v-bind:key="index">{{g}}</div>
+                          <div v-else-if="g === ta['genres'][ta['genres'].length - 2]" v-bind:key="index">{{g}} &</div>
+                          <div v-else v-bind:key="index">{{g}},</div>
+                        </template>
+                      </div>
                       <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('yourplaylists',ta,1,'trackartist')">Recommended artists songs based on this</div>
                       <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                         Follow<input type="checkbox" v-if="ta.followed" @click.once="followArtist(ta,$event)"  checked v-model="ta.followed">
@@ -335,7 +341,13 @@
                     </div>
                     <div >{{ta.name}}
                       <div>{{ta['followers']['total'] + ' followers'}}</div>
-                      <div>{{ta.genres}}</div>
+                      <div style="display: flex">
+                        <template v-for="(g,index) in ta['genres']">
+                          <div v-if="g === ta['genres'][ta['genres'].length - 1]" style="margin-left: 4px;" v-bind:key="index">{{g}}</div>
+                          <div v-else-if="g === ta['genres'][ta['genres'].length - 2]" v-bind:key="index">{{g}} &</div>
+                          <div v-else v-bind:key="index">{{g}},</div>
+                        </template>
+                      </div>
                       <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('topartist',ta,2,'trackartist','art' +d[index].id)">Recommended artists songs based on this</div>
                       <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                         Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
@@ -569,7 +581,13 @@
                     </div>
                     <div >{{ta.name}}
                       <div>{{ta['followers']['total'] + ' followers'}}</div>
-                      <div>{{ta['genres']}}</div>
+                      <div style="display: flex">
+                        <template v-for="(g,index) in ta['genres']">
+                          <div v-if="g === ta['genres'][ta['genres'].length - 1]" style="margin-left: 4px;" v-bind:key="index">{{g}}</div>
+                          <div v-else-if="g === ta['genres'][ta['genres'].length - 2]" v-bind:key="index">{{g}} &</div>
+                          <div v-else v-bind:key="index">{{g}},</div>
+                        </template>
+                      </div>
                       <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('topartist6',ta,22,'trackartist','art' + d[index].id)">Recommended artists songs based on this</div>
                       <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                         Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
@@ -800,7 +818,13 @@
                   </div>
                   <div >{{ta.name}}
                     <div>{{ta['followers']['total'] + ' followers'}}</div>
-                    <div>{{ta['genres']}}</div>
+                    <div style="display: flex">
+                      <template v-for="(g,index) in ta['genres']">
+                        <div v-if="g === ta['genres'][ta['genres'].length - 1]" style="margin-left: 4px;" v-bind:key="index">{{g}}</div>
+                        <div v-else-if="g === ta['genres'][ta['genres'].length - 2]" v-bind:key="index">{{g}} &</div>
+                        <div v-else v-bind:key="index">{{g}},</div>
+                      </template>
+                    </div>
                     <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('topartista',ta,23,'trackartist','art' + d[index].id)">Recommended artists songs based on this</div>
                     <div>
                       <button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
@@ -1061,7 +1085,13 @@
                     </div>
                     <div >{{ta.name}}
                       <div>{{ta['followers']['total'] + ' followers'}}</div>
-                      <div>{{ta['genres']}}</div>
+                      <div style="display: flex">
+                        <template v-for="(g,index) in ta['genres']">
+                          <div v-if="g === ta['genres'][ta['genres'].length - 1]" style="margin-left: 4px;" v-bind:key="index">{{g}}</div>
+                          <div v-else-if="g === ta['genres'][ta['genres'].length - 2]" v-bind:key="index">{{g}} &</div>
+                          <div v-else v-bind:key="index">{{g}},</div>
+                        </template>
+                      </div>
                       <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('toptrack',ta,3,'trackartist')">Recommended artists songs based on this</div>
                       <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                         Follow<input type="checkbox" v-if="ta.followed" @click.once="followArtist(ta,$event)"  checked v-model="ta.followed">
@@ -1303,7 +1333,13 @@
                     </div>
                     <div >{{ta.name}}
                       <div>{{ta['followers']['total'] + ' followers'}}</div>
-                      <div>{{ta['genres']}}</div>
+                      <div style="display: flex">
+                        <template v-for="(g,index) in ta['genres']">
+                          <div v-if="g === ta['genres'][ta['genres'].length - 1]" style="margin-left: 4px;" v-bind:key="index">{{g}}</div>
+                          <div v-else-if="g === ta['genres'][ta['genres'].length - 2]" v-bind:key="index">{{g}} &</div>
+                          <div v-else v-bind:key="index">{{g}},</div>
+                        </template>
+                      </div>
                       <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('toptrack6',ta,32,'trackartist')">Recommended artists songs based on this</div>
                       <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                         Follow<input type="checkbox" v-if="ta.followed" @click.once="followArtist(ta,$event)"  checked v-model="ta.followed">
@@ -1549,7 +1585,13 @@
                     </div>
                     <div >{{ta.name}}
                       <div>{{ta['followers']['total'] + ' followers'}}</div>
-                      <div>{{ta['genres']}}</div>
+                      <div style="display: flex">
+                        <template v-for="(g,index) in ta['genres']">
+                          <div v-if="g === ta['genres'][ta['genres'].length - 1]" style="margin-left: 4px;" v-bind:key="index">{{g}}</div>
+                          <div v-else-if="g === ta['genres'][ta['genres'].length - 2]" v-bind:key="index">{{g}} &</div>
+                          <div v-else v-bind:key="index">{{g}},</div>
+                        </template>
+                      </div>
                       <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('toptrackall',ta,33,'trackartist')">Recommended artists songs based on this</div>
                       <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                         Follow<input type="checkbox" v-if="ta.followed" @click.once="followArtist(ta,$event)"  checked v-model="ta.followed">
@@ -1795,7 +1837,13 @@
                     </div>
                     <div >{{ta.name}}
                       <div>{{ta['followers']['total'] + ' followers'}}</div>
-                      <div>{{ta['genres']}}</div>
+                      <div style="display: flex">
+                        <template v-for="(g,index) in ta['genres']">
+                          <div v-if="g === ta['genres'][ta['genres'].length - 1]" style="margin-left: 4px;" v-bind:key="index">{{g}}</div>
+                          <div v-else-if="g === ta['genres'][ta['genres'].length - 2]" v-bind:key="index">{{g}} &</div>
+                          <div v-else v-bind:key="index">{{g}},</div>
+                        </template>
+                      </div>
                       <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('savedalbum',ta,4)">Recommended artists songs based on this</div>
                       <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                         Follow<input type="checkbox" v-if="ta.followed" @click.once="followArtist(ta,$event)"  checked v-model="ta.followed">
@@ -2024,7 +2072,13 @@
                     </div>
                     <div >{{ta.name}}
                       <div>{{ta['followers']['total'] + ' followers'}}</div>
-                      <div>{{ta['genres']}}</div>
+                      <div style="display: flex">
+                        <template v-for="(g,index) in ta['genres']">
+                          <div v-if="g === ta['genres'][ta['genres'].length - 1]" style="margin-left: 4px;" v-bind:key="index">{{g}}</div>
+                          <div v-else-if="g === ta['genres'][ta['genres'].length - 2]" v-bind:key="index">{{g}} &</div>
+                          <div v-else v-bind:key="index">{{g}},</div>
+                        </template>
+                      </div>
                       <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('savedtrack',ta,5,'trackartist')">Recommended artists songs based on this</div>
                       <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                         Follow<input type="checkbox" v-if="ta.followed" @click.once="followArtist(ta,$event)"  checked v-model="ta.followed">
@@ -2262,7 +2316,13 @@
                     </div>
                     <div >{{ta.name}}
                       <div>{{ta['followers']['total'] + ' followers'}}</div>
-                      <div>{{ta.genres}}</div>
+                      <div style="display: flex">
+                        <template v-for="(g,index) in ta['genres']">
+                          <div v-if="g === ta['genres'][ta['genres'].length - 1]" style="margin-left: 4px;" v-bind:key="index">{{g}}</div>
+                          <div v-else-if="g === ta['genres'][ta['genres'].length - 2]" v-bind:key="index">{{g}} &</div>
+                          <div v-else v-bind:key="index">{{g}},</div>
+                        </template>
+                      </div>
                       <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('followedartist',ta,6,'trackartist','art' +d[index].id)">Recommended artists songs based on this</div>
                       <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                         Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">
@@ -2509,7 +2569,13 @@
                     </div>
                     <div >{{ta.name}}
                       <div>{{ta['followers']['total'] + ' followers'}}</div>
-                      <div>{{ta['genres']}}</div>
+                      <div style="display: flex">
+                        <template v-for="(g,index) in ta['genres']">
+                          <div v-if="g === ta['genres'][ta['genres'].length - 1]" style="margin-left: 4px;" v-bind:key="index">{{g}}</div>
+                          <div v-else-if="g === ta['genres'][ta['genres'].length - 2]" v-bind:key="index">{{g}} &</div>
+                          <div v-else v-bind:key="index">{{g}},</div>
+                        </template>
+                      </div>
                       <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('newrelease',ta,7,'trackartist')">Recommended artists songs based on this</div>
                       <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                         Follow<input type="checkbox" v-if="ta.followed" @click.once="followArtist(ta,$event)"  checked v-model="ta.followed">
@@ -2781,7 +2847,13 @@
                     </div>
                     <div >{{ta.name}}
                       <div>{{ta['followers']['total'] + ' followers'}}</div>
-                      <div>{{ta['genres']}}</div>
+                      <div style="display: flex">
+                        <template v-for="(g,index) in ta['genres']">
+                          <div v-if="g === ta['genres'][ta['genres'].length - 1]" style="margin-left: 4px;" v-bind:key="index">{{g}}</div>
+                          <div v-else-if="g === ta['genres'][ta['genres'].length - 2]" v-bind:key="index">{{g}} &</div>
+                          <div v-else v-bind:key="index">{{g}},</div>
+                        </template>
+                      </div>
                       <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('sptplaylists',ta,9,'trackartist')">Recommended artists songs based on this</div>
                       <div><button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
                         Follow<input type="checkbox" v-if="ta.followed" @click.once="followArtist(ta,$event)"  checked v-model="ta.followed">
@@ -3055,7 +3127,13 @@
                   </div>
                   <div >{{ta.name}}
                     <div>{{ta['followers']['total'] + ' followers'}}</div>
-                    <div>{{ta['genres']}}</div>
+                    <div style="display: flex">
+                      <template v-for="(g,index) in ta['genres']">
+                        <div v-if="g === ta['genres'][ta['genres'].length - 1]" style="margin-left: 4px;" v-bind:key="index">{{g}}</div>
+                        <div v-else-if="g === ta['genres'][ta['genres'].length - 2]" v-bind:key="index">{{g}} &</div>
+                        <div v-else v-bind:key="index">{{g}},</div>
+                      </template>
+                    </div>
                     <div style="color: rgb(240, 55, 165);" v-on:click="seedArtist('search',ta,10,'trackartist','art'+ta.id)">Recommended artists songs based on this</div>
                     <div>
                       <button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open in Spotify</a></button>
@@ -3382,8 +3460,9 @@ export default {
               if (error.response.status === 401){
                 axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                   // console.log(response.data)
-                  let new_token = response.data['new_token']
-                  document.cookie ='access_token=' + new_token
+                  if (response.status === 200){
+                    this.deeper(item,num,event)
+                  }
                 })
               }
             })
@@ -3433,9 +3512,9 @@ export default {
             .catch(error =>{
               if (error.response.status === 401){
                 axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                  console.log(response.data)
-                  let new_token = response.data['new_token']
-                  document.cookie ='access_token=' + new_token
+                  if (response.status === 200){
+                    this.deeper(item,num,event)
+                  }
                 })
               }
             })
@@ -3525,9 +3604,9 @@ export default {
             .catch(error =>{
               if (error.response.status === 401){
                 axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                  console.log(response.data)
-                  let new_token = response.data['new_token']
-                  document.cookie ='access_token=' + new_token
+                  if (response.status === 200){
+                    this.deeper(item,num,event)
+                  }
                 })
               }
             })
@@ -3753,8 +3832,9 @@ export default {
                   if (error.response.status === 401){
                     axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                       // console.log(response.data)
-                      let new_token = response.data['new_token']
-                      document.cookie ='access_token=' + new_token
+                      if (response.status === 200){
+                        this.deeperArtistself(item,track)
+                      }
                     })
                   }
                 })
@@ -4111,8 +4191,9 @@ export default {
               if (error.response.status === 401){
                 axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                   // console.log(response.data)
-                  let new_token = response.data['new_token']
-                  document.cookie ='access_token=' + new_token
+                  if (response.status === 200){
+                    this.deeperAlbum(item,num,child,search)
+                  }
                 })
               }
             })
@@ -4145,8 +4226,9 @@ export default {
                 if (error.response.status === 401){
                   axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                     // console.log(response.data)
-                    let new_token = response.data['new_token']
-                    document.cookie ='access_token=' + new_token
+                    if (response.status === 200){
+                      this.deeperAlbum(item,num,child,search)
+                    }
                   })
                 }
               })
@@ -4177,8 +4259,9 @@ export default {
             if (error.response.status === 401){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                 // console.log(response.data)
-                let new_token = response.data['new_token']
-                document.cookie ='access_token=' + new_token
+                if (response.status === 200){
+                  this.deeperAlbum2(item)
+                }
               })
             }
           })
@@ -4255,8 +4338,9 @@ export default {
             if (error.response.status === 401){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                 // console.log(response.data)
-                let new_token = response.data['new_token']
-                document.cookie ='access_token=' + new_token
+                if (response.status === 200){
+                  this.deeperTracks(pointer,item,num,flag,sib,child)
+                }
               })
             }
           })
@@ -5026,9 +5110,9 @@ export default {
           .catch(error =>{
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                console.log(response.data)
-                let new_token = response.data['new_token']
-                document.cookie ='access_token=' + new_token
+                if (response.status === 200){
+                  this.fetchPlaylists(event,offset)
+                }
               })
             }
           })
@@ -5101,8 +5185,9 @@ export default {
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                 // console.log(response.data)
-                let new_token = response.data['new_token']
-                document.cookie ='access_token=' + new_token
+                if (response.status === 200){
+                  this.fetchInit(event)
+                }
               })
             }
           })
@@ -5149,8 +5234,9 @@ export default {
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                 // console.log(response.data)
-                let new_token = response.data['new_token']
-                document.cookie ='access_token=' + new_token
+                if (response.status === 200){
+                  this.fetchArtist(event)
+                }
               })
             }
           })
@@ -5192,8 +5278,9 @@ export default {
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                 // console.log(response.data)
-                let new_token = response.data['new_token']
-                document.cookie ='access_token=' + new_token
+                if (response.status === 200){
+                  this.fetchArtist2(event)
+                }
               })
             }
           })
@@ -5235,8 +5322,9 @@ export default {
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                 // console.log(response.data)
-                let new_token = response.data['new_token']
-                document.cookie ='access_token=' + new_token
+                if (response.status === 200){
+                  this.fetchArtist3(event)
+                }
               })
             }
           })
@@ -5289,8 +5377,9 @@ export default {
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                 // console.log(response.data)
-                let new_token = response.data['new_token']
-                document.cookie ='access_token=' + new_token
+                if (response.status === 200){
+                  this.fetchApi(event)
+                }
               })
             }
           })
@@ -5311,8 +5400,9 @@ export default {
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                 // console.log(response.data)
-                let new_token = response.data['new_token']
-                document.cookie ='access_token=' + new_token
+                if (response.status === 200){
+                  this.fetchApi2(event)
+                }
               })
             }
           })
@@ -5333,8 +5423,9 @@ export default {
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                 // console.log(response.data)
-                let new_token = response.data['new_token']
-                document.cookie ='access_token=' + new_token
+                if (response.status === 200){
+                  this.fetchApi3(event)
+                }
               })
             }
           })
@@ -5542,8 +5633,9 @@ export default {
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                 // console.log(response.data)
-                let new_token = response.data['new_token']
-                document.cookie ='access_token=' + new_token
+                if (response.status === 200){
+                  this.fetchAlbums(event)
+                }
               })
             }
           })
@@ -5565,8 +5657,9 @@ export default {
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                 // console.log(response.data)
-                let new_token = response.data['new_token']
-                document.cookie ='access_token=' + new_token
+                if (response.status === 200){
+                  this.fetchTracks(offset)
+                }
               })
             }
           })
@@ -5590,8 +5683,9 @@ export default {
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                 // console.log(response.data)
-                let new_token = response.data['new_token']
-                document.cookie ='access_token=' + new_token
+                if (response.status === 200){
+                  this.fetchNR(offset)
+                }
               })
             }
           })
@@ -5618,8 +5712,9 @@ export default {
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                 // console.log(response.data)
-                let new_token = response.data['new_token']
-                document.cookie ='access_token=' + new_token
+                if (response.status === 200){
+                  this.getNewrelease(newarr,offset)
+                }
               })
             }
           })
@@ -5656,8 +5751,9 @@ export default {
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                 // console.log(response.data)
-                let new_token = response.data['new_token']
-                document.cookie ='access_token=' + new_token
+                if (response.status === 200){
+                  this.fetchFA()
+                }
               })
             }
           })
@@ -5678,8 +5774,9 @@ export default {
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                 // console.log(response.data)
-                let new_token = response.data['new_token']
-                document.cookie ='access_token=' + new_token
+                if (response.status === 200){
+                  this.fetchSpotPlaylists(offset)
+                }
               })
             }
           })
@@ -5751,9 +5848,10 @@ export default {
           .catch(error =>{
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
+                if (response.status === 200){
+                  this.SpotInit(event)
+                }
                 // console.log(response.data)
-                let new_token = response.data['new_token']
-                document.cookie ='access_token=' + new_token
               })
             }
           })
@@ -5782,9 +5880,9 @@ export default {
           .catch(error =>{
             if (error.response.status){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                console.log(response.data)
-                let new_token = response.data['new_token']
-                document.cookie ='access_token=' + new_token
+                if (response.status === 200){
+                  this.refreshplaylists(rid)
+                }
               })
             }
           })
@@ -5828,7 +5926,6 @@ export default {
                     headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                   })
                       .then((response) => {
-                        console.log(response.data)
                         let tracks = response.data['items']
                         if (tracks[0]['preview_url']) {
                           albums[i].preview_url = tracks[0]['preview_url']
@@ -5848,7 +5945,6 @@ export default {
                     headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                   })
                       .then((response) => {
-                        console.log(response.data)
                         let tracks = response.data['tracks']
                         if (tracks[0]['preview_url']) {
                           artists[i].preview_url = tracks[0]['preview_url']
@@ -5886,8 +5982,9 @@ export default {
             if (error.response.status === 401){
               axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                 // console.log(response.data)
-                let new_token = response.data['new_token']
-                document.cookie ='access_token=' + new_token
+                if (response.status === 200){
+                  this.search(e)
+                }
               })
             }
           })
@@ -6262,8 +6359,9 @@ export default {
               if (error.response.status === 401){
                 axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                   // console.log(response.data)
-                  let new_token = response.data['new_token']
-                  document.cookie ='access_token=' + new_token
+                  if (response.status === 200){
+                    this.followPlaylist(playlist,event)
+                  }
                 })
               }
             })
@@ -6280,8 +6378,9 @@ export default {
               if (error.response.status === 401){
                 axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                   // console.log(response.data)
-                  let new_token = response.data['new_token']
-                  document.cookie ='access_token=' + new_token
+                  if (response.status === 200){
+                    this.followPlaylist(playlist,event)
+                  }
                 })
               }
             })
@@ -6304,8 +6403,9 @@ export default {
               if (error.response.status === 401){
                 axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                   //  console.log(response.data)
-                  let new_token = response.data['new_token']
-                  document.cookie ='access_token=' + new_token
+                  if (response.status === 200){
+                    this.followArtist(artist,event)
+                  }
                 })
               }
             })
@@ -6324,8 +6424,9 @@ export default {
               if (error.response.status === 401){
                 axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                   // console.log(response.data)
-                  let new_token = response.data['new_token']
-                  document.cookie ='access_token=' + new_token
+                  if (response.status === 200){
+                    this.followArtist(artist,event)
+                  }
                 })
               }
             })
@@ -6349,8 +6450,9 @@ export default {
               if (error.response.status === 401){
                 axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                   // console.log(response.data)
-                  let new_token = response.data['new_token']
-                  document.cookie ='access_token=' + new_token
+                  if (response.status === 200){
+                    this.followAlbum(album,event)
+                  }
                 })
               }
             })
@@ -6369,8 +6471,9 @@ export default {
               if (error.response.status === 401){
                 axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                   // console.log(response.data)
-                  let new_token = response.data['new_token']
-                  document.cookie ='access_token=' + new_token
+                  if (response.status === 200){
+                    this.followAlbum(album,event)
+                  }
                 })
               }
             })
@@ -6392,9 +6495,10 @@ export default {
             .catch(error =>{
               if (error.response.status === 401){
                 axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
+                  if (response.status === 200){
+                    this.followTrack(track,event)
+                  }
                   // console.log(response.data)
-                  let new_token = response.data['new_token']
-                  document.cookie ='access_token=' + new_token
                 })
               }
             })
@@ -6412,9 +6516,9 @@ export default {
             .catch(error =>{
               if (error.response.status === 401){
                 axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
-                  // console.log(response.data)
-                  let new_token = response.data['new_token']
-                  document.cookie ='access_token=' + new_token
+                  if (response.status === 200){
+                    this.followTrack(track,event)
+                  }
                 })
               }
             })
