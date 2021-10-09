@@ -25,7 +25,7 @@
           <div class="con2" style="display: flex;color: black" v-bind:key="index">
             <template v-if="item.tracks">
               <template v-for="(pl,ind) of item['tracks']['items']" >
-                <div v-bind:id="pl.track.id" v-bind:key="ind" v-if="pl.track.preview_url && pl.track.album.images[0]" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="queuein(pl['track']),polygon(pl.track)" v-bind:style="{ 'background-image': 'url(' + pl.track.album.images[0].url + ')' }" >{{lists(pl['track']['artists'])}} - {{pl.track.name}}
+                <div v-bind:id="pl.track.id" v-bind:key="ind" v-if="pl.track.preview_url && pl.track.album.images[0]" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeper(pl,1,$event); queuein(pl['track'])" v-bind:style="{ 'background-image': 'url(' + pl.track.album.images[0].url + ')' }" >{{lists(pl['track']['artists'])}} - {{pl.track.name}}
                   <audio preload="none" v-bind:src="pl.track.preview_url"></audio>
                 </div>
                 <div v-else-if="pl.track.album.images[0]" tabindex="0" v-bind:key="ind" class="con3" v-bind:style="{ 'background-image': 'url(' + pl.track.album.images[0].url + ')' }" v-on:click="deeper(pl,1,$event); queuein(pl['track'])" style="opacity: .5">{{lists(pl['track']['artists'])}} - {{pl.track.name}}
@@ -6771,7 +6771,16 @@ export default {
             }
           })
           .catch()
-    }
+    },
+    findPos(obj) {
+  let curtop = 0;
+  if (obj.offsetParent) {
+    do {
+      curtop += obj.offsetTop;
+    } while (obj == obj.offsetParent);
+    return [curtop];
+  }
+}
   },
 }
 

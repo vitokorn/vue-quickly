@@ -3387,6 +3387,7 @@ export default {
   },
   methods: {
     polygon(item,d,num){
+      // item.deeper1.push(tt)
       console.log(item)
       console.log(d)
       console.log(num)
