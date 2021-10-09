@@ -5713,7 +5713,9 @@ export default {
             for (let i=0;i <  items.length;i++){
               newarr.push(items[i].id)
             }
-            this.getNewrelease(newarr,offset)
+            if (offset <100) {
+              this.getNewrelease(newarr,offset)
+            }
           })
           .catch(error =>{
             if (error.response.status){
@@ -5738,9 +5740,9 @@ export default {
                 // let old = this.newreleases
                 // old.push(response.data['albums'])
                 this.newreleases.push(...response.data['albums'])
-                if (response.data['albums'].length > 0){
-                  this.fetchNR(offset +=20)
-                }
+            if (response.data['albums'].length > 0 && offset < 100){
+              this.fetchNR(offset +=20)
+            }
               }
 
           )
