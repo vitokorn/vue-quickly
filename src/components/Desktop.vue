@@ -274,6 +274,7 @@
           </template>
         </div>
       </div>
+        <div class="footer"></div>
       </div>
     </li>
     <li id="option2">
@@ -3538,10 +3539,11 @@ export default {
               if (indexing === -1){
                 this.deeper1.push(tt)
                 setTimeout(() => {
+                  // console.log('3542')
                   window.scrollTo({
-                    top:(document.getElementById('d'+ tt.id)).offsetTop,
+                    top:(document.getElementById('d'+ tt.id)).offsetTop + 300,
                     behavior:'smooth'});
-                }, 10);
+                }, 800);
               }
             })
             .catch(error =>{
