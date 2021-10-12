@@ -6133,7 +6133,7 @@ export default {
     filterres(event){
       let input = event.target
       let filter = input.value.toUpperCase();
-      let pl = document.querySelectorAll('#sptplaylists > div:not(.rectrack,.head) > div');
+      let pl = document.querySelectorAll('#sptplaylists > div:not(.rectrack,.head) > div.pl > div');
 
       for (let i=0; i<pl.length; i++){
         if(pl[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
