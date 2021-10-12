@@ -4081,11 +4081,8 @@ export default {
                         console.log(i)
                         newarray.push(i.offsetHeight)
                       }
-                      if (newarray.reduce((a, b) => a + b, 0) + 50 + 'px' < 300){
-                        target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 50 + 'px'
-                      } else{
                         target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
-                      }
+
                     },0)
                   })
                   // setTimeout(() => {
@@ -5064,7 +5061,7 @@ export default {
             newarray.push(i.offsetHeight)
           }
           console.log(newarray.reduce((a, b) => a + b, 0))
-          target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 50 + 'px'
+          target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
         },0)
         return
       }
@@ -5169,7 +5166,7 @@ export default {
           newarray.push(i.offsetHeight)
         }
         console.log(newarray.reduce((a, b) => a + b, 0))
-        target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 50 + 'px'
+        target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
       },0)
     },
     deeperTracks2(pointer,item,d,num,flag,sib,child){
@@ -5887,7 +5884,7 @@ export default {
             newarray.push(i.offsetHeight)
           }
           console.log(newarray.reduce((a, b) => a + b, 0))
-          target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 50 + 'px'
+          target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
         },0)
         return
       }
@@ -5988,7 +5985,7 @@ export default {
                 newarray.push(i.offsetHeight)
               }
               console.log(newarray.reduce((a, b) => a + b, 0))
-              target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 50 + 'px'
+              target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
             },0)
             // setTimeout(() => {
             //   window.scrollTo({

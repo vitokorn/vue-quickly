@@ -783,7 +783,6 @@ footer{
     .tabs{
         position: relative;
         margin: 0;
-        padding: 15px;
         font-size: 0;
         display: block;
     }
