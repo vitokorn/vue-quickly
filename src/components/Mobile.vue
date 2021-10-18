@@ -321,9 +321,9 @@
                         <div>{{ta['followers']['total'] + ' followers'}}</div>
                         <div style="display: flex">
                           <template v-for="(g,index) in ta['genres']">
-                            <div v-if="g === ta['genres'][ta['genres'].length - 1]" v-on:click="thesoundof(g)" style="margin-left: 4px;" v-bind:key="index">{{g}}</div>
-                            <div v-else-if="g === ta['genres'][ta['genres'].length - 2]" v-bind:key="index" v-on:click="thesoundof(g)">{{g}} &</div>
-                            <div v-else v-bind:key="index" v-on:click="thesoundof(g)">{{g}},</div>
+                            <div v-if="g === ta['genres'][ta['genres'].length - 1]" v-on:click="thesoundof(g,2)" style="margin-left: 4px;" v-bind:key="index">{{g}}</div>
+                            <div v-else-if="g === ta['genres'][ta['genres'].length - 2]" v-bind:key="index" v-on:click="thesoundof(g,2)">{{g}} &</div>
+                            <div v-else v-bind:key="index" v-on:click="thesoundof(g,2)">{{g}},</div>
                           </template>
                         </div>
                         <div style="color: rgb(240, 55, 165);" v-on:click="seedArtistM('topartist',ta,2,'trackartist','art' +d[index].id,item)">Recommended artists songs based on this</div>
@@ -7439,12 +7439,118 @@ export default {
         }
       }, 1000);
     },
-    thesoundof(name){
-      let event = {}
-      let target = {}
-      target.value = 'The Sound of ' + name
-      event.target = target
-      this.search(event)
+    thesoundof: async function(name,num){
+      let value = 'The Sound of ' + name
+      let neww = await this.titleCase(name)
+      let newvalue = 'The Sound of ' + neww
+      console.log(await this.titleCase(name))
+      console.log(newvalue)
+      axios.request({
+        url: 'https://api.spotify.com/v1/search/?q=' + value + '&type=playlist&limit=5',
+        method: 'get',
+        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+      })
+          .then((response) => {
+            let playlists = response.data['playlists']['items']
+            let finded = playlists.find(playlists => playlists.name === newvalue && playlists.owner.id === 'thesoundsofspotify')
+
+
+      let playlist = []
+        // console.log('237' + playlists[i].id)
+        axios.request({
+          url: 'https://api.spotify.com/v1/playlists/' + finded.id,
+          method: 'get',
+          headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+        })
+            .then((response) => {
+              // console.log(response.data['tracks'])
+              let tracks = response.data['tracks']
+              if (tracks['items'][0]['track']['preview_url']) {
+                finded.preview_url = tracks['items'][0]['track']['preview_url']
+              }
+              finded.tracks = tracks
+              playlist = finded
+              playlist.type = 'deeperplaylist'
+              console.log(playlist)
+              if (num === 1){
+                let indexing = this.deeper1.indexOf(playlist)
+                if (indexing === -1){
+                  this.deeper1.push(playlist)
+                }
+              } else if (num === 2){
+                let indexing = this.deeper2.indexOf(playlist)
+                if (indexing === -1){
+                  this.deeper2.push(playlist)
+                }
+              } else if (num === 22){
+                let indexing = this.deeper22.indexOf(playlist)
+                if (indexing === -1){
+                  this.deeper22.push(playlist)
+                }
+              } else if (num === 23){
+                let indexing = this.deeper23.indexOf(playlist)
+                if (indexing === -1){
+                  this.deeper23.push(playlist)
+                }
+              } else if (num === 3){
+                let indexing = this.deeper3.indexOf(playlist)
+                if (indexing === -1){
+                  this.deeper3.push(playlist)
+                }
+              } else if (num === 32){
+                let indexing = this.deeper32.indexOf(playlist)
+                if (indexing === -1){
+                  this.deeper32.push(playlist)
+                }
+              } else if (num === 33){
+                let indexing = this.deeper33.indexOf(playlist)
+                if (indexing === -1){
+                  this.deeper33.push(playlist)
+                }
+              } else if (num === 4){
+                let indexing = this.deeper4.indexOf(playlist)
+                if (indexing === -1){
+                  this.deeper4.push(playlist)
+                }
+              } else if (num === 5){
+                let indexing = this.deeper5.indexOf(playlist)
+                if (indexing === -1){
+                  this.deeper5.push(playlist)
+                }
+              } else if (num === 6){
+                let indexing = this.deeper6.indexOf(playlist)
+                if (indexing === -1){
+                  this.deeper6.push(playlist)
+                }
+              } else if (num === 7){
+                let indexing = this.deeper7.indexOf(playlist)
+                if (indexing === -1){
+                  this.deeper7.push(playlist)
+                }
+              } else if (num === 8){
+                let indexing = this.deeper8.indexOf(playlist)
+                if (indexing === -1){
+                  this.deeper8.push(playlist)
+                }
+              } else if (num === 9){
+                let indexing = this.deeper9.indexOf(playlist)
+                if (indexing === -1){
+                  this.deeper9.push(playlist)
+                }
+              }
+            })
+
+
+    }).catch(error =>{
+      if (error.response.status === 401){
+        axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
+          // console.log(response.data)
+          if (response.status === 200){
+            this.thesoundof(name)
+          }
+        })
+      }
+    })
     },
     filterres(event){
       let input = event.target
@@ -7924,6 +8030,16 @@ export default {
           i.style.display = 'none'
         }
       }
+    },
+    titleCase(str) {
+      let splitStr = str.toLowerCase().split(' ');
+      for (let i = 0; i < splitStr.length; i++) {
+        // You do not need to check if i is larger than splitStr length, as your for does that for you
+        // Assign it back to the array
+        splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+      }
+      // Directly return the joined string
+      return splitStr.join(' ');
     }
   },
 }
