@@ -118,6 +118,6 @@ export default {
 
 <style>
 @import './assets/style/styles.css';
-/*@import './assets/style/normalize.css';*/
+@import './assets/style/normalize.css';
 </style>
 

@@ -50,7 +50,7 @@ exports.scode = (req, res) => {
 
                 User.findOrCreate({where:{spotyid:r['id'],country:r['country'],display_name:r['display_name']},defaults:{
                         access_token:access_token,refresh_token:refresh_token
-                    }}).then(res.cookie('username',username,{expires:new Date(Date.now() + 3600000*24*7)}),res.cookie('access_token',access_token,{sameSite:'strict',expires:new Date(Date.now() + 3600000*24*7)}),res.cookie('country',r['country'],{expires:new Date(Date.now() + 3600000*24*7)}),res.cookie('nickname',nickname,{expires:new Date(Date.now() + 3600000*24*7)}),
+                    }}).then(res.cookie('username',username,{expires:new Date(Date.now() + 3600000*24*365)}),res.cookie('access_token',access_token,{sameSite:'strict',expires:new Date(Date.now() + 3600000*24*7)}),res.cookie('country',r['country'],{expires:new Date(Date.now() + 3600000*24*365)}),res.cookie('nickname',nickname,{expires:new Date(Date.now() + 3600000*24*365)}),
                     res.redirect('/')).catch(error =>{
                     console.log('47 ' + error)
                 })
