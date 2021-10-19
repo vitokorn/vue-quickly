@@ -6421,7 +6421,6 @@ export default {
                     finded.tracks = tracks
                     playlist = finded
                     playlist.type = 'deeperplaylist'
-                    playlist.pid = parent.id
                     console.log(playlist)
                     if (num === 1) {
                       let indexing = this.deeper1.indexOf(playlist)

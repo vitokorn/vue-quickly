@@ -7709,12 +7709,8 @@ export default {
         method: 'get',
         headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
-          .then(async (response) => {
+          .then((response) => {
             let playlists = response.data['playlists']['items']
-            let first = playlists.find(playlists => playlists.name === newvalue && playlists.owner.id === 'thesoundsofspotify')
-            console.log(first)
-            let second = playlists.find(playlists => playlists.name === value && playlists.owner.id === 'thesoundsofspotify')
-            console.log(second)
             const finded = new Promise(function(resolve, reject) {
               let first = playlists.find(playlists => playlists.name === newvalue && playlists.owner.id === 'thesoundsofspotify')
               let second = playlists.find(playlists => playlists.name === value && playlists.owner.id === 'thesoundsofspotify')
@@ -7784,9 +7780,6 @@ export default {
                   .then((response) => {
                     // console.log(response.data['tracks'])
                     let tracks = response.data['tracks']
-                    if (tracks['items'][0]['track']['preview_url']) {
-                      finded.preview_url = tracks['items'][0]['track']['preview_url']
-                    }
                     finded.tracks = tracks
                     playlist = finded
                     playlist.type = 'deeperplaylist'
@@ -7802,6 +7795,7 @@ export default {
                       let indexing = this.deeper2.indexOf(playlist)
                       if (indexing === -1) {
                         this.deeper2.push(playlist)
+                        console.log(this.deeper2)
                       }
                     } else if (num === 22) {
                       let indexing = this.deeper22.indexOf(playlist)
