@@ -4770,6 +4770,20 @@ export default {
           },0)
           return
         }
+        window.addEventListener('resize',function (){
+          setTimeout(async () => {
+            console.log(target.nextElementSibling)
+            let lst = target.nextElementSibling.children[0].children
+            console.log(lst)
+            let newarray = []
+            for await(let i of lst) {
+              console.log(i)
+              newarray.push(i.offsetHeight)
+            }
+            console.log(newarray.reduce((a, b) => a + b, 0))
+            target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 50 + 'px'
+          },0)
+        })
         let tt = []
         tt = item.track
         tt.type = 'pl'
@@ -5257,6 +5271,21 @@ export default {
           target.children[0].nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
         },0)
       }
+      window.addEventListener('resize',function (){
+        setTimeout(async () => {
+          let target = document.getElementById(parent.id)
+          document.getElementById(parent.id)
+          let lst = target.children[0].nextElementSibling.children[0].children
+          console.log(lst)
+          let newarray = []
+          for await(let i of lst) {
+            console.log(i)
+            newarray.push(i.offsetHeight)
+          }
+          console.log(newarray.reduce((a, b) => a + b, 0))
+          target.children[0].nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
+        },0)
+      })
       // setTimeout(() => {
       //   window.scrollTo({
       //     top:(document.getElementById('art'+ item.id)).offsetTop,
@@ -8489,20 +8518,53 @@ export default {
               }
               if(document.getElementById('p'+finded.id)){
                 document.getElementById('p'+finded.id).style.display = 'flex'
-                setTimeout(async () => {
-                  let target = document.getElementById(parent.id)
-                  document.getElementById(parent.id)
-                  console.log(target.nextElementSibling)
-                  let lst = target.nextElementSibling.children[0].children
-                  console.log(lst)
-                  let newarray = []
-                  for await(let i of lst) {
-                    console.log(i)
-                    newarray.push(i.offsetHeight)
-                  }
-                  console.log(newarray.reduce((a, b) => a + b, 0))
-                  target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
-                },0)
+                if (num === 2 || num === 22 || num === 23 || num === 3 || num === 32 || num === 33 || num === 7 || num === 4){
+                  setTimeout(async () => {
+                    let target = document.getElementById(parent.id)
+                    document.getElementById(parent.id)
+                    console.log(target.children[1])
+                    let lst = target.children[1].children[0].children
+                    console.log(lst)
+                    let newarray = []
+                    for await(let i of lst) {
+                      console.log(i)
+                      newarray.push(i.offsetHeight)
+                    }
+                    console.log(newarray.reduce((a, b) => a + b, 0))
+                    target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 500 + 'px'
+                  },100)
+                } else if (num === 5 ) {
+                  setTimeout(async () => {
+                    let target = document.getElementById(parent.track.id)
+                    document.getElementById(parent.track.id)
+                    console.log(target.children[1])
+                    let lst = target.children[1].children[0].children
+                    console.log(lst)
+                    let newarray = []
+                    for await(let i of lst) {
+                      console.log(i)
+                      newarray.push(i.offsetHeight)
+                    }
+                    console.log(newarray.reduce((a, b) => a + b, 0))
+                    target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 500 + 'px'
+                  },100)
+                }else {
+                  setTimeout(async () => {
+                    let target = document.getElementById(parent.id)
+                    document.getElementById(parent.id)
+                    console.log(target.nextElementSibling)
+                    let lst = target.nextElementSibling.children[0].children
+                    console.log(lst)
+                    let newarray = []
+                    for await(let i of lst) {
+                      console.log(i)
+                      newarray.push(i.offsetHeight)
+                    }
+                    console.log(newarray.reduce((a, b) => a + b, 0))
+                    target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 500 + 'px'
+                  },100)
+                }
+
                 return
               }
 
@@ -8594,7 +8656,7 @@ export default {
                         this.deepers.push(playlist)
                       }
                     }
-                    if (num === 3 || num === 32 || num === 33 || num === 7 || num === 4){
+                    if (num === 2 || num === 22 || num === 23 || num === 3 || num === 32 || num === 33 || num === 7 || num === 4){
                       setTimeout(async () => {
                         let target = document.getElementById(parent.id)
                         document.getElementById(parent.id)
@@ -8607,8 +8669,24 @@ export default {
                           newarray.push(i.offsetHeight)
                         }
                         console.log(newarray.reduce((a, b) => a + b, 0))
-                        target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 300 + 'px'
+                        target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 500 + 'px'
                       },100)
+                      window.addEventListener('resize',function (){
+                        setTimeout(async () => {
+                          let target = document.getElementById(parent.id)
+                          document.getElementById(parent.id)
+                          console.log(target.children[1])
+                          let lst = target.children[1].children[0].children
+                          console.log(lst)
+                          let newarray = []
+                          for await(let i of lst) {
+                            console.log(i)
+                            newarray.push(i.offsetHeight)
+                          }
+                          console.log(newarray.reduce((a, b) => a + b, 0))
+                          target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 500 + 'px'
+                        },0)
+                      })
                     } else if (num === 5 ) {
                       setTimeout(async () => {
                         let target = document.getElementById(parent.track.id)
@@ -8622,8 +8700,24 @@ export default {
                           newarray.push(i.offsetHeight)
                         }
                         console.log(newarray.reduce((a, b) => a + b, 0))
-                        target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 300 + 'px'
+                        target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 500 + 'px'
                       },100)
+                      window.addEventListener('resize',function (){
+                        setTimeout(async () => {
+                          let target = document.getElementById(parent.track.id)
+                          document.getElementById(parent.track.id)
+                          console.log(target.children[1])
+                          let lst = target.children[1].children[0].children
+                          console.log(lst)
+                          let newarray = []
+                          for await(let i of lst) {
+                            console.log(i)
+                            newarray.push(i.offsetHeight)
+                          }
+                          console.log(newarray.reduce((a, b) => a + b, 0))
+                          target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 500 + 'px'
+                        },0)
+                      })
                     }else {
                       setTimeout(async () => {
                         let target = document.getElementById(parent.id)
@@ -8637,10 +8731,25 @@ export default {
                           newarray.push(i.offsetHeight)
                         }
                         console.log(newarray.reduce((a, b) => a + b, 0))
-                        target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 300 + 'px'
+                        target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 500 + 'px'
                       },100)
+                      window.addEventListener('resize',function (){
+                        setTimeout(async () => {
+                          let target = document.getElementById(parent.id)
+                          document.getElementById(parent.id)
+                          console.log(target.nextElementSibling)
+                          let lst = target.nextElementSibling.children[0].children
+                          console.log(lst)
+                          let newarray = []
+                          for await(let i of lst) {
+                            console.log(i)
+                            newarray.push(i.offsetHeight)
+                          }
+                          console.log(newarray.reduce((a, b) => a + b, 0))
+                          target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 500 + 'px'
+                        },0)
+                      })
                     }
-
                   })
             }))
 
