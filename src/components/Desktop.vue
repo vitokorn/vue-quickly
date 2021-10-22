@@ -277,7 +277,7 @@
                 <div class="con3" v-else-if="!d.preview_url && d.images[0]" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" style="opacity: .5">{{d.name}}
                   <audio preload="none"></audio>
                 </div>
-                <div class="con3" v-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
+                <div class="con3" v-else-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
                   <audio preload="none" v-bind:src="d.preview_url"></audio>
                 </div>
                 <div class="con3" v-else style="opacity: .5">{{d.name}}
@@ -365,7 +365,7 @@
                   <div v-else-if="!s.preview_url && s.album.images[0]" tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('yourplaylists',s,1,false,'seed_artists'); queuein(s)">{{s.name}}
                     <audio preload="none"></audio>
                   </div>
-                  <div v-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('yourplaylists',s,1,false,'seed_artists'); queuein(s)">{{s.name}}
+                  <div v-else-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('yourplaylists',s,1,false,'seed_artists'); queuein(s)">{{s.name}}
                     <audio preload="none" v-bind:src="s.preview_url"></audio>
                   </div>
                   <div v-else tabindex="0" class="con3" v-bind:key="index" style="opacity: .5" v-on:click="deeperTracks('yourplaylists',s,1,false,'seed_artists'); queuein(s)">{{s.name}}
@@ -647,7 +647,7 @@
                   <div class="con3" v-else-if="!d.preview_url && d.images[0]" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" style="opacity: .5">{{d.name}}
                     <audio preload="none"></audio>
                   </div>
-                  <div class="con3" v-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
+                  <div class="con3" v-else-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
                     <audio preload="none" v-bind:src="d.preview_url"></audio>
                   </div>
                   <div class="con3" v-else style="opacity: .5">{{d.name}}
@@ -739,7 +739,7 @@
                     <div v-else-if="!s.preview_url && s.album.images[0]" tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('topartist',s,2,false,'seed_artists'); queuein(s)">{{s.name}}
                       <audio preload="none"></audio>
                     </div>
-                    <div v-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('topartist',s,2,false,'seed_artists'); queuein(s)">{{s.name}}
+                    <div v-else-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('topartist',s,2,false,'seed_artists'); queuein(s)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" style="opacity: .5" v-on:click="deeperTracks('topartist',s,2,false,'seed_artists'); queuein(s)">{{s.name}}
@@ -1008,7 +1008,7 @@
                   <div class="con3" v-else-if="!d.preview_url && d.images[0]" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" style="opacity: .5">{{d.name}}
                     <audio preload="none"></audio>
                   </div>
-                  <div class="con3" v-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
+                  <div class="con3" v-else-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
                     <audio preload="none" v-bind:src="d.preview_url"></audio>
                   </div>
                   <div class="con3" v-else style="opacity: .5">{{d.name}}
@@ -1096,7 +1096,7 @@
                     <div v-else-if="!s.preview_url && s.album.images[0]" tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('topartist6',s,22,false,'seed_artists'); queuein(s)">{{s.name}}
                       <audio preload="none"></audio>
                     </div>
-                    <div v-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('topartist6',s,22,false,'seed_artists'); queuein(s)">{{s.name}}
+                    <div v-else-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('topartist6',s,22,false,'seed_artists'); queuein(s)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" style="opacity: .5" v-on:click="deeperTracks('topartist6',s,22,false,'seed_artists'); queuein(s)">{{s.name}}
@@ -1362,7 +1362,7 @@
                 <div class="con3" v-else-if="!d.preview_url && d.images[0]" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" style="opacity: .5">{{d.name}}
                   <audio preload="none"></audio>
                 </div>
-                <div class="con3" v-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
+                <div class="con3" v-else-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
                   <audio preload="none" v-bind:src="d.preview_url"></audio>
                 </div>
                 <div class="con3" v-else style="opacity: .5">{{d.name}}
@@ -1450,7 +1450,7 @@
                   <div v-else-if="!s.preview_url && s.album.images[0]" tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('topartista',s,23,false,'seed_artists'); queuein(s)">{{s.name}}
                     <audio preload="none"></audio>
                   </div>
-                  <div v-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('topartista',s,23,false,'seed_artists'); queuein(s)">{{s.name}}
+                  <div v-else-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('topartista',s,23,false,'seed_artists'); queuein(s)">{{s.name}}
                     <audio preload="none" v-bind:src="s.preview_url"></audio>
                   </div>
                   <div v-else tabindex="0" class="con3" v-bind:key="index" style="opacity: .5" v-on:click="deeperTracks('topartista',s,23,false,'seed_artists'); queuein(s)">{{s.name}}
@@ -1757,7 +1757,7 @@
                   <div class="con3" v-else-if="!d.preview_url && d.images[0]" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" style="opacity: .5">{{d.name}}
                     <audio preload="none"></audio>
                   </div>
-                  <div class="con3" v-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
+                  <div class="con3" v-else-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
                     <audio preload="none" v-bind:src="d.preview_url"></audio>
                   </div>
                   <div class="con3" v-else style="opacity: .5">{{d.name}}
@@ -1845,7 +1845,7 @@
                     <div v-else-if="!s.preview_url && s.album.images[0]" tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('toptrack',s,3,false,'seed_artists'); queuein(s)">{{s.name}}
                       <audio preload="none"></audio>
                     </div>
-                    <div v-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('toptrack',s,3,false,'seed_artists'); queuein(s)">{{s.name}}
+                    <div v-else-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('toptrack',s,3,false,'seed_artists'); queuein(s)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" style="opacity: .5" v-on:click="deeperTracks('toptrack',s,3,false,'seed_artists'); queuein(s)">{{s.name}}
@@ -2128,7 +2128,7 @@
                   <div class="con3" v-else-if="!d.preview_url && d.images[0]" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" style="opacity: .5">{{d.name}}
                     <audio preload="none"></audio>
                   </div>
-                  <div class="con3" v-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
+                  <div class="con3" v-else-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
                     <audio preload="none" v-bind:src="d.preview_url"></audio>
                   </div>
                   <div class="con3" v-else style="opacity: .5">{{d.name}}
@@ -2220,7 +2220,7 @@
                     <div v-else-if="!s.preview_url && s.album.images[0]" tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('toptrack6',s,32,false,'seed_artists'); queuein(s)">{{s.name}}
                       <audio preload="none"></audio>
                     </div>
-                    <div v-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('toptrack6',s,32,false,'seed_artists'); queuein(s)">{{s.name}}
+                    <div v-else-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('toptrack6',s,32,false,'seed_artists'); queuein(s)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" style="opacity: .5" v-on:click="deeperTracks('toptrack6',s,32,false,'seed_artists'); queuein(s)">{{s.name}}
@@ -2503,7 +2503,7 @@
                   <div class="con3" v-else-if="!d.preview_url && d.images[0]" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" style="opacity: .5">{{d.name}}
                     <audio preload="none"></audio>
                   </div>
-                  <div class="con3" v-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
+                  <div class="con3" v-else-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
                     <audio preload="none" v-bind:src="d.preview_url"></audio>
                   </div>
                   <div class="con3" v-else style="opacity: .5">{{d.name}}
@@ -2591,7 +2591,7 @@
                     <div v-else-if="!s.preview_url && s.album.images[0]" tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('toptrackall',s,33,false,'seed_artists'); queuein(s)">{{s.name}}
                       <audio preload="none"></audio>
                     </div>
-                    <div v-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('toptrackall',s,33,false,'seed_artists'); queuein(s)">{{s.name}}
+                    <div v-else-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('toptrackall',s,33,false,'seed_artists'); queuein(s)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" style="opacity: .5" v-on:click="deeperTracks('toptrackall',s,33,false,'seed_artists'); queuein(s)">{{s.name}}
@@ -2859,7 +2859,7 @@
                 <div class="con3" v-else-if="!d.preview_url && d.images[0]" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" style="opacity: .5">{{d.name}}
                   <audio preload="none"></audio>
                 </div>
-                <div class="con3" v-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
+                <div class="con3" v-else-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
                   <audio preload="none" v-bind:src="d.preview_url"></audio>
                 </div>
                 <div class="con3" v-else style="opacity: .5">{{d.name}}
@@ -2933,7 +2933,7 @@
                   <div v-else-if="!s.preview_url && s.album.images[0]" tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('savedalbum',s,4,false,'seed_artists'); queuein(s)">{{s.name}}
                     <audio preload="none"></audio>
                   </div>
-                  <div v-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('savedalbum',s,4,false,'seed_artists'); queuein(s)">{{s.name}}
+                  <div v-else-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('savedalbum',s,4,false,'seed_artists'); queuein(s)">{{s.name}}
                     <audio preload="none" v-bind:src="s.preview_url"></audio>
                   </div>
                   <div v-else tabindex="0" class="con3" v-bind:key="index" style="opacity: .5" v-on:click="deeperTracks('savedalbum',s,4,false,'seed_artists'); queuein(s)">{{s.name}}
@@ -3222,7 +3222,7 @@
                 <div class="con3" v-else-if="!d.preview_url && d.images[0]" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" style="opacity: .5">{{d.name}}
                   <audio preload="none"></audio>
                 </div>
-                <div class="con3" v-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
+                <div class="con3" v-else-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
                   <audio preload="none" v-bind:src="d.preview_url"></audio>
                 </div>
                 <div class="con3" v-else style="opacity: .5">{{d.name}}
@@ -3310,7 +3310,7 @@
                   <div v-else-if="!s.preview_url && s.album.images[0]" tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('savedtrack',s,5,false,'seed_artists'); queuein(s)">{{s.name}}
                     <audio preload="none"></audio>
                   </div>
-                  <div v-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('savedtrack',s,5,false,'seed_artists'); queuein(s)">{{s.name}}
+                  <div v-else-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('savedtrack',s,5,false,'seed_artists'); queuein(s)">{{s.name}}
                     <audio preload="none" v-bind:src="s.preview_url"></audio>
                   </div>
                   <div v-else tabindex="0" class="con3" v-bind:key="index" style="opacity: .5" v-on:click="deeperTracks('savedtrack',s,5,false,'seed_artists'); queuein(s)">{{s.name}}
@@ -3579,7 +3579,7 @@
                   <div class="con3" v-else-if="!d.preview_url && d.images[0]" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" style="opacity: .5">{{d.name}}
                     <audio preload="none"></audio>
                   </div>
-                  <div class="con3" v-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
+                  <div class="con3" v-else-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
                     <audio preload="none" v-bind:src="d.preview_url"></audio>
                   </div>
                   <div class="con3" v-else style="opacity: .5">{{d.name}}
@@ -3670,7 +3670,7 @@
                     <div v-else-if="!s.preview_url && s.album.images[0]" tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('followedartist',s,6,false,'seed_artists'); queuein(s)">{{s.name}}
                       <audio preload="none"></audio>
                     </div>
-                    <div v-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('followedartist',s,6,false,'seed_artists'); queuein(s)">{{s.name}}
+                    <div v-else-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('followedartist',s,6,false,'seed_artists'); queuein(s)">{{s.name}}
                       <audio preload="none" v-bind:src="s.preview_url"></audio>
                     </div>
                     <div v-else tabindex="0" class="con3" v-bind:key="index" style="opacity: .5" v-on:click="deeperTracks('followedartist',s,6,false,'seed_artists'); queuein(s)">{{s.name}}
@@ -3958,7 +3958,7 @@
                 <div class="con3" v-else-if="!d.preview_url && d.images[0]" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" style="opacity: .5">{{d.name}}
                   <audio preload="none"></audio>
                 </div>
-                <div class="con3" v-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
+                <div class="con3" v-else-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
                   <audio preload="none" v-bind:src="d.preview_url"></audio>
                 </div>
                 <div class="con3" v-else style="opacity: .5">{{d.name}}
@@ -4046,7 +4046,7 @@
                   <div v-else-if="!s.preview_url && s.album.images[0]" tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('newrelease',s,7,false,'seed_artists'); queuein(s)">{{s.name}}
                     <audio preload="none"></audio>
                   </div>
-                  <div v-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('newrelease',s,7,false,'seed_artists'); queuein(s)">{{s.name}}
+                  <div v-else-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('newrelease',s,7,false,'seed_artists'); queuein(s)">{{s.name}}
                     <audio preload="none" v-bind:src="s.preview_url"></audio>
                   </div>
                   <div v-else tabindex="0" class="con3" v-bind:key="index" style="opacity: .5" v-on:click="deeperTracks('newrelease',s,7,false,'seed_artists'); queuein(s)">{{s.name}}
@@ -4112,13 +4112,16 @@
           <div class="con2" style="display: flex;color: black">
             <template v-if="item.tracks">
               <template v-for="(spl,index) of item['tracks']['items']" >
-                <div v-bind:id="spl.id" v-bind:key="index" v-if="spl.track.preview_url && spl.track.album.images[0]" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeper(spl,9,$event); queuein(spl['track'])" v-bind:style="{ 'background-image': 'url(' + spl.track.album.images[0].url + ')' }" >{{lists(spl['track']['artists'])}} - {{spl.track.name}}
+                <div v-bind:id="spl.track.id" v-bind:key="index" v-if="spl.track.preview_url && spl.track.album.images[0]" tabindex="0" class="con3" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeper(spl,9,$event); queuein(spl['track'])" v-bind:style="{ 'background-image': 'url(' + spl.track.album.images[0].url + ')' }" >{{lists(spl['track']['artists'])}} - {{spl.track.name}}
                   <audio preload="none" v-bind:src="spl.track.preview_url"></audio>
                 </div>
-                <div v-bind:id="spl.id" v-else-if="spl.track.album.images[0]" tabindex="0" v-bind:key="index" class="con3" v-on:click="deeper(spl,9,$event); queuein(spl['track'])" v-bind:style="{ 'background-image': 'url(' + spl.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(spl['track']['artists'])}} - {{spl.track.name}}
+                <div v-bind:id="spl.track.id" v-else-if="!spl.track.preview_url && spl.track.album.images[0]" tabindex="0" v-bind:key="index" class="con3" v-on:click="deeper(spl,9,$event); queuein(spl['track'])" v-bind:style="{ 'background-image': 'url(' + spl.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(spl['track']['artists'])}} - {{spl.track.name}}
                   <audio preload="none"></audio>
                 </div>
-                <div v-else v-bind:key="index" class="con3" v-on:click="deeper(spl,9,$event); queuein(spl['track'])" style="opacity: .5">{{lists(pl['track']['artists'])}} - {{pl.track.name}}></div>
+                <div v-bind:id="spl.track.id" v-else-if="spl.track.preview_url && !spl.track.album.images[0]" tabindex="0" v-bind:key="index" class="con3" v-on:click="deeper(spl,9,$event); queuein(spl['track'])">{{lists(spl['track']['artists'])}} - {{spl.track.name}}
+                  <audio preload="none" v-bind:src="spl.track.preview_url"></audio>
+                </div>
+                <div v-bind:id="spl.track.id" v-else v-bind:key="index" class="con3" v-on:click="deeper(spl,9,$event); queuein(spl['track'])" style="opacity: .5">{{lists(pl['track']['artists'])}} - {{pl.track.name}}></div>
               </template>
             </template>
           </div>
@@ -4361,7 +4364,7 @@
                 <div class="con3" v-else-if="!d.preview_url && d.images[0]" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" style="opacity: .5">{{d.name}}
                   <audio preload="none"></audio>
                 </div>
-                <div class="con3" v-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
+                <div class="con3" v-else-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
                   <audio preload="none" v-bind:src="d.preview_url"></audio>
                 </div>
                 <div class="con3" v-else style="opacity: .5">{{d.name}}
@@ -4441,7 +4444,7 @@
                   <div v-else-if="!s.preview_url && s.album.images[0]" tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('sptplaylists',s,9,false,'seed_artists'); queuein(s)">{{s.name}}
                     <audio preload="none"></audio>
                   </div>
-                  <div v-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('sptplaylists',s,9,false,'seed_artists'); queuein(s)">{{s.name}}
+                  <div v-else-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('sptplaylists',s,9,false,'seed_artists'); queuein(s)">{{s.name}}
                     <audio preload="none" v-bind:src="s.preview_url"></audio>
                   </div>
                   <div v-else tabindex="0" class="con3" v-bind:key="index" style="opacity: .5" v-on:click="deeperTracks('sptplaylists',s,9,false,'seed_artists'); queuein(s)">{{s.name}}
@@ -4754,7 +4757,7 @@
                 <div class="con3" v-else-if="!d.preview_url && d.images[0]" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" style="opacity: .5">{{d.name}}
                   <audio preload="none"></audio>
                 </div>
-                <div class="con3" v-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
+                <div class="con3" v-else-if="d.preview_url && !d.images[0]" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{d.name}}
                   <audio preload="none" v-bind:src="d.preview_url"></audio>
                 </div>
                 <div class="con3" v-else style="opacity: .5">{{d.name}}
@@ -4867,7 +4870,7 @@
                   <div v-else-if="!s.preview_url && s.album.images[0]" tabindex="0" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5" v-on:click="deeperTracks('search',s,10,false,'seed_artists'); queuein(s)">{{s.name}}
                     <audio preload="none"></audio>
                   </div>
-                  <div v-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('search',s,10,false,'seed_artists'); queuein(s)">{{s.name}}
+                  <div v-else-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="index" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-on:click="deeperTracks('search',s,10,false,'seed_artists'); queuein(s)">{{s.name}}
                     <audio preload="none" v-bind:src="s.preview_url"></audio>
                   </div>
                   <div v-else tabindex="0" class="con3" v-bind:key="index" style="opacity: .5" v-on:click="deeperTracks('search',s,10,false,'seed_artists'); queuein(s)">{{s.name}}
@@ -6806,11 +6809,11 @@ export default {
           this.currentpl = document.getElementById(id)
           this.currentpl.className = 'hr-line-dashed activetab'
         }
-        // setTimeout(() => {
-        //   window.scrollTo({
-        //     top:(document.getElementById('p'+ id)).offsetTop,
-        //     behavior:'smooth'});
-        // },10)
+        setTimeout(() => {
+          window.scrollTo({
+            top:(document.getElementById('p'+ id)).offsetTop,
+            behavior:'smooth'});
+        },10)
         return
       }
       axios.request({
@@ -6837,12 +6840,12 @@ export default {
                     this.currentpl = document.getElementById(id)
                     this.currentpl.className = 'hr-line-dashed activetab'
                   }
+                  // setTimeout(() => {
+                  //   window.scrollTo({
+                  //     top:(document.getElementById('p'+ id)).offsetTop,
+                  //     behavior:'smooth'});
+                  // },0)
                 })
-            // setTimeout(() => {
-            //   window.scrollTo({
-            //     top:(document.getElementById('p'+ id)).offsetTop,
-            //     behavior:'smooth'});
-            // },1000)
           })
           .catch(error =>{
             if (error.response.status){
