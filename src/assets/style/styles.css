@@ -117,6 +117,7 @@ header{
 }
 h1{
     color: var(--h1-color);
+    font-size: 1em !important;
 }
 .playable {
     position: relative;
@@ -329,6 +330,9 @@ position: relative;
 }
 }
 @media (min-width: 768px) {
+    h1 {
+        font-size: 2em !important;
+    }
 .con3{
   width: 130px;
     height: 130px;
@@ -406,7 +410,7 @@ position: relative;
     }
 @media (max-width: 576px) {
     h1 {
-        font-size: 1.4em;
+        font-size: 1.4em !important;
     }
 }
 .con4{
@@ -627,7 +631,7 @@ a{
 }
 .content{
     float: right;
-    bottom: 50px;
+    bottom: 30px;
     position: relative;
     right: 10px;
     color:var(--h1-color)
