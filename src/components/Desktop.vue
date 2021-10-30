@@ -5007,6 +5007,9 @@ export default {
       console.log(d)
       console.log(num)
     },
+    polygon2(id){
+      console.log(id)
+    },
     playl(item){
       let pls = document.querySelectorAll('#search> .rectrack > div')
       for (let i = 0; i < pls.length; i++) {
@@ -7765,7 +7768,6 @@ export default {
               }
             })
             finded.then((finded => {
-
               let alltop = document.querySelectorAll(' .item-container > .rectrack > div.hcontent > div.' + sib)
               // console.log(child)
               if (child){

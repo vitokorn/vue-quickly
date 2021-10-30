@@ -962,7 +962,9 @@ input[type=checkbox]{
     position: absolute;
     padding: 85px 0;
 }
-
+.aresset{
+    color: var(--pl-color);
+}
 .aresset a{
     display: initial !important;
     padding: initial !important;

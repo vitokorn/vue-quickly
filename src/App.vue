@@ -3,6 +3,7 @@
     <header class="header" id="navbar">
       <img class="logo" src="./assets/logo-small.png" alt="">
       <h1>Discover Mobily</h1>
+      <div style="color: var(--h1-color)" class="aresset">Inspired by <a href="https://discoverquickly.com/">Discover Quickly</a></div>
       <div class="content">
 
         <div v-if="isAuth()" class="">Hello, {{username}}</div>

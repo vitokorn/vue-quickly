@@ -5205,15 +5205,15 @@ export default {
         if (num === 3 || num ===32 || num===33 || num === 7){
           setTimeout(async () => {
             await this.hideall(target.nextElementSibling)
-            console.log(target.nextElementSibling)
+            // console.log(target.nextElementSibling)
             let lst = target.nextElementSibling.children[0].children
-            console.log(lst)
+            // console.log(lst)
             let newarray = []
             for await(let i of lst) {
-              console.log(i)
+              // console.log(i)
               newarray.push(i.offsetHeight)
             }
-            console.log(newarray.reduce((a, b) => a + b, 0))
+            // console.log(newarray.reduce((a, b) => a + b, 0))
             target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 50 + 'px'
           },0)}
         return
@@ -5272,26 +5272,26 @@ export default {
                 setTimeout(async () => {
                   await this.hideall(target.nextElementSibling)
 
-                  console.log(target.nextElementSibling)
+                  // console.log(target.nextElementSibling)
                   let lst = target.nextElementSibling.children[0].children
-                  console.log(lst)
+                  // console.log(lst)
                   let newarray = []
                   for await(let i of lst) {
-                    console.log(i)
+                    // console.log(i)
                     newarray.push(i.offsetHeight)
                   }
-                  console.log(newarray.reduce((a, b) => a + b, 0))
+                  // console.log(newarray.reduce((a, b) => a + b, 0))
                   target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 50 + 'px'
                 },0)
                 window.addEventListener('resize',function (){
                   setTimeout(async () => {
-                    console.log('3826')
-                    console.log(target.nextElementSibling)
+                    // console.log('3826')
+                    // console.log(target.nextElementSibling)
                     let lst = target.nextElementSibling.children[0].children
-                    console.log(lst)
+                    // console.log(lst)
                     let newarray = []
                     for await(let i of lst) {
-                      console.log(i)
+                      // console.log(i)
                       newarray.push(i.offsetHeight)
                     }
                     target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 50 + 'px'
@@ -5348,30 +5348,30 @@ export default {
           document.getElementById('d'+ item.track.id).style.display = 'flex'
           setTimeout(async () => {
             await this.hideall(target.nextElementSibling)
-            console.log(target.nextElementSibling)
+            // console.log(target.nextElementSibling)
             let lst = target.nextElementSibling.children[0].children
-            console.log(lst)
+            // console.log(lst)
             let newarray = []
             for await(let i of lst) {
-              console.log(i)
+              // console.log(i)
               newarray.push(i.offsetHeight)
             }
-            console.log(newarray.reduce((a, b) => a + b, 0))
+            // console.log(newarray.reduce((a, b) => a + b, 0))
             target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 50 + 'px'
           },0)
           return
         }
         window.addEventListener('resize',function (){
           setTimeout(async () => {
-            console.log(target.nextElementSibling)
+            // console.log(target.nextElementSibling)
             let lst = target.nextElementSibling.children[0].children
-            console.log(lst)
+            // console.log(lst)
             let newarray = []
             for await(let i of lst) {
-              console.log(i)
+              // console.log(i)
               newarray.push(i.offsetHeight)
             }
-            console.log(newarray.reduce((a, b) => a + b, 0))
+            // console.log(newarray.reduce((a, b) => a + b, 0))
             target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 50 + 'px'
           },0)
         })
@@ -5413,15 +5413,15 @@ export default {
         }
         setTimeout(async () => {
           await this.hideall(target.nextElementSibling)
-          console.log(target.nextElementSibling)
+          // console.log(target.nextElementSibling)
           let lst = target.nextElementSibling.children[0].children
-          console.log(lst)
+          // console.log(lst)
           let newarray = []
           for await(let i of lst) {
-            console.log(i)
+            // console.log(i)
             newarray.push(i.offsetHeight)
           }
-          console.log(newarray.reduce((a, b) => a + b, 0))
+          // console.log(newarray.reduce((a, b) => a + b, 0))
           target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 50 + 'px'
         },0)
       } else if (num === 8){
@@ -5471,26 +5471,26 @@ export default {
                   this.deeper9.push(tt)
                   setTimeout(async () => {
                     await this.hideall(target.nextElementSibling)
-                    console.log(target.nextElementSibling)
+                    // console.log(target.nextElementSibling)
                     let lst = target.nextElementSibling.children[0].children
-                    console.log(lst)
+                    // console.log(lst)
                     let newarray = []
                     for await(let i of lst) {
-                      console.log(i)
+                      // console.log(i)
                       newarray.push(i.offsetHeight)
                     }
-                    console.log(newarray.reduce((a, b) => a + b, 0))
+                    // console.log(newarray.reduce((a, b) => a + b, 0))
                     target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 20 + 'px'
                   },0)
                   window.addEventListener('resize',function (){
                     setTimeout(async () => {
-                      console.log('3826')
-                      console.log(target.nextElementSibling)
+                      // console.log('3826')
+                      // console.log(target.nextElementSibling)
                       let lst = target.nextElementSibling.children[0].children
-                      console.log(lst)
+                      // console.log(lst)
                       let newarray = []
                       for await(let i of lst) {
-                        console.log(i)
+                        // console.log(i)
                         newarray.push(i.offsetHeight)
                       }
                         target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
@@ -5519,26 +5519,26 @@ export default {
         setTimeout(async () => {
           await this.hideall(target.nextElementSibling)
 
-          console.log(target.nextElementSibling)
+          // console.log(target.nextElementSibling)
           let lst = target.nextElementSibling.children[0].children
-          console.log(lst)
+          // console.log(lst)
           let newarray = []
           for await(let i of lst) {
-            console.log(i)
+            // console.log(i)
             newarray.push(i.offsetHeight)
           }
-          console.log(newarray.reduce((a, b) => a + b, 0))
+          // console.log(newarray.reduce((a, b) => a + b, 0))
           target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 50 + 'px'
         },0)
         window.addEventListener('resize',function (){
           setTimeout(async () => {
-            console.log('3826')
-            console.log(target.nextElementSibling)
+            // console.log('3826')
+            // console.log(target.nextElementSibling)
             let lst = target.nextElementSibling.children[0].children
-            console.log(lst)
+            // console.log(lst)
             let newarray = []
             for await(let i of lst) {
-              console.log(i)
+              // console.log(i)
               newarray.push(i.offsetHeight)
             }
             target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 50 + 'px'
@@ -5670,15 +5670,15 @@ export default {
     },
     deeperartistmob: async function (pointer,item,track,num,flag,sib,related,parent){
       let trackartist = []
-      console.log(parent)
+      // console.log(parent)
       trackartist.type = 'trackartist'
       trackartist.pid = parent.id
       let all = document.querySelectorAll('.item-container > .rectrack > div.hcontent > div')
       let alltop = document.querySelectorAll('.item-container > .rectrack > div.hcontent > div.' + sib)
       let last = document.querySelector('.item-container > .rectrack > div.hcontent > div.trackartist > div[id="art' + item.id + '"]')
-       console.log(last)
-      console.log(all)
-      console.log(alltop)
+      //  console.log(last)
+      // console.log(all)
+      // console.log(alltop)
       if (flag === true){
         // console.log(item.id)
         if (all.length !==0 && all.length !==0){
@@ -5724,32 +5724,32 @@ export default {
           setTimeout(async () => {
             let target = document.getElementById(parent.id)
             document.getElementById(parent.id)
-            console.log(target.nextElementSibling)
+            // console.log(target.nextElementSibling)
             let lst = target.nextElementSibling.children[0].children
-            console.log(lst)
+            // console.log(lst)
             let newarray = []
             for await(let i of lst) {
-              console.log(i)
+              // console.log(i)
               newarray.push(i.offsetHeight)
             }
-            console.log(newarray.reduce((a, b) => a + b, 0))
+            // console.log(newarray.reduce((a, b) => a + b, 0))
             target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
           },0)
         } else if (num === 5) {
           let target = document.getElementById(parent.track.id)
           document.getElementById(parent.track.id)
-          console.log(parent.track.id)
-          console.log(target.children[0])
+          // console.log(parent.track.id)
+          // console.log(target.children[0])
           await this.hideall(target.children[0].nextElementSibling)
           target.children[0].nextElementSibling.style.display = 'block'
           let lst = target.children[0].nextElementSibling.children[0].children
-          console.log(lst)
+          // console.log(lst)
           let newarray = []
           for await(let i of lst) {
-            console.log(i)
+            // console.log(i)
             newarray.push(i.offsetHeight)
           }
-          console.log(newarray.reduce((a, b) => a + b, 0))
+          // console.log(newarray.reduce((a, b) => a + b, 0))
           target.children[0].nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
         }else{
           setTimeout(async () => {
@@ -5757,13 +5757,13 @@ export default {
             document.getElementById(parent.id)
             await this.hideall(target.children[0].nextElementSibling)
             let lst = target.children[0].nextElementSibling.children[0].children
-            console.log(lst)
+            // console.log(lst)
             let newarray = []
             for await(let i of lst) {
-              console.log(i)
+              // console.log(i)
               newarray.push(i.offsetHeight)
             }
-            console.log(newarray.reduce((a, b) => a + b, 0))
+            // console.log(newarray.reduce((a, b) => a + b, 0))
             target.children[0].nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
           },0)
         }
@@ -5815,50 +5815,50 @@ export default {
         setTimeout(async () => {
           let target = document.getElementById(parent.id)
           document.getElementById(parent.id)
-          console.log(target.nextElementSibling)
+          // console.log(target.nextElementSibling)
           let lst = target.nextElementSibling.children[0].children
-          console.log(lst)
+          // console.log(lst)
           let newarray = []
           for await(let i of lst) {
-            console.log(i)
+            // console.log(i)
             newarray.push(i.offsetHeight)
           }
-          console.log(newarray.reduce((a, b) => a + b, 0))
+          // console.log(newarray.reduce((a, b) => a + b, 0))
           target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
         },0)
       } else if (num === 5){
         setTimeout(async () => {
           let target = document.getElementById(parent.track.id)
           document.getElementById(parent.track.id)
-          console.log(parent.track.id)
+          // console.log(parent.track.id)
 
-          console.log(target.children[0])
+          // console.log(target.children[0])
           await this.hideall(target.children[0].nextElementSibling)
           let lst = target.children[0].nextElementSibling.children[0].children
-          console.log(lst)
+          // console.log(lst)
           let newarray = []
           for await(let i of lst) {
-            console.log(i)
+            // console.log(i)
             newarray.push(i.offsetHeight)
           }
-          console.log(newarray.reduce((a, b) => a + b, 0))
+          // console.log(newarray.reduce((a, b) => a + b, 0))
           target.children[0].nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
         },0)
       } else {
         setTimeout(async () => {
           let target = document.getElementById(parent.id)
           document.getElementById(parent.id)
-          console.log(parent.id)
+          // console.log(parent.id)
 
-          console.log(target.children[0])
+          // console.log(target.children[0])
           await this.hideall(target.children[0].nextElementSibling)
           let lst = target.children[0].nextElementSibling.children[0].children
           let newarray = []
           for await(let i of lst) {
-            console.log(i)
+            // console.log(i)
             newarray.push(i.offsetHeight)
           }
-          console.log(newarray.reduce((a, b) => a + b, 0))
+          // console.log(newarray.reduce((a, b) => a + b, 0))
           target.children[0].nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
         },0)
         window.addEventListener('resize',function (){
@@ -5866,13 +5866,13 @@ export default {
             let target = document.getElementById(parent.id)
             document.getElementById(parent.id)
             let lst = target.children[0].nextElementSibling.children[0].children
-            console.log(lst)
+            // console.log(lst)
             let newarray = []
             for await(let i of lst) {
-              console.log(i)
+              // console.log(i)
               newarray.push(i.offsetHeight)
             }
-            console.log(newarray.reduce((a, b) => a + b, 0))
+            // console.log(newarray.reduce((a, b) => a + b, 0))
             if (num === 7){
               target.children[0].nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 50 + 'px'
             } else {
@@ -6181,15 +6181,15 @@ export default {
         setTimeout(async () => {
           let target = document.getElementById(parent.id)
           document.getElementById(parent.id)
-          console.log(target.nextElementSibling)
+          // console.log(target.nextElementSibling)
           let lst = target.nextElementSibling.children[0].children
-          console.log(lst)
+          // console.log(lst)
           let newarray = []
           for await(let i of lst) {
-            console.log(i)
+            // console.log(i)
             newarray.push(i.offsetHeight)
           }
-          console.log(newarray.reduce((a, b) => a + b, 0))
+          // console.log(newarray.reduce((a, b) => a + b, 0))
           target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
         },0)
         return
@@ -6210,15 +6210,15 @@ export default {
                   setTimeout(async () => {
                     let target = document.getElementById(parent.id)
                     document.getElementById(parent.id)
-                    console.log(target.nextElementSibling)
+                    // console.log(target.nextElementSibling)
                     let lst = target.nextElementSibling.children[0].children
-                    console.log(lst)
+                    // console.log(lst)
                     let newarray = []
                     for await(let i of lst) {
-                      console.log(i)
+                      // console.log(i)
                       newarray.push(i.offsetHeight)
                     }
-                    console.log(newarray.reduce((a, b) => a + b, 0))
+                    // console.log(newarray.reduce((a, b) => a + b, 0))
                     target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
                   },0)
                 }
@@ -6297,30 +6297,30 @@ export default {
                 setTimeout(async () => {
                   let target = document.getElementById(parent.id)
                   document.getElementById(parent.id)
-                  console.log(target.children[1])
+                  // console.log(target.children[1])
                   let lst = target.children[1].children[0].children
-                  console.log(lst)
+                  // console.log(lst)
                   let newarray = []
                   for await(let i of lst) {
-                    console.log(i)
+                    // console.log(i)
                     newarray.push(i.offsetHeight)
                   }
-                  console.log(newarray.reduce((a, b) => a + b, 0))
+                  // console.log(newarray.reduce((a, b) => a + b, 0))
                   target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
                 },0)
               } else if (num === 5 ){
                 setTimeout(async () => {
                   let target = document.getElementById(parent.track.id)
                   document.getElementById(parent.track.id)
-                  console.log(target.children[1])
+                  // console.log(target.children[1])
                   let lst = target.children[1].children[0].children
-                  console.log(lst)
+                  // console.log(lst)
                   let newarray = []
                   for await(let i of lst) {
-                    console.log(i)
+                    // console.log(i)
                     newarray.push(i.offsetHeight)
                   }
-                  console.log(newarray.reduce((a, b) => a + b, 0))
+                  // console.log(newarray.reduce((a, b) => a + b, 0))
                   target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
                 },0)
               }
@@ -6349,17 +6349,17 @@ export default {
             setTimeout(async () => {
               let target = document.getElementById(parent.id)
               document.getElementById(parent.id)
-              console.log(target)
-              console.log(target.children[1])
+              // console.log(target)
+              // console.log(target.children[1])
               await this.hideall(target.children[1])
               let lst = target.children[1].children[0].children
-              console.log(lst)
+              // console.log(lst)
               let newarray = []
               for await(let i of lst) {
-                console.log(i)
+                // console.log(i)
                 newarray.push(i.offsetHeight)
               }
-              console.log(newarray.reduce((a, b) => a + b, 0))
+              // console.log(newarray.reduce((a, b) => a + b, 0))
               target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
             },0)
             return
@@ -6388,22 +6388,22 @@ export default {
                 setTimeout(async () => {
                   let target = document.getElementById(item.id)
                   document.getElementById(item.id)
-                  console.log(target)
-                  console.log(target.children[1])
+                  // console.log(target)
+                  // console.log(target.children[1])
                   await this.hideall(target.children[1])
                   let lst = target.children[1].children[0].children
-                  console.log(lst)
+                  // console.log(lst)
                   let newarray = []
                   for await(let i of lst) {
-                    console.log(i)
+                    // console.log(i)
                     newarray.push(i.offsetHeight)
                   }
-                  console.log(newarray.reduce((a, b) => a + b, 0))
+                  // console.log(newarray.reduce((a, b) => a + b, 0))
                   target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
                 },0)
               })
               .catch(error =>{
-                console.log(error)
+                // console.log(error)
                 if (error.response.status === 401){
                   axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) =>{
                     // console.log(response.data)
@@ -6422,38 +6422,38 @@ export default {
               document.getElementById(parent.id)
               await this.hideall(target.children[1])
               let lst = target.children[1].children[0].children
-              console.log(lst)
+              // console.log(lst)
               let newarray = []
               for await(let i of lst) {
-                console.log(i)
+                // console.log(i)
                 newarray.push(i.offsetHeight)
               }
-              console.log(newarray.reduce((a, b) => a + b, 0))
+              // console.log(newarray.reduce((a, b) => a + b, 0))
               target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
             },0)
             return
           }
           item.pid = parent.id
           item.album = item
-          console.log(item)
+          // console.log(item)
           let indexing = this.deeper4.indexOf(item)
-          console.log(indexing)
+          // console.log(indexing)
           if (indexing === -1){
             this.deeper4.push(item)
           }
           setTimeout(async () => {
             let target = document.getElementById(parent.id)
             document.getElementById(parent.id)
-            console.log(target.nextElementSibling)
+            // console.log(target.nextElementSibling)
             await this.hideall(target.children[1])
             let lst = target.children[1].children[0].children
-            console.log(lst)
+            // console.log(lst)
             let newarray = []
             for await(let i of lst) {
-              console.log(i)
+              // console.log(i)
               newarray.push(i.offsetHeight)
             }
-            console.log(newarray.reduce((a, b) => a + b, 0))
+            // console.log(newarray.reduce((a, b) => a + b, 0))
             target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
           },100)
         }
@@ -6636,7 +6636,7 @@ export default {
       // }, 10);
     },
     deeperTracksM: async function(pointer,item,num,flag,sib,child,parent){
-      console.log(item)
+      // console.log(item)
       item.type ='deepertracks'
       item.pid = parent.id
       let all = document.querySelectorAll('.item-container > .rectrack > div.hcontent > div')
@@ -6685,45 +6685,45 @@ export default {
           setTimeout(async () => {
             let target = document.getElementById(parent.id)
             document.getElementById(parent.id)
-            console.log(target.children[1])
+            // console.log(target.children[1])
             let lst = target.children[1].children[0].children
-            console.log(lst)
+            // console.log(lst)
             let newarray = []
             for await(let i of lst) {
-              console.log(i)
+              // console.log(i)
               newarray.push(i.offsetHeight)
             }
-            console.log(newarray.reduce((a, b) => a + b, 0))
+            // console.log(newarray.reduce((a, b) => a + b, 0))
             target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
           },0)
         } else if (num === 5) {
           setTimeout(async () => {
             let target = document.getElementById(parent.track.id)
             document.getElementById(parent.track.id)
-            console.log(target.children[1])
+            // console.log(target.children[1])
             let lst = target.children[1].children[0].children
-            console.log(lst)
+            // console.log(lst)
             let newarray = []
             for await(let i of lst) {
-              console.log(i)
+              // console.log(i)
               newarray.push(i.offsetHeight)
             }
-            console.log(newarray.reduce((a, b) => a + b, 0))
+            // console.log(newarray.reduce((a, b) => a + b, 0))
             target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
           },0)
         }else{
           setTimeout(async () => {
             let target = document.getElementById(parent.id)
             document.getElementById(parent.id)
-            console.log(target.nextElementSibling)
+            // console.log(target.nextElementSibling)
             let lst = target.nextElementSibling.children[0].children
-            console.log(lst)
+            // console.log(lst)
             let newarray = []
             for await(let i of lst) {
-              console.log(i)
+              // console.log(i)
               newarray.push(i.offsetHeight)
             }
-            console.log(newarray.reduce((a, b) => a + b, 0))
+            // console.log(newarray.reduce((a, b) => a + b, 0))
             target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
           },0)
         }
@@ -6823,60 +6823,60 @@ export default {
         setTimeout(async () => {
           let target = document.getElementById(parent.id)
           document.getElementById(parent.id)
-          console.log(target.nextElementSibling)
+          // console.log(target.nextElementSibling)
           let lst = target.nextElementSibling.children[0].children
-          console.log(lst)
+          // console.log(lst)
           let newarray = []
           for await(let i of lst) {
-            console.log(i)
+            // console.log(i)
             newarray.push(i.offsetHeight)
           }
-          console.log(newarray.reduce((a, b) => a + b, 0))
+          // console.log(newarray.reduce((a, b) => a + b, 0))
           target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
         },0)
       } else if (num === 3 || num === 32 || num === 33 || num === 7){
         setTimeout(async () => {
           let target = document.getElementById(parent.id)
           document.getElementById(parent.id)
-          console.log(target.children[1])
+          // console.log(target.children[1])
           let lst = target.children[1].children[0].children
-          console.log(lst)
+          // console.log(lst)
           let newarray = []
           for await(let i of lst) {
-            console.log(i)
+            // console.log(i)
             newarray.push(i.offsetHeight)
           }
-          console.log(newarray.reduce((a, b) => a + b, 0))
+          // console.log(newarray.reduce((a, b) => a + b, 0))
           target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
         },0)
       } else if (num === 5) {
         setTimeout(async () => {
           let target = document.getElementById(parent.track.id)
           document.getElementById(parent.track.id)
-          console.log(target.children[1])
+          // console.log(target.children[1])
           let lst = target.children[1].children[0].children
-          console.log(lst)
+          // console.log(lst)
           let newarray = []
           for await(let i of lst) {
-            console.log(i)
+            // console.log(i)
             newarray.push(i.offsetHeight)
           }
-          console.log(newarray.reduce((a, b) => a + b, 0))
+          // console.log(newarray.reduce((a, b) => a + b, 0))
           target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
         },0)
       }else {
         setTimeout(async () => {
           let target = document.getElementById(parent.id)
           document.getElementById(parent.id)
-          console.log(target.children[0])
+          // console.log(target.children[0])
           let lst = target.children[0].nextElementSibling.children[0].children
-          console.log(lst)
+          // console.log(lst)
           let newarray = []
           for await(let i of lst) {
-            console.log(i)
+            // console.log(i)
             newarray.push(i.offsetHeight)
           }
-          console.log(newarray.reduce((a, b) => a + b, 0))
+          // console.log(newarray.reduce((a, b) => a + b, 0))
           target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
         },0)
       }
@@ -7046,15 +7046,15 @@ export default {
         setTimeout(async () => {
           let target = document.getElementById(parent.id)
           document.getElementById(parent.id)
-          console.log(target.nextElementSibling)
+          // console.log(target.nextElementSibling)
           let lst = target.nextElementSibling.children[0].children
-          console.log(lst)
+          // console.log(lst)
           let newarray = []
           for await(let i of lst) {
-            console.log(i)
+            // console.log(i)
             newarray.push(i.offsetHeight)
           }
-          console.log(newarray.reduce((a, b) => a + b, 0))
+          // console.log(newarray.reduce((a, b) => a + b, 0))
           target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
         },0)
         return
@@ -7066,15 +7066,15 @@ export default {
           setTimeout(async () => {
             let target = document.getElementById(parent.id)
             document.getElementById(parent.id)
-            console.log(target.nextElementSibling)
+            // console.log(target.nextElementSibling)
             let lst = target.nextElementSibling.children[0].children
-            console.log(lst)
+            // console.log(lst)
             let newarray = []
             for await(let i of lst) {
-              console.log(i)
+              // console.log(i)
               newarray.push(i.offsetHeight)
             }
-            console.log(newarray.reduce((a, b) => a + b, 0))
+            // console.log(newarray.reduce((a, b) => a + b, 0))
             target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
           },0)
         }
@@ -7150,30 +7150,30 @@ export default {
         setTimeout(async () => {
           let target = document.getElementById(parent.id)
           document.getElementById(parent.id)
-          console.log(target.children[1])
+          // console.log(target.children[1])
           let lst = target.children[1].children[0].children
-          console.log(lst)
+          // console.log(lst)
           let newarray = []
           for await(let i of lst) {
-            console.log(i)
+            // console.log(i)
             newarray.push(i.offsetHeight)
           }
-          console.log(newarray.reduce((a, b) => a + b, 0))
+          // console.log(newarray.reduce((a, b) => a + b, 0))
           target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
         },0)
       } else {
         setTimeout(async () => {
           let target = document.getElementById(parent.track.id)
           document.getElementById(parent.track.id)
-          console.log(target.children[1])
+          // console.log(target.children[1])
           let lst = target.children[1].children[0].children
-          console.log(lst)
+          // console.log(lst)
           let newarray = []
           for await(let i of lst) {
-            console.log(i)
+            // console.log(i)
             newarray.push(i.offsetHeight)
           }
-          console.log(newarray.reduce((a, b) => a + b, 0))
+          // console.log(newarray.reduce((a, b) => a + b, 0))
           target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
         },0)
       }
@@ -7339,15 +7339,15 @@ export default {
         setTimeout(async () => {
           let target = document.getElementById(parent.id)
           document.getElementById(parent.id)
-          console.log(target.nextElementSibling)
+          // console.log(target.nextElementSibling)
           let lst = target.nextElementSibling.children[0].children
-          console.log(lst)
+          // console.log(lst)
           let newarray = []
           for await(let i of lst) {
-            console.log(i)
+            // console.log(i)
             newarray.push(i.offsetHeight)
           }
-          console.log(newarray.reduce((a, b) => a + b, 0))
+          // console.log(newarray.reduce((a, b) => a + b, 0))
           target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
         },0)
         return
@@ -7441,45 +7441,45 @@ export default {
               setTimeout(async () => {
                 let target = document.getElementById(parent.id)
                 document.getElementById(parent.id)
-                console.log(target.children[1])
+                // console.log(target.children[1])
                 let lst = target.children[1].children[0].children
-                console.log(lst)
+                // console.log(lst)
                 let newarray = []
                 for await(let i of lst) {
-                  console.log(i)
+                  // console.log(i)
                   newarray.push(i.offsetHeight)
                 }
-                console.log(newarray.reduce((a, b) => a + b, 0))
+                // console.log(newarray.reduce((a, b) => a + b, 0))
                 target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
               },0)
             } else if (num === 5 ) {
               setTimeout(async () => {
                 let target = document.getElementById(parent.track.id)
                 document.getElementById(parent.track.id)
-                console.log(target.children[1])
+                // console.log(target.children[1])
                 let lst = target.children[1].children[0].children
-                console.log(lst)
+                // console.log(lst)
                 let newarray = []
                 for await(let i of lst) {
-                  console.log(i)
+                  // console.log(i)
                   newarray.push(i.offsetHeight)
                 }
-                console.log(newarray.reduce((a, b) => a + b, 0))
+                // console.log(newarray.reduce((a, b) => a + b, 0))
                 target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
               },0)
             }else {
               setTimeout(async () => {
                 let target = document.getElementById(parent.id)
                 document.getElementById(parent.id)
-                console.log(target.nextElementSibling)
+                // console.log(target.nextElementSibling)
                 let lst = target.nextElementSibling.children[0].children
-                console.log(lst)
+                // console.log(lst)
                 let newarray = []
                 for await(let i of lst) {
-                  console.log(i)
+                  // console.log(i)
                   newarray.push(i.offsetHeight)
                 }
-                console.log(newarray.reduce((a, b) => a + b, 0))
+                // console.log(newarray.reduce((a, b) => a + b, 0))
                 target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
               },0)
             }
@@ -7653,45 +7653,45 @@ export default {
           setTimeout(async () => {
             let target = document.getElementById(parent.id)
             document.getElementById(parent.id)
-            console.log(target.children[1])
+            // console.log(target.children[1])
             let lst = target.children[1].children[0].children
-            console.log(lst)
+            // console.log(lst)
             let newarray = []
             for await(let i of lst) {
-              console.log(i)
+              // console.log(i)
               newarray.push(i.offsetHeight)
             }
-            console.log(newarray.reduce((a, b) => a + b, 0))
+            // console.log(newarray.reduce((a, b) => a + b, 0))
             target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
           },0)
         } else if (num === 5) {
           setTimeout(async () => {
             let target = document.getElementById(parent.track.id)
             document.getElementById(parent.track.id)
-            console.log(target.children[1])
+            // console.log(target.children[1])
             let lst = target.children[1].children[0].children
-            console.log(lst)
+            // console.log(lst)
             let newarray = []
             for await(let i of lst) {
-              console.log(i)
+              // console.log(i)
               newarray.push(i.offsetHeight)
             }
-            console.log(newarray.reduce((a, b) => a + b, 0))
+            // console.log(newarray.reduce((a, b) => a + b, 0))
             target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
           },0)
         } else {
           setTimeout(async () => {
             let target = document.getElementById(parent.id)
             document.getElementById(parent.id)
-            console.log(target.nextElementSibling)
+            // console.log(target.nextElementSibling)
             let lst = target.nextElementSibling.children[0].children
-            console.log(lst)
+            // console.log(lst)
             let newarray = []
             for await(let i of lst) {
-              console.log(i)
+              // console.log(i)
               newarray.push(i.offsetHeight)
             }
-            console.log(newarray.reduce((a, b) => a + b, 0))
+            // console.log(newarray.reduce((a, b) => a + b, 0))
             target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
           },0)
         }
@@ -7787,45 +7787,45 @@ export default {
                   setTimeout(async () => {
                     let target = document.getElementById(parent.id)
                     document.getElementById(parent.id)
-                    console.log(target.children[1])
+                    // console.log(target.children[1])
                     let lst = target.children[1].children[0].children
-                    console.log(lst)
+                    // console.log(lst)
                     let newarray = []
                     for await(let i of lst) {
-                      console.log(i)
+                      // console.log(i)
                       newarray.push(i.offsetHeight)
                     }
-                    console.log(newarray.reduce((a, b) => a + b, 0))
+                    // console.log(newarray.reduce((a, b) => a + b, 0))
                     target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
                   },0)
                 } else if (num === 5 ) {
                   setTimeout(async () => {
                     let target = document.getElementById(parent.track.id)
                     document.getElementById(parent.track.id)
-                    console.log(target.children[1])
+                    // console.log(target.children[1])
                     let lst = target.children[1].children[0].children
-                    console.log(lst)
+                    // console.log(lst)
                     let newarray = []
                     for await(let i of lst) {
-                      console.log(i)
+                      // console.log(i)
                       newarray.push(i.offsetHeight)
                     }
-                    console.log(newarray.reduce((a, b) => a + b, 0))
+                    // console.log(newarray.reduce((a, b) => a + b, 0))
                     target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
                   },0)
                 }else {
                   setTimeout(async () => {
                     let target = document.getElementById(parent.id)
                     document.getElementById(parent.id)
-                    console.log(target.nextElementSibling)
+                    // console.log(target.nextElementSibling)
                     let lst = target.nextElementSibling.children[0].children
-                    console.log(lst)
+                    // console.log(lst)
                     let newarray = []
                     for await(let i of lst) {
-                      console.log(i)
+                      // console.log(i)
                       newarray.push(i.offsetHeight)
                     }
-                    console.log(newarray.reduce((a, b) => a + b, 0))
+                    // console.log(newarray.reduce((a, b) => a + b, 0))
                     target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
                   },0)
                 }
@@ -8294,7 +8294,7 @@ export default {
                 headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
               })
                   .then((response) =>{
-                    console.log('247' + response.data)
+                    // console.log('247' + response.data)
                     let tracks = response.data['tracks']
                     if (tracks[0]['preview_url']){
                       items[i].preview_url = tracks[0]['preview_url']
@@ -9033,7 +9033,7 @@ export default {
                         }
                         albums[i].tracks = tracks
                         albarr.push(albums[i])
-                        console.log(albums)
+                        // console.log(albums)
                       })
                 }this.albums = albarr
 
@@ -9096,8 +9096,8 @@ export default {
       let value = 'The Sound of ' + name.toUpperCase()
       let neww = this.titleCase(name)
       let newvalue = 'The Sound of ' + neww
-      console.log(await this.titleCase(name))
-      console.log(newvalue)
+      // console.log(await this.titleCase(name))
+      // console.log(newvalue)
       axios.request({
         url: 'https://api.spotify.com/v1/search/?q=' + newvalue + '&type=playlist&limit=5',
         method: 'get',
@@ -9164,45 +9164,45 @@ export default {
                   setTimeout(async () => {
                     let target = document.getElementById(parent.id)
                     document.getElementById(parent.id)
-                    console.log(target.children[1])
+                    // console.log(target.children[1])
                     let lst = target.children[1].children[0].children
-                    console.log(lst)
+                    // console.log(lst)
                     let newarray = []
                     for await(let i of lst) {
-                      console.log(i)
+                      // console.log(i)
                       newarray.push(i.offsetHeight)
                     }
-                    console.log(newarray.reduce((a, b) => a + b, 0))
+                    // console.log(newarray.reduce((a, b) => a + b, 0))
                     target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 500 + 'px'
                   },100)
                 } else if (num === 5 ) {
                   setTimeout(async () => {
                     let target = document.getElementById(parent.track.id)
                     document.getElementById(parent.track.id)
-                    console.log(target.children[1])
+                    // console.log(target.children[1])
                     let lst = target.children[1].children[0].children
-                    console.log(lst)
+                    // console.log(lst)
                     let newarray = []
                     for await(let i of lst) {
-                      console.log(i)
+                      // console.log(i)
                       newarray.push(i.offsetHeight)
                     }
-                    console.log(newarray.reduce((a, b) => a + b, 0))
+                    // console.log(newarray.reduce((a, b) => a + b, 0))
                     target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 500 + 'px'
                   },100)
                 }else {
                   setTimeout(async () => {
                     let target = document.getElementById(parent.id)
                     document.getElementById(parent.id)
-                    console.log(target.nextElementSibling)
+                    // console.log(target.nextElementSibling)
                     let lst = target.nextElementSibling.children[0].children
-                    console.log(lst)
+                    // console.log(lst)
                     let newarray = []
                     for await(let i of lst) {
-                      console.log(i)
+                      // console.log(i)
                       newarray.push(i.offsetHeight)
                     }
-                    console.log(newarray.reduce((a, b) => a + b, 0))
+                    // console.log(newarray.reduce((a, b) => a + b, 0))
                     target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 500 + 'px'
                   },100)
                 }
@@ -9224,18 +9224,18 @@ export default {
                     playlist = finded
                     playlist.type = 'deeperplaylist'
                     playlist.pid = parent.id
-                    console.log(playlist)
+                    // console.log(playlist)
                     if (num === 1) {
                       let indexing = this.deeper1.indexOf(playlist)
                       if (indexing === -1) {
                         this.deeper1.push(playlist)
-                        console.log(this.deeper1)
+                        // console.log(this.deeper1)
                       }
                     } else if (num === 2) {
                       let indexing = this.deeper2.indexOf(playlist)
                       if (indexing === -1) {
                         this.deeper2.push(playlist)
-                        console.log(this.deeper2)
+                        // console.log(this.deeper2)
                       }
                     } else if (num === 22) {
                       let indexing = this.deeper22.indexOf(playlist)
@@ -9302,30 +9302,30 @@ export default {
                       setTimeout(async () => {
                         let target = document.getElementById(parent.id)
                         document.getElementById(parent.id)
-                        console.log(target.children[1])
+                        // console.log(target.children[1])
                         let lst = target.children[1].children[0].children
-                        console.log(lst)
+                        // console.log(lst)
                         let newarray = []
                         for await(let i of lst) {
-                          console.log(i)
+                          // console.log(i)
                           newarray.push(i.offsetHeight)
                         }
-                        console.log(newarray.reduce((a, b) => a + b, 0))
+                        // console.log(newarray.reduce((a, b) => a + b, 0))
                         target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 300 + 'px'
                       },100)
                       window.addEventListener('resize',function (){
                         setTimeout(async () => {
                           let target = document.getElementById(parent.id)
                           document.getElementById(parent.id)
-                          console.log(target.children[1])
+                          // console.log(target.children[1])
                           let lst = target.children[1].children[0].children
-                          console.log(lst)
+                          // console.log(lst)
                           let newarray = []
                           for await(let i of lst) {
-                            console.log(i)
+                            // console.log(i)
                             newarray.push(i.offsetHeight)
                           }
-                          console.log(newarray.reduce((a, b) => a + b, 0))
+                          // console.log(newarray.reduce((a, b) => a + b, 0))
                           target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 300 + 'px'
                         },0)
                       })
@@ -9333,30 +9333,30 @@ export default {
                       setTimeout(async () => {
                         let target = document.getElementById(parent.track.id)
                         document.getElementById(parent.track.id)
-                        console.log(target.children[1])
+                        // console.log(target.children[1])
                         let lst = target.children[1].children[0].children
-                        console.log(lst)
+                        // console.log(lst)
                         let newarray = []
                         for await(let i of lst) {
-                          console.log(i)
+                          // console.log(i)
                           newarray.push(i.offsetHeight)
                         }
-                        console.log(newarray.reduce((a, b) => a + b, 0))
+                        // console.log(newarray.reduce((a, b) => a + b, 0))
                         target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 300 + 'px'
                       },100)
                       window.addEventListener('resize',function (){
                         setTimeout(async () => {
                           let target = document.getElementById(parent.track.id)
                           document.getElementById(parent.track.id)
-                          console.log(target.children[1])
+                          // console.log(target.children[1])
                           let lst = target.children[1].children[0].children
-                          console.log(lst)
+                          // console.log(lst)
                           let newarray = []
                           for await(let i of lst) {
-                            console.log(i)
+                            // console.log(i)
                             newarray.push(i.offsetHeight)
                           }
-                          console.log(newarray.reduce((a, b) => a + b, 0))
+                          // console.log(newarray.reduce((a, b) => a + b, 0))
                           target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 300 + 'px'
                         },0)
                       })
@@ -9364,30 +9364,30 @@ export default {
                       setTimeout(async () => {
                         let target = document.getElementById(parent.id)
                         document.getElementById(parent.id)
-                        console.log(target.nextElementSibling)
+                        // console.log(target.nextElementSibling)
                         let lst = target.nextElementSibling.children[0].children
-                        console.log(lst)
+                        // console.log(lst)
                         let newarray = []
                         for await(let i of lst) {
-                          console.log(i)
+                          // console.log(i)
                           newarray.push(i.offsetHeight)
                         }
-                        console.log(newarray.reduce((a, b) => a + b, 0))
+                        // console.log(newarray.reduce((a, b) => a + b, 0))
                         target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 300 + 'px'
                       },100)
                       window.addEventListener('resize',function (){
                         setTimeout(async () => {
                           let target = document.getElementById(parent.id)
                           document.getElementById(parent.id)
-                          console.log(target.nextElementSibling)
+                          // console.log(target.nextElementSibling)
                           let lst = target.nextElementSibling.children[0].children
-                          console.log(lst)
+                          // console.log(lst)
                           let newarray = []
                           for await(let i of lst) {
-                            console.log(i)
+                            // console.log(i)
                             newarray.push(i.offsetHeight)
                           }
-                          console.log(newarray.reduce((a, b) => a + b, 0))
+                          // console.log(newarray.reduce((a, b) => a + b, 0))
                           target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 300 + 'px'
                         },0)
                       })
@@ -9636,9 +9636,9 @@ export default {
     },
     click: function (event){
       let target = event.target
-      console.log(target)
+      // console.log(target)
       let audios = target.lastChild
-      console.log(audios)
+      // console.log(audios)
       if (this.currentTrack !=null && this.currentTrack !==audios){
         this.currentTrack.pause()
       }
@@ -9662,9 +9662,9 @@ export default {
     },
     specialClick: function (event){
       let target = event.target.parentElement
-      console.log(target)
+      // console.log(target)
       let audios = target.lastChild
-      console.log(audios)
+      // console.log(audios)
       if (this.currentTrack !=null && this.currentTrack !==audios){
         this.currentTrack.pause()
       }
