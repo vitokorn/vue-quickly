@@ -8742,9 +8742,9 @@ export default {
       })
           .then((response) =>{
             this.savedtracks.push(...response.data['items'])
-            // if (response.data['items'].length > 0){
-            //   this.fetchTracks(offset += 50)
-            // }
+            if (response.data['items'].length > 0){
+              this.fetchTracks(offset += 50)
+            }
 
           })
           .catch(error =>{
