@@ -383,16 +383,16 @@
               </div>
               <div class="con2" style="display: flex;color: black">
                 <div class="trackbody" v-for="(item,index) of d['tracks']['items']" v-bind:key="index">
-                  <div v-if="item.track.preview_url && item.track.album.images[0]" v-bind:id="item.track.id"  tabindex="0" class="con3" v-on:click="deeperTracks('yourplaylists',item.track,1,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" >{{lists(item['track']['artists'])}} - {{item.track.name}}
+                  <div v-if="plitem.track && item.track.preview_url && item.track.album.images[0]" v-bind:id="item.track.id"  tabindex="0" class="con3" v-on:click="deeperTracks('yourplaylists',item.track,1,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" >{{lists(item['track']['artists'])}} - {{item.track.name}}
                     <audio preload="none" v-bind:src="item.track.preview_url"></audio>
                   </div>
-                  <div v-else-if="!item.track.preview_url && item.track.album.images[0]" v-bind:id="item.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('yourplaylists',item.track,1,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(item['track']['artists'])}} - {{item.track.name}}
+                  <div v-else-if="plitem.track && !item.track.preview_url && item.track.album.images[0]" v-bind:id="item.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('yourplaylists',item.track,1,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(item['track']['artists'])}} - {{item.track.name}}
                     <audio preload="none"></audio>
                   </div>
-                  <div v-else-if="item.track.preview_url && !item.track.album.images[0]" v-bind:id="item.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('yourplaylists',item.track,1,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" >{{lists(item['track']['artists'])}} - {{item.track.name}}
+                  <div v-else-if="plitem.track && item.track.preview_url && !item.track.album.images[0]" v-bind:id="item.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('yourplaylists',item.track,1,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" >{{lists(item['track']['artists'])}} - {{item.track.name}}
                     <audio preload="none" v-bind:src="item.track.preview_url"></audio>
                   </div>
-                  <div v-else tabindex="0" class="con3" v-bind:id="item.track.id" v-on:click="deeperTracks('yourplaylists',item.track,1,false,'playlist',false);" style="opacity: .5">{{lists(item['track']['artists'])}} - {{item.track.name}}
+                  <div v-else-if="plitem.track && plitem.track && !plitem.track.preview_url && !plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="item.track.id" v-on:click="deeperTracks('yourplaylists',item.track,1,false,'playlist',false);" style="opacity: .5">{{lists(item['track']['artists'])}} - {{item.track.name}}
                     <audio preload="none"></audio>
                   </div>
                 </div>
@@ -757,16 +757,16 @@
                 </div>
                 <div class="con2" style="display: flex;color: black">
                   <div class="trackbody" v-for="(plitem,index) of d['tracks']['items']" v-bind:key="index">
-                    <div v-if="plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('topartist',plitem.track,2,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                    <div v-if="plitem.track && plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('topartist',plitem.track,2,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                       <audio preload="none" v-bind:src="plitem.track.preview_url"></audio>
                     </div>
-                    <div v-else-if="!plitem.track.preview_url && plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('topartist',plitem.track,2,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                    <div v-else-if="plitem.track && !plitem.track.preview_url && plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('topartist',plitem.track,2,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                       <audio preload="none"></audio>
                     </div>
-                    <div v-else-if="plitem.track.preview_url && !plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('topartist',plitem.track,2,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                    <div v-else-if="plitem.track && plitem.track.preview_url && !plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('topartist',plitem.track,2,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                       <audio preload="none" v-bind:src="plitem.track.preview_url"></audio>
                     </div>
-                    <div v-else tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('topartist',plitem.track,2,false,'playlist',false);" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                    <div v-else-if="plitem.track && plitem.track && !plitem.track.preview_url && !plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('topartist',plitem.track,2,false,'playlist',false);" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                       <audio preload="none"></audio>
                     </div>
                   </div>
@@ -1114,16 +1114,16 @@
                 </div>
                 <div class="con2" style="display: flex;color: black">
                   <div class="trackbody" v-for="(plitem,index) of d['tracks']['items']" v-bind:key="index">
-                    <div v-if="plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('topartist6',plitem.track,22,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                    <div v-if="plitem.track && plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('topartist6',plitem.track,22,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                       <audio preload="none" v-bind:src="plitem.track.preview_url"></audio>
                     </div>
-                    <div v-else-if="!plitem.track.preview_url && plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('topartist6',plitem.track,22,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                    <div v-else-if="plitem.track && !plitem.track.preview_url && plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('topartist6',plitem.track,22,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                       <audio preload="none"></audio>
                     </div>
-                    <div v-else-if="plitem.track.preview_url && !plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('topartist6',plitem.track,22,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                    <div v-else-if="plitem.track && plitem.track.preview_url && !plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('topartist6',plitem.track,22,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                       <audio preload="none" v-bind:src="plitem.track.preview_url"></audio>
                     </div>
-                    <div v-else tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('topartist6',plitem.track,22,false,'playlist',false);" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                    <div v-else-if="plitem.track && plitem.track && !plitem.track.preview_url && !plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('topartist6',plitem.track,22,false,'playlist',false);" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                       <audio preload="none"></audio>
                     </div>
                   </div>
@@ -1468,16 +1468,16 @@
               </div>
               <div class="con2" style="display: flex;color: black">
                 <div class="trackbody" v-for="(plitem,index) of d['tracks']['items']" v-bind:key="index">
-                  <div v-if="plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('topartista',plitem.track,23,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                  <div v-if="plitem.track && plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('topartista',plitem.track,23,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                     <audio preload="none" v-bind:src="plitem.track.preview_url"></audio>
                   </div>
-                  <div v-else-if="!plitem.track.preview_url && plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('topartista',plitem.track,23,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                  <div v-else-if="plitem.track && !plitem.track.preview_url && plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('topartista',plitem.track,23,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                     <audio preload="none"></audio>
                   </div>
-                  <div v-else-if="plitem.track.preview_url && !plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('topartista',plitem.track,23,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                  <div v-else-if="plitem.track && plitem.track.preview_url && !plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('topartista',plitem.track,23,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                     <audio preload="none" v-bind:src="plitem.track.preview_url"></audio>
                   </div>
-                  <div v-else tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('topartista',plitem.track,23,false,'playlist',false);" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                  <div v-else-if="plitem.track && plitem.track && !plitem.track.preview_url && !plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('topartista',plitem.track,23,false,'playlist',false);" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                     <audio preload="none"></audio>
                   </div>
                 </div>
@@ -1863,16 +1863,16 @@
                 </div>
                 <div class="con2" style="display: flex;color: black">
                   <div class="trackbody" v-for="(plitem,index) of d['tracks']['items']" v-bind:key="index">
-                    <div v-if="plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('toptrack',plitem.track,3,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                    <div v-if="plitem.track && plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('toptrack',plitem.track,3,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                       <audio preload="none" v-bind:src="plitem.track.preview_url"></audio>
                     </div>
-                    <div v-else-if="!plitem.track.preview_url && plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('toptrack',plitem.track,3,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                    <div v-else-if="plitem.track && !plitem.track.preview_url && plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('toptrack',plitem.track,3,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                       <audio preload="none"></audio>
                     </div>
-                    <div v-else-if="plitem.track.preview_url && !plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('toptrack',plitem.track,3,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                    <div v-else-if="plitem.track && plitem.track.preview_url && !plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('toptrack',plitem.track,3,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                       <audio preload="none" v-bind:src="plitem.track.preview_url"></audio>
                     </div>
-                    <div v-else tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('toptrack',plitem.track,3,false,'playlist',false);" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                    <div v-else-if="plitem.track && plitem.track && !plitem.track.preview_url && !plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('toptrack',plitem.track,3,false,'playlist',false);" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                       <audio preload="none"></audio>
                     </div>
                   </div>
@@ -2238,16 +2238,16 @@
                 </div>
                 <div class="con2" style="display: flex;color: black">
                   <div class="trackbody" v-for="(plitem,index) of d['tracks']['items']" v-bind:key="index">
-                    <div v-if="plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('toptrack6',plitem.track,32,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                    <div v-if="plitem.track && plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('toptrack6',plitem.track,32,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                       <audio preload="none" v-bind:src="plitem.track.preview_url"></audio>
                     </div>
-                    <div v-else-if="!plitem.track.preview_url && plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('toptrack6',plitem.track,32,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                    <div v-else-if="plitem.track && !plitem.track.preview_url && plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('toptrack6',plitem.track,32,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                       <audio preload="none"></audio>
                     </div>
-                    <div v-else-if="plitem.track.preview_url && !plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('toptrack6',plitem.track,32,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                    <div v-else-if="plitem.track && plitem.track.preview_url && !plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('toptrack6',plitem.track,32,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                       <audio preload="none" v-bind:src="plitem.track.preview_url"></audio>
                     </div>
-                    <div v-else tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('toptrack6',plitem.track,32,false,'playlist',false);" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                    <div v-else-if="plitem.track && plitem.track && !plitem.track.preview_url && !plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('toptrack6',plitem.track,32,false,'playlist',false);" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                       <audio preload="none"></audio>
                     </div>
                   </div>
@@ -2609,16 +2609,16 @@
                 </div>
                 <div class="con2" style="display: flex;color: black">
                   <div class="trackbody" v-for="(plitem,index) of d['tracks']['items']" v-bind:key="index">
-                    <div v-if="plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('toptrackall',plitem.track,33,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                    <div v-if="plitem.track && plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('toptrackall',plitem.track,33,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                       <audio preload="none" v-bind:src="plitem.track.preview_url"></audio>
                     </div>
-                    <div v-else-if="!plitem.track.preview_url && plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('toptrackall',plitem.track,33,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                    <div v-else-if="plitem.track && !plitem.track.preview_url && plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('toptrackall',plitem.track,33,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                       <audio preload="none"></audio>
                     </div>
-                    <div v-else-if="plitem.track.preview_url && !plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('toptrackall',plitem.track,33,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                    <div v-else-if="plitem.track && plitem.track.preview_url && !plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('toptrackall',plitem.track,33,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                       <audio preload="none" v-bind:src="plitem.track.preview_url"></audio>
                     </div>
-                    <div v-else tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('toptrackall',plitem.track,33,false,'playlist',false);" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                    <div v-else-if="plitem.track && plitem.track && !plitem.track.preview_url && !plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('toptrackall',plitem.track,33,false,'playlist',false);" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                       <audio preload="none"></audio>
                     </div>
                   </div>
@@ -2951,16 +2951,16 @@
               </div>
               <div class="con2" style="display: flex;color: black">
                 <div class="trackbody" v-for="(plitem,index) of d['tracks']['items']" v-bind:key="index">
-                  <div v-if="plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('savedalbum',plitem.track,4,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                  <div v-if="plitem.track && plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('savedalbum',plitem.track,4,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                     <audio preload="none" v-bind:src="plitem.track.preview_url"></audio>
                   </div>
-                  <div v-else-if="!plitem.track.preview_url && plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('savedalbum',plitem.track,4,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                  <div v-else-if="plitem.track && !plitem.track.preview_url && plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('savedalbum',plitem.track,4,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                     <audio preload="none"></audio>
                   </div>
-                  <div v-else-if="plitem.track.preview_url && !plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('savedalbum',plitem.track,4,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                  <div v-else-if="plitem.track && plitem.track.preview_url && !plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('savedalbum',plitem.track,4,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                     <audio preload="none" v-bind:src="plitem.track.preview_url"></audio>
                   </div>
-                  <div v-else tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('savedalbum',plitem.track,4,false,'playlist',false);" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                  <div v-else-if="plitem.track && plitem.track && !plitem.track.preview_url && !plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('savedalbum',plitem.track,4,false,'playlist',false);" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                     <audio preload="none"></audio>
                   </div>
                 </div>
@@ -3328,16 +3328,16 @@
               </div>
               <div class="con2" style="display: flex;color: black">
                 <div class="trackbody" v-for="(plitem,index) of d['tracks']['items']" v-bind:key="index">
-                  <div v-if="plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('savedtrack',plitem.track,5,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                  <div v-if="plitem.track && plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('savedtrack',plitem.track,5,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                     <audio preload="none" v-bind:src="plitem.track.preview_url"></audio>
                   </div>
-                  <div v-else-if="!plitem.track.preview_url && plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('savedtrack',plitem.track,5,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                  <div v-else-if="plitem.track && !plitem.track.preview_url && plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('savedtrack',plitem.track,5,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                     <audio preload="none"></audio>
                   </div>
-                  <div v-else-if="plitem.track.preview_url && !plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('savedtrack',plitem.track,5,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                  <div v-else-if="plitem.track && plitem.track.preview_url && !plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('savedtrack',plitem.track,5,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                     <audio preload="none" v-bind:src="plitem.track.preview_url"></audio>
                   </div>
-                  <div v-else tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('savedtrack',plitem.track,5,false,'playlist',false);" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                  <div v-else-if="plitem.track && plitem.track && !plitem.track.preview_url && !plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('savedtrack',plitem.track,5,false,'playlist',false);" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                     <audio preload="none"></audio>
                   </div>
                 </div>
@@ -3688,16 +3688,16 @@
                 </div>
                 <div class="con2" style="display: flex;color: black">
                   <div class="trackbody" v-for="(plitem,index) of d['tracks']['items']" v-bind:key="index">
-                    <div v-if="plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('followedartist',plitem.track,6,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                    <div v-if="plitem.track && plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('followedartist',plitem.track,6,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                       <audio preload="none" v-bind:src="plitem.track.preview_url"></audio>
                     </div>
-                    <div v-else-if="!plitem.track.preview_url && plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('followedartist',plitem.track,6,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                    <div v-else-if="plitem.track && !plitem.track.preview_url && plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('followedartist',plitem.track,6,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                       <audio preload="none"></audio>
                     </div>
-                    <div v-else-if="plitem.track.preview_url && !plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('followedartist',plitem.track,6,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                    <div v-else-if="plitem.track && plitem.track.preview_url && !plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('followedartist',plitem.track,6,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                       <audio preload="none" v-bind:src="plitem.track.preview_url"></audio>
                     </div>
-                    <div v-else tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('followedartist',plitem.track,6,false,'playlist',false);" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                    <div v-else-if="plitem.track && plitem.track && !plitem.track.preview_url && !plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('followedartist',plitem.track,6,false,'playlist',false);" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                       <audio preload="none"></audio>
                     </div>
                   </div>
@@ -4064,16 +4064,16 @@
               </div>
               <div class="con2" style="display: flex;color: black">
                 <div class="trackbody" v-for="(plitem,index) of d['tracks']['items']" v-bind:key="index">
-                  <div v-if="plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('newrelease',plitem.track,7,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                  <div v-if="plitem.track && plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('newrelease',plitem.track,7,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                     <audio preload="none" v-bind:src="plitem.track.preview_url"></audio>
                   </div>
-                  <div v-else-if="!plitem.track.preview_url && plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('newrelease',plitem.track,7,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                  <div v-else-if="plitem.track && !plitem.track.preview_url && plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('newrelease',plitem.track,7,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                     <audio preload="none"></audio>
                   </div>
-                  <div v-else-if="plitem.track.preview_url && !plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('newrelease',plitem.track,7,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                  <div v-else-if="plitem.track && plitem.track.preview_url && !plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('newrelease',plitem.track,7,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                     <audio preload="none" v-bind:src="plitem.track.preview_url"></audio>
                   </div>
-                  <div v-else tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('newrelease',plitem.track,7,false,'playlist',false);" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                  <div v-else-if="plitem.track && plitem.track && !plitem.track.preview_url && !plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('newrelease',plitem.track,7,false,'playlist',false);" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                     <audio preload="none"></audio>
                   </div>
                 </div>
@@ -4462,16 +4462,16 @@
               </div>
               <div class="con2" style="display: flex;color: black">
                 <div class="trackbody" v-for="(plitem,index) of d['tracks']['items']" v-bind:key="index">
-                  <div v-if="plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('sptplaylists',plitem.track,9,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                  <div v-if="plitem.track && plitem.track && plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('sptplaylists',plitem.track,9,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                     <audio preload="none" v-bind:src="plitem.track.preview_url"></audio>
                   </div>
-                  <div v-else-if="!plitem.track.preview_url && plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('sptplaylists',plitem.track,9,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                  <div v-else-if="plitem.track && plitem.track && !plitem.track.preview_url && plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('sptplaylists',plitem.track,9,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                     <audio preload="none"></audio>
                   </div>
-                  <div v-else-if="plitem.track.preview_url && !plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('sptplaylists',plitem.track,9,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                  <div v-else-if="plitem.track && plitem.track && plitem.track.preview_url && !plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('sptplaylists',plitem.track,9,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                     <audio preload="none" v-bind:src="plitem.track.preview_url"></audio>
                   </div>
-                  <div v-else tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('sptplaylists',plitem.track,9,false,'playlist',false);" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                  <div v-else-if="plitem.track && plitem.track && !plitem.track.preview_url && !plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('sptplaylists',plitem.track,9,false,'playlist',false);" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                     <audio preload="none"></audio>
                   </div>
                 </div>
@@ -4888,16 +4888,16 @@
               </div>
               <div class="con2" style="display: flex;color: black">
                 <div class="trackbody" v-for="(plitem,index) of d['tracks']['items']" v-bind:key="index">
-                  <div v-if="plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('search',plitem.track,10,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                  <div v-if="plitem.track && plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('search',plitem.track,10,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" >{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                     <audio preload="none" v-bind:src="plitem.track.preview_url"></audio>
                   </div>
-                  <div v-else-if="!plitem.track.preview_url && plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('search',plitem.track,10,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                  <div v-else-if="plitem.track && !plitem.track.preview_url && plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('search',plitem.track,10,false,'playlist',false);" v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                     <audio preload="none"></audio>
                   </div>
-                  <div v-else-if="plitem.track.preview_url && !plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('search',plitem.track,10,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                  <div v-else-if="plitem.track && plitem.track.preview_url && !plitem.track.album.images[0]" v-bind:id="plitem.track.id" tabindex="0" class="con3" v-on:click="deeperTracks('search',plitem.track,10,false,'playlist',false)" v-on:mouseover="mouseOver" v-on:mouseleave="mouseLeave">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                     <audio preload="none" v-bind:src="plitem.track.preview_url"></audio>
                   </div>
-                  <div v-else tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('search',plitem.track,10,false,'playlist',false);" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
+                  <div v-else-if="plitem.track && !plitem.track.preview_url && !plitem.track.album.images[0]" tabindex="0" class="con3" v-bind:id="plitem.track.id" v-on:click="deeperTracks('search',plitem.track,10,false,'playlist',false);" style="opacity: .5">{{lists(plitem['track']['artists'])}} - {{plitem.track.name}}
                     <audio preload="none"></audio>
                   </div>
                 </div>
