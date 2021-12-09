@@ -23,11 +23,13 @@
             <div class="conm" style="display: flex;color: black" v-bind:key="index">
               <template v-if="item.tracks">
                 <template v-for="(pl,ind) of item['tracks']['items']" >
+                  <template v-if="pl.track" v-bind:id="pl.track.id">
                   <div class="item-container" v-bind:key="ind">
                     <div v-bind:id="pl.track.id" v-if="pl.track.preview_url && pl.track.album.images[0]" tabindex="0" class="con3" v-on:click="deepermobile(pl,1,$event),specialClick($event)" v-bind:style="{ 'background-image': 'url(' + pl.track.album.images[0].url + ')' }" >{{lists(pl['track']['artists'])}} - {{pl.track.name}}</div>
                     <div v-bind:id="pl.track.id" v-else-if="pl.track.album.images[0] && !pl.track.preview_url" tabindex="0" v-bind:key="ind" class="con3" v-bind:style="{ 'background-image': 'url(' + pl.track.album.images[0].url + ')' }" v-on:click="deepermobile(pl,1,$event)" style="opacity: .5">{{lists(pl['track']['artists'])}} - {{pl.track.name}}</div>
                     <div v-bind:id="pl.track.id" v-else-if="!pl.track.album.images[0] && pl.track.preview_url" v-bind:key="ind" class="con3" v-on:click="deepermobile(pl,1,$event)">{{lists(pl['track']['artists'])}} - {{pl.track.name}}></div>
                     <div v-bind:id="pl.track.id" v-else v-bind:key="ind" class="con3" v-on:click="deepermobile(pl,1,$event)" style="opacity: .5">{{lists(pl['track']['artists'])}} - {{pl.track.name}}></div>
+
                   <div v-bind:key="ind" class="rectrack test">
                     <div class="hcontent">
                     <template v-for="(d,index) in deeper1">
@@ -396,6 +398,7 @@
                   </div>
                     <audio v-bind:key="ind" v-if="pl.track.preview_url" preload="none" v-bind:src="pl.track.preview_url"></audio>
                   </div>
+                </template>
                 </template>
               </template>
               </div>
