@@ -6882,10 +6882,10 @@ export default {
             let newarr = []
             let items =response.data['items']
             // console.log('235' + items[0].id)
-            for (let i=0;i <  items.length;i++){
+            for await(let i of items){
               // console.log('237' + items[i].id)
               axios.request({
-                url:'https://api.spotify.com/v1/artists/' + items[i].id + '/top-tracks?market=' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
+                url:'https://api.spotify.com/v1/artists/' + i.id + '/top-tracks?market=' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
                 method: 'get',
                 headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
               })
@@ -6893,9 +6893,9 @@ export default {
                     // console.log('247' + response.data)
                     let tracks = response.data['tracks']
                     if (tracks[0]['preview_url']){
-                      items[i].preview_url = tracks[0]['preview_url']
+                      i.preview_url = tracks[0]['preview_url']
                     }
-                    items[i].tracks = tracks
+                    i.tracks = tracks
                     newarr.push(items[i])
 
                   })
