@@ -6896,11 +6896,12 @@ export default {
                       i.preview_url = tracks[0]['preview_url']
                     }
                     i.tracks = tracks
-                    newarr.push(items[i])
-
+                    newarr.push(i)
+                    if (i === items[items.length-1]){
+                      this.topartist = newarr
+                    }
                   })
             }
-            this.topartist = newarr
             document.getElementById("loader").remove()
           })
           .catch(error =>{
@@ -6922,14 +6923,14 @@ export default {
         method: 'get',
         headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
-          .then((response) =>{
+          .then(async(response) =>{
             let newarr = []
             let items =response.data['items']
             // console.log('235' + items[0].id)
-            for (let i=0;i <  items.length;i++){
+            for await(let i of  items){
               // console.log('237' + items[i].id)
               axios.request({
-                url:'https://api.spotify.com/v1/artists/' + items[i].id + '/top-tracks?market=' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
+                url:'https://api.spotify.com/v1/artists/' + i.id + '/top-tracks?market=' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
                 method: 'get',
                 headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
               })
@@ -6937,14 +6938,15 @@ export default {
                     // console.log('247' + response.data)
                     let tracks = response.data['tracks']
                     if (tracks[0]['preview_url']){
-                      items[i].preview_url = tracks[0]['preview_url']
+                      i.preview_url = tracks[0]['preview_url']
                     }
-                    items[i].tracks = tracks
-                    newarr.push(items[i])
-
+                    i.tracks = tracks
+                    newarr.push(i)
+                    if (i === items[items.length-1]){
+                      this.topartist6 = newarr
+                    }
                   })
             }
-            this.topartist6 = newarr
             document.getElementById("loader").remove()
           })
           .catch(error =>{
@@ -6966,14 +6968,14 @@ export default {
         method: 'get',
         headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
-          .then((response) =>{
+          .then(async(response) =>{
             let newarr = []
             let items =response.data['items']
             // console.log('235' + items[0].id)
-            for (let i=0;i <  items.length;i++){
+            for await(let i of items){
               // console.log('237' + items[i].id)
               axios.request({
-                url:'https://api.spotify.com/v1/artists/' + items[i].id + '/top-tracks?market=' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
+                url:'https://api.spotify.com/v1/artists/' + i.id + '/top-tracks?market=' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
                 method: 'get',
                 headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
               })
@@ -6981,14 +6983,15 @@ export default {
                     // console.log('247' + response.data)
                     let tracks = response.data['tracks']
                     if (tracks[0]['preview_url']){
-                      items[i].preview_url = tracks[0]['preview_url']
+                      i.preview_url = tracks[0]['preview_url']
                     }
-                    items[i].tracks = tracks
-                    newarr.push(items[i])
-
+                    i.tracks = tracks
+                    newarr.push(i)
+                    if (i === items[items.length-1]){
+                      this.topartista = newarr
+                    }
                   })
             }
-            this.topartista = newarr
             document.getElementById("loader").remove()
           })
           .catch(error =>{
@@ -7465,27 +7468,28 @@ export default {
         method: 'get',
         headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
-          .then((response) =>{
+          .then(async(response) =>{
             let newarr = []
             let items =response.data['artists']['items']
-            for (let i=0;i <  items.length;i++){
+            for await(let i of items){
               // console.log('237 ' + items[i].id)
               axios.request({
-                url:'https://api.spotify.com/v1/artists/' + items[i].id + '/top-tracks?market=UA&limit=10',
+                url:'https://api.spotify.com/v1/artists/' + i.id + '/top-tracks?market=UA&limit=10',
                 method: 'get',
                 headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
               })
                   .then((response) =>{
                     let tracks = response.data['tracks']
                     if (tracks[0]['preview_url']){
-                      items[i].preview_url = tracks[0]['preview_url']
+                      i.preview_url = tracks[0]['preview_url']
                     }
-                    items[i].tracks = tracks
-                    newarr.push(items[i])
-
+                    i.tracks = tracks
+                    newarr.push(i)
+                    if (i === items[items.length-1]){
+                      this.followedartists = newarr
+                    }
                   })
             }
-            this.followedartists = newarr
           })
           .catch(error =>{
             if (error.response.status){
