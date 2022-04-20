@@ -6878,7 +6878,7 @@ export default {
         method: 'get',
         headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
       })
-          .then((response) =>{
+          .then(async(response) =>{
             let newarr = []
             let items =response.data['items']
             // console.log('235' + items[0].id)
