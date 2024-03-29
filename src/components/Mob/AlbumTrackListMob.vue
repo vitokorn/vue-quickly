@@ -1,26 +1,36 @@
+<script setup>
+import {useDMStore} from "@/stores/dm-store";
+
+const props = defineProps(['d', 'track', 'num', 'item'])
+const store = useDMStore()
+</script>
 <template>
-  <div v-if="track.preview_url && d.images[0]" tabindex="0" class="itemImg itemImg-xs  itemImg-search" v-on:click="this.$store.dispatch('click',{event:$event}),this.$store.dispatch('deeperTracks2M',{item:track,d:d,num:num,sib:'deep_albums',parent:item}); this.$store.dispatch('queuein',track)" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
+  <div v-if="track.preview_url && d.images[0]" tabindex="0" class="itemImg itemImg-xs  itemImg-search"
+       v-on:click="store.click({event:$event}),store.deeperTracks2M({item:track,d:d,num:num,sib:'deep_albums',parent:item}); store.queuein(track)"
+       v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
     <audio preload="auto" v-bind:src="track.preview_url"></audio>
   </div>
-  <div v-else-if="!track.preview_url && d.images[0]" tabindex="0" class="itemImg itemImg-xs  itemImg-search" v-on:click="this.$store.dispatch('deeperTracks2M',{item:track,d:d,num:num,sib:'deep_albums',parent:item}); this.$store.dispatch('queuein',track)" v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" style="opacity: .5">
+  <div v-else-if="!track.preview_url && d.images[0]" tabindex="0" class="itemImg itemImg-xs  itemImg-search"
+       v-on:click="store.deeperTracks2M({item:track,d:d,num:num,sib:'deep_albums',parent:item}); store.queuein(track)"
+       v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" style="opacity: .5">
     <audio preload="none"></audio>
   </div>
-  <div v-else-if="track.preview_url && !d.images[0]" tabindex="0" class="itemImg itemImg-xs  itemImg-search" v-on:click="this.$store.dispatch('click',{event:$event}),this.$store.dispatch('deeperTracks2M',{item:track,d:d,num:num,sib:'deep_albums',parent:item}); this.$store.dispatch('queuein',track)">
+  <div v-else-if="track.preview_url && !d.images[0]" tabindex="0" class="itemImg itemImg-xs  itemImg-search"
+       v-on:click="store.click({event:$event}),store.deeperTracks2M({item:track,d:d,num:num,sib:'deep_albums',parent:item}); store.queuein(track)">
     <audio preload="auto" v-bind:src="track.preview_url"></audio>
   </div>
-  <div v-else tabindex="0" class="itemImg itemImg-xs  itemImg-search" v-on:click="this.$store.dispatch('deeperTracks2M',{item:track,d:d,num:num,sib:'deep_albums',parent:item}); this.$store.dispatch('queuein',track)" style="opacity: .5">
+  <div v-else tabindex="0" class="itemImg itemImg-xs  itemImg-search"
+       v-on:click="store.deeperTracks2M({item:track,d:d,num:num,sib:'deep_albums',parent:item}); store.queuein(track)"
+       style="opacity: .5">
     <audio preload="none"></audio>
   </div>
-  <div class="title" v-on:click="this.$store.dispatch('deeperTracks2M',{item:track,d:d,num:num,sib:'deep_albums',parent:item}); this.$store.dispatch('queuein',track)"  ><div>{{track.name}}</div></div>
+  <div class="title"
+       v-on:click="store.deeperTracks2M({item:track,d:d,num:num,sib:'deep_albums',parent:item}); store.queuein(track)">
+    <div>{{ track.name }}</div>
+  </div>
 
 </template>
 
-<script>
-export default {
-  name: "AlbumTrackList",
-  props:['d','track','num','item']
-}
-</script>
 
 <style scoped>
 
