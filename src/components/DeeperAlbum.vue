@@ -1,3 +1,14 @@
+<script setup>
+import {Lists} from "@/common/lists";
+import AlbumTrackList from "./AlbumTrackList";
+import AlbumCover from "./AlbumCover";
+import {useDMStore} from "@/stores/dm-store";
+function lists(artists){
+  return Lists.Ls(artists)
+}
+const props = defineProps(['d','num'])
+const store = useDMStore()
+</script>
 <template>
     <div class="deep_albums card2" v-bind:id="'alb'+d.id" v-bind:key="index">
       <album-cover :d="d" :cover="d.images[0]"></album-cover>
@@ -9,12 +20,12 @@
       </div>
       <div style="display: block;" class="trackList">Tracks
         <template v-if="d.tracks.items">
-          <div v-for="(track,index) in d.tracks.items" class="playable-search" style="color: var(--con2-color)" v-on:mouseover="this.$store.dispatch('parentmouseOver',$event)" v-on:mouseleave="this.$store.dispatch('parentmouseLeave',$event)" v-bind:key="index">
+          <div v-for="(track,index) in d.tracks.items" class="playable-search" style="color: var(--con2-color)" v-on:mouseover="store.parentmouseOver($event)" v-on:mouseleave="store.parentmouseLeave($event)" v-bind:key="index">
             <album-track-list :d="d" :track="track" :num="num"></album-track-list>
           </div>
         </template>
         <template v-else>
-          <div v-for="(track,index) in d.tracks" class="playable-search" style="color: var(--con2-color)" v-on:mouseover="this.$store.dispatch('parentmouseOver',$event)" v-on:mouseleave="this.$store.dispatch('parentmouseLeave',$event)" v-bind:key="index">
+          <div v-for="(track,index) in d.tracks" class="playable-search" style="color: var(--con2-color)" v-on:mouseover="store.parentmouseOver($event)" v-on:mouseleave="store.parentmouseLeave($event)" v-bind:key="index">
             <album-track-list :d="d" :track="track" :num="num"></album-track-list>
           </div>
         </template>
@@ -22,21 +33,7 @@
     </div>
 </template>
 
-<script>
-import {Lists} from "../common/lists";
-import AlbumTrackList from "./AlbumTrackList";
-import AlbumCover from "./AlbumCover";
-export default {
-  name: "deeper-album",
-  components: {AlbumCover, AlbumTrackList},
-  props: ['d','num'],
-  methods:{
-    lists(artists){
-      return Lists.Ls(artists)
-    }
-  }
-}
-</script>
+
 
 <style scoped>
 
