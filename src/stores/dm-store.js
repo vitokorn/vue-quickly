@@ -1,7 +1,7 @@
 import {defineStore} from 'pinia';
 import axios from "axios";
-import titleCase from "@/common/titleCase";
-import {Lists} from "@/common/lists";
+import titleCase from "../common/titleCase";
+import {Lists} from "../common/lists";
 
 export const useDMStore = defineStore('dm', {
         state: () => ({

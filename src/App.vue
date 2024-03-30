@@ -35,10 +35,10 @@
 /* eslint-disable no-useless-escape */
 
 
-import Auth from "./components/Auth";
+import Auth from "./components/Auth.vue";
 import Desktop from './components/Desktop.vue'
 import Mobile from './components/Mobile.vue'
-import Logout from "./components/Logout";
+import Logout from "./components/Logout.vue";
 import authMixin from "./mixins/authMixin";
 import detectingMobileMixin from "./mixins/detectingMobileMixin";
 import prefMixin from "./mixins/prefMixin";

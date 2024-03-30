@@ -1,5 +1,5 @@
 <script setup>
-import {useDMStore} from "@/stores/dm-store";
+import {useDMStore} from "../stores/dm-store";
 
 
 defineProps(['d','index','num','cover'])

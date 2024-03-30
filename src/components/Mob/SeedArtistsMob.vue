@@ -1,5 +1,5 @@
 <script setup>
-import {useDMStore} from "@/stores/dm-store";
+import {useDMStore} from "../../stores/dm-store";
 
 const props = defineProps(['d', 'num', 'item'])
 const store = useDMStore()
@@ -9,7 +9,7 @@ const store = useDMStore()
   <div class="seed_artists card2" v-bind:key="'sa'+index" v-bind:id="d.id">
     <div>Recommended songs based on {{ d.name }}
       <button class="btn" v-on:click="store.reloadSA({num:num,id:d.id,name:d.name })"><img
-          class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button>
+          class="refresh-end" src="../../assets/refresh-icon.png" alt=""></button>
     </div>
     <div class="card2">
       <template v-for="(s,index) in d.tracks">

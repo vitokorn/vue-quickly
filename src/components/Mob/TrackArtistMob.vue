@@ -88,7 +88,7 @@
 </template>
 
 <script>
-import titleCase from "@/common/titleCase";
+import titleCase from "../../common/titleCase";
 import axios from "axios";
 
 export default {
