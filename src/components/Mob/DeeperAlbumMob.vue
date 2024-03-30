@@ -1,8 +1,8 @@
 <script setup>
-import {Lists} from "@/common/lists";
-import AlbumTrackListMob from "./AlbumTrackListMob";
-import AlbumCoverMob from "./AlbumCoverMob";
-import {useDMStore} from "@/stores/dm-store";
+import {Lists} from "../../common/lists";
+import AlbumTrackListMob from "./AlbumTrackListMob.vue";
+import AlbumCoverMob from "./AlbumCoverMob.vue";
+import {useDMStore} from "../../stores/dm-store";
 
 const props = defineProps(['d', 'num', 'item'])
 const store = useDMStore()

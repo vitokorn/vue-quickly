@@ -1,8 +1,8 @@
 <script setup>
-import {Lists} from "@/common/lists";
-import AlbumTrackList from "./AlbumTrackList";
-import AlbumCover from "./AlbumCover";
-import {useDMStore} from "@/stores/dm-store";
+import {Lists} from "../common/lists";
+import AlbumTrackList from "./AlbumTrackList.vue";
+import AlbumCover from "./AlbumCover.vue";
+import {useDMStore} from "../stores/dm-store";
 function lists(artists){
   return Lists.Ls(artists)
 }

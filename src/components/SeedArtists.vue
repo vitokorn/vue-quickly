@@ -1,5 +1,5 @@
 <script setup>
-import {useDMStore} from "@/stores/dm-store";
+import {useDMStore} from "../stores/dm-store";
 
 defineProps(['d', 'num'])
 const store = useDMStore()
@@ -8,7 +8,7 @@ const store = useDMStore()
 
 <template>
   <div class="seed_artists card2" v-bind:key="'sa'+index" v-bind:id="d.id">
-    <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="store.reloadSA({num:num,id:d.id,name:d.name })"><img class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button></div>
+    <div>Recommended songs based on {{d.name}}<button class="btn" v-on:click="store.reloadSA({num:num,id:d.id,name:d.name })"><img class="refresh-end" src="../assets/refresh-icon.png" alt=""></button></div>
     <div class="card2">
       <template v-for="(s,index) in d.tracks" >
         <div v-if="s.preview_url && s.album.images[0]" class="con3" v-bind:key="index" v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }" v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)" v-on:click="store.deeperTracks({item:s,num:num,flag:false,sib:'seed_artists'}); store.queuein(s)">{{s.name}}

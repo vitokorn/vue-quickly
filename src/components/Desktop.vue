@@ -1,6 +1,6 @@
 <script setup>
-import RecTrack from "./RecTrack";
-import {useDMStore} from "@/stores/dm-store";
+import RecTrack from "./RecTrack.vue";
+import {useDMStore} from "../stores/dm-store";
 
 const store = useDMStore()
 
@@ -71,7 +71,7 @@ function findPos(obj) {
           <div id="yourplaylists" class="con2" style="display: block;">
             <div class="rel">
               <button class="btn" v-on:click="store.reloadpl({event:$event})"><img class="refresh-end"
-                                                                                   src="@/assets/refresh-icon.png"
+                                                                                   src="../assets/refresh-icon.png"
                                                                                    alt=""></button>
             </div>
             <div class="pl" style="justify-content: center;">
@@ -86,7 +86,7 @@ function findPos(obj) {
               <div class="con2">
                 <div class="con4">{{ item.name }}</div>
                 <button class="btn" v-on:click="store.reloader({num:1,event:$event})"><img
-                    class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button>
+                    class="refresh-end" src="../assets/refresh-icon.png" alt=""></button>
                 <div class="aresset"
                      style="width: 60%;display: flex;align-items: center;flex-wrap: wrap;cursor: pointer">
                   {{ item.description }}
@@ -150,15 +150,15 @@ function findPos(obj) {
           <div style="display: flex;">
             <span id="topartists" v-on:click="store.switchArtist({num:1})">Last month</span>
             <button class="btn" v-on:click="store.reloadartists({num:1,event:$event})"><img
-                class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button>
+                class="refresh-end" src="../assets/refresh-icon.png" alt=""></button>
             <span id="topartists6" v-on:click="store.switchArtist({num:2})" style="margin-left: 12px"
                   v-on:click.self.once="store.fetchArtist2({event:$event})">Last 6 month</span>
             <button class="btn" v-on:click="store.reloadartists({num:2,event:$event})"><img
-                class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button>
+                class="refresh-end" src="../assets/refresh-icon.png" alt=""></button>
             <span id="topartistsall" v-on:click="store.switchArtist({num:3})" style="margin-left: 12px"
                   v-on:click.self.once="store.fetchArtist3({event:$event})">All time</span>
             <button class="btn" v-on:click="store.reloadartists({num:3,event:$event})"><img
-                class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button>
+                class="refresh-end" src="../assets/refresh-icon.png" alt=""></button>
           </div>
           <div id="topartist" class="con2" style="display: flex;color: black;width: auto;">
             <div class="trackbody" v-for="(item,index) of store.topartist" v-bind:key="index">
@@ -236,15 +236,15 @@ function findPos(obj) {
           <div style="display: flex;">
             <span id="toptracks" v-on:click="store.switchTracks({num:1})">Last month</span>
             <button class="btn" v-on:click="store.reloadtracks({num:1,event:$event})"><img
-                class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button>
+                class="refresh-end" src="../assets/refresh-icon.png" alt=""></button>
             <span id="toptrackssix" v-on:click="store.switchTracks({num:2})"
                   v-on:click.self.once="store.fetchApi2({event:$event})" style="margin-left: 12px">Last 6 month</span>
             <button class="btn" v-on:click="store.reloadtracks({num:2,event:$event})"><img
-                class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button>
+                class="refresh-end" src="../assets/refresh-icon.png" alt=""></button>
             <span id="toptracksall" v-on:click="store.switchTracks({num:3})"
                   v-on:click.self.once="store.fetchApi3({event:$event})" style="margin-left: 12px">All time</span>
             <button class="btn" v-on:click="store.reloadtracks({num:3,event:$event})"><img
-                class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button>
+                class="refresh-end" src="../assets/refresh-icon.png" alt=""></button>
           </div>
           <div id="toptrack" class="con2" style="display: flex;color: black;width: auto;">
             <div class="trackbody" v-for="(item,index) of store.items" v-bind:key="index">
@@ -388,7 +388,7 @@ function findPos(obj) {
         <div>
           <div style="display: flex;">
             <button class="btn" v-on:click="store.reloadartists(4,$event)"><img class="refresh-end"
-                                                                                src="@/assets/refresh-icon.png"
+                                                                                src="../assets/refresh-icon.png"
                                                                                 alt=""></button>
           </div>
           <div id="followedartist" style="width: 95%;" class="con2">
@@ -460,7 +460,7 @@ function findPos(obj) {
               <div class="con2">
                 <div class="con4">{{ item.name }}</div>
                 <button class="btn" v-on:click="store.reloader({num:9,event:$event})"><img
-                    class="refresh-end" src="@/assets/refresh-icon.png" alt=""></button>
+                    class="refresh-end" src="../assets/refresh-icon.png" alt=""></button>
                 <div class="aresset"
                      style="width: 60%;display: flex;align-items: center;flex-wrap: wrap;cursor: pointer">
                   {{ item.description }}

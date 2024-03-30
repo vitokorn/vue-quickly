@@ -1,6 +1,6 @@
 <script setup>
-import {Lists} from "@/common/lists";
-import {useDMStore} from "@/stores/dm-store";
+import {Lists} from "../common/lists";
+import {useDMStore} from "../stores/dm-store";
 
 defineProps(['d', 'num'])
 
@@ -15,7 +15,7 @@ function lists(artists) {
     <div class="con2">
       <div class="con4">{{ d.name }}</div>
       <button class="btn" v-on:click="store.reloader({num:num,event:$event})"><img class="refresh-end"
-                                                                                   src="@/assets/refresh-icon.png"
+                                                                                   src="../assets/refresh-icon.png"
                                                                                    alt=""></button>
       <div class="aresset" style="width: 60%;display: flex;align-items: center;flex-wrap: wrap;cursor: pointer"
            v-html="d.description"></div>

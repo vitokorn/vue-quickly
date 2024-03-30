@@ -1,13 +1,13 @@
 <script setup>
-import Playlist from "./Playlist";
-import SeedTracks from "./SeedTracks";
-import TrackArtist from "./TrackArtist";
-import DeeperTracks from "./DeeperTracks";
-import DeeperTracks2 from "./DeeperTracks2";
-import DeeperAlbum from "./DeeperAlbum";
-import SeedArtists from "./SeedArtists";
-import DeeperPlaylist from "./DeeperPlaylist";
-import {useDMStore} from "@/stores/dm-store";
+import Playlist from "./Playlist.vue";
+import SeedTracks from "./SeedTracks.vue";
+import TrackArtist from "./TrackArtist.vue";
+import DeeperTracks from "./DeeperTracks.vue";
+import DeeperTracks2 from "./DeeperTracks2.vue";
+import DeeperAlbum from "./DeeperAlbum.vue";
+import SeedArtists from "./SeedArtists.vue";
+import DeeperPlaylist from "./DeeperPlaylist.vue";
+import {useDMStore} from "../stores/dm-store";
 // import {toRaw} from 'vue'
 const props = defineProps(['num'])
 const store = useDMStore()

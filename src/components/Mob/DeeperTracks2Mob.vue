@@ -1,6 +1,6 @@
 <script setup>
-import TrackCoverMob from "./TrackCoverMob";
-import {useDMStore} from "@/stores/dm-store";
+import TrackCoverMob from "./TrackCoverMob.vue";
+import {useDMStore} from "../../stores/dm-store";
 
 const props = defineProps(['d', 'num', 'item'])
 const store = useDMStore()

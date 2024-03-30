@@ -1,5 +1,5 @@
 <script setup>
-import {useDMStore} from "@/stores/dm-store";
+import {useDMStore} from "../../stores/dm-store";
 
 const props = defineProps(['d', 'track', 'num', 'item'])
 const store = useDMStore()

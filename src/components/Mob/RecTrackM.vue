@@ -1,13 +1,13 @@
 <script setup>
-import PlaylistMob from "./PlaylistMob";
-import SeedTracksMob from "./SeedTracksMob";
-import TrackArtistMob from "./TrackArtistMob";
-import DeeperTracksMob from "./DeeperTracksMob";
-import DeeperTracks2Mob from "./DeeperTracks2Mob";
-import DeeperAlbumMob from "./DeeperAlbumMob";
-import SeedArtistsMob from "./SeedArtistsMob";
-import DeeperPlaylistMob from "./DeeperPlaylistMob";
-import {useDMStore} from "@/stores/dm-store";
+import PlaylistMob from "./PlaylistMob.vue";
+import SeedTracksMob from "./SeedTracksMob.vue";
+import TrackArtistMob from "./TrackArtistMob.vue";
+import DeeperTracksMob from "./DeeperTracksMob.vue";
+import DeeperTracks2Mob from "./DeeperTracks2Mob.vue";
+import DeeperAlbumMob from "./DeeperAlbumMob.vue";
+import SeedArtistsMob from "./SeedArtistsMob.vue";
+import DeeperPlaylistMob from "./DeeperPlaylistMob.vue";
+import {useDMStore} from "../../stores/dm-store";
 
 const props = defineProps(['item', 'num'])
 const store = useDMStore()
