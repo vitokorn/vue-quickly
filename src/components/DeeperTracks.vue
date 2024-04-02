@@ -14,7 +14,7 @@ const store = useDMStore()
       <div>{{ d.name }}</div>
       <div style="display: flex; align-items: center;"><p>By </p>
         <div v-for="(art,index) in d.artists" v-bind:key="index" style="display: flex;align-items: center">
-          <div style="margin-left: 4px; margin-right: 4px; cursor: pointer;"
+          <div class="mx-2" style="cursor: pointer;"
                v-on:click="store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})">
             {{ art.name }}
           </div>

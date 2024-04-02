@@ -88,3 +88,9 @@ node server.js
 vue-cli-service build
 vue-cli-service serve
 ```
+
+## Icons
+https://fontawesome.com/
+
+## External
+https://getbootstrap.com/docs/5.3/getting-started/introduction/
