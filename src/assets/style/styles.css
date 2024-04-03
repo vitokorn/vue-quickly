@@ -193,8 +193,8 @@ h1 {
 }
 
 .con3 {
-    width: 105px;
-    height: 105px;
+    width: 128px;
+    height: 128px;
     /*border: 2px solid white;*/
     display: flex;
     -moz-box-align: center;
@@ -231,8 +231,8 @@ h1 {
 
 @media (max-width: 576px) {
     .con3 {
-        width: 105px;
-        height: 105px;
+        width: 128px;
+        height: 128px;
         /*border: 2px solid white;*/
         color: transparent;
         display: flex;

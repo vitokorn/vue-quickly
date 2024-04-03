@@ -7,10 +7,12 @@ import {preferred} from "../mixins/prefMixin";
 import {ref} from "vue";
 import {useDMStore} from "../stores/dm-store";
 import Settings from "./Settings.vue";
+import {isMobile} from "../mixins/detectingMobileMixin";
 const store = useDMStore()
 const initUserTheme = preferred();
 let username =  document.cookie.replace(/(?:(?:^|.*;\s*)nickname\s*\=\s*([^;]*).*$)|^.*$/, "$1")
 let userTheme = ref(localStorage.getItem('user-theme'))
+const mobileVersion = ref(false)
 setTheme(initUserTheme)
 
 
@@ -19,6 +21,10 @@ function setTheme(theme) {
   userTheme.value = theme;
   document.documentElement.className = theme;
 }
+
+window.addEventListener('resize', () => {
+  mobileVersion.value = window.innerWidth < 1076;
+})
 </script>
 
 <template>
@@ -27,7 +33,7 @@ function setTheme(theme) {
       <img class="logo" src="../assets/logo-small.png" alt="" style="height: 50px;width: 50px">
       <div style="font-weight: bold;font-size: 2em" class="ps-2">Discover Mobily</div>
     </div>
-    <div style="display: flex;">
+    <div :class="mobileVersion || isMobile() ? 'd-block':'d-flex'">
       <div class="themesnav" ><div class="themes" style="background-color: white;"></div><input id="light" type="radio" v-model="userTheme" value="light" v-on:click="setTheme('light')"><label for="light">White</label></div>
       <div class="themesnav"><div class="themes" style="background-color: #181a1b;"></div><input id="dark" type="radio"  v-model="userTheme" value="dark" v-on:click="setTheme('dark')"><label for="dark">Dark</label></div>
       <div class="themesnav"><div class="themes" style="background-color: #001331;"></div><input id="dark-blue" type="radio" v-model="userTheme" value="dark-blue" v-on:click="setTheme('dark-blue')"><label for="dark-blue">Dark blue</label></div>

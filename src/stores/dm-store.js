@@ -233,11 +233,11 @@ export const useDMStore = defineStore('dm', {
             setCurrentTrack(currenttrack) {
                 this.currenttrack = currenttrack
             },
-            click(event) {
-                let target = event.target
+            click(payload) {
+                let target = payload.event.target
                 let audios = target.lastChild
-                if (this.currentTrack != null && this.currentTrack !== audios) {
-                    this.currentTrack.pause()
+                if (this.currenttrack != null && this.currenttrack !== audios) {
+                    this.currenttrack.pause()
                 }
                 if (audios.paused === false) {
                     audios.pause()
@@ -567,6 +567,7 @@ export const useDMStore = defineStore('dm', {
                 }
             },
             deepermobile: async function (payload) {
+                console.log(570)
                 let item = payload.item,
                     num = payload.num,
                     event = payload.event
@@ -646,6 +647,7 @@ export const useDMStore = defineStore('dm', {
                             }
                         })
                 if (num === 1) {
+                    console.log(649)
                     if (document.getElementById('d' + item.track.id) !== null) {
                         document.getElementById('d' + item.track.id).style.display = 'flex'
                         await this.hideall(target.nextElementSibling)
@@ -4449,6 +4451,7 @@ export const useDMStore = defineStore('dm', {
 
                         // console.log(target.children[0])
                         if (target.children[0].nextElementSibling) {
+                            console.log(target.children[0].nextElementSibling)
                             await this.hideall({elem: target.children[0].nextElementSibling})
                             let lst = target.children[0].nextElementSibling.children[0].children
                             let newarray = []
@@ -5324,8 +5327,8 @@ export const useDMStore = defineStore('dm', {
                         // let second = playlists.find(playlists => playlists.name === value && playlists.owner.id === 'thesoundsofspotify')
                         // console.log(second)
                         const finded = new Promise(function (resolve, reject) {
-                            let first = playlists.find(playlists => playlists.name === newvalue && playlists.owner.id === 'thesoundsofspotify')
-                            let second = playlists.find(playlists => playlists.name === value && playlists.owner.id === 'thesoundsofspotify')
+                            let first = playlists.find(playlists => playlists.name === newvalue || playlists.name.startsWith('The Sound ') && playlists.owner.id === 'thesoundsofspotify')
+                            let second = playlists.find(playlists => playlists.name === value || playlists.name.startsWith('The Sound ')  && playlists.owner.id === 'thesoundsofspotify')
                             if (first) {
                                 resolve(first)
                             } else if (second) {
@@ -5866,11 +5869,14 @@ export const useDMStore = defineStore('dm', {
                     })
 
             },
-            hideall(elem) {
+            hideall(payload) {
                 // console.log()
                 // console.log(elem)
+                let elem = payload.elem
+                console.log(elem)
                 let all = document.querySelectorAll('.item-container > .rectrack')
                 for (let i of all) {
+                    console.log(i)
                     if (i === elem) {
                         i.style.display = 'block'
                         i.children[0].style.display = 'block'
