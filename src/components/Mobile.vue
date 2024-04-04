@@ -564,7 +564,7 @@ window.addEventListener('resize', () => {
                    v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }">
                 <audio preload="auto" v-bind:src="item.preview_url"></audio>
               </div>
-              <div v-else tabindex="0" class="itemImg itemImg-xs  itemImg-search"
+              <div v-else-if="store.unplayable_tracks" tabindex="0" class="itemImg itemImg-xs  itemImg-search"
                    v-on:click="store.deeperTracks({item:item,num:10,flag:true})"
                    v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" style="opacity: .5">
                 <audio preload="none"></audio>
@@ -583,7 +583,7 @@ window.addEventListener('resize', () => {
                    v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }">
                 <audio preload="auto" v-bind:src="item.tracks[0].preview_url"></audio>
               </div>
-              <div v-else tabindex="0" class="itemImg itemImg-xs  itemImg-search"
+              <div v-else-if="store.unplayable_tracks" tabindex="0" class="itemImg itemImg-xs  itemImg-search"
                    v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }" style="opacity: .5">
                 <audio preload="none"></audio>
               </div>
@@ -601,7 +601,7 @@ window.addEventListener('resize', () => {
                    v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }">
                 <audio preload="auto" v-bind:src="item.preview_url"></audio>
               </div>
-              <div v-else tabindex="0" class="itemImg itemImg-xs  itemImg-search"
+              <div v-else-if="store.unplayable_tracks" tabindex="0" class="itemImg itemImg-xs  itemImg-search"
                    v-on:click="store.deeperAlbum({item:item,num:10,search:true})"
                    v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }" style="opacity: .5">
                 <audio preload="none"></audio>
@@ -618,7 +618,7 @@ window.addEventListener('resize', () => {
                    v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }">
                 <audio preload="auto" v-bind:src="item.preview_url"></audio>
               </div>
-              <div v-else-if="!item.preview_url && item.images[0]" tabindex="0"
+              <div v-else-if="!item.preview_url && item.images[0] && store.unplayable_tracks" tabindex="0"
                    class="itemImg itemImg-xs  itemImg-search" v-on:click="store.playl({item:item}),store.click($event)"
                    v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }">
                 <audio preload="none"></audio>
@@ -627,7 +627,7 @@ window.addEventListener('resize', () => {
                    class="itemImg itemImg-xs  itemImg-search" v-on:click="store.playl({item:item}),store.click($event)">
                 <audio preload="auto" v-bind:src="item.preview_url"></audio>
               </div>
-              <div v-else tabindex="0" class="itemImg itemImg-xs  itemImg-search"
+              <div v-else-if="store.unplayable_tracks" tabindex="0" class="itemImg itemImg-xs  itemImg-search"
                    v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }"
                    v-on:click="store.playl({item:item})" style="opacity: .5">
                 <audio preload="none"></audio>

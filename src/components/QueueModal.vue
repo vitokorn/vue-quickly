@@ -28,7 +28,7 @@ const store = useDMStore()
             <div v-if="q.image" tabindex="0" class="itemImg itemImg-xs  itemImg-search"
                  v-bind:style="{ 'background-image': 'url(' + q.image.url + ')' }">
             </div>
-            <div v-else tabindex="0" class="itemImg itemImg-xs  itemImg-search" style="color: grey;opacity: .5">
+            <div v-else-if="store.unplayable_tracks" tabindex="0" class="itemImg itemImg-xs  itemImg-search" style="color: grey;opacity: .5">
               <audio preload="none"></audio>
             </div>
             <div>

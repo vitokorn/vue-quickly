@@ -35,7 +35,7 @@ const store = useDMStore()
         <audio preload="auto" v-bind:src="d.preview_url"></audio>
         <div style="float: left; position: absolute; font-size: 0.7em;">{{ art.name }}</div>
       </div>
-      <div class="artist-cirle con3" v-else-if="!d.preview_url && d.images[0]" v-bind:key="'2'+index"
+      <div class="artist-cirle con3" v-else-if="!d.preview_url && d.images[0] && store.unplayable_tracks" v-bind:key="'2'+index"
            v-on:click="store.deeperartistmob({item:art,track:d,num:num,flag:false,sib:'playlisttrack',parent:item})"
            v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }" style="opacity: .5">
         <audio preload="none"></audio>
@@ -46,7 +46,7 @@ const store = useDMStore()
         <audio preload="auto" v-bind:src="d.preview_url"></audio>
         <div style="float: left; position: absolute; font-size: 0.7em;">{{ art.name }}</div>
       </div>
-      <div class="artist-cirle con3" v-else v-bind:key="'4'+index"
+      <div class="artist-cirle con3" v-else-if="store.unplayable_tracks" v-bind:key="'4'+index"
            v-on:click="store.deeperartistmob({item:art,track:d,num:num,flag:false,sib:'playlisttrack',parent:item})"
            style="opacity: .5">
         <audio preload="none"></audio>

@@ -10,13 +10,13 @@ const store = useDMStore()
     <div class="con3" v-if="d.preview_url && cover" v-bind:style="{ 'background-image': 'url(' + cover.url + ')' }" v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)">{{d.name}}
       <audio preload="auto" v-bind:src="d.preview_url"></audio>
     </div>
-    <div class="con3" v-else-if="!d.preview_url && cover" v-bind:style="{ 'background-image': 'url(' + cover.url + ')' }" style="opacity: .5">{{d.name}}
+    <div class="con3" v-else-if="!d.preview_url && cover && store.unplayable_tracks" v-bind:style="{ 'background-image': 'url(' + cover.url + ')' }" style="opacity: .5">{{d.name}}
       <audio preload="none"></audio>
     </div>
     <div class="con3" v-else-if="d.preview_url && !cover" v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)">{{d.name}}
       <audio preload="auto" v-bind:src="d.preview_url"></audio>
     </div>
-    <div class="con3" v-else style="opacity: .5">{{d.name}}
+    <div class="con3" v-else-if="store.unplayable_tracks" style="opacity: .5">{{d.name}}
       <audio preload="none"></audio>
     </div>
     <div style="width: 50%;text-align: left;margin-left: 10px;">
@@ -37,7 +37,7 @@ const store = useDMStore()
         <audio preload="auto" v-bind:src="d.preview_url"></audio>
         <div style="float: left; position: absolute; font-size: 0.7em;">{{art.name}}</div>
       </div>
-      <div class="artist-cirle con3" v-else-if="!d.preview_url && cover" v-bind:key="'2'+index" v-on:click="store.deeperartist({item:art,track:d,num:num,flag:false,sib:'plls'})" v-bind:style="{ 'background-image': 'url(' + cover.url + ')' }" style="opacity: .5">
+      <div class="artist-cirle con3" v-else-if="!d.preview_url && cover && store.unplayable_tracks" v-bind:key="'2'+index" v-on:click="store.deeperartist({item:art,track:d,num:num,flag:false,sib:'plls'})" v-bind:style="{ 'background-image': 'url(' + cover.url + ')' }" style="opacity: .5">
         <audio preload="none"></audio>
         <div style="float: left; position: absolute; font-size: 0.7em;">{{art.name}}</div>
       </div>
@@ -45,7 +45,7 @@ const store = useDMStore()
         <audio preload="auto" v-bind:src="d.preview_url"></audio>
         <div style="float: left; position: absolute; font-size: 0.7em;">{{art.name}}</div>
       </div>
-      <div class="artist-cirle con3" v-else v-bind:key="'4'+index" v-on:click="store.deeperartist({item:art,track:d,num:num,flag:false,sib:'plls'})" style="opacity: .5">
+      <div class="artist-cirle con3" v-else-if="store.unplayable_tracks" v-bind:key="'4'+index" v-on:click="store.deeperartist({item:art,track:d,num:num,flag:false,sib:'plls'})" style="opacity: .5">
         <audio preload="none"></audio>
         <div style="float: left; position: absolute; font-size: 0.7em;">{{art.name}}</div>
       </div>

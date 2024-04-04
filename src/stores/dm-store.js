@@ -52,6 +52,9 @@ export const useDMStore = defineStore('dm', {
             selectedArtistsRange: 1,
             selectedTracksRange:1,
             queueModal: false,
+            unplayable_tracks: true,
+            audio_preview: true,
+            open_links: true
         }),
         getters: {
             getDeeper1:  (state) => state.deeper1,
@@ -5670,19 +5673,23 @@ export const useDMStore = defineStore('dm', {
             mouseOver: function (event) {
                 let target = event.target
                 let audios = target.lastChild
-                audios.play()
+                if (this.audio_preview) {
+                    audios.play()
+                }
             },
             mouseLeave: function (event) {
                 let target = event.target
                 let audios = target.lastChild
-                audios.pause()
+                if (this.audio_preview) {
+                    audios.pause()
+                }
             },
             parentmouseOver: function (event) {
                 let target = event.target
                 // console.log(target)
                 let audios = target.firstChild.lastChild
                 // console.log(audios)
-                if (audios) {
+                if (audios && this.audio_preview) {
                     audios.play()
                 }
             },
@@ -5691,7 +5698,7 @@ export const useDMStore = defineStore('dm', {
                 // console.log(target)
                 let audios = target.firstChild.lastChild
                 // console.log(audios)
-                if (audios) {
+                if (audios && this.audio_preview) {
                     audios.pause()
                 }
             },
@@ -5720,11 +5727,13 @@ export const useDMStore = defineStore('dm', {
                 if (this.currenttrack != null && this.currenttrack !== audios) {
                     this.currenttrack.pause()
                 }
-                if (audios.paused === false) {
-                    audios.pause()
-                } else
-                    audios.play()
-                this.setCurrentTrack(audios)
+                if (this.audio_preview) {
+                    if (audios.paused === false) {
+                        audios.pause()
+                    } else
+                        audios.play()
+                    this.setCurrentTrack(audios)
+                }
             },
             specialClick: function (event) {
                 let target = event.target.parentElement
@@ -5735,11 +5744,13 @@ export const useDMStore = defineStore('dm', {
                 if (this.currenttrack != null && this.currenttrack !== audios) {
                     this.currenttrack.pause()
                 }
-                if (audios.paused === false) {
-                    audios.pause()
-                } else
-                    audios.play()
-                this.setCurrentTrack(audios)
+                if (this.audio_preview) {
+                    if (audios.paused === false) {
+                        audios.pause()
+                    } else
+                        audios.play()
+                    this.setCurrentTrack(audios)
+                }
             },
             searchClick: function (payload) {
                 let event = payload.event
@@ -5749,11 +5760,13 @@ export const useDMStore = defineStore('dm', {
                 if (this.currenttrack != null && this.currenttrack !== audios) {
                     this.currenttrack.pause()
                 }
-                if (audios.paused === false) {
-                    audios.pause()
-                } else
-                    audios.play()
-                this.setCurrentTrack(audios)
+                if (this.audio_preview) {
+                    if (audios.paused === false) {
+                        audios.pause()
+                    } else
+                        audios.play()
+                    this.setCurrentTrack(audios)
+                }
             },
             paginate(array, page_size, page_number) {
                 return array.slice((page_number - 1) * page_size, page_number * page_size)

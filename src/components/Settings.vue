@@ -2,7 +2,9 @@
 
 import Logout from "./Logout.vue";
 import {ref} from "vue";
+import {useDMStore} from "../stores/dm-store";
 const showMenu = ref(false)
+const store = useDMStore()
 </script>
 
 <template>
@@ -12,15 +14,15 @@ const showMenu = ref(false)
   </div>
   <div class="dropdown-menu" v-if="showMenu">
     <div>
-      <input type="checkbox" id="unplayable">
+      <input type="checkbox" id="unplayable" v-model="store.unplayable_tracks">
       <label class="ms-1" for="unplayable">Show unplayable tracks</label>
     </div>
     <div>
-      <input type="checkbox" id="preview">
+      <input type="checkbox" id="preview" v-model="store.audio_preview">
       <label class="ms-1" for="preview">Audio preview</label>
     </div>
     <div>
-      <input type="checkbox" id="open">
+      <input type="checkbox" id="open" v-model="store.open_links">
       <label class="ms-1" for="open">Open Spotify links in browser</label>
     </div>
     <div class="mx-1 pointer">Clear cache & restart</div>

@@ -32,7 +32,7 @@ function lists(artists) {
           {{ lists(plitem['track']['artists']) }} - {{ plitem.track.name }}
           <audio preload="auto" v-bind:src="plitem.track.preview_url"></audio>
         </div>
-        <div v-else-if="plitem.track && !plitem.track.preview_url && plitem.track.album.images[0]"
+        <div v-else-if="plitem.track && !plitem.track.preview_url && plitem.track.album.images[0] && store.unplayable_tracks"
              v-bind:id="plitem.track.id" tabindex="0" class="con3"
              v-on:click="store.deeperTracks({item:plitem.track,num:num,flag:false,sib:'playlist'});"
              v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }" style="opacity: .5">
@@ -46,7 +46,7 @@ function lists(artists) {
           {{ lists(plitem['track']['artists']) }} - {{ plitem.track.name }}
           <audio preload="auto" v-bind:src="plitem.track.preview_url"></audio>
         </div>
-        <div v-else-if="plitem.track && plitem.track && !plitem.track.preview_url && !plitem.track.album.images[0]"
+        <div v-else-if="plitem.track && plitem.track && !plitem.track.preview_url && !plitem.track.album.images[0] && store.unplayable_tracks"
              tabindex="0" class="con3" v-bind:id="plitem.track.id"
              v-on:click="store.deeperTracks({item:plitem.track,num:num,flag:false,sib:'playlist'});"
              style="opacity: .5">{{ lists(plitem['track']['artists']) }} - {{ plitem.track.name }}
