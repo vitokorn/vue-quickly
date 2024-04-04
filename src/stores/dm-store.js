@@ -1319,7 +1319,6 @@ export const useDMStore = defineStore('dm', {
                 this.selectedArtistsRange = payload.num
             },
             switchTracks(payload) {
-                let num = payload.num
                 this.selectedTracksRange = payload.num
             },
             fetchApi(payload) {
