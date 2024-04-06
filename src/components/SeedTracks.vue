@@ -21,8 +21,8 @@ const store = useDMStore()
           {{ s.name }}
           <audio preload="auto" v-bind:src="s.preview_url"></audio>
         </div>
-        <div v-else-if="!s.preview_url && s.album.images[0] && store.unplayable_tracks" tabindex="0" class="con3" v-bind:key="'2'+index"
-             v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }" style="opacity: .5"
+        <div v-else-if="!s.preview_url && s.album.images[0] && store.unplayable_tracks" tabindex="0" class="con3 half-opacity" v-bind:key="'2'+index"
+             v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }"
              v-on:click="store.deeperTracks({item:s,num:num,flag:false,sib:'seed_tracks',child:false,parent:d.track}); store.queuein(s)">
           {{ s.name }}
           <audio preload="none"></audio>
@@ -34,7 +34,7 @@ const store = useDMStore()
           {{ s.name }}
           <audio preload="auto" v-bind:src="s.preview_url"></audio>
         </div>
-        <div v-else-if="store.unplayable_tracks" tabindex="0" class="con3" v-bind:key="'4'+index" style="opacity: .5"
+        <div v-else-if="store.unplayable_tracks" tabindex="0" class="con3 half-opacity" v-bind:key="'4'+index"
              v-on:click="store.deeperTracksM({item:s,num:num,flag:false,sib:'seed_tracks',child:false,parent:d.track}); store.queuein(s)">
           {{ s.name }}
           <audio preload="none"></audio>

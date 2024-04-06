@@ -31,7 +31,7 @@ window.addEventListener('resize', () => {
   <header class="d-flex align-items-center justify-content-between">
     <div class="d-flex align-items-center">
       <img class="logo" src="../assets/logo-small.png" alt="" style="height: 50px;width: 50px">
-      <div style="font-weight: bold;font-size: 2em" class="ps-2">Discover Mobily</div>
+      <div style="font-size: 2em" class="ps-2 font-bold">Discover Mobily</div>
     </div>
     <div :class="mobileVersion || isMobile() ? 'd-block':'d-flex'">
       <div class="themesnav" ><div class="themes" style="background-color: white;"></div><input id="light" type="radio" v-model="userTheme" value="light" v-on:click="setTheme('light')"><label for="light">White</label></div>

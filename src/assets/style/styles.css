@@ -1019,3 +1019,25 @@ input[type=checkbox] {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.font-bold {
+    font-weight: bold
+}
+.half-opacity {
+    opacity: .5
+}
+.background-setting {
+    background-repeat: no-repeat;
+    background-size: cover
+}
+.text-left {
+    text-align: left;
+}
+
+.light-washed-rose {
+    color: #FF3399;
+}
+
+.float-left {
+    float: left;
+}

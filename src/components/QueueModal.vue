@@ -9,7 +9,7 @@ const store = useDMStore()
     <a class="modal__close" href="#"></a>
     <div class="modal__content">
       <a class="modal__content__close pointer" @click="store.queueModal=false">x</a>
-      <div style="margin-bottom: 10px;">Queue</div>
+      <div class="mb-2">Queue</div>
       <div class="d-flex align-items-center">
         <button v-on:click="store.savequeue()">Save all tracks</button>
         <select class="text-truncate">
@@ -21,14 +21,14 @@ const store = useDMStore()
         </select>
         <div v-on:click="store.removequeue()"><svg height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z"/></svg></div>
       </div>
-      <div class="pe-3" style="height: 250px;overflow-y: auto;margin-top: 10px;">
+      <div class="pe-3 mt-2" style="height: 250px;overflow-y: auto;">
         <div v-for="(q,index) in store.queuearr" class="playable-modal"
              v-bind:key="index">
           <div class="d-flex">
-            <div v-if="q.image" tabindex="0" class="itemImg itemImg-xs  itemImg-search"
+            <div v-if="q.image" tabindex="0" class="itemImg itemImg-xs itemImg-search"
                  v-bind:style="{ 'background-image': 'url(' + q.image.url + ')' }">
             </div>
-            <div v-else-if="store.unplayable_tracks" tabindex="0" class="itemImg itemImg-xs  itemImg-search" style="color: grey;opacity: .5">
+            <div v-else-if="store.unplayable_tracks" tabindex="0" class="itemImg itemImg-xs itemImg-search half-opacity" style="color: grey;">
               <audio preload="none"></audio>
             </div>
             <div>

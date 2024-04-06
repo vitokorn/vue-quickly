@@ -82,13 +82,13 @@ window.addEventListener('resize', () => {
   <div v-if="selectedOption===1">
     <Loader v-if="store.loader"/>
     <teleport to="#option1" :disabled="!accordionActive">
-      <div id="yourplaylists" class="con2" style="display: block;">
+      <div id="yourplaylists" class="con2">
         <div class="rel">
           <button class="btn" v-on:click="store.reloadpl({event:$event})"><img class="refresh-end"
                                                                                src="../assets/refresh-icon.png" alt="">
           </button>
         </div>
-        <div class="pl" style="justify-content: center;">
+        <div class="pl justify-content-center">
           <template v-for="(item,index) of store.listplaylists" v-bind:key="index">
             <div v-bind:id="item.id" v-on:click="store.fetchInit({event:$event})" class="hr-line-dashed">{{
                 item.name
@@ -102,17 +102,17 @@ window.addEventListener('resize', () => {
             <button class="btn" v-on:click="store.reloader({num:1,event:$event})"><img class="refresh-end"
                                                                                        src="../assets/refresh-icon.png"
                                                                                        alt=""></button>
-            <div class="aresset" style="width: 60%;display: flex;align-items: center;flex-wrap: wrap;cursor: pointer">
+            <div class="aresset d-flex align-items-center flex-wrap pointer" style="width: 60%;">
               {{ item.description }}
               <button class="button"><a class="linkresset" v-bind:href="item['external_urls']['spotify']"
                                         target="_blank">Open in Spotify</a></button>
               Follow<input type="checkbox" v-if="item.followed" @click.once="store.followPlaylist($event)" checked
                            v-model="item.followed">
               <input type="checkbox" v-else @click.once="store.followPlaylist($event)" v-model="item.followed"></div>
-            <div v-if="item.images" class="con4" style="background-repeat: no-repeat;background-size: cover;"
+            <div v-if="item.images" class="con4 background-setting"
                  v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }"></div>
           </div>
-          <div class="conm" style="display: flex;color: black" v-bind:key="index">
+          <div class="conm d-flex" style="color: black" v-bind:key="index">
             <template v-if="item.tracks">
               <template v-for="(pl,ind) of item['tracks']['items']">
                 <template v-if="pl.track">
@@ -125,9 +125,9 @@ window.addEventListener('resize', () => {
                       <template v-else>{{ pl.track.name }}</template>
                     </div>
                     <div v-bind:id="pl.track.id" v-else-if="pl.track.album.images[0] && !pl.track.preview_url"
-                         tabindex="0" class="con3"
+                         tabindex="0" class="con3 half-opacity"
                          v-bind:style="{ 'background-image': 'url(' + pl.track.album.images[0].url + ')' }"
-                         v-on:click.self="store.deepermobile({item:pl,num:1,event:$event})" style="opacity: .5">
+                         v-on:click.self="store.deepermobile({item:pl,num:1,event:$event})">
                       <template v-if="pl.track.artists">{{ lists(pl.track.artists) }} - {{ pl.track.name }}</template>
                       <template v-else>{{ pl.track.name }}</template>
                     </div>
@@ -137,8 +137,8 @@ window.addEventListener('resize', () => {
                       <template v-if="pl.track.artists">{{ lists(pl.track.artists) }} - {{ pl.track.name }}</template>
                       <template v-else>{{ pl.track.name }}</template>
                     </div>
-                    <div v-bind:id="pl.track.id" v-else class="con3"
-                         v-on:click.self="store.deepermobile({item:pl,num:1,event:$event})" style="opacity: .5">
+                    <div v-bind:id="pl.track.id" v-else class="con3 half-opacity"
+                         v-on:click.self="store.deepermobile({item:pl,num:1,event:$event})">
                       <template v-if="pl.track.artists">{{ lists(pl.track.artists) }} - {{ name }}</template>
                       <template v-else>{{ pl.track.name }}</template>
                     </div>
@@ -157,7 +157,7 @@ window.addEventListener('resize', () => {
     <Loader v-if="store.loader"/>
     <teleport to="#option2" :disabled="!accordionActive">
       <div>
-        <div style="display: flex;">
+        <div class="d-flex">
           <span id="topartists" v-on:click="store.switchArtist({num:1})"
                 :class="store.selectedArtistsRange === 1 ? 'activetab':''">Last month</span>
           <button class="btn" v-on:click="store.reloadartists({num:1,event:$event})"><img
@@ -180,18 +180,18 @@ window.addEventListener('resize', () => {
                  v-on:click="store.deeperartistmob({item:item,track:item.tracks,num:2,flag:true,sib:false,related:false,parent:item}),store.specialClick($event)"
                  v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">{{ item.name }}
             </div>
-            <div v-else-if="!item.preview_url && item.images[1]" tabindex="0" class="con3"
+            <div v-else-if="!item.preview_url && item.images[1]" tabindex="0" class="con3 half-opacity"
                  v-on:click="store.deeperartistmob({item:item,track:item.tracks,num:2,flag:true,sib:false,related:false,parent:item})"
-                 v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }" style="opacity: .5">
+                 v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">
               {{ item.name }}
             </div>
             <div v-else-if="item.preview_url && !item.images[1]" tabindex="0" class="con3"
                  v-on:click="store.deeperartistmob({item:item,track:item.tracks,num:2,flag:true,sib:false,related:false,parent:item})">
               {{ item.name }}
             </div>
-            <div v-else tabindex="0" class="con3"
+            <div v-else tabindex="0" class="con3 half-opacity"
                  v-on:click="store.deeperartistmob({item:item,track:item.tracks,num:2,flag:true,sib:false,related:false,parent:item})"
-                 v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }" style="opacity: .5">
+                 v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">
               {{ item.name }}
             </div>
             <rec-track-m :num="2" :item="item"></rec-track-m>
@@ -205,18 +205,18 @@ window.addEventListener('resize', () => {
                  v-on:click="store.deeperartistmob({item:item,track:item.tracks,num:22,flag:true,sib:false,related:false,parent:item}),store.specialClick($event)"
                  v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">{{ item.name }}
             </div>
-            <div v-else-if="!item.preview_url && item.images[1]" tabindex="0" class="con3"
+            <div v-else-if="!item.preview_url && item.images[1]" tabindex="0" class="con3 half-opacity"
                  v-on:click="store.deeperartistmob({item:item,track:item.tracks,num:22,flag:true,sib:false,related:false,parent:item})"
-                 v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }" style="opacity: .5">
+                 v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">
               {{ item.name }}
             </div>
             <div v-else-if="item.preview_url && !item.images[1]" tabindex="0" class="con3"
                  v-on:click="store.deeperartistmob({item:item,track:item.tracks,num:22,flag:true,sib:false,related:false,parent:item})">
               {{ item.name }}
             </div>
-            <div v-else tabindex="0" class="con3"
+            <div v-else tabindex="0" class="con3 half-opacity"
                  v-on:click="store.deeperartistmob({item:item,track:item.tracks,num:22,flag:true,sib:false,related:false,parent:item})"
-                 v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }" style="opacity: .5">
+                 v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">
               {{ item.name }}
             </div>
             <rec-track-m :num="22" :item="item"></rec-track-m>
@@ -230,9 +230,9 @@ window.addEventListener('resize', () => {
                  v-on:click="store.deeperartistmob({item:item,track:item.tracks,num:23,flag:true,sib:false,related:false,parent:item}),store.specialClick($event)"
                  v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">{{ item.name }}
             </div>
-            <div v-else tabindex="0" class="con3"
+            <div v-else tabindex="0" class="con3 half-opacity"
                  v-on:click="store.deeperartistmob({item:item,track:item.tracks,num:23,flag:true,sib:false,related:false,parent:item})"
-                 v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }" style="opacity: .5">
+                 v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">
               {{ item.name }}
             </div>
             <rec-track-m :num="23" :item="item"></rec-track-m>
@@ -246,7 +246,7 @@ window.addEventListener('resize', () => {
     <Loader v-if="store.loader"/>
     <teleport to="#option3" :disabled="!accordionActive">
       <div>
-        <div style="display: flex;">
+        <div class="d-flex">
           <span id="toptracks" v-on:click="store.switchTracks({num:1})"
                 :class="store.selectedTracksRange === 1 ? 'activetab':''">Last month</span>
           <button class="btn" v-on:click="store.reloadtracks({num:1,event:$event})"><img class="refresh-end"
@@ -273,8 +273,8 @@ window.addEventListener('resize', () => {
                    v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }">
                 {{ lists(item.artists) }} - {{ item.name }}
               </div>
-              <div v-else-if="!item.preview_url && item.album.images[0]" tabindex="0" class="con3"
-                   v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" style="opacity: .5"
+              <div v-else-if="!item.preview_url && item.album.images[0]" tabindex="0" class="con3 half-opacity"
+                   v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }"
                    v-on:click="store.deepermobile({item:item,num:3,event:$event});">{{ lists(item.artists) }} -
                 {{ item.name }}
               </div>
@@ -282,7 +282,7 @@ window.addEventListener('resize', () => {
                    v-on:click="store.deepermobile({item:item,num:3,event:$event});">{{ lists(item.artists) }} -
                 {{ item.name }}
               </div>
-              <div v-else tabindex="0" class="con3" style="opacity: .5"
+              <div v-else tabindex="0" class="con3 half-opacity"
                    v-on:click="store.deepermobile({item:item,num:3,event:$event});">{{ lists(item.artists) }} -
                 {{ item.name }}
               </div>
@@ -291,7 +291,7 @@ window.addEventListener('resize', () => {
             </div>
           </template>
         </div>
-        <div id="toptrack6" class="d-flex flex-wrap" style="display: flex;color: black;width: auto;"
+        <div id="toptrack6" class="d-flex flex-wrap" style="color: black;width: auto;"
              :class="store.selectedTracksRange===2 ? '': 'd-none'">
           <template v-for="(item,index) of store.itemsm" v-bind:key="index">
             <div class="item-container" v-bind:id="item.id">
@@ -300,8 +300,8 @@ window.addEventListener('resize', () => {
                    v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }">
                 {{ lists(item.artists) }} - {{ item.name }}
               </div>
-              <div v-else-if="!item.preview_url && item.album.images[0]" tabindex="0" class="con3"
-                   v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" style="opacity: .5"
+              <div v-else-if="!item.preview_url && item.album.images[0]" tabindex="0" class="con3 half-opacity"
+                   v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }"
                    v-on:click="store.deepermobile({item:item,num:32,event:$event});">{{ lists(item.artists) }} -
                 {{ item.name }}
               </div>
@@ -309,7 +309,7 @@ window.addEventListener('resize', () => {
                    v-on:click="store.deepermobile({item:item,num:32,event:$event});">{{ lists(item.artists) }} -
                 {{ item.name }}
               </div>
-              <div v-else-if="!item.preview_url && !item.album.images[0]" tabindex="0" class="con3" style="opacity: .5"
+              <div v-else-if="!item.preview_url && !item.album.images[0]" tabindex="0" class="con3 half-opacity"
                    v-on:click="store.deepermobile({item:item,num:32,event:$event});">{{ lists(item.artists) }} -
                 {{ item.name }}
               </div>
@@ -318,7 +318,7 @@ window.addEventListener('resize', () => {
             </div>
           </template>
         </div>
-        <div id="toptrackall" class="d-flex flex-wrap" style="display: flex;color: black;width: auto;"
+        <div id="toptrackall" class="d-flex flex-wrap" style="color: black;width: auto;"
              :class="store.selectedTracksRange===3 ? '': 'd-none'">
           <template v-for="(item,index) of store.itemsl" v-bind:key="index">
             <div class="item-container" v-bind:id="item.id">
@@ -327,8 +327,8 @@ window.addEventListener('resize', () => {
                    v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }">
                 {{ lists(item.artists) }} - {{ item.name }}
               </div>
-              <div v-else-if="!item.preview_url && item.album.images[0]" tabindex="0" class="con3"
-                   v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" style="opacity: .5"
+              <div v-else-if="!item.preview_url && item.album.images[0]" tabindex="0" class="con3 half-opacity"
+                   v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }"
                    v-on:click="store.deepermobile({item:item,num:33,event:$event});">{{ lists(item.artists) }} -
                 {{ item.name }}
               </div>
@@ -336,7 +336,7 @@ window.addEventListener('resize', () => {
                    v-on:click="store.deepermobile({item:item,num:33,event:$event});">{{ lists(item.artists) }} -
                 {{ item.name }}
               </div>
-              <div v-else tabindex="0" class="con3" style="opacity: .5"
+              <div v-else tabindex="0" class="con3 half-opacity"
                    v-on:click="store.deepermobile({item:item,num:33,event:$event});">{{ lists(item.artists) }} -
                 {{ item.name }}
               </div>
@@ -360,12 +360,12 @@ window.addEventListener('resize', () => {
                  v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }">
               {{ lists(item.album.artists) }}
             </div>
-            <div v-else-if="!item.album.tracks.items[0].preview_url && item.album.images[0]" tabindex="0" class="con3"
+            <div v-else-if="!item.album.tracks.items[0].preview_url && item.album.images[0]" tabindex="0" class="con3 half-opacity"
                  v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }"
-                 v-on:click="store.deeperAlbumMob({item:item,num:4,parent:item.album})" style="opacity: .5">
+                 v-on:click="store.deeperAlbumMob({item:item,num:4,parent:item.album})">
               {{ lists(item.album.artists) }}
             </div>
-            <div v-else tabindex="0" class="con3" style="opacity: .5"
+            <div v-else tabindex="0" class="con3 half-opacity"
                  v-on:click="store.deeperAlbumMob({item:item,num:4,parent:item.album})">{{ lists(item.album.artists) }}
             </div>
             <rec-track-m :num="4" :item="item.album"></rec-track-m>
@@ -388,17 +388,17 @@ window.addEventListener('resize', () => {
                    v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }">
                 {{ lists(item.track.artists) }} - {{ item.track.name }}
               </div>
-              <div v-else-if="!item.track.preview_url && item.track.album.images[0]" tabindex="0" class="con3"
+              <div v-else-if="!item.track.preview_url && item.track.album.images[0]" tabindex="0" class="con3 half-opacity"
                    v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }"
-                   style="opacity: .5" v-on:click="store.deepermobile({item:item,num:5,event:$event})">
+                   v-on:click="store.deepermobile({item:item,num:5,event:$event})">
                 {{ lists(item.track.artists) }} - {{ item.track.name }}
               </div>
               <div v-else-if="item.track.preview_url && !item.track.album.images[0]" class="con3"
                    v-on:click="store.deepermobile({item:item,num:5,event:$event})">{{ lists(item.track.artists) }} -
                 {{ item.track.name }}
               </div>
-              <div v-else class="con3" v-on:click="store.deepermobile({item:item,num:5,event:$event})"
-                   style="opacity: .5">{{ lists(item.track.artists) }} - {{ item.track.name }}
+              <div v-else class="con3 half-opacity" v-on:click="store.deepermobile({item:item,num:5,event:$event})"
+                   >{{ lists(item.track.artists) }} - {{ item.track.name }}
               </div>
               <rec-track-m :num="5" :item="item.track"></rec-track-m>
               <audio preload="auto" v-if="item.track.preview_url" v-bind:src="item.track.preview_url"></audio>
@@ -412,21 +412,21 @@ window.addEventListener('resize', () => {
     <Loader v-if="store.loader"/>
     <teleport to="#option3" :disabled="!accordionActive">
       <div>
-        <div style="display: flex;">
+        <div class="d-flex">
           <button class="btn" v-on:click="store.reloadartists(4,$event)"><img class="refresh-end"
                                                                               src="../assets/refresh-icon.png" alt="">
           </button>
         </div>
-        <div id="followedartist" class="conm" style="display: flex;color: black;">
+        <div id="followedartist" class="conm d-flex" style="color: black;">
           <div class="item-container" v-for="(item,index) of store.followedartists" v-bind:id="item.id"
                v-bind:key="index">
             <div v-if="item.preview_url" tabindex="0" class="con3"
                  v-on:click="store.deeperartistmob({item:item,track:item.tracks,num:6,flag:true,sib:false,related:false,parent:item}),store.specialClick($event)"
                  v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">{{ item.name }}
             </div>
-            <div v-else tabindex="0" class="con3"
+            <div v-else tabindex="0" class="con3 half-opacity"
                  v-on:click="store.deeperartistmob({item:item,track:item.tracks,num:6,flag:true,sib:false,related:false,parent:item})"
-                 v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }" style="opacity: .5">
+                 v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">
               {{ item.name }}
             </div>
             <rec-track-m :num="6" :item="item"></rec-track-m>
@@ -439,7 +439,7 @@ window.addEventListener('resize', () => {
   <div v-if="selectedOption===7">
     <Loader v-if="store.loader"/>
     <teleport to="#option3" :disabled="!accordionActive">
-      <div style="display: block">
+      <div>
         <div id="newrelease" class="conm">
           <template v-for="(item,index) of store.newreleases" v-bind:key="index">
             <div class="item-container" v-bind:id="item.id">
@@ -448,8 +448,8 @@ window.addEventListener('resize', () => {
                    v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }">{{ lists(item.artists) }} -
                 {{ item.name }}
               </div>
-              <div v-else-if="!item.tracks.items[0].preview_url && item.images[0].url" tabindex="0" class="con3"
-                   v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }" style="opacity: .5"
+              <div v-else-if="!item.tracks.items[0].preview_url && item.images[0].url" tabindex="0" class="con3 half-opacity"
+                   v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }"
                    v-on:click="store.deepermobile({item:item,num:7,event:$event})">{{ lists(item.artists) }} -
                 {{ item.name }}
               </div>
@@ -457,7 +457,7 @@ window.addEventListener('resize', () => {
                    v-on:click="store.deepermobile({item:item,num:7,event:$event})">{{ lists(item.artists) }} -
                 {{ item.name }}
               </div>
-              <div v-else tabindex="0" class="con3" style="opacity: .5"
+              <div v-else tabindex="0" class="con3 half-opacity"
                    v-on:click="store.deepermobile({item:item,num:7,event:$event})">{{ lists(item.artists) }} -
                 {{ item.name }}
               </div>
@@ -473,14 +473,14 @@ window.addEventListener('resize', () => {
   <div v-if="selectedOption===8">
     <Loader v-if="store.loader"/>
     <teleport to="#option3" :disabled="!accordionActive">
-      <div style="display: block;">
-        <div id="sptplaylists" class="con2" style="display: block;">
+      <div>
+        <div id="sptplaylists" class="con2">
           <div class="head">
             <input class="inp" type="text" v-on:keyup="filterres"
                    placeholder="Please enter a search term.." title="Type in a name">
           </div>
-          <div class="sp" style="display: block">
-            <div class="pl" style="justify-content: center;">
+          <div class="sp">
+            <div class="pl justify-content-center">
               <template v-for="item of store.spotplaylists" v-bind:key="item.id">
                 <div v-bind:id="item.id" v-on:click="store.SpotInit({event:$event})" class="hr-line-dashed">{{
                     item.name
@@ -495,17 +495,17 @@ window.addEventListener('resize', () => {
               <button class="btn" v-on:click="store.reloader({num:9,event:$event})"><img class="refresh-end"
                                                                                          src="../assets/refresh-icon.png"
                                                                                          alt=""></button>
-              <div class="aresset" style="width: 60%;display: flex;align-items: center;flex-wrap: wrap;cursor: pointer">
+              <div class="aresset d-flex align-items-center flex-wrap pointer" style="width: 60%;">
                 {{ item.description }}
                 <button class="button"><a class="linkresset" v-bind:href="item['external_urls']['spotify']"
                                           target="_blank">Open in Spotify</a></button>
                 Follow<input type="checkbox" v-if="item.followed" @click.once="store.followPlaylist($event)" checked
                              v-model="item.followed">
                 <input type="checkbox" v-else @click.once="store.followPlaylist($event)" v-model="item.followed"></div>
-              <div v-if="item.images" class="con4" style="background-repeat: no-repeat;background-size: cover;"
+              <div v-if="item.images" class="con4 background-setting"
                    v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }"></div>
             </div>
-            <div class="conm" style="display: flex;color: black">
+            <div class="conm d-flex" style="color: black">
               <template v-if="item.tracks">
                 <template v-for="(spl,index) of item['tracks']['items']" v-bind:key="index">
                   <div class="item-container">
@@ -518,9 +518,9 @@ window.addEventListener('resize', () => {
                       <template v-else>{{ spl.track.name }}</template>
                     </div>
                     <div v-bind:id="spl.track.id" v-else-if="spl.track.album.images[0] && !spl.track.preview_url"
-                         tabindex="0" class="con3"
+                         tabindex="0" class="con3 half-opacity"
                          v-bind:style="{ 'background-image': 'url(' + spl.track.album.images[0].url + ')' }"
-                         v-on:click.self="store.deepermobile({item:spl,num:9,event:$event})" style="opacity: .5">
+                         v-on:click.self="store.deepermobile({item:spl,num:9,event:$event})">
                       <template v-if="spl.track.artists">{{ lists(spl.track.artists) }} - {{ spl.track.name }}
                       </template>
                       <template v-else>{{ spl.track.name }}</template>
@@ -532,8 +532,8 @@ window.addEventListener('resize', () => {
                       </template>
                       <template v-else>{{ spl.track.name }}</template>
                     </div>
-                    <div v-bind:id="spl.track.id" v-else class="con3"
-                         v-on:click.self="store.deepermobile({item:spl,num:9,event:$event})" style="opacity: .5">
+                    <div v-bind:id="spl.track.id" v-else class="con3 half-opacity"
+                         v-on:click.self="store.deepermobile({item:spl,num:9,event:$event})">
                       <template v-if="spl.track.artists">{{ lists(spl.track.artists) }} - {{ spl.track.name }}
                       </template>
                       <template v-else>{{ spl.track.name }}</template>
@@ -553,7 +553,7 @@ window.addEventListener('resize', () => {
     <Loader v-if="store.loader"/>
     <teleport to="#option3" :disabled="!accordionActive">
       <div id="search">
-        <div style="display: flex;height: auto; flex-flow: row wrap;">
+        <div class="d-flex flex-wrap">
           <div style="width: 100%;color:var(--search-color);font-size: 1.5em;"></div>
           <div style="width: 50%">
             <div class="stitle">Songs</div>
@@ -564,9 +564,9 @@ window.addEventListener('resize', () => {
                    v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }">
                 <audio preload="auto" v-bind:src="item.preview_url"></audio>
               </div>
-              <div v-else-if="store.unplayable_tracks" tabindex="0" class="itemImg itemImg-xs  itemImg-search"
+              <div v-else-if="store.unplayable_tracks" tabindex="0" class="itemImg itemImg-xs itemImg-search half-opacity"
                    v-on:click="store.deeperTracks({item:item,num:10,flag:true})"
-                   v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }" style="opacity: .5">
+                   v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }">
                 <audio preload="none"></audio>
               </div>
               <div class="title" v-on:click="store.deeperTracks({item:item,num:10,flag:true})">
@@ -583,8 +583,8 @@ window.addEventListener('resize', () => {
                    v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }">
                 <audio preload="auto" v-bind:src="item.tracks[0].preview_url"></audio>
               </div>
-              <div v-else-if="store.unplayable_tracks" tabindex="0" class="itemImg itemImg-xs  itemImg-search"
-                   v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }" style="opacity: .5">
+              <div v-else-if="store.unplayable_tracks" tabindex="0" class="itemImg itemImg-xs itemImg-search half-opacity"
+                   v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }">
                 <audio preload="none"></audio>
               </div>
               <div class="title" v-on:click="store.deeperartist({item:item,track:item.tracks,num:10,flag:true})">
@@ -601,9 +601,9 @@ window.addEventListener('resize', () => {
                    v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }">
                 <audio preload="auto" v-bind:src="item.preview_url"></audio>
               </div>
-              <div v-else-if="store.unplayable_tracks" tabindex="0" class="itemImg itemImg-xs  itemImg-search"
+              <div v-else-if="store.unplayable_tracks" tabindex="0" class="itemImg itemImg-xs itemImg-search half-opacity"
                    v-on:click="store.deeperAlbum({item:item,num:10,search:true})"
-                   v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }" style="opacity: .5">
+                   v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }">
                 <audio preload="none"></audio>
               </div>
               <div class="title" v-on:click="store.deeperAlbum({item:item,num:10,search:true})">{{ item.name }}</div>
@@ -627,9 +627,9 @@ window.addEventListener('resize', () => {
                    class="itemImg itemImg-xs  itemImg-search" v-on:click="store.playl({item:item}),store.click($event)">
                 <audio preload="auto" v-bind:src="item.preview_url"></audio>
               </div>
-              <div v-else-if="store.unplayable_tracks" tabindex="0" class="itemImg itemImg-xs  itemImg-search"
+              <div v-else-if="store.unplayable_tracks" tabindex="0" class="itemImg itemImg-xs itemImg-search half-opacity"
                    v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }"
-                   v-on:click="store.playl({item:item})" style="opacity: .5">
+                   v-on:click="store.playl({item:item})">
                 <audio preload="none"></audio>
               </div>
               <div class="title" v-on:click="store.playl({item:item})">{{ item.name }}</div>
