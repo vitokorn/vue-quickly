@@ -10,6 +10,7 @@ const store = useDMStore()
 
 const selectedOption = ref(null)
 const accordionActive = ref(true)
+const search = ref('')
 
 
 function filterres(event) {
@@ -74,7 +75,7 @@ window.addEventListener('resize', () => {
          v-on:click.self.once="store.fetchSpotPlaylists({offset:0})">Spotify playlists</a>
 
     </li>
-    <li id="srch" class="srch"><a id="sear" style="padding: 15px;"><input class="inp"
+    <li id="srch" class="srch"><a id="sear" style="padding: 15px;"><input class="inp" v-model="search"
                                                                           v-on:keyup="selectedOption=9;store.search($event)"></a>
 
     </li>
@@ -554,8 +555,8 @@ window.addEventListener('resize', () => {
     <teleport to="#option3" :disabled="!accordionActive">
       <div id="search">
         <div class="d-flex flex-wrap">
-          <div style="width: 100%;color:var(--search-color);font-size: 1.5em;"></div>
-          <div style="width: 50%">
+          <div class="col-12" style="color:var(--search-color);font-size: 1.5em;">{{search}}</div>
+          <div class="col-6">
             <div class="stitle">Songs</div>
             <div v-for="(item,index) in store.tracks" class="playable-search"
                  v-on:click="store.parentClick({event:$event})" v-bind:key="index">
@@ -574,7 +575,7 @@ window.addEventListener('resize', () => {
               </div>
             </div>
           </div>
-          <div style="width: 50%">
+          <div class="col-6">
             <div class="stitle">Artists</div>
             <div v-for="(item,index) in store.artists" class="playable-search"
                  v-on:click="store.parentClick({event:$event})" v-bind:key="index">
@@ -592,7 +593,7 @@ window.addEventListener('resize', () => {
               </div>
             </div>
           </div>
-          <div style="width: 50%">
+          <div class="col-6">
             <div class="stitle">Albums</div>
             <div v-for="(item,index) in store.albums" class="playable-search"
                  v-on:click="store.parentClick({event:$event})" v-bind:key="index">
@@ -609,7 +610,7 @@ window.addEventListener('resize', () => {
               <div class="title" v-on:click="store.deeperAlbum({item:item,num:10,search:true})">{{ item.name }}</div>
             </div>
           </div>
-          <div style="width: 50%">
+          <div class="col-6">
             <div class="stitle">Playlists</div>
             <div v-for="(item,index) in store.splaylists" class="playable-search" v-on:click="store.playl({item:item})"
                  v-bind:key="index">

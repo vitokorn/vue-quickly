@@ -12,7 +12,7 @@ const store = useDMStore()
     <track-cover :d="d" :cover=d.album.images[0]></track-cover>
     <div class="text-left" style="width: 50%;margin-left: 10px;">
       <div>{{ d.name }}</div>
-      <div style="display: flex; align-items: center;"><p>By </p>
+      <div class="d-flex align-items-center"><p>By </p>
         <div v-for="(art,index) in d.artists" class="d-flex align-items-center" v-bind:key="index">
           <div class="mx-2 pointer"
                v-on:click="store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})">

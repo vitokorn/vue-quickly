@@ -8,6 +8,7 @@ import Footer from "./Footer.vue";
 const store = useDMStore()
 const selectedOption = ref(null)
 const accordionActive = ref(false)
+const search = ref('')
 
 // eslint-disable-next-line no-unused-vars
 function polygon(item, d, num) {
@@ -109,7 +110,7 @@ window.addEventListener('resize', () => {
         <a v-on:click="store.switchTabs({event:$event});selectedOption=8" id="spt"
            v-on:click.self.once="store.fetchSpotPlaylists({offset:0})">Spotify playlists</a>
       </li>
-      <li id="srch" class="srch"><a id="sear" style="padding: 15px;"><input type="search" class="inp pointer"
+      <li id="srch" class="srch"><a id="sear" style="padding: 15px;"><input type="search" class="inp pointer" v-model="search"
                                                                             v-on:keyup="selectedOption=9;store.search($event)"></a>
       </li>
     </ul>
@@ -551,8 +552,8 @@ window.addEventListener('resize', () => {
     <div v-if="selectedOption===9" id="search">
       <Loader v-if="store.loader"/>
       <div class="d-flex flex-wrap" style="height: auto;">
-        <div style="width: 100%;color:var(--search-color);font-size: 1.5em;"></div>
-        <div style="width: 50%">
+        <div class="col-12" style="color:var(--search-color);font-size: 1.5em;">{{search}}</div>
+        <div class="col-6">
           <div class="stitle">Songs</div>
           <div v-for="(item,index) in store.tracks" class="playable-search"
                v-on:mouseover="store.parentmouseOver($event)"
@@ -574,7 +575,7 @@ window.addEventListener('resize', () => {
             </div>
           </div>
         </div>
-        <div style="width: 50%">
+        <div class="col-6">
           <div class="stitle">Artists</div>
           <div v-for="(item,index) in store.artists" class="playable-search"
                v-on:mouseover="store.parentmouseOver($event)"
@@ -596,7 +597,7 @@ window.addEventListener('resize', () => {
             </div>
           </div>
         </div>
-        <div style="width: 50%">
+        <div class="col-6">
           <div class="stitle">Albums</div>
           <div v-for="(item,index) in store.albums" class="playable-search"
                v-on:mouseover="store.parentmouseOver($event)"
@@ -619,7 +620,7 @@ window.addEventListener('resize', () => {
             </div>
           </div>
         </div>
-        <div style="width: 50%">
+        <div class="col-6">
           <div class="stitle">Playlists</div>
           <div v-for="(item,index) in store.splaylists" class="playable-search"
                v-on:mouseover="store.parentmouseOver($event)"
