@@ -16,12 +16,12 @@ function lists(artists) {
       <button class="btn" v-on:click="store.reloader({num:num,event:$event})"><img class="refresh-end"
                                                                                    src="../../assets/refresh-icon.png"
                                                                                    alt=""></button>
-      <div class="aresset d-flex align-items-center flex-wrap pointer" style="width: 60%;"
+      <div class="aresset display-flex align-items-center flex-wrap pointer" style="width: 60%;"
            v-html="d.description"></div>
       <div class="con4 background-setting"
            v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }"></div>
     </div>
-    <div class="con2 d-flex" style="color: black">
+    <div class="con2 display-flex" style="color: black">
       <div class="trackbody" v-for="(plitem,index) of d['tracks']['items']" v-bind:key="index">
         <div v-if="plitem.track && plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id"
              tabindex="0" class="con3"

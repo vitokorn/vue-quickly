@@ -352,11 +352,11 @@ async function thesoundofmob(payload) {
         </div>
         <div>{{ ta.name }}
           <div>{{ ta['followers']['total'] + ' followers' }}</div>
-          <div class="d-flex">
+          <div class="display-flex">
             <template v-for="(g,index) in ta['genres']">
               <div v-if="g === ta['genres'][ta['genres'].length - 1]"
-                   v-on:click="thesoundofmob({name:g,num:num,sib:'trackartist',child:false,parent:item})" style="margin-left: 4px;"
-                   v-bind:key="'2'+index">{{ g }}
+                   v-on:click="thesoundofmob({name:g,num:num,sib:'trackartist',child:false,parent:item})"
+                   v-bind:key="'2'+index" class="me-1">{{ g }}
               </div>
               <div v-else-if="g === ta['genres'][ta['genres'].length - 2]" v-bind:key="'3'+index"
                    v-on:click="thesoundofmob({name:g,num:num,sib:'trackartist',child:false,parent:item})">{{ g }} &

@@ -28,18 +28,18 @@ window.addEventListener('resize', () => {
 </script>
 
 <template>
-  <header class="d-flex align-items-center justify-content-between">
-    <div class="d-flex align-items-center">
+  <header class="display-flex align-items-center justify-content-between">
+    <div class="display-flex align-items-center">
       <img class="logo" src="../assets/logo-small.png" alt="" style="height: 50px;width: 50px">
       <div style="font-size: 2em" class="ps-2 font-bold">Discover Mobily</div>
     </div>
-    <div :class="mobileVersion || isMobile() ? 'd-block':'d-flex'">
+    <div :class="mobileVersion || isMobile() ? 'd-block':'display-flex'">
       <div class="themesnav" ><div class="themes" style="background-color: white;"></div><input id="light" type="radio" v-model="userTheme" value="light" v-on:click="setTheme('light')"><label for="light">White</label></div>
       <div class="themesnav"><div class="themes" style="background-color: #181a1b;"></div><input id="dark" type="radio"  v-model="userTheme" value="dark" v-on:click="setTheme('dark')"><label for="dark">Dark</label></div>
       <div class="themesnav"><div class="themes" style="background-color: #001331;"></div><input id="dark-blue" type="radio" v-model="userTheme" value="dark-blue" v-on:click="setTheme('dark-blue')"><label for="dark-blue">Dark blue</label></div>
       <div class="themesnav"><div class="themes" style="background-color: #3f3d58;"></div><input id="dq" type="radio" v-model="userTheme" value="dq" v-on:click="setTheme('dq')"><label for="dq">DQ</label></div>
     </div>
-    <div class="d-flex align-items-center">
+    <div class="display-flex align-items-center">
       <div v-if="isAuth()" class="me-1">Hello, {{username}}</div>
       <Settings/>
       <Auth v-if="!isAuth()"/>

@@ -103,7 +103,7 @@ window.addEventListener('resize', () => {
             <button class="btn" v-on:click="store.reloader({num:1,event:$event})"><img class="refresh-end"
                                                                                        src="../assets/refresh-icon.png"
                                                                                        alt=""></button>
-            <div class="aresset d-flex align-items-center flex-wrap pointer" style="width: 60%;">
+            <div class="aresset display-flex align-items-center flex-wrap pointer" style="width: 60%;">
               {{ item.description }}
               <button class="button"><a class="linkresset" v-bind:href="item['external_urls']['spotify']"
                                         target="_blank">Open in Spotify</a></button>
@@ -113,7 +113,7 @@ window.addEventListener('resize', () => {
             <div v-if="item.images" class="con4 background-setting"
                  v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }"></div>
           </div>
-          <div class="conm d-flex" style="color: black" v-bind:key="index">
+          <div class="conm display-flex" style="color: black" v-bind:key="index">
             <template v-if="item.tracks">
               <template v-for="(pl,ind) of item['tracks']['items']">
                 <template v-if="pl.track">
@@ -158,23 +158,23 @@ window.addEventListener('resize', () => {
     <Loader v-if="store.loader"/>
     <teleport to="#option2" :disabled="!accordionActive">
       <div>
-        <div class="d-flex">
+        <div class="display-flex align-items-center">
           <span id="topartists" v-on:click="store.switchArtist({num:1})"
                 :class="store.selectedArtistsRange === 1 ? 'activetab':''">Last month</span>
           <button class="btn" v-on:click="store.reloadartists({num:1,event:$event})"><img
               class="refresh-end" src="../assets/refresh-icon.png" alt=""></button>
-          <span id="topartists6" v-on:click="store.switchArtist({num:2})" style="margin-left: 12px"
+          <span id="topartists6" v-on:click="store.switchArtist({num:2})" class="mx-2"
                 :class="store.selectedArtistsRange === 2 ? 'activetab':''"
                 v-on:click.self.once="store.fetchArtist2({event:$event})">Last 6 month</span>
           <button class="btn" v-on:click="store.reloadartists({num:2,event:$event})"><img
               class="refresh-end" src="../assets/refresh-icon.png" alt=""></button>
-          <span id="topartistsall" v-on:click="store.switchArtist({num:3})" style="margin-left: 12px"
+          <span id="topartistsall" v-on:click="store.switchArtist({num:3})" class="mx-2"
                 :class="store.selectedArtistsRange === 3 ? 'activetab':''"
                 v-on:click.self.once="store.fetchArtist3({event:$event})">All time</span>
           <button class="btn" v-on:click="store.reloadartists({num:3,event:$event})"><img
               class="refresh-end" src="../assets/refresh-icon.png" alt=""></button>
         </div>
-        <div id="topartist" class="d-flex flex-wrap" style="color: black;width: auto;"
+        <div id="topartist" class="display-flex flex-wrap" style="color: black;width: auto;"
              :class="store.selectedArtistsRange===1 ? '': 'd-none'">
           <div class="item-container" v-for="(item,index) of store.topartist" v-bind:id="item.id" v-bind:key="index">
             <div v-if="item.preview_url && item.images[1]" tabindex="0" class="con3"
@@ -199,7 +199,7 @@ window.addEventListener('resize', () => {
             <audio v-bind:key="index" v-if="item.preview_url" preload="none" v-bind:src="item.preview_url"></audio>
           </div>
         </div>
-        <div id="topartist6" class="d-flex flex-wrap" style="color: black;width: auto;"
+        <div id="topartist6" class="display-flex flex-wrap" style="color: black;width: auto;"
              :class="store.selectedArtistsRange===2 ? '': 'd-none'">
           <div v-for="(item,index) of store.topartist6" v-bind:id="item.id" v-bind:key="index">
             <div v-if="item.preview_url && item.images[1]" tabindex="0" class="con3"
@@ -224,7 +224,7 @@ window.addEventListener('resize', () => {
             <audio v-bind:key="index" v-if="item.preview_url" preload="none" v-bind:src="item.preview_url"></audio>
           </div>
         </div>
-        <div id="topartista" class="d-flex flex-wrap" style="color: black;width: auto;"
+        <div id="topartista" class="display-flex flex-wrap" style="color: black;width: auto;"
              :class="store.selectedArtistsRange===3 ? '': 'd-none'">
           <div class="item-container" v-for="(item,index) of store.topartista" v-bind:id="item.id" v-bind:key="index">
             <div v-if="item.preview_url" tabindex="0" class="con3"
@@ -247,26 +247,26 @@ window.addEventListener('resize', () => {
     <Loader v-if="store.loader"/>
     <teleport to="#option3" :disabled="!accordionActive">
       <div>
-        <div class="d-flex">
+        <div class="display-flex align-items-center">
           <span id="toptracks" v-on:click="store.switchTracks({num:1})"
                 :class="store.selectedTracksRange === 1 ? 'activetab':''">Last month</span>
           <button class="btn" v-on:click="store.reloadtracks({num:1,event:$event})"><img class="refresh-end"
                                                                                          src="../assets/refresh-icon.png"
                                                                                          alt=""></button>
           <span id="toptrackssix" v-on:click="store.switchTracks({num:2})"
-                v-on:click.self.once="store.fetchApi2({event:$event})" style="margin-left: 12px"
+                v-on:click.self.once="store.fetchApi2({event:$event})" class="mx-2"
                 :class="store.selectedTracksRange === 2 ? 'activetab':''">Last 6 month</span>
           <button class="btn" v-on:click="store.reloadtracks({num:2,event:$event})"><img class="refresh-end"
                                                                                          src="../assets/refresh-icon.png"
                                                                                          alt=""></button>
           <span id="toptracksall" v-on:click="store.switchTracks({num:3})"
-                v-on:click.self.once="store.fetchApi3({event:$event})" style="margin-left: 12px"
+                v-on:click.self.once="store.fetchApi3({event:$event})" class="mx-2"
                 :class="store.selectedTracksRange === 3 ? 'activetab':''">All time</span>
           <button class="btn" v-on:click="store.reloadtracks({num:3,event:$event})"><img class="refresh-end"
                                                                                          src="../assets/refresh-icon.png"
                                                                                          alt=""></button>
         </div>
-        <div id="toptrack" class="d-flex flex-wrap" :class="store.selectedTracksRange===1 ? '': 'd-none'">
+        <div id="toptrack" class="display-flex flex-wrap" :class="store.selectedTracksRange===1 ? '': 'd-none'">
           <template v-for="(item,index) of store.items" v-bind:key="index">
             <div class="item-container" v-bind:id="item.id">
               <div v-if="item.preview_url && item.album.images[0]" tabindex="0" class="con3"
@@ -292,7 +292,7 @@ window.addEventListener('resize', () => {
             </div>
           </template>
         </div>
-        <div id="toptrack6" class="d-flex flex-wrap" style="color: black;width: auto;"
+        <div id="toptrack6" class="display-flex flex-wrap" style="color: black;width: auto;"
              :class="store.selectedTracksRange===2 ? '': 'd-none'">
           <template v-for="(item,index) of store.itemsm" v-bind:key="index">
             <div class="item-container" v-bind:id="item.id">
@@ -319,7 +319,7 @@ window.addEventListener('resize', () => {
             </div>
           </template>
         </div>
-        <div id="toptrackall" class="d-flex flex-wrap" style="color: black;width: auto;"
+        <div id="toptrackall" class="display-flex flex-wrap" style="color: black;width: auto;"
              :class="store.selectedTracksRange===3 ? '': 'd-none'">
           <template v-for="(item,index) of store.itemsl" v-bind:key="index">
             <div class="item-container" v-bind:id="item.id">
@@ -413,12 +413,12 @@ window.addEventListener('resize', () => {
     <Loader v-if="store.loader"/>
     <teleport to="#option3" :disabled="!accordionActive">
       <div>
-        <div class="d-flex">
+        <div class="display-flex">
           <button class="btn" v-on:click="store.reloadartists(4,$event)"><img class="refresh-end"
                                                                               src="../assets/refresh-icon.png" alt="">
           </button>
         </div>
-        <div id="followedartist" class="conm d-flex" style="color: black;">
+        <div id="followedartist" class="conm display-flex" style="color: black;">
           <div class="item-container" v-for="(item,index) of store.followedartists" v-bind:id="item.id"
                v-bind:key="index">
             <div v-if="item.preview_url" tabindex="0" class="con3"
@@ -496,7 +496,7 @@ window.addEventListener('resize', () => {
               <button class="btn" v-on:click="store.reloader({num:9,event:$event})"><img class="refresh-end"
                                                                                          src="../assets/refresh-icon.png"
                                                                                          alt=""></button>
-              <div class="aresset d-flex align-items-center flex-wrap pointer" style="width: 60%;">
+              <div class="aresset display-flex align-items-center flex-wrap pointer" style="width: 60%;">
                 {{ item.description }}
                 <button class="button"><a class="linkresset" v-bind:href="item['external_urls']['spotify']"
                                           target="_blank">Open in Spotify</a></button>
@@ -506,7 +506,7 @@ window.addEventListener('resize', () => {
               <div v-if="item.images" class="con4 background-setting"
                    v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }"></div>
             </div>
-            <div class="conm d-flex" style="color: black">
+            <div class="conm display-flex" style="color: black">
               <template v-if="item.tracks">
                 <template v-for="(spl,index) of item['tracks']['items']" v-bind:key="index">
                   <div class="item-container">
@@ -554,7 +554,7 @@ window.addEventListener('resize', () => {
     <Loader v-if="store.loader"/>
     <teleport to="#option3" :disabled="!accordionActive">
       <div id="search">
-        <div class="d-flex flex-wrap">
+        <div class="display-flex flex-wrap">
           <div class="col-12" style="color:var(--search-color);font-size: 1.5em;">{{search}}</div>
           <div class="col-6">
             <div class="stitle">Songs</div>

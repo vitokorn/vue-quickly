@@ -27,17 +27,13 @@ const store = useDMStore()
         </div>
         <div>{{ ta.name }}
           <div>{{ ta['followers']['total'] + ' followers' }}</div>
-          <div class="d-flex">
-            <template v-for="(g,index) in ta['genres']">
-              <div v-if="g === ta['genres'][ta['genres'].length - 1]"
+          <div class="display-flex">
+            <template v-for="(g,index) in ta['genres']" v-bind:key="'2'+index">
+              <div v-if="ta['genres'].length > 1 && ta['genres'].length - 1 === index" class="me-2">&</div>
+              <div v-if="ta['genres'].length >= 2 && ta['genres'].length - 1 !== index && index !== 0" class="me-2">,</div>
+              <div
                    v-on:click="store.thesoundof({name:g,num:num,sib:'trackartist',child:false})"
-                   style="margin-left: 4px;" v-bind:key="'2'+index">{{ g }}
-              </div>
-              <div v-else-if="g === ta['genres'][ta['genres'].length - 2]" v-bind:key="'3'+index"
-                   v-on:click="store.thesoundof({name:g,num:num,sib:'trackartist',child:false})">{{ g }} &
-              </div>
-              <div v-else v-bind:key="'4'+index"
-                   v-on:click="store.thesoundof({name:g,num:num,sib:'trackartist',child:false})">{{ g }},
+                   class="me-2" >{{ g }}
               </div>
             </template>
           </div>

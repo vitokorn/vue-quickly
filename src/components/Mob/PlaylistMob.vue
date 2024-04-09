@@ -5,8 +5,7 @@ const props = defineProps(['d', 'index', 'num', 'cover', 'item'])
 const store = useDMStore()
 </script>
 <template>
-  <div v-if="d.type==='pl'" v-bind:key="index" v-bind:id="'d'+d.id" class="card2 plls d-flex"
-       style="margin-top: 12px; margin-bottom: 6px;">
+  <div v-if="d.type==='pl'" v-bind:key="index" v-bind:id="'d'+d.id" class="card2 plls display-flex my-3">
     <div class="con3" v-if="d.preview_url && cover" v-bind:style="{ 'background-image': 'url(' + cover.url + ')' }"
          v-on:click="store.click({event:$event})">{{ d.name }}
       <audio preload="auto" v-bind:src="d.preview_url"></audio>
@@ -21,10 +20,12 @@ const store = useDMStore()
     <div class="con3 half-opacity" v-else-if="store.unplayable_tracks">{{ d.name }}
       <audio preload="none"></audio>
     </div>
-    <div class="text-left" style="width: 50%;margin-left: 10px;">
+    <div class="text-left ms-2" style="width: 50%;">
       <div>{{ d.name }}</div>
-      <div class="d-flex align-items-center"><p>By </p>
-        <div v-for="(art,index) in d.artists" v-bind:key="index" class="d-flex align-items-center">
+      <div class="display-flex align-items-center"><p>By </p>
+        <div v-for="(art,index) in d.artists" v-bind:key="index" class="display-flex align-items-center">
+          <div v-if="d.artists.length > 1 && d.artists.length - 1 === index">&</div>
+          <div v-if="d.artists.length >= 2 && d.artists.length - 1 !== index && index !== 0">,</div>
           <div class="mx-2 pointer"
                v-on:click="store.deeperartistmob({item:art,track:d,num:num,flag:false,sib:'plls',parent:item})">
             {{ art.name }}

@@ -7,13 +7,14 @@ const store = useDMStore()
 </script>
 
 <template>
-  <div class="playlisttrack card2 d-flex" v-bind:id="'d'+d.id" v-bind:key="index"
-       style="margin-top: 12px; margin-bottom: 6px;">
+  <div class="playlisttrack card2 display-flex my-3" v-bind:id="'d'+d.id" v-bind:key="index">
     <track-cover :d="d" :cover=d.album.images[0]></track-cover>
-    <div class="text-left" style="width: 50%;margin-left: 10px;">
+    <div class="text-left ms-2" style="width: 50%;">
       <div>{{ d.name }}</div>
-      <div class="d-flex align-items-center"><p>By </p>
-        <div v-for="(art,index) in d.artists" class="d-flex align-items-center" v-bind:key="index">
+      <div class="display-flex align-items-center"><p>By </p>
+        <div v-for="(art,index) in d.artists" class="display-flex align-items-center" v-bind:key="index">
+          <div v-if="d.artists.length > 1 && d.artists.length - 1 === index">&</div>
+          <div v-if="d.artists.length >= 2 && d.artists.length - 1 !== index && index !== 0">,</div>
           <div class="mx-2 pointer"
                v-on:click="store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})">
             {{ art.name }}
