@@ -14,7 +14,7 @@ const store = useDMStore()
           <div v-for="(art,index) in d.artists" v-bind:key="index" class="display-flex align-items-center">
             <div v-if="d.artists.length > 1 && d.artists.length - 1 === index">&</div>
             <div v-if="d.artists.length >= 2 && d.artists.length - 1 !== index && index !== 0">,</div>
-            <div class="mx-2 pointer" v-on:click="store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})">{{art.name}}</div>
+            <div class="mx-1 pointer" v-on:click="store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})">{{art.name}}</div>
           </div>
         </div>
         <span class="light-washed-rose" v-on:click="store.seedTracks({item:d,num:num,sib:'playlisttrack',child:'d'+ d.id})">Recommended songs based on this</span>

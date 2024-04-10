@@ -1783,16 +1783,9 @@ export const useDMStore = defineStore('dm', {
                 }, 1000);
             },
             refreshplaylists(payload) {
+                this.loader = true
                 let rid = payload.rid
-                // let value = rid
-                // let refreshIcon = rid.replace('refresh_', 'icon_')
-                // let refreshButton = document.getElementById(value)
-                // refreshIcon.class("class", "refresh-start")
-                // refreshButton.removeAttribute("class")
-                // refreshButton.disabled = true
                 let id = rid.replace('refresh_', '')
-                // refreshButton.setAttribute("class", "refresh-end")
-                // refreshButton.disabled = false
                 axios.request({
                     url: 'https://api.spotify.com/v1/playlists/' + id,
                     method: 'get',
@@ -1804,6 +1797,7 @@ export const useDMStore = defineStore('dm', {
                         this.setPlayInfo([])
                         this.setPlayInfo(response.data)
                         this.setPlaylists(response.data['tracks']['items'])
+                        this.loader = false
                     })
                     .catch(error => {
                         if (error.response.status) {
@@ -1817,6 +1811,7 @@ export const useDMStore = defineStore('dm', {
                     })
             },
             reloader(payload) {
+                this.loader = true
                 let num = payload.num,
                     event = payload.event
                 // console.log(id)
@@ -1873,6 +1868,7 @@ export const useDMStore = defineStore('dm', {
                 setTimeout(() => {
                     target.className = 'refresh-end'
                 }, 1000)
+                this.loader = false
                 // if (id.startsWith('art')){
                 //   let cid = id.replace('art','')
                 //   if (num===1){
@@ -2555,6 +2551,7 @@ export const useDMStore = defineStore('dm', {
                         data.type = 'seed_tracks'
                         data.id = 'st' + item.id
                         data.name = item.name
+                        data.artists = item.artists
                         // console.log(data)
                         if (num === 1) {
                             let indexing = this.deeper1.indexOf(data)

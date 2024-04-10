@@ -107,9 +107,7 @@ window.addEventListener('resize', () => {
               {{ item.description }}
               <button class="button"><a class="linkresset" v-bind:href="item['external_urls']['spotify']"
                                         target="_blank">Open in Spotify</a></button>
-              Follow<input type="checkbox" v-if="item.followed" @click.once="store.followPlaylist($event)" checked
-                           v-model="item.followed">
-              <input type="checkbox" v-else @click.once="store.followPlaylist($event)" v-model="item.followed"></div>
+              </div>
             <div v-if="item.images" class="con4 background-setting"
                  v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }"></div>
           </div>

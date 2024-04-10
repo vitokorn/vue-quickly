@@ -1,5 +1,6 @@
 <script setup>
 import {useDMStore} from "../stores/dm-store";
+import {Lists} from "../common/lists";
 
 defineProps(['d', 'num'])
 const store = useDMStore()
@@ -18,25 +19,25 @@ const store = useDMStore()
              v-on:mouseover="store.mouseOver($event)"
              v-on:mouseleave="store.mouseLeave($event)"
              v-on:click="store.deeperTracks({item:s,num:num,flag:false,sib:'seed_tracks',child:false,parent:d.track}); store.queuein(s)">
-          {{ s.name }}
+          {{Lists.Ls(d.artists)}} - {{ s.name }}
           <audio preload="auto" v-bind:src="s.preview_url"></audio>
         </div>
         <div v-else-if="!s.preview_url && s.album.images[0] && store.unplayable_tracks" tabindex="0" class="con3 half-opacity" v-bind:key="'2'+index"
              v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }"
              v-on:click="store.deeperTracks({item:s,num:num,flag:false,sib:'seed_tracks',child:false,parent:d.track}); store.queuein(s)">
-          {{ s.name }}
+          {{Lists.Ls(d.artists)}} - {{ s.name }}
           <audio preload="none"></audio>
         </div>
         <div v-else-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="'3'+index"
              v-on:mouseover="store.mouseOver($event)"
              v-on:mouseleave="store.mouseLeave($event)"
              v-on:click="store.deeperTracks({item:s,num:num,flag:false,sib:'seed_tracks',child:false,parent:d.track}); store.queuein(s)">
-          {{ s.name }}
+          {{Lists.Ls(d.artists)}} - {{ s.name }}
           <audio preload="auto" v-bind:src="s.preview_url"></audio>
         </div>
         <div v-else-if="store.unplayable_tracks" tabindex="0" class="con3 half-opacity" v-bind:key="'4'+index"
              v-on:click="store.deeperTracksM({item:s,num:num,flag:false,sib:'seed_tracks',child:false,parent:d.track}); store.queuein(s)">
-          {{ s.name }}
+          {{Lists.Ls(d.artists)}} - {{ s.name }}
           <audio preload="none"></audio>
         </div>
       </template>

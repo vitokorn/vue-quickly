@@ -26,7 +26,7 @@ const store = useDMStore()
         <div v-for="(art,index) in d.artists" v-bind:key="index" class="display-flex align-items-center">
           <div v-if="d.artists.length > 1 && d.artists.length - 1 === index">&</div>
           <div v-if="d.artists.length >= 2 && d.artists.length - 1 !== index && index !== 0">,</div>
-          <div class="mx-2 pointer"
+          <div class="mx-1 pointer"
                v-on:click="store.deeperartistmob({item:art,track:d,num:num,flag:false,sib:'plls',parent:item})">
             {{ art.name }}
           </div>
