@@ -48,7 +48,7 @@ function dab() {
 <template>
   <div class="rectrack">
     <div class="hcontent">
-      <template v-for="(d,index) in dab" :key="index">
+      <template v-for="(d,index) in dab()" :key="index">
         <!--          <div>type {{d.type}}</div>-->
         <!--          <div>item.id {{item.id}}</div>-->
         <!--          <div>pid {{d.pid}}</div>-->

@@ -48,7 +48,13 @@ export const useDMStore = defineStore('dm', {
             currentspl: null,
             searchtimer: null,
             currenttrack: null,
-
+            loader: false,
+            selectedArtistsRange: 1,
+            selectedTracksRange:1,
+            queueModal: false,
+            unplayable_tracks: true,
+            audio_preview: true,
+            open_links: true
         }),
         getters: {
             getDeeper1:  (state) => state.deeper1,
@@ -93,6 +99,7 @@ export const useDMStore = defineStore('dm', {
             getCurrentSPl:  (state) => state.currentspl,
             getSearchTimer:  (state) => state.searchtimer,
             getCurrentTrack:  (state) => state.currenttrack,
+            getLoader:  (state) => state.loader,
         },
         actions: {
             setDeeper1(deeper1) {
@@ -229,11 +236,11 @@ export const useDMStore = defineStore('dm', {
             setCurrentTrack(currenttrack) {
                 this.currenttrack = currenttrack
             },
-            click(event) {
-                let target = event.target
+            click(payload) {
+                let target = payload.event.target
                 let audios = target.lastChild
-                if (this.currentTrack != null && this.currentTrack !== audios) {
-                    this.currentTrack.pause()
+                if (this.currenttrack != null && this.currenttrack !== audios) {
+                    this.currenttrack.pause()
                 }
                 if (audios.paused === false) {
                     audios.pause()
@@ -563,6 +570,7 @@ export const useDMStore = defineStore('dm', {
                 }
             },
             deepermobile: async function (payload) {
+                console.log(570)
                 let item = payload.item,
                     num = payload.num,
                     event = payload.event
@@ -642,6 +650,7 @@ export const useDMStore = defineStore('dm', {
                             }
                         })
                 if (num === 1) {
+                    console.log(649)
                     if (document.getElementById('d' + item.track.id) !== null) {
                         document.getElementById('d' + item.track.id).style.display = 'flex'
                         await this.hideall(target.nextElementSibling)
@@ -952,30 +961,21 @@ export const useDMStore = defineStore('dm', {
             fetchPlaylists(payload) {
                 let event = payload.event,
                     offset = payload.offset
-                console.log(payload)
-                // console.log(offset)
-                // let div = "<div id='loader' class='loading waitingForConnection'>Loading<span>.</span><span>.</span><span>.</span></div>"
-                // event.target.nextElementSibling.insertAdjacentHTML("afterbegin",div)
+                this.loader = true
                 axios.request({
                     url: 'https://api.spotify.com/v1/me/playlists?fields=items(name,id)&limit=50&offset=' + offset,
                     method: 'get',
                     headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                 })
                     .then((response) => {
-                        if (offset === 0) {
-                            this.setListPlaylists([],true)
-                            this.setListPlaylists(response.data['items'])
-                            if (response.data['items'].length > 0) {
-                                this.fetchPlaylists({event:event,offset:offset+=50})
-                            }
-                        } else {
-                            this.setListPlaylists(response.data['items'])
-                            if (response.data['items'].length > 0) {
-                                this.setListPlaylists(event.offset+=50)
-                            }
+                        this.setListPlaylists(response.data['items'])
+                        if (response.data['items'].length > 0) {
+                            this.setListPlaylists(event.offset += 50)
                         }
-
-                        // document.getElementById("loader").remove()
+                        if (response.data['items'].length > 49 ) {
+                            this.fetchPlaylists({event:event,offset:offset+=50})
+                        }
+                        this.loader = false
                     })
                     .catch(error => {
                         console.log(error)
@@ -1038,13 +1038,7 @@ export const useDMStore = defineStore('dm', {
             },
             fetchArtist(payload) {
                 let event = payload.event
-                if (event.target.parentElement.id === 'option2') {
-                    let div = "<div id='loader' class='loading waitingForConnection'>Loading<span>.</span><span>.</span><span>.</span></div>"
-                    event.target.nextElementSibling.insertAdjacentHTML("afterbegin", div)
-                } else {
-                    let div = "<div id='loader' class='loading waitingForConnection'>Loading<span>.</span><span>.</span><span>.</span></div>"
-                    event.target.parentElement.nextElementSibling.insertAdjacentHTML("afterbegin", div)
-                }
+                this.loader = true
                 axios.request({
                     url: 'https://api.spotify.com/v1/me/top/artists?time_range=short_term',
                     method: 'get',
@@ -1076,7 +1070,7 @@ export const useDMStore = defineStore('dm', {
                                     }
                                 })
                         }
-                        document.getElementById("loader").remove()
+                        this.loader = false
                     })
                     .catch(error => {
                         if (error.response.status) {
@@ -1091,8 +1085,7 @@ export const useDMStore = defineStore('dm', {
             },
             fetchArtist2(payload) {
                 let event = payload.event
-                let div = "<div id='loader' class='loading waitingForConnection'>Loading<span>.</span><span>.</span><span>.</span></div>"
-                event.target.parentElement.nextElementSibling.insertAdjacentHTML("afterbegin", div)
+                this.loader = true
                 axios.request({
                     url: 'https://api.spotify.com/v1/me/top/artists?time_range=medium_term',
                     method: 'get',
@@ -1124,7 +1117,7 @@ export const useDMStore = defineStore('dm', {
                                     }
                                 })
                         }
-                        document.getElementById("loader").remove()
+                        this.loader = false
                     })
                     .catch(error => {
                         if (error.response.status) {
@@ -1139,8 +1132,7 @@ export const useDMStore = defineStore('dm', {
             },
             fetchArtist3(payload) {
                 let event = payload.event
-                let div = "<div id='loader' class='loading waitingForConnection'>Loading<span>.</span><span>.</span><span>.</span></div>"
-                event.target.parentElement.nextElementSibling.insertAdjacentHTML("afterbegin", div)
+                this.loader = true
                 axios.request({
                     url: 'https://api.spotify.com/v1/me/top/artists?time_range=long_term',
                     method: 'get',
@@ -1172,7 +1164,7 @@ export const useDMStore = defineStore('dm', {
                                     }
                                 })
                         }
-                        document.getElementById("loader").remove()
+                        this.loader = false
                     })
                     .catch(error => {
                         if (error.response.status) {
@@ -1198,286 +1190,140 @@ export const useDMStore = defineStore('dm', {
                 if (target.id === 'playlistlist') {
                     if (document.getElementById('playlistlist').className === 'tabs_target') {
                         document.getElementById('playlistlist').className = ''
-                        document.getElementById('playlistlist').nextElementSibling.style.height = 0
                         return
                     }
                     document.getElementById('playlistlist').className = 'tabs_target'
-                    document.getElementById('playlistlist').nextElementSibling.style.height = 'auto'
                     document.getElementById('ta').className = ''
-                    document.getElementById('ta').nextElementSibling.style.height = 0
                     document.getElementById('tt').className = ''
-                    document.getElementById('tt').nextElementSibling.style.height = 0
                     document.getElementById('sa').className = ''
-                    document.getElementById('sa').nextElementSibling.style.height = 0
                     document.getElementById('st').className = ''
-                    document.getElementById('st').nextElementSibling.style.height = 0
                     document.getElementById('fa').className = ''
-                    document.getElementById('fa').nextElementSibling.style.height = 0
                     document.getElementById('nr').className = ''
-                    document.getElementById('nr').nextElementSibling.style.height = 0
                     document.getElementById('spt').className = ''
-                    document.getElementById('spt').nextElementSibling.style.height = 0
                     document.getElementById('sear').className = ''
-                    document.getElementById('sear').nextElementSibling.style.height = 0
                 } else if (target.id === 'ta') {
                     if (document.getElementById('ta').className === 'tabs_target') {
                         document.getElementById('ta').className = ''
-                        document.getElementById('ta').nextElementSibling.style.height = 0
                         return
                     }
                     document.getElementById('playlistlist').className = ''
-                    document.getElementById('playlistlist').nextElementSibling.style.height = 0
                     document.getElementById('ta').className = 'tabs_target'
-                    document.getElementById('ta').nextElementSibling.style.height = 'auto'
                     document.getElementById('tt').className = ''
-                    document.getElementById('tt').nextElementSibling.style.height = 0
                     document.getElementById('sa').className = ''
-                    document.getElementById('sa').nextElementSibling.style.height = 0
                     document.getElementById('st').className = ''
-                    document.getElementById('st').nextElementSibling.style.height = 0
                     document.getElementById('fa').className = ''
-                    document.getElementById('fa').nextElementSibling.style.height = 0
                     document.getElementById('nr').className = ''
-                    document.getElementById('nr').nextElementSibling.style.height = 0
                     document.getElementById('spt').className = ''
-                    document.getElementById('spt').nextElementSibling.style.height = 0
                     document.getElementById('sear').className = ''
-                    document.getElementById('sear').nextElementSibling.style.height = 0
                 } else if (target.id === 'tt') {
                     if (document.getElementById('tt').className === 'tabs_target') {
                         document.getElementById('tt').className = ''
-                        document.getElementById('tt').nextElementSibling.style.height = 0
                         return
                     }
                     document.getElementById('playlistlist').className = ''
-                    document.getElementById('playlistlist').nextElementSibling.style.height = 0
                     document.getElementById('ta').className = ''
-                    document.getElementById('ta').nextElementSibling.style.height = 0
                     document.getElementById('tt').className = 'tabs_target'
-                    document.getElementById('tt').nextElementSibling.style.height = 'auto'
                     document.getElementById('sa').className = ''
-                    document.getElementById('sa').nextElementSibling.style.height = 0
                     document.getElementById('st').className = ''
-                    document.getElementById('st').nextElementSibling.style.height = 0
                     document.getElementById('fa').className = ''
-                    document.getElementById('fa').nextElementSibling.style.height = 0
                     document.getElementById('nr').className = ''
-                    document.getElementById('nr').nextElementSibling.style.height = 0
                     document.getElementById('spt').className = ''
-                    document.getElementById('spt').nextElementSibling.style.height = 0
                     document.getElementById('sear').className = ''
-                    document.getElementById('sear').nextElementSibling.style.height = 0
                 } else if (target.id === 'sa') {
                     if (document.getElementById('sa').className === 'tabs_target') {
                         document.getElementById('sa').className = ''
-                        document.getElementById('sa').nextElementSibling.style.height = 0
                         return
                     }
                     document.getElementById('playlistlist').className = ''
-                    document.getElementById('playlistlist').nextElementSibling.style.height = 0
                     document.getElementById('ta').className = ''
-                    document.getElementById('ta').nextElementSibling.style.height = 0
                     document.getElementById('tt').className = ''
-                    document.getElementById('tt').nextElementSibling.style.height = 0
                     document.getElementById('sa').className = 'tabs_target'
-                    document.getElementById('sa').nextElementSibling.style.height = 'auto'
                     document.getElementById('st').className = ''
-                    document.getElementById('st').nextElementSibling.style.height = 0
                     document.getElementById('fa').className = ''
-                    document.getElementById('fa').nextElementSibling.style.height = 0
                     document.getElementById('nr').className = ''
-                    document.getElementById('nr').nextElementSibling.style.height = 0
                     document.getElementById('spt').className = ''
-                    document.getElementById('spt').nextElementSibling.style.height = 0
                     document.getElementById('sear').className = ''
-                    document.getElementById('sear').nextElementSibling.style.height = 0
                 } else if (target.id === 'st') {
                     if (document.getElementById('st').className === 'tabs_target') {
                         document.getElementById('st').className = ''
-                        document.getElementById('st').nextElementSibling.style.height = 0
                         return
                     }
                     document.getElementById('playlistlist').className = ''
-                    document.getElementById('playlistlist').nextElementSibling.style.height = 0
                     document.getElementById('ta').className = ''
-                    document.getElementById('ta').nextElementSibling.style.height = 0
                     document.getElementById('tt').className = ''
-                    document.getElementById('tt').nextElementSibling.style.height = 0
                     document.getElementById('sa').className = ''
-                    document.getElementById('sa').nextElementSibling.style.height = 0
                     document.getElementById('st').className = 'tabs_target'
-                    document.getElementById('st').nextElementSibling.style.height = 'auto'
                     document.getElementById('fa').className = ''
-                    document.getElementById('fa').nextElementSibling.style.height = 0
                     document.getElementById('nr').className = ''
-                    document.getElementById('nr').nextElementSibling.style.height = 0
                     document.getElementById('spt').className = ''
-                    document.getElementById('spt').nextElementSibling.style.height = 0
                     document.getElementById('sear').className = ''
-                    document.getElementById('sear').nextElementSibling.style.height = 0
                 } else if (target.id === 'fa') {
                     if (document.getElementById('fa').className === 'tabs_target') {
                         document.getElementById('fa').className = ''
-                        document.getElementById('fa').nextElementSibling.style.height = 0
                         return
                     }
                     document.getElementById('playlistlist').className = ''
-                    document.getElementById('playlistlist').nextElementSibling.style.height = 0
                     document.getElementById('ta').className = ''
-                    document.getElementById('ta').nextElementSibling.style.height = 0
                     document.getElementById('tt').className = ''
-                    document.getElementById('tt').nextElementSibling.style.height = 0
                     document.getElementById('sa').className = ''
-                    document.getElementById('sa').nextElementSibling.style.height = 0
                     document.getElementById('st').className = ''
-                    document.getElementById('st').nextElementSibling.style.height = 0
                     document.getElementById('fa').className = 'tabs_target'
-                    document.getElementById('fa').nextElementSibling.style.height = 'auto'
                     document.getElementById('nr').className = ''
-                    document.getElementById('nr').nextElementSibling.style.height = 0
                     document.getElementById('spt').className = ''
-                    document.getElementById('spt').nextElementSibling.style.height = 0
                     document.getElementById('sear').className = ''
-                    document.getElementById('sear').nextElementSibling.style.height = 0
                 } else if (target.id === 'nr') {
                     if (document.getElementById('nr').className === 'tabs_target') {
                         document.getElementById('nr').className = ''
-                        document.getElementById('nr').nextElementSibling.style.height = 0
                         return
                     }
                     document.getElementById('playlistlist').className = ''
-                    document.getElementById('playlistlist').nextElementSibling.style.height = 0
                     document.getElementById('ta').className = ''
-                    document.getElementById('ta').nextElementSibling.style.height = 0
                     document.getElementById('tt').className = ''
-                    document.getElementById('tt').nextElementSibling.style.height = 0
                     document.getElementById('sa').className = ''
-                    document.getElementById('sa').nextElementSibling.style.height = 0
                     document.getElementById('st').className = ''
-                    document.getElementById('st').nextElementSibling.style.height = 0
                     document.getElementById('fa').className = ''
-                    document.getElementById('fa').nextElementSibling.style.height = 0
                     document.getElementById('nr').className = 'tabs_target'
-                    document.getElementById('nr').nextElementSibling.style.height = 'auto'
                     document.getElementById('spt').className = ''
-                    document.getElementById('spt').nextElementSibling.style.height = 0
                     document.getElementById('sear').className = ''
-                    document.getElementById('sear').nextElementSibling.style.height = 0
                 } else if (target.id === 'spt') {
                     if (document.getElementById('spt').className === 'tabs_target') {
                         document.getElementById('spt').className = ''
-                        document.getElementById('spt').nextElementSibling.style.height = 0
                         return
                     }
                     document.getElementById('playlistlist').className = ''
-                    document.getElementById('playlistlist').nextElementSibling.style.height = 0
                     document.getElementById('ta').className = ''
-                    document.getElementById('ta').nextElementSibling.style.height = 0
                     document.getElementById('tt').className = ''
-                    document.getElementById('tt').nextElementSibling.style.height = 0
                     document.getElementById('sa').className = ''
-                    document.getElementById('sa').nextElementSibling.style.height = 0
                     document.getElementById('st').className = ''
-                    document.getElementById('st').nextElementSibling.style.height = 0
                     document.getElementById('fa').className = ''
-                    document.getElementById('fa').nextElementSibling.style.height = 0
                     document.getElementById('nr').className = ''
-                    document.getElementById('nr').nextElementSibling.style.height = 0
                     document.getElementById('spt').className = 'tabs_target'
-                    document.getElementById('spt').nextElementSibling.style.height = 'auto'
                     document.getElementById('sear').className = ''
-                    document.getElementById('sear').nextElementSibling.style.height = 0
                 } else if (target.id === 'sear') {
                     if (document.getElementById('sear').className === 'tabs_target') {
                         document.getElementById('sear').className = ''
-                        document.getElementById('sear').nextElementSibling.style.height = 0
                         return
                     }
                     document.getElementById('playlistlist').className = ''
-                    document.getElementById('playlistlist').nextElementSibling.style.height = 0
                     document.getElementById('ta').className = ''
-                    document.getElementById('ta').nextElementSibling.style.height = 0
                     document.getElementById('tt').className = ''
-                    document.getElementById('tt').nextElementSibling.style.height = 0
                     document.getElementById('sa').className = ''
-                    document.getElementById('sa').nextElementSibling.style.height = 0
                     document.getElementById('st').className = ''
-                    document.getElementById('st').nextElementSibling.style.height = 0
                     document.getElementById('fa').className = ''
-                    document.getElementById('fa').nextElementSibling.style.height = 0
                     document.getElementById('nr').className = ''
-                    document.getElementById('nr').nextElementSibling.style.height = 0
                     document.getElementById('spt').className = ''
-                    document.getElementById('spt').nextElementSibling.style.height = 0
                     document.getElementById('sear').className = 'tabs_target'
-                    document.getElementById('sear').nextElementSibling.style.height = 'auto'
                 }
             },
             switchArtist(payload) {
-                let num = payload.num
-                if (num === 1) {
-                    document.getElementById('topartist').style.display = 'flex'
-                    document.getElementById('topartists').className = 'activetab'
-                    document.getElementById('topartist6').style.display = 'none'
-                    document.getElementById('topartists6').className = ''
-                    document.getElementById('topartista').style.display = 'none'
-                    document.getElementById('topartistsall').className = ''
-                    this.setTaactivetab(document.getElementById('topartist'))
-                } else if (num === 2) {
-                    document.getElementById('topartist').style.display = 'none'
-                    document.getElementById('topartists').className = ''
-                    document.getElementById('topartist6').style.display = 'flex'
-                    document.getElementById('topartists6').className = 'activetab'
-                    document.getElementById('topartista').style.display = 'none'
-                    document.getElementById('topartistsall').className = ''
-                    this.setTaactivetab(document.getElementById('topartist6'))
-                } else if (num === 3) {
-                    document.getElementById('topartist').style.display = 'none'
-                    document.getElementById('topartists').className = ''
-                    document.getElementById('topartist6').style.display = 'none'
-                    document.getElementById('topartists6').className = ''
-                    document.getElementById('topartista').style.display = 'flex'
-                    document.getElementById('topartistsall').className = 'activetab'
-                    this.setTaactivetab(document.getElementById('topartista'))
-                }
+                this.selectedArtistsRange = payload.num
             },
             switchTracks(payload) {
-                let num = payload.num
-                if (num === 1) {
-                    document.getElementById('toptrack').style.display = 'flex'
-                    document.getElementById('toptracks').className = 'activetab'
-                    document.getElementById('toptrack6').style.display = 'none'
-                    document.getElementById('toptrackssix').className = ''
-                    document.getElementById('toptrackall').style.display = 'none'
-                    document.getElementById('toptracksall').className = ''
-                    this.setTtactivetab(document.getElementById('toptrack'))
-                } else if (num === 2) {
-                    document.getElementById('toptrack').style.display = 'none'
-                    document.getElementById('toptracks').className = ''
-                    document.getElementById('toptrack6').style.display = 'flex'
-                    document.getElementById('toptrackssix').className = 'activetab'
-                    document.getElementById('toptrackall').style.display = 'none'
-                    document.getElementById('toptracksall').className = ''
-                    this.setTtactivetab(document.getElementById('toptrack6'))
-                } else if (num === 3) {
-                    document.getElementById('toptrack').style.display = 'none'
-                    document.getElementById('toptracks').className = ''
-                    document.getElementById('toptrack6').style.display = 'none'
-                    document.getElementById('toptrackssix').className = ''
-                    document.getElementById('toptrackall').style.display = 'flex'
-                    document.getElementById('toptracksall').className = 'activetab'
-                    this.setTtactivetab(document.getElementById('toptrackall'))
-                }
+                this.selectedTracksRange = payload.num
             },
             fetchApi(payload) {
                 let event = payload.event
-                if (event.target.parentElement.id === 'option3') {
-                    let div = "<div id='loader' class='loading waitingForConnection'>Loading<span>.</span><span>.</span><span>.</span></div>"
-                    event.target.nextElementSibling.insertAdjacentHTML("afterbegin", div)
-                } else {
-                    let div = "<div id='loader' class='loading waitingForConnection'>Loading<span>.</span><span>.</span><span>.</span></div>"
-                    event.target.parentElement.nextElementSibling.insertAdjacentHTML("afterbegin", div)
-                }
+                this.loader = true
                 axios.request({
                     url: 'https://api.spotify.com/v1/me/top/tracks?time_range=short_term',
                     method: 'get',
@@ -1485,7 +1331,8 @@ export const useDMStore = defineStore('dm', {
                 })
                     .then((response) => {
                         this.setItems(response.data['items'])
-                        document.getElementById("loader").remove()
+                        this.loader = false
+
                     })
                     .catch(error => {
                         if (error.response.status) {
@@ -1500,8 +1347,7 @@ export const useDMStore = defineStore('dm', {
             },
             fetchApi2(payload) {
                 let event = payload.event
-                let div = "<div id='loader' class='loading waitingForConnection'>Loading<span>.</span><span>.</span><span>.</span></div>"
-                event.target.parentElement.nextElementSibling.insertAdjacentHTML("afterbegin", div)
+                this.loader = true
                 axios.request({
                     url: 'https://api.spotify.com/v1/me/top/tracks?time_range=medium_term',
                     method: 'get',
@@ -1509,7 +1355,7 @@ export const useDMStore = defineStore('dm', {
                 })
                     .then((response) => {
                         this.setItemsM(response.data['items'])
-                        document.getElementById("loader").remove()
+                        this.loader = false
                     })
                     .catch(error => {
                         if (error.response.status) {
@@ -1524,8 +1370,7 @@ export const useDMStore = defineStore('dm', {
             },
             fetchApi3(payload) {
                 let event = payload.event
-                let div = "<div id='loader' class='loading waitingForConnection'>Loading<span>.</span><span>.</span><span>.</span></div>"
-                event.target.parentElement.nextElementSibling.insertAdjacentHTML("afterbegin", div)
+                this.loader = true
                 axios.request({
                     url: 'https://api.spotify.com/v1/me/top/tracks?time_range=long_term',
                     method: 'get',
@@ -1533,7 +1378,7 @@ export const useDMStore = defineStore('dm', {
                 })
                     .then((response) => {
                         this.setItemsL(response.data['items'])
-                        document.getElementById("loader").remove()
+                        this.loader = false
                     })
                     .catch(error => {
                         if (error.response.status) {
@@ -1549,8 +1394,7 @@ export const useDMStore = defineStore('dm', {
             fetchAlbums(payload) {
                 let offset = payload.offset,
                     event = payload.event
-                let div = "<div id='loader' class='loading waitingForConnection'>Loading<span>.</span><span>.</span><span>.</span></div>"
-                event.target.nextElementSibling.insertAdjacentHTML("afterbegin", div)
+                this.loader = true
                 axios.request({
                     url: 'https://api.spotify.com/v1/me/albums?offset=' + offset + '&limit=20',
                     method: 'get',
@@ -1560,7 +1404,7 @@ export const useDMStore = defineStore('dm', {
                         let items = response.data['items']
                         // console.log(items)
                         this.setSavedAlbums(items)
-                        document.getElementById("loader").remove()
+                        this.loader = false
                         if (response.data['items'].length > 0) {
                             this.fetchAlbums({offset: offset += 20, event: event})
                         }
@@ -1578,6 +1422,7 @@ export const useDMStore = defineStore('dm', {
             },
             fetchTracks(payload) {
                 let offset = payload.offset
+                this.loader = true
                 axios.request({
                     url: 'https://api.spotify.com/v1/me/tracks?offset=' + offset + '&limit=50',
                     method: 'get',
@@ -1588,7 +1433,7 @@ export const useDMStore = defineStore('dm', {
                         if (response.data['items'].length > 0) {
                             // this.fetchTracks',{offset:offset += 50})
                         }
-
+                        this.loader = false
                     })
                     .catch(error => {
                         if (error.response.status) {
@@ -1603,6 +1448,7 @@ export const useDMStore = defineStore('dm', {
             },
             fetchNR(payload) {
                 let offset = payload.offset
+                this.loader = true
                 axios.request({
                     url: 'https://api.spotify.com/v1/browse/new-releases?limit=20&offset=' + offset,
                     method: 'get',
@@ -1618,6 +1464,7 @@ export const useDMStore = defineStore('dm', {
                         if (offset < 100) {
                             this.getNewrelease({newarr: newarr, offset: offset})
                         }
+                        this.loader = false
                     })
                     .catch(error => {
                         // console.log(error)
@@ -1663,6 +1510,7 @@ export const useDMStore = defineStore('dm', {
                     })
             },
             fetchFA() {
+                this.loader = true
                 axios.request({
                     url: 'https://api.spotify.com/v1/me/following?type=artist&limit=50',
                     method: 'get',
@@ -1692,6 +1540,7 @@ export const useDMStore = defineStore('dm', {
                                     }
                                 })
                         }
+                        this.loader = false
                     })
                     .catch(error => {
                         if (error.response.status) {
@@ -1703,9 +1552,11 @@ export const useDMStore = defineStore('dm', {
                             })
                         }
                     })
+
             },
             fetchSpotPlaylists(payload) {
                 let offset = payload.offset
+                this.loader = true
                 axios.request({
                     url: 'https://api.spotify.com/v1/users/spotify/playlists?fields=items(name,id)&limit=50&offset=' + offset,
                     method: 'get',
@@ -1727,6 +1578,7 @@ export const useDMStore = defineStore('dm', {
                             })
                         }
                     })
+                this.loader = false
             },
             SpotInit: function (payload) {
                 let event = payload.event
@@ -1819,7 +1671,6 @@ export const useDMStore = defineStore('dm', {
 
                     if (e.target.value) {
                         let value = e.target.value
-                        e.target.parentElement.nextElementSibling.children[0].children[0].innerText = value
                         // console.log(value)
 
                         axios.request({
@@ -1900,7 +1751,7 @@ export const useDMStore = defineStore('dm', {
                                         .then((response) => {
                                             // console.log(response.data['tracks'])
                                             let tracks = response.data['tracks']
-                                            if (tracks['items'][0]['track']['preview_url']) {
+                                            if (tracks['items'][0] && tracks['items'][0]['track']['preview_url']) {
                                                 i.preview_url = tracks['items'][0]['track']['preview_url']
                                             }
                                             i.tracks = tracks
@@ -1911,6 +1762,7 @@ export const useDMStore = defineStore('dm', {
                                 setTimeout(() => {
                                     this.setSPlaylists(playlist)
                                 }, 2000)
+                                console.log(this.tracks)
 
                                 // console.log(this.splaylists)
 
@@ -1931,16 +1783,9 @@ export const useDMStore = defineStore('dm', {
                 }, 1000);
             },
             refreshplaylists(payload) {
+                this.loader = true
                 let rid = payload.rid
-                // let value = rid
-                // let refreshIcon = rid.replace('refresh_', 'icon_')
-                // let refreshButton = document.getElementById(value)
-                // refreshIcon.class("class", "refresh-start")
-                // refreshButton.removeAttribute("class")
-                // refreshButton.disabled = true
                 let id = rid.replace('refresh_', '')
-                // refreshButton.setAttribute("class", "refresh-end")
-                // refreshButton.disabled = false
                 axios.request({
                     url: 'https://api.spotify.com/v1/playlists/' + id,
                     method: 'get',
@@ -1952,6 +1797,7 @@ export const useDMStore = defineStore('dm', {
                         this.setPlayInfo([])
                         this.setPlayInfo(response.data)
                         this.setPlaylists(response.data['tracks']['items'])
+                        this.loader = false
                     })
                     .catch(error => {
                         if (error.response.status) {
@@ -1965,6 +1811,7 @@ export const useDMStore = defineStore('dm', {
                     })
             },
             reloader(payload) {
+                this.loader = true
                 let num = payload.num,
                     event = payload.event
                 // console.log(id)
@@ -1976,6 +1823,7 @@ export const useDMStore = defineStore('dm', {
                 // console.log(target)
                 target.className = 'refresh-start'
                 if (num === 1) {
+                    this.loader = true
                     let div = "<div id='reloader' class='loading waitingForConnection'>Reloading<span>.</span><span>.</span><span>.</span></div>"
                     document.querySelector('#yourplaylists > div.pl').insertAdjacentHTML("afterend", div)
                     // console.log(document.getElementById('loader'))
@@ -1999,6 +1847,7 @@ export const useDMStore = defineStore('dm', {
                     }, 1000)
                     // console.log(sea)
                 } else if (num === 9) {
+                    this.loader = true
                     let div = "<div id='reloader' class='loading waitingForConnection'>Reloading<span>.</span><span>.</span><span>.</span></div>"
                     document.querySelector('#sptplaylists > div.pl').insertAdjacentHTML("afterend", div)
                     let nid = parent.id.replace('s', '')
@@ -2019,6 +1868,7 @@ export const useDMStore = defineStore('dm', {
                 setTimeout(() => {
                     target.className = 'refresh-end'
                 }, 1000)
+                this.loader = false
                 // if (id.startsWith('art')){
                 //   let cid = id.replace('art','')
                 //   if (num===1){
@@ -2112,7 +1962,7 @@ export const useDMStore = defineStore('dm', {
                 setTimeout(() => {
                     let ne = {}
                     ne.target = document.getElementById('playlistlist')
-                    this.fetchPlaylists(ne,0)
+                    this.fetchPlaylists({event:ne, offset:0})
                     document.getElementById("reloader").remove()
                     target.className = 'refresh-end'
                 }, 1000)
@@ -2701,6 +2551,7 @@ export const useDMStore = defineStore('dm', {
                         data.type = 'seed_tracks'
                         data.id = 'st' + item.id
                         data.name = item.name
+                        data.artists = item.artists
                         // console.log(data)
                         if (num === 1) {
                             let indexing = this.deeper1.indexOf(data)
@@ -4599,6 +4450,7 @@ export const useDMStore = defineStore('dm', {
 
                         // console.log(target.children[0])
                         if (target.children[0].nextElementSibling) {
+                            console.log(target.children[0].nextElementSibling)
                             await this.hideall({elem: target.children[0].nextElementSibling})
                             let lst = target.children[0].nextElementSibling.children[0].children
                             let newarray = []
@@ -5474,8 +5326,8 @@ export const useDMStore = defineStore('dm', {
                         // let second = playlists.find(playlists => playlists.name === value && playlists.owner.id === 'thesoundsofspotify')
                         // console.log(second)
                         const finded = new Promise(function (resolve, reject) {
-                            let first = playlists.find(playlists => playlists.name === newvalue && playlists.owner.id === 'thesoundsofspotify')
-                            let second = playlists.find(playlists => playlists.name === value && playlists.owner.id === 'thesoundsofspotify')
+                            let first = playlists.find(playlists => playlists.name === newvalue || playlists.name.startsWith('The Sound ') && playlists.owner.id === 'thesoundsofspotify')
+                            let second = playlists.find(playlists => playlists.name === value || playlists.name.startsWith('The Sound ')  && playlists.owner.id === 'thesoundsofspotify')
                             if (first) {
                                 resolve(first)
                             } else if (second) {
@@ -5817,19 +5669,23 @@ export const useDMStore = defineStore('dm', {
             mouseOver: function (event) {
                 let target = event.target
                 let audios = target.lastChild
-                audios.play()
+                if (this.audio_preview) {
+                    audios.play()
+                }
             },
             mouseLeave: function (event) {
                 let target = event.target
                 let audios = target.lastChild
-                audios.pause()
+                if (this.audio_preview) {
+                    audios.pause()
+                }
             },
             parentmouseOver: function (event) {
                 let target = event.target
                 // console.log(target)
                 let audios = target.firstChild.lastChild
                 // console.log(audios)
-                if (audios) {
+                if (audios && this.audio_preview) {
                     audios.play()
                 }
             },
@@ -5838,7 +5694,7 @@ export const useDMStore = defineStore('dm', {
                 // console.log(target)
                 let audios = target.firstChild.lastChild
                 // console.log(audios)
-                if (audios) {
+                if (audios && this.audio_preview) {
                     audios.pause()
                 }
             },
@@ -5867,11 +5723,13 @@ export const useDMStore = defineStore('dm', {
                 if (this.currenttrack != null && this.currenttrack !== audios) {
                     this.currenttrack.pause()
                 }
-                if (audios.paused === false) {
-                    audios.pause()
-                } else
-                    audios.play()
-                this.setCurrentTrack(audios)
+                if (this.audio_preview) {
+                    if (audios.paused === false) {
+                        audios.pause()
+                    } else
+                        audios.play()
+                    this.setCurrentTrack(audios)
+                }
             },
             specialClick: function (event) {
                 let target = event.target.parentElement
@@ -5882,11 +5740,13 @@ export const useDMStore = defineStore('dm', {
                 if (this.currenttrack != null && this.currenttrack !== audios) {
                     this.currenttrack.pause()
                 }
-                if (audios.paused === false) {
-                    audios.pause()
-                } else
-                    audios.play()
-                this.setCurrentTrack(audios)
+                if (this.audio_preview) {
+                    if (audios.paused === false) {
+                        audios.pause()
+                    } else
+                        audios.play()
+                    this.setCurrentTrack(audios)
+                }
             },
             searchClick: function (payload) {
                 let event = payload.event
@@ -5896,11 +5756,13 @@ export const useDMStore = defineStore('dm', {
                 if (this.currenttrack != null && this.currenttrack !== audios) {
                     this.currenttrack.pause()
                 }
-                if (audios.paused === false) {
-                    audios.pause()
-                } else
-                    audios.play()
-                this.setCurrentTrack(audios)
+                if (this.audio_preview) {
+                    if (audios.paused === false) {
+                        audios.pause()
+                    } else
+                        audios.play()
+                    this.setCurrentTrack(audios)
+                }
             },
             paginate(array, page_size, page_number) {
                 return array.slice((page_number - 1) * page_size, page_number * page_size)
@@ -5991,10 +5853,11 @@ export const useDMStore = defineStore('dm', {
                 }
             },
             checkPlaylists() {
+                this.queueModal = true
                 if (this.listplaylists.length === 0) {
                     let ne = {}
                     ne.target = document.getElementById('playlistlist')
-                    this.fetchPlaylists(ne,0)
+                    this.fetchPlaylists({event:ne, offset:0})
                 }
             },
             createplaylist() {
@@ -6010,16 +5873,19 @@ export const useDMStore = defineStore('dm', {
                     .then(() => {
                         let ne = {}
                         ne.target = document.getElementById('playlistlist')
-                        this.fetchPlaylists(ne,0)
+                        this.fetchPlaylists({event:ne, offset:0})
                         // console.log(this.listplaylists)
                     })
 
             },
-            hideall(elem) {
+            hideall(payload) {
                 // console.log()
                 // console.log(elem)
+                let elem = payload.elem
+                console.log(elem)
                 let all = document.querySelectorAll('.item-container > .rectrack')
                 for (let i of all) {
+                    console.log(i)
                     if (i === elem) {
                         i.style.display = 'block'
                         i.children[0].style.display = 'block'
