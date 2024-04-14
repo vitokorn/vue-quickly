@@ -1,8 +1,13 @@
 <script setup>
 import {useDMStore} from "../stores/dm-store";
+import {ref} from "vue";
 
 defineProps(['d', 'num'])
 const store = useDMStore()
+const selected = ref()
+function setActive(id) {
+  selected.value = id
+}
 </script>
 <template>
   <div class="trackartist card2 text-left" style="gap: 16px;" v-bind:key="'ta'+index">
@@ -54,26 +59,31 @@ const store = useDMStore()
       <div v-if="ta.type==='top_tracks'" v-bind:key="index" tabindex="0" class="top-tracks card2">
         <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
           <div v-if="tt.preview_url && tt.album.images[0]" class="con3"
+               :class="selected===tt.id ? 'selected' : ''"
                v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }"
                v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)"
-               v-on:click="store.deeperTracks({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id}); store.queuein(tt)">
+               v-on:click="setActive(tt.id);store.deeperTracks({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id}); store.queuein(tt)">
             {{ tt.name }}
             <audio v-bind:src="tt.preview_url"></audio>
           </div>
           <div v-else-if="!tt.preview_url && tt.album.images[0]" class="con3 half-opacity"
+               :class="selected===tt.id ? 'selected' : ''"
                v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }"
-               v-on:click="store.deeperTracks({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id}); store.queuein(tt)">
+               v-on:click="setActive(tt.id);store.deeperTracks({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id}); store.queuein(tt)">
             {{ tt.name }}
             <audio></audio>
           </div>
-          <div v-else-if="tt.preview_url && !tt.album.images[0]" class="con3" v-on:mouseover="store.mouseOver($event)"
+          <div v-else-if="tt.preview_url && !tt.album.images[0]" class="con3"
+               :class="selected===tt.id ? 'selected' : ''"
+               v-on:mouseover="store.mouseOver($event)"
                v-on:mouseleave="store.mouseLeave($event)"
-               v-on:click="store.deeperTracks({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id}); store.queuein(tt)">
+               v-on:click="setActive(tt.id);store.deeperTracks({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id}); store.queuein(tt)">
             {{ tt.name }}
             <audio v-bind:src="tt.preview_url"></audio>
           </div>
           <div v-else class="con3 half-opacity"
-               v-on:click="store.deeperTracks({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id}); store.queuein(tt)">
+               :class="selected===tt.id ? 'selected' : ''"
+               v-on:click="setActive(tt.id);store.deeperTracks({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id}); store.queuein(tt)">
             {{ tt.name }}
             <audio></audio>
           </div>
@@ -87,22 +97,27 @@ const store = useDMStore()
           v-bind:key="index" tabindex="0" class="card2">
         <div v-for="(a,index) in ta" v-bind:key="index">
           <div v-if="a.preview_url && a.images[0]" class="con3"
-               v-on:click="store.deeperAlbum({item:a,num:num,child:'art' + d[0].id,search:false})"
+               :class="selected===a.id ? 'selected' : ''"
+               v-on:click="setActive(a.id);store.deeperAlbum({item:a,num:num,child:'art' + d[0].id,search:false})"
                v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)"
                v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{ a.name }}
             <audio preload="auto" v-bind:src="a.preview_url"></audio>
           </div>
           <div v-else-if="!a.preview_url && a.images[0]" class="con3 half-opacity"
-               v-on:click="store.deeperAlbum({item:a,num:num,child:'art' + d[0].id,search:false})"
+               :class="selected===a.id ? 'selected' : ''"
+               v-on:click="setActive(a.id);store.deeperAlbum({item:a,num:num,child:'art' + d[0].id,search:false})"
                v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{ a.name }}
             <audio></audio>
           </div>
           <div v-else-if="a.preview_url && !a.images[0]" class="con3"
-               v-on:click="store.deeperAlbum({item:a,num:num,child:'art' + d[0].id,search:false})"
+               :class="selected===a.id ? 'selected' : ''"
+               v-on:click="setActive(a.id);store.deeperAlbum({item:a,num:num,child:'art' + d[0].id,search:false})"
                v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)">{{ a.name }}
             <audio preload="auto" v-bind:src="a.preview_url"></audio>
           </div>
-          <div v-else class="con3 half-opacity" v-on:click="store.deeperAlbum({item:a,num:num,child:'art' + d[0].id,search:false})"
+          <div v-else class="con3 half-opacity"
+               :class="selected===a.id ? 'selected' : ''"
+               v-on:click="setActive(a.id);store.deeperAlbum({item:a,num:num,child:'art' + d[0].id,search:false})"
                >{{ a.name }}
             <audio></audio>
           </div>
@@ -115,21 +130,21 @@ const store = useDMStore()
                v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }"
                v-on:mouseover="store.mouseOver($event)"
                v-on:mouseleave="store.mouseLeave($event)"
-               v-on:click="store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
+               v-on:click="setActive(r.id);store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
             <audio preload="auto" v-bind:src="r.preview_url"></audio>
           </div>
           <div v-else-if="!r.preview_url && r.images[0]" class="img-xs half-opacity"
                v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }"
-               v-on:click="store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
+               v-on:click="setActive(r.id);store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
             <audio></audio>
           </div>
           <div v-else-if="r.preview_url && !r.images[0]" tabindex="0" class="img-xs"
                v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)"
-               v-on:click="store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
+               v-on:click="setActive(r.id);store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
             <audio preload="auto" v-bind:src="r.preview_url"></audio>
           </div>
           <div v-else class="img-xs half-opacity"
-               v-on:click="store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
+               v-on:click="setActive(r.id);store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
             <audio></audio>
           </div>
         </div>
