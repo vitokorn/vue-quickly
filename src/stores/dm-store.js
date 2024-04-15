@@ -56,9 +56,12 @@ export const useDMStore = defineStore('dm', {
             unplayable_tracks: true,
             audio_preview: true,
             open_links: true,
+            restart_song_on_hover: false,
             artists_data: [],
             tracks_data: [],
             albums_data: [],
+            seed_artists_data: [],
+            seed_tracks_data: []
         }),
         getters: {
             getDeeper1:  (state) => state.deeper1,
@@ -245,9 +248,15 @@ export const useDMStore = defineStore('dm', {
                 let audios = target.lastChild
                 if (this.currenttrack != null && this.currenttrack !== audios) {
                     this.currenttrack.pause()
+                    if (this.restart_song_on_hover) {
+                        this.currenttrack.currentTime = 0
+                    }
                 }
                 if (audios.paused === false) {
                     audios.pause()
+                    if (this.restart_song_on_hover) {
+                        audios.currentTime = 0
+                    }
                 } else
                     audios.play()
                 this.currenttrack = audios
@@ -268,6 +277,9 @@ export const useDMStore = defineStore('dm', {
                 if (indexing === -1) {
                     this.deepers.push(item)
                 }
+                setTimeout(() => {
+                    document.getElementById('p' + item.id).scrollIntoView({ behavior: "smooth"})
+                }, 10);
             },
             async deeper(payload) {
                 console.log(261)
@@ -441,6 +453,9 @@ export const useDMStore = defineStore('dm', {
                     //     behavior:'smooth'});
                     // }, 10);
                 }
+                setTimeout(() => {
+                    document.getElementById('d'+ tracktrack.id).scrollIntoView({ behavior: "smooth"})
+                }, 10);
 
             },
             deepermobile: async function (payload) {
@@ -2344,7 +2359,7 @@ export const useDMStore = defineStore('dm', {
                     })
                     .catch()
             },
-            seedTracks(payload) {
+            async seedTracks(payload) {
                 let pointer,
                     item = payload.item,
                     num = payload.num,
@@ -2417,100 +2432,109 @@ export const useDMStore = defineStore('dm', {
                     // }, 10);
                     return
                 }
-                axios.request({
+                let exists = this.seed_tracks_data.find(dt => dt.id === 'st' + item.id)
+
+                let data = []
+                if (exists) {
+                    data = exists
+                }
+                if (!exists) {
+                await axios.request({
                     url: 'https://api.spotify.com/v1/recommendations?seed_tracks=' + item['id'] + '&limit=50&offset=0&market=UA' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
                     method: 'get',
                     headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                 })
                     .then((response) => {
-                        let data = []
+
                         // console.log(response.data['tracks'])
                         data.tracks = response.data['tracks']
                         data.type = 'seed_tracks'
                         data.id = 'st' + item.id
                         data.name = item.name
                         data.artists = item.artists
+                        this.seed_tracks_data.push(data)
                         // console.log(data)
-                        if (num === 1) {
-                            let indexing = this.deeper1.indexOf(data)
-                            if (indexing === -1) {
-                                // eslint-disable-next-line no-undef
-                                this.setDeeper1(data)
-                            }
-                        } else if (num === 2) {
-                            let indexing = this.deeper2.indexOf(data)
-                            if (indexing === -1) {
-                                // eslint-disable-next-line no-undef
-                                this.setDeeper2(data)
-                            }
-                        } else if (num === 22) {
-                            let indexing = this.deeper22.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper22(data)
-                            }
-                        } else if (num === 23) {
-                            let indexing = this.deeper23.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper23(data)
-                            }
-                        } else if (num === 3) {
-                            let indexing = this.deeper3.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper3(data)
-                            }
-                        } else if (num === 32) {
-                            let indexing = this.deeper32.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper32(data)
-                            }
-                        } else if (num === 33) {
-                            let indexing = this.deeper33.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper33(data)
-                            }
-                        } else if (num === 4) {
-                            let indexing = this.deeper4.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper4(data)
-                            }
-                        } else if (num === 5) {
-                            let indexing = this.deeper5.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper5(data)
-                            }
-                        } else if (num === 6) {
-                            let indexing = this.deeper6.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper6(data)
-                            }
-                        } else if (num === 7) {
-                            let indexing = this.deeper7.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper7(data)
-                            }
-                        } else if (num === 8) {
-                            let indexing = this.deeper8.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper8(data)
-                            }
-                        } else if (num === 9) {
-                            let indexing = this.deeper9.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper9(data)
-                            }
-                        } else if (num === 10) {
-                            let indexing = this.deepers.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeepers(data)
-                            }
-                        }
-                        // setTimeout(() => {
-                        //   window.scrollTo({
-                        //     top:(document.getElementById('st'+ item.id)).offsetTop,
-                        //     behavior:'smooth'});
-                        // }, 10);
+
+
                     })
                     .catch()
+                }
+                if (num === 1) {
+                    let indexing = this.deeper1.indexOf(data)
+                    if (indexing === -1) {
+                        // eslint-disable-next-line no-undef
+                        this.setDeeper1(data)
+                    }
+                } else if (num === 2) {
+                    let indexing = this.deeper2.indexOf(data)
+                    if (indexing === -1) {
+                        // eslint-disable-next-line no-undef
+                        this.setDeeper2(data)
+                    }
+                } else if (num === 22) {
+                    let indexing = this.deeper22.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper22(data)
+                    }
+                } else if (num === 23) {
+                    let indexing = this.deeper23.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper23(data)
+                    }
+                } else if (num === 3) {
+                    let indexing = this.deeper3.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper3(data)
+                    }
+                } else if (num === 32) {
+                    let indexing = this.deeper32.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper32(data)
+                    }
+                } else if (num === 33) {
+                    let indexing = this.deeper33.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper33(data)
+                    }
+                } else if (num === 4) {
+                    let indexing = this.deeper4.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper4(data)
+                    }
+                } else if (num === 5) {
+                    let indexing = this.deeper5.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper5(data)
+                    }
+                } else if (num === 6) {
+                    let indexing = this.deeper6.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper6(data)
+                    }
+                } else if (num === 7) {
+                    let indexing = this.deeper7.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper7(data)
+                    }
+                } else if (num === 8) {
+                    let indexing = this.deeper8.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper8(data)
+                    }
+                } else if (num === 9) {
+                    let indexing = this.deeper9.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper9(data)
+                    }
+                } else if (num === 10) {
+                    let indexing = this.deepers.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeepers(data)
+                    }
+                }
+                setTimeout(() => {
+                    document.getElementById('st' + item.id).scrollIntoView({ behavior: "smooth"})
+                }, 100);
             },
             seedTracksM(payload) {
                 let pointer,
@@ -2971,11 +2995,10 @@ export const useDMStore = defineStore('dm', {
                         this.setDeepers(item)
                     }
                 }
-                // setTimeout(() => {
-                //   window.scrollTo({
-                //     top:(document.getElementById('alb'+ item.id)).offsetTop,
-                //     behavior:'smooth'});
-                // }, 10);
+
+                setTimeout(() => {
+                    document.getElementById('d' + item.id).scrollIntoView({ behavior: "smooth"})
+                }, 10);
             },
             deeperTracks2(payload) {
                 let pointer,
@@ -3136,11 +3159,10 @@ export const useDMStore = defineStore('dm', {
                         this.setDeepers(item)
                     }
                 }
-                // setTimeout(() => {
-                //   window.scrollTo({
-                //     top:(document.getElementById('d'+ item.id)).offsetTop,
-                //     behavior:'smooth'});
-                // }, 10);
+
+                setTimeout(() => {
+                    document.getElementById('d' + item.id).scrollIntoView({ behavior: "smooth"})
+                }, 10);
             },
             deeperTracksM: async function (payload) {
                 let item = payload.item,
@@ -3607,7 +3629,7 @@ export const useDMStore = defineStore('dm', {
                     }, 0)
                 }
             },
-            seedArtist(payload) {
+            async seedArtist(payload) {
                 let pointer,
                     item = payload.item,
                     num = payload.num,
@@ -3677,98 +3699,110 @@ export const useDMStore = defineStore('dm', {
                     // }, 10);
                     return
                 }
-                axios.request({
-                    url: 'https://api.spotify.com/v1/recommendations?seed_artists=' + item['id'] + '&limit=50&offset=0&market=UA' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
-                    method: 'get',
-                    headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
-                })
-                    .then((response) => {
-                        let data = []
-                        data.tracks = response.data['tracks']
-                        data.type = 'seed_artists'
-                        data.id = 'sa' + item.id
-                        data.name = item.name
-                        // console.log(data)
-                        if (num === 1) {
-                            let indexing = this.deeper1.indexOf(data)
-                            if (indexing === -1) {
-                                // eslint-disable-next-line no-undef
-                                this.setDeeper1(data)
-                            }
-                        } else if (num === 2) {
-                            let indexing = this.deeper2.indexOf(data)
-                            if (indexing === -1) {
-                                // eslint-disable-next-line no-undef
-                                this.setDeeper2(data)
-                            }
-                        } else if (num === 22) {
-                            let indexing = this.deeper22.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper22(data)
-                            }
-                        } else if (num === 23) {
-                            let indexing = this.deeper23.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper23(data)
-                            }
-                        } else if (num === 3) {
-                            let indexing = this.deeper3.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper3(data)
-                            }
-                        } else if (num === 32) {
-                            let indexing = this.deeper32.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper32(data)
-                            }
-                        } else if (num === 33) {
-                            let indexing = this.deeper33.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper33(data)
-                            }
-                        } else if (num === 4) {
-                            let indexing = this.deeper4.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper4(data)
-                            }
-                        } else if (num === 5) {
-                            let indexing = this.deeper5.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper5(data)
-                            }
-                        } else if (num === 6) {
-                            let indexing = this.deeper6.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper6(data)
-                            }
-                        } else if (num === 7) {
-                            let indexing = this.deeper7.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper7(data)
-                            }
-                        } else if (num === 8) {
-                            let indexing = this.deeper8.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper8(data)
-                            }
-                        } else if (num === 9) {
-                            let indexing = this.deeper9.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper9(data)
-                            }
-                        } else if (num === 10) {
-                            let indexing = this.deepers.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeepers(data)
-                            }
-                        }
-                        // setTimeout(() => {
-                        //   window.scrollTo({
-                        //     top:(document.getElementById('sa'+ item.id)).offsetTop,
-                        //     behavior:'smooth'});
-                        // }, 10);
+                let exists = this.seed_artists_data.find(dt => dt.id === 'sa' + item.id)
+
+                let data = []
+                if (exists) {
+                    data = exists
+                }
+                if (!exists) {
+                    await axios.request({
+                        url: 'https://api.spotify.com/v1/recommendations?seed_artists=' + item['id'] + '&limit=50&offset=0&market=UA' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
+                        method: 'get',
+                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
-                    .catch()
+                        .then((response) => {
+                            data.tracks = response.data['tracks']
+                            data.type = 'seed_artists'
+                            data.id = 'sa' + item.id
+                            data.name = item.name
+                            this.seed_artists_data.push(data)
+                            // console.log(data)
+
+                            // setTimeout(() => {
+                            //   window.scrollTo({
+                            //     top:(document.getElementById('sa'+ item.id)).offsetTop,
+                            //     behavior:'smooth'});
+                            // }, 10);
+                        })
+                        .catch()
+                }
+                if (num === 1) {
+                    let indexing = this.deeper1.indexOf(data)
+                    if (indexing === -1) {
+                        // eslint-disable-next-line no-undef
+                        this.setDeeper1(data)
+                    }
+                } else if (num === 2) {
+                    let indexing = this.deeper2.indexOf(data)
+                    if (indexing === -1) {
+                        // eslint-disable-next-line no-undef
+                        this.setDeeper2(data)
+                    }
+                } else if (num === 22) {
+                    let indexing = this.deeper22.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper22(data)
+                    }
+                } else if (num === 23) {
+                    let indexing = this.deeper23.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper23(data)
+                    }
+                } else if (num === 3) {
+                    let indexing = this.deeper3.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper3(data)
+                    }
+                } else if (num === 32) {
+                    let indexing = this.deeper32.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper32(data)
+                    }
+                } else if (num === 33) {
+                    let indexing = this.deeper33.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper33(data)
+                    }
+                } else if (num === 4) {
+                    let indexing = this.deeper4.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper4(data)
+                    }
+                } else if (num === 5) {
+                    let indexing = this.deeper5.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper5(data)
+                    }
+                } else if (num === 6) {
+                    let indexing = this.deeper6.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper6(data)
+                    }
+                } else if (num === 7) {
+                    let indexing = this.deeper7.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper7(data)
+                    }
+                } else if (num === 8) {
+                    let indexing = this.deeper8.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper8(data)
+                    }
+                } else if (num === 9) {
+                    let indexing = this.deeper9.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper9(data)
+                    }
+                } else if (num === 10) {
+                    let indexing = this.deepers.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeepers(data)
+                    }
+                }
+                setTimeout(() => {
+                    document.getElementById('sa' + item.id).scrollIntoView({ behavior: "smooth"})
+                }, 100);
             },
             seedArtistM(payload) {
                 let item = payload.item,
@@ -4126,12 +4160,10 @@ export const useDMStore = defineStore('dm', {
                 } else if (num === 10) {
                     this.setDeepers(trackartist)
                 }
-                // setTimeout(() => {
-                //   window.scrollTo({
-                //     top:(document.getElementById('art'+ item.id)).offsetTop,
-                //     behavior:'smooth'});
-                // }, 10);
-                // console.log(trackartist)
+                setTimeout(() => {
+                    document.getElementById('art'+ item.id).scrollIntoView({ behavior: "smooth"})
+                }, 10);
+                console.log(trackartist)
             },
             deeperartistmob: async function (payload) {
                 let item = payload.item,
@@ -4700,6 +4732,16 @@ export const useDMStore = defineStore('dm', {
                     }
                 }
 
+                if (document.getElementById('alb'+ item.id)) {
+                    document.getElementById('alb'+ item.id).style.display = 'flex'
+                    // setTimeout(() => {
+                    //   window.scrollTo({
+                    //     top:(document.getElementById('sa'+ item.id)).offsetTop,
+                    //     behavior:'smooth'});
+                    // }, 10);
+                    return
+                }
+
                 // console.log(item.id)
                 if (!exists) {
                     axios.request({
@@ -4799,11 +4841,9 @@ export const useDMStore = defineStore('dm', {
                     }
                     console.log(this.deepers)
                 }
-                // setTimeout(() => {
-                //   window.scrollTo({
-                //     top:(document.getElementById('alb'+ item.id)).offsetTop,
-                //     behavior:'smooth'});
-                // }, 100);
+                setTimeout(() => {
+                    document.getElementById('alb'+ item.id).scrollIntoView({ behavior: "smooth"})
+                }, 100);
             },
             deeperAlbumMob(payload) {
                 let item = payload.item,
@@ -5535,6 +5575,9 @@ export const useDMStore = defineStore('dm', {
                 let audios = target.lastChild
                 if (this.audio_preview) {
                     audios.pause()
+                    if (this.restart_song_on_hover) {
+                        audios.currentTime = 0
+                    }
                 }
             },
             parentmouseOver: function (event) {
@@ -5553,6 +5596,9 @@ export const useDMStore = defineStore('dm', {
                 // console.log(audios)
                 if (audios && this.audio_preview) {
                     audios.pause()
+                    if (this.restart_song_on_hover) {
+                        audios.currentTime = 0
+                    }
                 }
             },
             // click: function (payload) {
@@ -5579,10 +5625,16 @@ export const useDMStore = defineStore('dm', {
                 let audios = target.firstChild.lastChild
                 if (this.currenttrack != null && this.currenttrack !== audios) {
                     this.currenttrack.pause()
+                    if (this.restart_song_on_hover) {
+                        this.currenttrack.currentTime = 0
+                    }
                 }
                 if (this.audio_preview) {
                     if (audios.paused === false) {
                         audios.pause()
+                        if (this.restart_song_on_hover) {
+                            audios.currentTime = 0
+                        }
                     } else
                         audios.play()
                     this.setCurrentTrack(audios)
@@ -5596,10 +5648,16 @@ export const useDMStore = defineStore('dm', {
                 // console.log(audios)
                 if (this.currenttrack != null && this.currenttrack !== audios) {
                     this.currenttrack.pause()
+                    if (this.restart_song_on_hover) {
+                        this.currenttrack.currentTime = 0
+                    }
                 }
                 if (this.audio_preview) {
                     if (audios.paused === false) {
                         audios.pause()
+                        if (this.restart_song_on_hover) {
+                            audios.currentTime = 0
+                        }
                     } else
                         audios.play()
                     this.setCurrentTrack(audios)
@@ -5612,10 +5670,16 @@ export const useDMStore = defineStore('dm', {
                 let audios = target.parentElement.firstChild.lastChild
                 if (this.currenttrack != null && this.currenttrack !== audios) {
                     this.currenttrack.pause()
+                    if (this.restart_song_on_hover) {
+                        this.currenttrack.currentTime = 0
+                    }
                 }
                 if (this.audio_preview) {
                     if (audios.paused === false) {
                         audios.pause()
+                        if (this.restart_song_on_hover) {
+                            audios.currentTime = 0
+                        }
                     } else
                         audios.play()
                     this.setCurrentTrack(audios)

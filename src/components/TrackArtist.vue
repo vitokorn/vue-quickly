@@ -127,6 +127,7 @@ function setActive(id) {
       <div v-if="ta.type==='related-artists' && ta.length > 0" v-bind:key="index" class="card2">
         <div v-for="(r,index) in ta" v-bind:key="index">
           <div v-if="r.preview_url && r.images[0]" tabindex="0" class="img-xs background-setting"
+               :class="selected===r.id ? 'selected' : ''"
                v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }"
                v-on:mouseover="store.mouseOver($event)"
                v-on:mouseleave="store.mouseLeave($event)"
@@ -134,16 +135,19 @@ function setActive(id) {
             <audio preload="auto" v-bind:src="r.preview_url"></audio>
           </div>
           <div v-else-if="!r.preview_url && r.images[0]" class="img-xs half-opacity"
+               :class="selected===r.id ? 'selected' : ''"
                v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }"
                v-on:click="setActive(r.id);store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
             <audio></audio>
           </div>
           <div v-else-if="r.preview_url && !r.images[0]" tabindex="0" class="img-xs"
+               :class="selected===r.id ? 'selected' : ''"
                v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)"
                v-on:click="setActive(r.id);store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
             <audio preload="auto" v-bind:src="r.preview_url"></audio>
           </div>
           <div v-else class="img-xs half-opacity"
+               :class="selected===r.id ? 'selected' : ''"
                v-on:click="setActive(r.id);store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
             <audio></audio>
           </div>
