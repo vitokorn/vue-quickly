@@ -3,11 +3,16 @@ import {Lists} from "../common/lists";
 import AlbumTrackList from "./AlbumTrackList.vue";
 import AlbumCover from "./AlbumCover.vue";
 import {useDMStore} from "../stores/dm-store";
+import {ref} from "vue";
 function lists(artists){
   return Lists.Ls(artists)
 }
 const props = defineProps(['d','num'])
 const store = useDMStore()
+const selected = ref()
+function setActive(id) {
+  selected.value = id
+}
 </script>
 <template>
     <div class="deep_albums card2" v-bind:id="'alb'+d.id" v-bind:key="index">
@@ -22,12 +27,12 @@ const store = useDMStore()
       <div class="trackList">TRACKS
         <template v-if="d.tracks.items">
           <div v-for="(track,index) in d.tracks.items" class="playable-search" style="color: var(--reset-color)" v-on:mouseover="store.parentmouseOver($event)" v-on:mouseleave="store.parentmouseLeave($event)" v-bind:key="index">
-            <album-track-list :d="d" :track="track" :num="num"></album-track-list>
+            <album-track-list :d="d"  :track="track" :num="num" :selected="selected" @set-active="setActive"></album-track-list>
           </div>
         </template>
         <template v-else>
           <div v-for="(track,index) in d.tracks" class="playable-search" style="color: var(--reset-color)" v-on:mouseover="store.parentmouseOver($event)" v-on:mouseleave="store.parentmouseLeave($event)" v-bind:key="index">
-            <album-track-list :d="d" :track="track" :num="num"></album-track-list>
+            <album-track-list :d="d" :track="track" :num="num" :selected="selected" @set-active="setActive"></album-track-list>
           </div>
         </template>
       </div>
