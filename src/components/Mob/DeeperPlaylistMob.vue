@@ -25,7 +25,7 @@ function lists(artists) {
       <div class="trackbody" v-for="(plitem,index) of d['tracks']['items']" v-bind:key="index">
         <div v-if="plitem.track && plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id"
              tabindex="0" class="con3"
-             v-on:click="store.deeperTracksM({item:plitem.track,num:num,flag:false,sib:'playlist',parent:item}),store.click({event:$event})"
+             v-on:click="store.deeperTracksM({item:plitem.track,num:num,flag:false,sib:'playlist',parent:item});store.click($event)"
              v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }">
           {{ lists(plitem['track']['artists']) }} - {{ plitem.track.name }}
           <audio preload="auto" v-bind:src="plitem.track.preview_url"></audio>
@@ -40,7 +40,7 @@ function lists(artists) {
         </div>
         <div v-else-if="plitem.track && plitem.track.preview_url && !plitem.track.album.images[0]"
              v-bind:id="plitem.track.id" tabindex="0" class="con3"
-             v-on:click="store.deeperTracksM({item:plitem.track,num:num,flag:false,sib:'playlist',parent:item}),store.click({event:$event})">
+             v-on:click="store.deeperTracksM({item:plitem.track,num:num,flag:false,sib:'playlist',parent:item});store.click($event)">
           {{ lists(plitem['track']['artists']) }} - {{ plitem.track.name }}
           <audio preload="auto" v-bind:src="plitem.track.preview_url"></audio>
         </div>

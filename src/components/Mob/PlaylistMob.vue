@@ -7,14 +7,14 @@ const store = useDMStore()
 <template>
   <div v-if="d.type==='pl'" v-bind:key="index" v-bind:id="'d'+d.id" class="card2 plls display-flex my-3">
     <div class="con3" v-if="d.preview_url && cover" v-bind:style="{ 'background-image': 'url(' + cover.url + ')' }"
-         v-on:click="store.click({event:$event})">{{ d.name }}
+         v-on:click="store.click($event)">{{ d.name }}
       <audio preload="auto" v-bind:src="d.preview_url"></audio>
     </div>
     <div class="con3 half-opacity" v-else-if="!d.preview_url && cover && store.unplayable_tracks"
          v-bind:style="{ 'background-image': 'url(' + cover.url + ')' }">{{ d.name }}
       <audio preload="none"></audio>
     </div>
-    <div class="con3" v-else-if="d.preview_url && !cover" v-on:click="store.click({event:$event})">{{ d.name }}
+    <div class="con3" v-else-if="d.preview_url && !cover" v-on:click="store.click($event)">{{ d.name }}
       <audio preload="auto" v-bind:src="d.preview_url"></audio>
     </div>
     <div class="con3 half-opacity" v-else-if="store.unplayable_tracks">{{ d.name }}
@@ -41,6 +41,7 @@ const store = useDMStore()
         <!--        <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">-->
       </div>
     </div>
+    <div style="width: 10%" @click="store.backToTop(d.parentId)">Back to top</div>
     <template v-for="(art,index) in d.artists">
       <div class="artist-cirle con3" v-if="d.preview_url && cover" v-bind:key="index"
            v-on:click="store.deeperartistmob({item:art,track:d,num:num,flag:false,sib:'plls',parent:item})"

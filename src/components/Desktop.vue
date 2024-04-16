@@ -125,7 +125,8 @@ window.addEventListener('resize', () => {
         <a v-on:click="store.switchTabs({event:$event});selectedTopMenu=8" id="spt"
            v-on:click.self.once="store.fetchSpotPlaylists({offset:0})">Spotify playlists</a>
       </li>
-      <li id="srch" class="srch"><a id="sear" style="padding: 15px;"><input type="search" class="inp pointer" v-model="search"
+      <li id="srch" class="srch"><a id="sear" style="padding: 15px;"><input type="search" class="inp pointer"
+                                                                            v-model="search"
                                                                             v-on:keyup="selectedTopMenu=9;store.search($event)"></a>
       </li>
     </ul>
@@ -156,7 +157,7 @@ window.addEventListener('resize', () => {
                 {{ item.description }}
                 <button class="button"><a class="linkresset" v-bind:href="item['external_urls']['spotify']"
                                           target="_blank">Open in Spotify</a></button>
-                </div>
+              </div>
               <div v-if="item.images[0]" class="con4 background-setting"
                    v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }"></div>
             </div>
@@ -174,7 +175,8 @@ window.addEventListener('resize', () => {
                       {{ lists(pl['track']['artists']) }} - {{ pl.track.name }}
                       <audio preload="auto" v-bind:src="pl.track.preview_url"></audio>
                     </div>
-                    <div v-else-if="pl.track.album.images[0] && !pl.track.preview_url && store.unplayable_tracks" tabindex="0"
+                    <div v-else-if="pl.track.album.images[0] && !pl.track.preview_url && store.unplayable_tracks"
+                         tabindex="0"
                          v-bind:key="'2'+ind" class="con3 half-opacity"
                          :class="selectedItem===pl.track.id ? 'selected' : ''"
                          v-bind:style="{ 'background-image': 'url(' + pl.track.album.images[0].url + ')' }"
@@ -192,7 +194,7 @@ window.addEventListener('resize', () => {
                     <div v-else-if="store.unplayable_tracks" v-bind:key="'4'+ind" class="con3 half-opacity"
                          :class="selectedItem===pl.track.id ? 'selected' : ''"
                          v-on:click="setSelectedItem(pl.track.id);store.prepare({num:1});store.deeper({item:pl,num:1,event:$event}); store.queuein(pl['track'])"
-                         >{{ lists(pl['track']['artists']) }} - {{ pl.track.name }}>
+                    >{{ lists(pl['track']['artists']) }} - {{ pl.track.name }}>
                     </div>
                   </template>
                 </template>
@@ -442,7 +444,7 @@ window.addEventListener('resize', () => {
             </div>
             <div v-else-if="store.unplayable_tracks" class="con3 half-opacity"
                  v-on:click="setSelectedItem(item.id);store.prepare({num:5});store.deeper({item:item,num:5,event:$event}); store.queuein(item.track)"
-                 >{{ lists(item.track.artists) }} - {{ item.track.name }}
+            >{{ lists(item.track.artists) }} - {{ item.track.name }}
             </div>
           </template>
           <rec-track :num="5"></rec-track>
@@ -556,12 +558,13 @@ window.addEventListener('resize', () => {
                     {{ lists(spl['track']['artists']) }} - {{ spl.track.name }}
                     <audio preload="auto" v-bind:src="spl.track.preview_url"></audio>
                   </div>
-                  <div v-bind:id="spl.track.id" v-else-if="!spl.track.preview_url && spl.track.album.images[0] && store.unplayable_tracks"
+                  <div v-bind:id="spl.track.id"
+                       v-else-if="!spl.track.preview_url && spl.track.album.images[0] && store.unplayable_tracks"
                        tabindex="0" v-bind:key="'2'+index" class="con3 half-opacity"
                        :class="selectedItem===item.id ? 'selected' : ''"
                        v-on:click="setSelectedItem(spl.track.id);store.prepare({num:9});store.deeper({item:spl,num:9,event:$event}); store.queuein(spl['track'])"
                        v-bind:style="{ 'background-image': 'url(' + spl.track.album.images[0].url + ')' }"
-                       >{{ lists(spl['track']['artists']) }} - {{ spl.track.name }}
+                  >{{ lists(spl['track']['artists']) }} - {{ spl.track.name }}
                     <audio preload="auto"></audio>
                   </div>
                   <div v-bind:id="spl.track.id" v-else-if="spl.track.preview_url && !spl.track.album.images[0]"
@@ -574,7 +577,7 @@ window.addEventListener('resize', () => {
                   <div v-bind:id="spl.track.id" v-else v-bind:key="'4'+index" class="con3 half-opacity"
                        :class="selectedItem===item.id ? 'selected' : ''"
                        v-on:click="setSelectedItem(spl.track.id);store.prepare({num:9});store.deeper({item:spl,num:9,event:$event}); store.queuein(spl['track'])"
-                       >{{ lists(spl['track']['artists']) }} - {{ spl.track.name }}>
+                  >{{ lists(spl['track']['artists']) }} - {{ spl.track.name }}>
                   </div>
                 </template>
               </template>
@@ -589,7 +592,7 @@ window.addEventListener('resize', () => {
     <div v-if="selectedTopMenu===9" id="search">
       <Loader v-if="store.loader"/>
       <div class="display-flex flex-wrap" style="height: auto;">
-        <div class="col-12" style="color:var(--search-color);font-size: 1.5em;">{{search}}</div>
+        <div class="col-12" style="color:var(--search-color);font-size: 1.5em;">{{ search }}</div>
         <div class="col-6">
           <div class="stitle">Songs</div>
           <div v-for="(item,index) in store.tracks" class="playable-search"

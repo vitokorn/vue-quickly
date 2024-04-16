@@ -16,7 +16,7 @@ const store = useDMStore()
       <template v-for="(s,index) in d.tracks">
         <div v-if="s.preview_url && s.album.images[0]" class="con3" v-bind:key="index"
              v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }"
-             v-on:click="store.click({event:$event});store.deeperTracksM({item:s,num:num,flag:false,sib:'seed_tracks',child:false,parent:item}); store.queuein(s)">
+             v-on:click="store.click($event);store.deeperTracksM({item:s,num:num,flag:false,sib:'seed_tracks',child:false,parent:item}); store.queuein(s)">
           {{Lists.Ls(d.artists)}} - {{ s.name }}
           <audio preload="auto" v-bind:src="s.preview_url"></audio>
         </div>
@@ -27,7 +27,7 @@ const store = useDMStore()
           <audio preload="none"></audio>
         </div>
         <div v-else-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="'3'+index"
-             v-on:click="store.click({event:$event});store.deeperTracksM({item:s,num:num,flag:false,sib:'seed_tracks',child:false,parent:item}); store.queuein(s)">
+             v-on:click="store.click($event);store.deeperTracksM({item:s,num:num,flag:false,sib:'seed_tracks',child:false,parent:item}); store.queuein(s)">
           {{Lists.Ls(d.artists)}} - {{ s.name }}
           <audio preload="auto" v-bind:src="s.preview_url"></audio>
         </div>
