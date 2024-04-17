@@ -57,6 +57,10 @@ function dab() {
                          >
             </PlaylistMob>
           </template>
+          <template v-else-if="num===8">
+            <PlaylistMob v-if="d.type==='pl'" :d=d.track :index="index" :num="num" :cover="d.track.album.images[0]">
+            </PlaylistMob>
+          </template>
           <template v-else>
             <PlaylistMob v-if="d.type==='pl'" :d=d :index="index" :num="num"
                          :cover="d.album.images[0]" >

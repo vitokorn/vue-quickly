@@ -5,7 +5,7 @@ import {useDMStore} from "../stores/dm-store";
 defineProps(['d', 'num'])
 const store = useDMStore()
 </script>
-<template v-bind:key="'dt2'+index">
+<template >
     <div class="playlisttrack card2 display-flex my-3" v-bind:id="'d'+d.id">
       <track-cover :d="d" :cover=d.images[0]></track-cover>
       <div class="text-left ms-2" style="width: 50%;">

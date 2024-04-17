@@ -15,7 +15,7 @@ function setActive(id) {
 }
 </script>
 <template>
-    <div class="deep_albums card2" v-bind:id="'alb'+d.id" v-bind:key="index">
+    <div class="deep_albums card2" v-bind:id="'alb'+d.id">
       <album-cover :d="d" :cover="d.images[0]"></album-cover>
       <div class="mx-2">
         <div class="mb-2 font-bold">{{d.name}}</div>

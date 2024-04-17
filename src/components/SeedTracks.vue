@@ -12,7 +12,7 @@ function setActive(id) {
 </script>
 
 <template>
-  <div class="seed_tracks card2" v-bind:key="'st'+index" v-bind:id="d.id">
+  <div class="seed_tracks card2" v-bind:id="d.id">
     <div>Recommended songs based on {{ d.name }}
       <button class="btn" v-on:click="store.reloadST({num:num,id:d.id,name:d.name })"><img
           class="refresh-end" src="../assets/refresh-icon.png" alt=""></button>

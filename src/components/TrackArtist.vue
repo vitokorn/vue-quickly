@@ -10,7 +10,7 @@ function setActive(id) {
 }
 </script>
 <template>
-  <div class="trackartist card2 text-left" style="gap: 16px;" v-bind:key="'ta'+index">
+  <div class="trackartist card2 text-left" style="gap: 16px;">
     <template v-for="(ta,index) in d">
       <div v-if="ta.type==='artist'" class="recartist card2 text-left" v-bind:id="'art'+ta.id" v-bind:key="index"
            style="width: 100%;gap: 16px;">

@@ -56,7 +56,7 @@ function dab() {
           <Playlist v-if="d.type==='pl'" :d=d :index="index" :num="num" :cover="d.images[0]">
           </Playlist>
         </template>
-        <template v-else-if="num===9">
+        <template v-else-if="num===8">
           <Playlist v-if="d.type==='pl'" :d=d.track :index="index" :num="num" :cover="d.track.album.images[0]">
           </Playlist>
         </template>

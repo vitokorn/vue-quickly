@@ -11,7 +11,7 @@ function lists(artists) {
 }
 </script>
 <template>
-  <div class="playlist card2" v-bind:key="'dp'+index" v-bind:id="'p' + d.id">
+  <div class="playlist card2" v-bind:id="'p' + d.id">
     <div class="con2">
       <div class="con4">{{ d.name }}</div>
       <button class="btn" v-on:click="store.reloader({num:num,event:$event})"><img class="refresh-end"
