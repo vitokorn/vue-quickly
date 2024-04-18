@@ -1,11 +1,15 @@
 <script setup>
 import {Lists} from "../common/lists";
 import {useDMStore} from "../stores/dm-store";
+import {ref} from "vue";
 
 defineProps(['d', 'num'])
 
 const store = useDMStore()
-
+const selected = ref()
+function setActive(id) {
+  selected.value = id
+}
 function lists(artists) {
   return Lists.Ls(artists)
 }
@@ -23,9 +27,10 @@ function lists(artists) {
            v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }"></div>
     </div>
     <div class="con2 display-flex" style="color: black">
-      <div class="trackbody" v-for="(plitem,index) of d['tracks']['items']" v-bind:key="index">
+      <div class="trackbody" v-for="(plitem,index) of d['tracks']['items']" v-bind:key="index" @click="setActive(plitem.track.id);">
         <div v-if="plitem.track && plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id"
              tabindex="0" class="con3"
+             :class="selected===plitem.track.id ? 'selected' : ''"
              v-on:click="store.deeperTracks({item:plitem.track,num:num,flag:false,sib:'playlist'})"
              v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)"
              v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }">
@@ -35,6 +40,7 @@ function lists(artists) {
         <div
             v-else-if="plitem.track && !plitem.track.preview_url && plitem.track.album.images[0] && store.unplayable_tracks"
             v-bind:id="plitem.track.id" tabindex="0" class="con3 half-opacity"
+            :class="selected===plitem.track.id ? 'selected' : ''"
             v-on:click="store.deeperTracks({item:plitem.track,num:num,flag:false,sib:'playlist'});"
             v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }">
           {{ lists(plitem['track']['artists']) }} - {{ plitem.track.name }}
@@ -42,6 +48,7 @@ function lists(artists) {
         </div>
         <div v-else-if="plitem.track && plitem.track.preview_url && !plitem.track.album.images[0]"
              v-bind:id="plitem.track.id" tabindex="0" class="con3"
+             :class="selected===plitem.track.id ? 'selected' : ''"
              v-on:click="store.deeperTracks({item:plitem.track,num:num,flag:false,sib:'playlist'})"
              v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)">
           {{ lists(plitem['track']['artists']) }} - {{ plitem.track.name }}
@@ -50,6 +57,7 @@ function lists(artists) {
         <div
             v-else-if="plitem.track && plitem.track && !plitem.track.preview_url && !plitem.track.album.images[0] && store.unplayable_tracks"
             tabindex="0" class="con3 half-opacity" v-bind:id="plitem.track.id"
+            :class="selected===plitem.track.id ? 'selected' : ''"
             v-on:click="store.deeperTracks({item:plitem.track,num:num,flag:false,sib:'playlist'});">
           {{ lists(plitem['track']['artists']) }} - {{ plitem.track.name }}
           <audio preload="none"></audio>

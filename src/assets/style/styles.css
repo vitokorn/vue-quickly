@@ -1046,3 +1046,6 @@ input[type=checkbox] {
 .display-flex {
     display: flex;
 }
+.text-center {
+    text-align: center;
+}

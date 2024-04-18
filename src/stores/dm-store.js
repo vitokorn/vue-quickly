@@ -51,7 +51,7 @@ export const useDMStore = defineStore('dm', {
             currenttrack: null,
             loader: false,
             selectedArtistsRange: 1,
-            selectedTracksRange:1,
+            selectedTracksRange: 1,
             queueModal: false,
             unplayable_tracks: true,
             audio_preview: true,
@@ -64,49 +64,49 @@ export const useDMStore = defineStore('dm', {
             seed_tracks_data: []
         }),
         getters: {
-            getDeeper1:  (state) => state.deeper1,
-            getDeeper2:  (state) => state.deeper2,
-            getDeeper22:  (state) => state.deeper22,
-            getDeeper23:  (state) => state.deeper23,
-            getDeeper3:  (state) => state.deeper3,
-            getDeeper32:  (state) => state.deeper32,
-            getDeeper33:  (state) => state.deeper33,
-            getDeeper4:  (state) => state.deeper4,
-            getDeeper5:  (state) => state.deeper5,
-            getDeeper6:  (state) => state.deeper6,
-            getDeeper7:  (state) => state.deeper7,
-            getDeeper8:  (state) => state.deeper8,
-            getDeeper9:  (state) => state.deeper9,
-            getDeepers:  (state) => state.deepers,
-            getQueue:  (state) => state.queue,
-            getQueueArr:  (state) => state.queuearr,
-            getListPlaylists:  (state) => state.listplaylists,
-            getPlayinfo:  (state) => state.playinfo,
-            getPlaylists:  (state) => state.playlists,
-            getTopArtist:  (state) => state.topartist,
-            getTopArtist6:  (state) => state.topartist6,
-            getTopArtista:  (state) => state.topartista,
-            getTaactivetab:  (state) => state.taactivetab,
-            getTtactivetab:  (state) => state.ttactivetab,
-            getSavedAlbums:  (state) => state.savedalbums,
-            getSavedTracks:  (state) => state.savedtracks,
-            getNewReleases:  (state) => state.newreleases,
-            getFollowedArtists:  (state) => state.followedartists,
-            getItems:  (state) => state.items,
-            getItemsM:  (state) => state.itemsm,
-            getItemsL:  (state) => state.itemsl,
-            getSpotPlaylists:  (state) => state.spotplaylists,
-            getSptInfo:  (state) => state.sptinfo,
-            getSptPlaylists:  (state) => state.sptplaylists,
-            getAlbums:  (state) => state.albums,
-            getArtists:  (state) => state.artists,
-            getTracks:  (state) => state.tracks,
-            getSPlaylists:  (state) => state.splaylists,
-            getCurrentPl:  (state) => state.currentpl,
-            getCurrentSPl:  (state) => state.currentspl,
-            getSearchTimer:  (state) => state.searchtimer,
-            getCurrentTrack:  (state) => state.currenttrack,
-            getLoader:  (state) => state.loader,
+            getDeeper1: (state) => state.deeper1,
+            getDeeper2: (state) => state.deeper2,
+            getDeeper22: (state) => state.deeper22,
+            getDeeper23: (state) => state.deeper23,
+            getDeeper3: (state) => state.deeper3,
+            getDeeper32: (state) => state.deeper32,
+            getDeeper33: (state) => state.deeper33,
+            getDeeper4: (state) => state.deeper4,
+            getDeeper5: (state) => state.deeper5,
+            getDeeper6: (state) => state.deeper6,
+            getDeeper7: (state) => state.deeper7,
+            getDeeper8: (state) => state.deeper8,
+            getDeeper9: (state) => state.deeper9,
+            getDeepers: (state) => state.deepers,
+            getQueue: (state) => state.queue,
+            getQueueArr: (state) => state.queuearr,
+            getListPlaylists: (state) => state.listplaylists,
+            getPlayinfo: (state) => state.playinfo,
+            getPlaylists: (state) => state.playlists,
+            getTopArtist: (state) => state.topartist,
+            getTopArtist6: (state) => state.topartist6,
+            getTopArtista: (state) => state.topartista,
+            getTaactivetab: (state) => state.taactivetab,
+            getTtactivetab: (state) => state.ttactivetab,
+            getSavedAlbums: (state) => state.savedalbums,
+            getSavedTracks: (state) => state.savedtracks,
+            getNewReleases: (state) => state.newreleases,
+            getFollowedArtists: (state) => state.followedartists,
+            getItems: (state) => state.items,
+            getItemsM: (state) => state.itemsm,
+            getItemsL: (state) => state.itemsl,
+            getSpotPlaylists: (state) => state.spotplaylists,
+            getSptInfo: (state) => state.sptinfo,
+            getSptPlaylists: (state) => state.sptplaylists,
+            getAlbums: (state) => state.albums,
+            getArtists: (state) => state.artists,
+            getTracks: (state) => state.tracks,
+            getSPlaylists: (state) => state.splaylists,
+            getCurrentPl: (state) => state.currentpl,
+            getCurrentSPl: (state) => state.currentspl,
+            getSearchTimer: (state) => state.searchtimer,
+            getCurrentTrack: (state) => state.currenttrack,
+            getLoader: (state) => state.loader,
         },
         actions: {
             setDeeper1(deeper1) {
@@ -162,8 +162,8 @@ export const useDMStore = defineStore('dm', {
                 if (empty) {
                     this.listplaylists = []
                 } else if (value) {
-                        this.listplaylists.push(...value);
-                    }
+                    this.listplaylists.push(...value);
+                }
             },
             setPlayInfo(playinfo) {
                 this.playinfo.push(playinfo);
@@ -231,17 +231,17 @@ export const useDMStore = defineStore('dm', {
             setSPlaylists(splaylists) {
                 this.splaylists = splaylists
             },
-            setCurrentPl(currentpl) {
-                this.currentpl = currentpl
+            setCurrentPl(currentPl) {
+                this.currentpl = currentPl
             },
-            setCurrentSPl(currentspl) {
-                this.currentspl = currentspl
+            setCurrentSPl(currentSPl) {
+                this.currentspl = currentSPl
             },
             setSearchTimer(searchtimer) {
                 this.searchtimer = searchtimer
             },
-            setCurrentTrack(currenttrack) {
-                this.currenttrack = currenttrack
+            setCurrentTrack(currentTrack) {
+                this.currenttrack = currentTrack
             },
             click(event) {
                 let target = event.target
@@ -278,7 +278,7 @@ export const useDMStore = defineStore('dm', {
                     this.deepers.push(item)
                 }
                 setTimeout(() => {
-                    document.getElementById('p' + item.id).scrollIntoView({ behavior: "smooth"})
+                    document.getElementById('p' + item.id).scrollIntoView({behavior: "smooth"})
                 }, 10);
             },
             playlM(payload) {
@@ -299,7 +299,7 @@ export const useDMStore = defineStore('dm', {
                     this.deepers.push(item)
                 }
                 setTimeout(() => {
-                    document.getElementById('p' + item.id).scrollIntoView({ behavior: "smooth"})
+                    document.getElementById('p' + item.id).scrollIntoView({behavior: "smooth"})
                 }, 10);
             },
             async deeper(payload) {
@@ -366,63 +366,63 @@ export const useDMStore = defineStore('dm', {
                         })
                 }
                 if (num === 1) {
-                    let indexing = this.deeper1.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper1.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper1(tracktrack)
                     }
                 } else if (num === 2) {
-                    let indexing = this.deeper2.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper2.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper2(tracktrack)
                     }
                     // console.log(tracktrack)
                     // console.log(this.deeper2)
                 } else if (num === 22) {
-                    let indexing = this.deeper22.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper22.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper22(tracktrack)
                     }
                     // console.log(tracktrack)
                     // console.log(this.deeper22)
                 } else if (num === 23) {
-                    let indexing = this.deeper23.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper23.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper23(tracktrack)
                     }
                     // console.log(tracktrack)
                     // console.log(this.deeper23)
                 } else if (num === 3) {
-                    let indexing = this.deeper3.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper3.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper3(tracktrack)
                     }
                     // console.log(tracktrack)
                     // console.log(this.deeper3)
                 } else if (num === 32) {
-                    let indexing = this.deeper32.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper32.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper32(tracktrack)
                     }
                     // console.log(tracktrack)
                     // console.log(this.deeper32)
                 } else if (num === 33) {
-                    let indexing = this.deeper33.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper33.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper33(tracktrack)
                     }
                     // console.log(tracktrack)
                     // console.log(this.deeper33)
                 } else if (num === 4) {
-                    let indexing = this.deeper4.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper4.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper4(tracktrack)
                     }
                     // console.log(tracktrack)
                     // console.log(this.deeper4)
                 } else if (num === 5) {
                     // console.log(item.track)
-                    let indexing = this.deeper5.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper5.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper5(tracktrack)
                     }
                     // setTimeout(() => {
@@ -432,22 +432,22 @@ export const useDMStore = defineStore('dm', {
                     // }, 10);
                     // console.log(this.deeper5)
                 } else if (num === 6) {
-                    let indexing = this.deeper6.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper6.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper6(tracktrack)
                     }
                     // console.log(tracktrack)
                     // console.log(this.deeper6)
                 } else if (num === 7) {
                     tracktrack.preview_url = item.tracks.items[0].preview_url
-                    let indexing = this.deeper7.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper7.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper7(tracktrack)
                     }
                     // console.log(this.deeper7)
                 } else if (num === 8) {
-                    let indexing = this.deeper8.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper8.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper8(tracktrack)
                     }
                     // console.log(tracktrack)
@@ -455,14 +455,14 @@ export const useDMStore = defineStore('dm', {
                 } else if (num === 9) {
 
                     let indexing = this.deeper9.indexOf(tt)
-                    if (indexing === -1) {
+                    if (!indexing) {
                         this.setDeeper9(tracktrack)
                     }
                     // console.log(tt)
                     // console.log(this.deeper9)
                 } else if (num === 10) {
-                    let indexing = this.deepers.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deepers.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeepers(tracktrack)
                     }
                     // console.log(this.deepers)
@@ -475,7 +475,7 @@ export const useDMStore = defineStore('dm', {
                     // }, 10);
                 }
                 setTimeout(() => {
-                    document.getElementById('d'+ tracktrack.id).scrollIntoView({ behavior: "smooth"})
+                    document.getElementById('d' + tracktrack.id).scrollIntoView({behavior: "smooth"})
                 }, 10);
 
             },
@@ -545,63 +545,63 @@ export const useDMStore = defineStore('dm', {
                         })
                 }
                 if (num === 1) {
-                    let indexing = this.deeper1.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper1.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper1(tracktrack)
                     }
                 } else if (num === 2) {
-                    let indexing = this.deeper2.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper2.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper2(tracktrack)
                     }
                     // console.log(tracktrack)
                     // console.log(this.deeper2)
                 } else if (num === 22) {
-                    let indexing = this.deeper22.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper22.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper22(tracktrack)
                     }
                     // console.log(tracktrack)
                     // console.log(this.deeper22)
                 } else if (num === 23) {
-                    let indexing = this.deeper23.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper23.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper23(tracktrack)
                     }
                     // console.log(tracktrack)
                     // console.log(this.deeper23)
                 } else if (num === 3) {
-                    let indexing = this.deeper3.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper3.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper3(tracktrack)
                     }
                     // console.log(tracktrack)
                     // console.log(this.deeper3)
                 } else if (num === 32) {
-                    let indexing = this.deeper32.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper32.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper32(tracktrack)
                     }
                     // console.log(tracktrack)
                     // console.log(this.deeper32)
                 } else if (num === 33) {
-                    let indexing = this.deeper33.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper33.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper33(tracktrack)
                     }
                     // console.log(tracktrack)
                     // console.log(this.deeper33)
                 } else if (num === 4) {
-                    let indexing = this.deeper4.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper4.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper4(tracktrack)
                     }
                     // console.log(tracktrack)
                     // console.log(this.deeper4)
                 } else if (num === 5) {
                     // console.log(item.track)
-                    let indexing = this.deeper5.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper5.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper5(tracktrack)
                     }
                     // setTimeout(() => {
@@ -611,22 +611,22 @@ export const useDMStore = defineStore('dm', {
                     // }, 10);
                     // console.log(this.deeper5)
                 } else if (num === 6) {
-                    let indexing = this.deeper6.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper6.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper6(tracktrack)
                     }
                     // console.log(tracktrack)
                     // console.log(this.deeper6)
                 } else if (num === 7) {
                     tracktrack.preview_url = item.tracks.items[0].preview_url
-                    let indexing = this.deeper7.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper7.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper7(tracktrack)
                     }
                     // console.log(this.deeper7)
                 } else if (num === 8) {
-                    let indexing = this.deeper8.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper8.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper8(tracktrack)
                     }
                     // console.log(tracktrack)
@@ -634,14 +634,14 @@ export const useDMStore = defineStore('dm', {
                 } else if (num === 9) {
 
                     let indexing = this.deeper9.indexOf(tt)
-                    if (indexing === -1) {
+                    if (!indexing) {
                         this.setDeeper9(tracktrack)
                     }
                     // console.log(tt)
                     // console.log(this.deeper9)
                 } else if (num === 10) {
-                    let indexing = this.deepers.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deepers.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeepers(tracktrack)
                     }
                     // console.log(this.deepers)
@@ -654,7 +654,7 @@ export const useDMStore = defineStore('dm', {
                     // }, 10);
                 }
                 setTimeout(() => {
-                    document.getElementById('d'+ tracktrack.id).scrollIntoView({ behavior: "smooth"})
+                    document.getElementById('d' + tracktrack.id).scrollIntoView({behavior: "smooth"})
                 }, 10);
             },
             fetchPlaylists(payload) {
@@ -671,8 +671,8 @@ export const useDMStore = defineStore('dm', {
                         if (response.data['items'].length > 0) {
                             this.setListPlaylists(event.offset += 50)
                         }
-                        if (response.data['items'].length > 49 ) {
-                            this.fetchPlaylists({event:event,offset:offset+=50})
+                        if (response.data['items'].length > 49) {
+                            this.fetchPlaylists({event: event, offset: offset += 50})
                         }
                         this.loader = false
                     })
@@ -693,30 +693,12 @@ export const useDMStore = defineStore('dm', {
                 let event = payload.event
                 // console.log('167 '  + event.currentTarget.id)
                 let id = event.currentTarget.id
-                let allTracks = document.querySelectorAll("#yourplaylists > .rectrack > div");
-                if (allTracks != null) {
-                    for (let i = 0; i < allTracks.length; i++) {
-                        allTracks[i].style.display = 'none'
-                    }
-                }
-                let pl = document.querySelectorAll('#yourplaylists > div:not(.rectrack,.pl,.rel)')
-                for (let i = 0; i < pl.length; i++) {
-                    pl[i].style.display = 'none'
-
-                }
                 if (document.getElementById('p' + id)) {
                     // console.log(document.getElementById('p'+ id))
                     document.getElementById('p' + id).style.display = 'block'
                     // console.log(this.currentpl)
                     // this.commit('setCurrentPl',document.getElementById(id))
-                    if (this.currentpl) {
-                        this.currentpl.className = 'hr-line-dashed'
-                        this.setCurrentPl(document.getElementById(id))
-                        this.currentpl.className = 'hr-line-dashed activetab'
-                    } else {
-                        this.setCurrentPl(document.getElementById(id))
-                        this.currentpl.className = 'hr-line-dashed activetab'
-                    }
+
                     // setTimeout(() => {
                     //   window.scrollTo({
                     //     top:(document.getElementById('p'+ id)).offsetTop,
@@ -724,16 +706,23 @@ export const useDMStore = defineStore('dm', {
                     // },10)
                     return
                 }
-                axios.request({
-                    url: 'https://api.spotify.com/v1/playlists/' + id,
-                    method: 'get',
-                    headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
-                })
-                    .then((response) => {
-                        // console.log(response.data)
-                        let data = response.data
-                        this.setPlaylists2(data)
+                let exists = this.playlists.find(dt => dt.id === id)
+                if (!exists) {
+                    axios.request({
+                        url: 'https://api.spotify.com/v1/playlists/' + id,
+                        method: 'get',
+                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
+                        .then((response) => {
+                            // console.log(response.data)
+                            let data = response.data
+                            console.log(data)
+                            this.setCurrentPl(data)
+                            this.setPlaylists2(data)
+                        })
+                } else {
+                    this.setCurrentPl(exists)
+                }
             },
             fetchArtist(payload) {
                 let event = payload.event
@@ -1263,8 +1252,8 @@ export const useDMStore = defineStore('dm', {
                 })
                     .then((response) => {
                         this.setSpotPlaylists(response.data['items'])
-                        if (response.data['items'].length > 0){
-                          this.fetchSpotPlaylists(offset+=50)
+                        if (response.data['items'].length > 0) {
+                            this.fetchSpotPlaylists(offset += 50)
                         }
                     })
                     .catch(error => {
@@ -1296,14 +1285,6 @@ export const useDMStore = defineStore('dm', {
                 }
                 if (document.getElementById('s' + id)) {
                     document.getElementById('s' + id).style.display = 'block'
-                    if (this.currentspl) {
-                        this.currentspl.className = 'hr-line-dashed'
-                        this.setCurrentSPl(document.getElementById(id))
-                        this.currentspl.className = 'hr-line-dashed activetab'
-                    } else {
-                        this.setCurrentSPl(document.getElementById(id))
-                        this.currentspl.className = 'hr-line-dashed activetab'
-                    }
                     // setTimeout(() => {
                     //   window.scrollTo({
                     //     top:(document.getElementById('s'+ id)).offsetTop,
@@ -1329,14 +1310,6 @@ export const useDMStore = defineStore('dm', {
                         //     .then((response) =>{
                         //       data.followed = response.data[0]
                         //       this.sptplaylists.push(data)
-                        //       if (this.currentspl){
-                        //         this.currentspl.className = 'hr-line-dashed'
-                        //         this.currentspl = document.getElementById(id)
-                        //         this.currentspl.className = 'hr-line-dashed activetab'
-                        //       } else {
-                        //         this.currentspl = document.getElementById(id)
-                        //         this.currentspl.className = 'hr-line-dashed activetab'
-                        //       }
                         //     })
 
 
@@ -1654,14 +1627,14 @@ export const useDMStore = defineStore('dm', {
                 let event = payload.event
                 let target = event.target
                 target.className = 'refresh-start'
-                this.setListPlaylists([],true)
+                this.setListPlaylists([], true)
                 this.setPlaylists([])
                 let div = "<div id='reloader' class='loading waitingForConnection'>Reloading<span>.</span><span>.</span><span>.</span></div>"
                 document.querySelector('#yourplaylists').insertAdjacentHTML("afterbegin", div)
                 setTimeout(() => {
                     let ne = {}
                     ne.target = document.getElementById('playlistlist')
-                    this.fetchPlaylists({event:ne, offset:0})
+                    this.fetchPlaylists({event: ne, offset: 0})
                     document.getElementById("reloader").remove()
                     target.className = 'refresh-end'
                 }, 1000)
@@ -2195,7 +2168,7 @@ export const useDMStore = defineStore('dm', {
                     pointer = 'newrelease'
                 } else if (num === 8) {
                     pointer = 'sptplaylists'
-                } else if (num === 9) {
+                } else if (num === 10) {
                     pointer = 'search'
                 }
                 // console.log(item)
@@ -2245,101 +2218,101 @@ export const useDMStore = defineStore('dm', {
                     data = exists
                 }
                 if (!exists) {
-                await axios.request({
-                    url: 'https://api.spotify.com/v1/recommendations?seed_tracks=' + item['id'] + '&limit=50&offset=0&market=UA' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
-                    method: 'get',
-                    headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
-                })
-                    .then((response) => {
-
-                        // console.log(response.data['tracks'])
-                        data.tracks = response.data['tracks']
-                        data.type = 'seed_tracks'
-                        data.id = 'st' + item.id
-                        data.name = item.name
-                        data.artists = item.artists
-                        this.seed_tracks_data.push(data)
-                        // console.log(data)
-
-
+                    await axios.request({
+                        url: 'https://api.spotify.com/v1/recommendations?seed_tracks=' + item['id'] + '&limit=50&offset=0&market=UA' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
+                        method: 'get',
+                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
-                    .catch()
+                        .then((response) => {
+
+                            // console.log(response.data['tracks'])
+                            data.tracks = response.data['tracks']
+                            data.type = 'seed_tracks'
+                            data.id = 'st' + item.id
+                            data.name = item.name
+                            data.artists = item.artists
+                            this.seed_tracks_data.push(data)
+                            // console.log(data)
+
+
+                        })
+                        .catch()
                 }
                 if (num === 1) {
-                    let indexing = this.deeper1.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper1.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         // eslint-disable-next-line no-undef
                         this.setDeeper1(data)
                     }
                 } else if (num === 2) {
-                    let indexing = this.deeper2.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper2.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         // eslint-disable-next-line no-undef
                         this.setDeeper2(data)
                     }
                 } else if (num === 22) {
-                    let indexing = this.deeper22.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper22.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         this.setDeeper22(data)
                     }
                 } else if (num === 23) {
-                    let indexing = this.deeper23.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper23.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         this.setDeeper23(data)
                     }
                 } else if (num === 3) {
-                    let indexing = this.deeper3.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper3.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         this.setDeeper3(data)
                     }
                 } else if (num === 32) {
-                    let indexing = this.deeper32.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper32.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         this.setDeeper32(data)
                     }
                 } else if (num === 33) {
-                    let indexing = this.deeper33.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper33.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         this.setDeeper33(data)
                     }
                 } else if (num === 4) {
-                    let indexing = this.deeper4.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper4.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         this.setDeeper4(data)
                     }
                 } else if (num === 5) {
-                    let indexing = this.deeper5.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper5.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         this.setDeeper5(data)
                     }
                 } else if (num === 6) {
-                    let indexing = this.deeper6.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper6.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         this.setDeeper6(data)
                     }
                 } else if (num === 7) {
-                    let indexing = this.deeper7.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper7.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         this.setDeeper7(data)
                     }
                 } else if (num === 8) {
-                    let indexing = this.deeper8.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper8.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         this.setDeeper8(data)
                     }
                 } else if (num === 9) {
-                    let indexing = this.deeper9.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper9.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         this.setDeeper9(data)
                     }
                 } else if (num === 10) {
-                    let indexing = this.deepers.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deepers.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         this.setDeepers(data)
                     }
                 }
                 setTimeout(() => {
-                    document.getElementById('st' + item.id).scrollIntoView({ behavior: "smooth"})
+                    document.getElementById('st' + item.id).scrollIntoView({behavior: "smooth"})
                 }, 100);
             },
             async seedTracksM(payload) {
@@ -2373,7 +2346,7 @@ export const useDMStore = defineStore('dm', {
                     pointer = 'newrelease'
                 } else if (num === 8) {
                     pointer = 'sptplaylists'
-                } else if (num === 9) {
+                } else if (num === 10) {
                     pointer = 'search'
                 }
                 // console.log(item)
@@ -2445,75 +2418,75 @@ export const useDMStore = defineStore('dm', {
                         .catch()
                 }
                 if (num === 1) {
-                    let indexing = this.deeper1.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper1.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         // eslint-disable-next-line no-undef
                         this.setDeeper1(data)
                     }
                 } else if (num === 2) {
-                    let indexing = this.deeper2.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper2.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         // eslint-disable-next-line no-undef
                         this.setDeeper2(data)
                     }
                 } else if (num === 22) {
-                    let indexing = this.deeper22.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper22.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         this.setDeeper22(data)
                     }
                 } else if (num === 23) {
-                    let indexing = this.deeper23.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper23.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         this.setDeeper23(data)
                     }
                 } else if (num === 3) {
-                    let indexing = this.deeper3.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper3.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         this.setDeeper3(data)
                     }
                 } else if (num === 32) {
-                    let indexing = this.deeper32.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper32.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         this.setDeeper32(data)
                     }
                 } else if (num === 33) {
-                    let indexing = this.deeper33.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper33.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         this.setDeeper33(data)
                     }
                 } else if (num === 4) {
-                    let indexing = this.deeper4.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper4.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         this.setDeeper4(data)
                     }
                 } else if (num === 5) {
-                    let indexing = this.deeper5.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper5.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         this.setDeeper5(data)
                     }
                 } else if (num === 6) {
-                    let indexing = this.deeper6.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper6.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         this.setDeeper6(data)
                     }
                 } else if (num === 7) {
-                    let indexing = this.deeper7.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper7.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         this.setDeeper7(data)
                     }
                 } else if (num === 8) {
-                    let indexing = this.deeper8.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper8.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         this.setDeeper8(data)
                     }
                 } else if (num === 9) {
-                    let indexing = this.deeper9.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deeper9.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         this.setDeeper9(data)
                     }
                 } else if (num === 10) {
-                    let indexing = this.deepers.indexOf(data)
-                    if (indexing === -1) {
+                    let indexing = this.deepers.find(dt => dt.id === data.id)
+                    if (!indexing) {
                         this.setDeepers(data)
                     }
                 }
@@ -2529,6 +2502,7 @@ export const useDMStore = defineStore('dm', {
                     child = payload.child,
                     pointer
                 item.type = 'deepertracks'
+                let exists = this.tracks_data.find(dt => dt.id === item.id)
                 // console.log(item)
                 // console.log(flag)
                 // console.log(sib)
@@ -2556,8 +2530,14 @@ export const useDMStore = defineStore('dm', {
                     pointer = 'newrelease'
                 } else if (num === 8) {
                     pointer = 'sptplaylists'
-                } else if (num === 9) {
+                } else if (num === 10) {
                     pointer = 'search'
+                }
+                if (exists) {
+                    item = exists
+                } else {
+                    let clone = structuredClone(toRaw(item));
+                    this.tracks_data.push(clone)
                 }
                 let all = document.querySelectorAll('#' + pointer + '> .rectrack > div')
                 if (child) {
@@ -2587,14 +2567,6 @@ export const useDMStore = defineStore('dm', {
                         }
 
                     }
-                    let newall = Array.from(all)
-                    let track = newall.indexOf(document.getElementById('d' + item.id))
-                    let album = newall.indexOf(alltop[alltop.length - 1])
-                    // console.log(track)
-                    if (track !== -1 && track < album) {
-                        alltop[alltop.length - 1].insertAdjacentElement('afterend', document.getElementById('d' + item.id));
-                        // all.parentNode.insertBefore(newall[album],newall[track])
-                    }
                 } else if (flag === true) {
                     if (all.length !== 0 && all.length !== 0) {
                         for (let i = 0; i < all.length; i++) {
@@ -2611,100 +2583,102 @@ export const useDMStore = defineStore('dm', {
                     // }, 10);
                     return
                 }
-                axios.request({
-                    url: 'https://api.spotify.com/v1/me/tracks/contains?ids=' + item.id,
-                    method: 'get',
-                    headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
-                })
-                    .then((response) => {
-                        item.followed = response.data[0]
+                if (!exists) {
+                    axios.request({
+                        url: 'https://api.spotify.com/v1/me/tracks/contains?ids=' + item.id,
+                        method: 'get',
+                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
-                    .catch(error => {
-                        if (error.response.status === 401) {
-                            axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) => {
-                                // console.log(response.data)
-                                if (response.status === 200) {
-                                    this.deeperTracks(pointer, item, num, flag, sib, child)
-                                }
-                            })
-                        }
-                    })
+                        .then((response) => {
+                            item.followed = response.data[0]
+                        })
+                        .catch(error => {
+                            if (error.response.status === 401) {
+                                axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) => {
+                                    // console.log(response.data)
+                                    if (response.status === 200) {
+                                        this.deeperTracks(pointer, item, num, flag, sib, child)
+                                    }
+                                })
+                            }
+                        })
+                }
                 if (num === 1) {
-                    let indexing = this.deeper1.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper1.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         // eslint-disable-next-line no-undef
                         this.setDeeper1(item)
                     }
                 } else if (num === 2) {
-                    let indexing = this.deeper2.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper2.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         // eslint-disable-next-line no-undef
                         this.setDeeper2(item)
                     }
                 } else if (num === 22) {
-                    let indexing = this.deeper22.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper22.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper22(item)
                     }
                 } else if (num === 23) {
-                    let indexing = this.deeper23.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper23.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper23(item)
                     }
                 } else if (num === 3) {
-                    let indexing = this.deeper3.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper3.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper3(item)
                     }
                 } else if (num === 32) {
-                    let indexing = this.deeper32.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper32.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper32(item)
                     }
                 } else if (num === 33) {
-                    let indexing = this.deeper33.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper33.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper33(item)
                     }
                 } else if (num === 4) {
-                    let indexing = this.deeper4.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper4.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper4(item)
                     }
                 } else if (num === 5) {
-                    let indexing = this.deeper5.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper5.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper5(item)
                     }
                 } else if (num === 6) {
-                    let indexing = this.deeper6.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper6.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper6(item)
                     }
                 } else if (num === 7) {
-                    let indexing = this.deeper7.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper7.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper7(item)
                     }
                 } else if (num === 8) {
-                    let indexing = this.deeper8.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper8.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper8(item)
                     }
                 } else if (num === 9) {
-                    let indexing = this.deeper9.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper9.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper9(item)
                     }
                 } else if (num === 10) {
-                    let indexing = this.deepers.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deepers.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeepers(item)
                     }
                 }
 
                 setTimeout(() => {
-                    document.getElementById('d' + item.id).scrollIntoView({ behavior: "smooth"})
+                    document.getElementById('d' + item.id).scrollIntoView({behavior: "smooth"})
                 }, 10);
             },
             deeperTracks2(payload) {
@@ -2715,6 +2689,7 @@ export const useDMStore = defineStore('dm', {
                     // flag = payload.flag,
                     sib = payload.sib,
                     child = payload.child
+                let exists = this.tracks_data.find(dt => dt.id === item.id)
                 if (num === 1) {
                     pointer = 'yourplaylists'
                 } else if (num === 2) {
@@ -2739,7 +2714,7 @@ export const useDMStore = defineStore('dm', {
                     pointer = 'newrelease'
                 } else if (num === 8) {
                     pointer = 'sptplaylists'
-                } else if (num === 9) {
+                } else if (num === 10) {
                     pointer = 'search'
                 }
                 item.images = d.images
@@ -2775,14 +2750,6 @@ export const useDMStore = defineStore('dm', {
                         }
 
                     }
-                    let newall = Array.from(all)
-                    let track = newall.indexOf(document.getElementById('d' + item.id))
-                    let album = newall.indexOf(alltop[alltop.length - 1])
-                    // console.log(track)
-                    if (track !== -1 && track < album) {
-                        alltop[alltop.length - 1].insertAdjacentElement('afterend', document.getElementById('d' + item.id));
-                        // all.parentNode.insertBefore(newall[album],newall[track])
-                    }
                 }
                 if (document.getElementById('d' + item.id)) {
                     document.getElementById('d' + item.id).style.display = 'flex'
@@ -2793,82 +2760,90 @@ export const useDMStore = defineStore('dm', {
                     // }, 10);
                     return
                 }
+
+                if (exists) {
+                    item = exists
+                } else {
+                    let clone = structuredClone(toRaw(item));
+                    this.tracks_data.push(clone)
+                }
+
                 if (num === 1) {
-                    let indexing = this.deeper1.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper1.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         // eslint-disable-next-line no-undef
                         this.setDeeper1(item)
                     }
                 } else if (num === 2) {
-                    let indexing = this.deeper2.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper2.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         // eslint-disable-next-line no-undef
                         this.setDeeper2(item)
                     }
                 } else if (num === 22) {
-                    let indexing = this.deeper22.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper22.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper22(item)
                     }
                 } else if (num === 23) {
-                    let indexing = this.deeper23.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper23.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper23(item)
                     }
                 } else if (num === 3) {
-                    let indexing = this.deeper3.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper3.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper3(item)
                     }
                 } else if (num === 32) {
-                    let indexing = this.deeper32.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper32.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper32(item)
                     }
                 } else if (num === 33) {
-                    let indexing = this.deeper33.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper33.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper33(item)
                     }
                 } else if (num === 4) {
-                    let indexing = this.deeper4.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper4.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper4(item)
                     }
                 } else if (num === 5) {
-                    let indexing = this.deeper5.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper5.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper5(item)
                     }
                 } else if (num === 6) {
-                    let indexing = this.deeper6.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper6.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper6(item)
                     }
                 } else if (num === 7) {
-                    let indexing = this.deeper7.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper7.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper7(item)
                     }
                 } else if (num === 8) {
-                    let indexing = this.deeper8.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper8.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper8(item)
                     }
                 } else if (num === 9) {
-                    let indexing = this.deeper9.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper9.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper9(item)
                     }
                 } else if (num === 10) {
-                    let indexing = this.deepers.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deepers.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeepers(item)
                     }
                 }
 
                 setTimeout(() => {
-                    document.getElementById('d' + item.id).scrollIntoView({ behavior: "smooth"})
+                    document.getElementById('d' + item.id).scrollIntoView({behavior: "smooth"})
                 }, 10);
             },
             deeperTracksM: async function (payload) {
@@ -2880,6 +2855,7 @@ export const useDMStore = defineStore('dm', {
                     child = payload.child,
                     parent = payload.parent
                 // console.log(item)
+                let exists = this.tracks_data.find(dt => dt.id === item.id)
                 item.type = 'deepertracks'
                 item.parentId = parent
                 // console.log(item)
@@ -2909,8 +2885,14 @@ export const useDMStore = defineStore('dm', {
                     pointer = 'newrelease'
                 } else if (num === 8) {
                     pointer = 'sptplaylists'
-                } else if (num === 9) {
+                } else if (num === 10) {
                     pointer = 'search'
+                }
+                if (exists) {
+                    item = exists
+                } else {
+                    let clone = structuredClone(toRaw(item));
+                    this.tracks_data.push(clone)
                 }
                 let all = document.querySelectorAll('#' + pointer + '> .rectrack > div')
                 if (child) {
@@ -2940,14 +2922,6 @@ export const useDMStore = defineStore('dm', {
                         }
 
                     }
-                    let newall = Array.from(all)
-                    let track = newall.indexOf(document.getElementById('d' + item.id))
-                    let album = newall.indexOf(alltop[alltop.length - 1])
-                    // console.log(track)
-                    if (track !== -1 && track < album) {
-                        alltop[alltop.length - 1].insertAdjacentElement('afterend', document.getElementById('d' + item.id));
-                        // all.parentNode.insertBefore(newall[album],newall[track])
-                    }
                 } else if (flag === true) {
                     if (all.length !== 0 && all.length !== 0) {
                         for (let i = 0; i < all.length; i++) {
@@ -2964,100 +2938,102 @@ export const useDMStore = defineStore('dm', {
                     // }, 10);
                     return
                 }
-                axios.request({
-                    url: 'https://api.spotify.com/v1/me/tracks/contains?ids=' + item.id,
-                    method: 'get',
-                    headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
-                })
-                    .then((response) => {
-                        item.followed = response.data[0]
+                if (!exists) {
+                    axios.request({
+                        url: 'https://api.spotify.com/v1/me/tracks/contains?ids=' + item.id,
+                        method: 'get',
+                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
-                    .catch(error => {
-                        if (error.response.status === 401) {
-                            axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) => {
-                                // console.log(response.data)
-                                if (response.status === 200) {
-                                    this.deeperTracks(pointer, item, num, flag, sib, child)
-                                }
-                            })
-                        }
-                    })
+                        .then((response) => {
+                            item.followed = response.data[0]
+                        })
+                        .catch(error => {
+                            if (error.response.status === 401) {
+                                axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) => {
+                                    // console.log(response.data)
+                                    if (response.status === 200) {
+                                        this.deeperTracksM(payload)
+                                    }
+                                })
+                            }
+                        })
+                }
                 if (num === 1) {
-                    let indexing = this.deeper1.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper1.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         // eslint-disable-next-line no-undef
                         this.setDeeper1(item)
                     }
                 } else if (num === 2) {
-                    let indexing = this.deeper2.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper2.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         // eslint-disable-next-line no-undef
                         this.setDeeper2(item)
                     }
                 } else if (num === 22) {
-                    let indexing = this.deeper22.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper22.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper22(item)
                     }
                 } else if (num === 23) {
-                    let indexing = this.deeper23.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper23.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper23(item)
                     }
                 } else if (num === 3) {
-                    let indexing = this.deeper3.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper3.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper3(item)
                     }
                 } else if (num === 32) {
-                    let indexing = this.deeper32.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper32.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper32(item)
                     }
                 } else if (num === 33) {
-                    let indexing = this.deeper33.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper33.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper33(item)
                     }
                 } else if (num === 4) {
-                    let indexing = this.deeper4.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper4.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper4(item)
                     }
                 } else if (num === 5) {
-                    let indexing = this.deeper5.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper5.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper5(item)
                     }
                 } else if (num === 6) {
-                    let indexing = this.deeper6.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper6.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper6(item)
                     }
                 } else if (num === 7) {
-                    let indexing = this.deeper7.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper7.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper7(item)
                     }
                 } else if (num === 8) {
-                    let indexing = this.deeper8.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper8.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper8(item)
                     }
                 } else if (num === 9) {
-                    let indexing = this.deeper9.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper9.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper9(item)
                     }
                 } else if (num === 10) {
-                    let indexing = this.deepers.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deepers.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeepers(item)
                     }
                 }
 
                 setTimeout(() => {
-                    document.getElementById('d' + item.id).scrollIntoView({ behavior: "smooth"})
+                    document.getElementById('d' + item.id).scrollIntoView({behavior: "smooth"})
                 }, 10);
             },
             deeperTracks2M(payload) {
@@ -3068,6 +3044,7 @@ export const useDMStore = defineStore('dm', {
                     sib = payload.sib,
                     child = payload.child,
                     parent = payload.parent
+                let exists = this.tracks_data.find(dt => dt.id === item.id)
                 if (num === 1) {
                     pointer = 'yourplaylists'
                 } else if (num === 2) {
@@ -3092,7 +3069,7 @@ export const useDMStore = defineStore('dm', {
                     pointer = 'newrelease'
                 } else if (num === 8) {
                     pointer = 'sptplaylists'
-                } else if (num === 9) {
+                } else if (num === 10) {
                     pointer = 'search'
                 }
                 item.images = d.images
@@ -3140,82 +3117,90 @@ export const useDMStore = defineStore('dm', {
                     // }, 10);
                     return
                 }
+
+                if (exists) {
+                    item = exists
+                } else {
+                    let clone = structuredClone(toRaw(item));
+                    this.tracks_data.push(clone)
+                }
+
                 if (num === 1) {
-                    let indexing = this.deeper1.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper1.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         // eslint-disable-next-line no-undef
                         this.setDeeper1(item)
                     }
                 } else if (num === 2) {
-                    let indexing = this.deeper2.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper2.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         // eslint-disable-next-line no-undef
                         this.setDeeper2(item)
                     }
                 } else if (num === 22) {
-                    let indexing = this.deeper22.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper22.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper22(item)
                     }
                 } else if (num === 23) {
-                    let indexing = this.deeper23.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper23.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper23(item)
                     }
                 } else if (num === 3) {
-                    let indexing = this.deeper3.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper3.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper3(item)
                     }
                 } else if (num === 32) {
-                    let indexing = this.deeper32.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper32.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper32(item)
                     }
                 } else if (num === 33) {
-                    let indexing = this.deeper33.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper33.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper33(item)
                     }
                 } else if (num === 4) {
-                    let indexing = this.deeper4.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper4.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper4(item)
                     }
                 } else if (num === 5) {
-                    let indexing = this.deeper5.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper5.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper5(item)
                     }
                 } else if (num === 6) {
-                    let indexing = this.deeper6.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper6.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper6(item)
                     }
                 } else if (num === 7) {
-                    let indexing = this.deeper7.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper7.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper7(item)
                     }
                 } else if (num === 8) {
-                    let indexing = this.deeper8.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper8.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper8(item)
                     }
                 } else if (num === 9) {
-                    let indexing = this.deeper9.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper9.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper9(item)
                     }
                 } else if (num === 10) {
-                    let indexing = this.deepers.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deepers.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeepers(item)
                     }
                 }
 
                 setTimeout(() => {
-                    document.getElementById('d' + item.id).scrollIntoView({ behavior: "smooth"})
+                    document.getElementById('d' + item.id).scrollIntoView({behavior: "smooth"})
                 }, 10);
             },
             async seedArtist(payload) {
@@ -3248,7 +3233,7 @@ export const useDMStore = defineStore('dm', {
                     pointer = 'newrelease'
                 } else if (num === 8) {
                     pointer = 'sptplaylists'
-                } else if (num === 9) {
+                } else if (num === 10) {
                     pointer = 'search'
                 }
                 let alltop = document.querySelectorAll('#' + pointer + '> .rectrack > div.' + sib)
@@ -3390,7 +3375,7 @@ export const useDMStore = defineStore('dm', {
                     }
                 }
                 setTimeout(() => {
-                    document.getElementById('sa' + item.id).scrollIntoView({ behavior: "smooth"})
+                    document.getElementById('sa' + item.id).scrollIntoView({behavior: "smooth"})
                 }, 100);
             },
             async seedArtistM(payload) {
@@ -3424,7 +3409,7 @@ export const useDMStore = defineStore('dm', {
                     pointer = 'newrelease'
                 } else if (num === 8) {
                     pointer = 'sptplaylists'
-                } else if (num === 9) {
+                } else if (num === 10) {
                     pointer = 'search'
                 }
                 let alltop = document.querySelectorAll('#' + pointer + '> .rectrack > div.' + sib)
@@ -3561,7 +3546,7 @@ export const useDMStore = defineStore('dm', {
                     }
                 }
                 setTimeout(() => {
-                    document.getElementById('sa' + item.id).scrollIntoView({ behavior: "smooth"})
+                    document.getElementById('sa' + item.id).scrollIntoView({behavior: "smooth"})
                 }, 100);
             },
             prepare: async function (payload) {
@@ -3627,7 +3612,7 @@ export const useDMStore = defineStore('dm', {
                     pointer = 'newrelease'
                 } else if (num === 8) {
                     pointer = 'sptplaylists'
-                } else if (num === 9) {
+                } else if (num === 10) {
                     pointer = 'search'
                 }
                 let trackartist = []
@@ -3728,7 +3713,7 @@ export const useDMStore = defineStore('dm', {
                     this.setDeepers(trackartist)
                 }
                 setTimeout(() => {
-                    document.getElementById('art'+ item.id).scrollIntoView({ behavior: "smooth"})
+                    document.getElementById('art' + item.id).scrollIntoView({behavior: "smooth"})
                 }, 10);
                 console.log(trackartist)
             },
@@ -3766,7 +3751,7 @@ export const useDMStore = defineStore('dm', {
                     pointer = 'newrelease'
                 } else if (num === 8) {
                     pointer = 'sptplaylists'
-                } else if (num === 9) {
+                } else if (num === 10) {
                     pointer = 'search'
                 }
                 let trackartist = []
@@ -3873,7 +3858,7 @@ export const useDMStore = defineStore('dm', {
                     this.setDeepers(trackartist)
                 }
                 setTimeout(() => {
-                    document.getElementById('art'+ item.id).scrollIntoView({ behavior: "smooth"})
+                    document.getElementById('art' + item.id).scrollIntoView({behavior: "smooth"})
                 }, 10);
                 console.log(trackartist)
             },
@@ -4151,7 +4136,7 @@ export const useDMStore = defineStore('dm', {
                     })
             },
 
-            deeperAlbum: async function(payload) {
+            deeperAlbum: async function (payload) {
                 let item = payload.item,
                     num = payload.num,
                     child = payload.child,
@@ -4201,8 +4186,8 @@ export const useDMStore = defineStore('dm', {
                     }
                 }
 
-                if (document.getElementById('alb'+ item.id)) {
-                    document.getElementById('alb'+ item.id).style.display = 'flex'
+                if (document.getElementById('alb' + item.id)) {
+                    document.getElementById('alb' + item.id).style.display = 'flex'
                     // setTimeout(() => {
                     //   window.scrollTo({
                     //     top:(document.getElementById('sa'+ item.id)).offsetTop,
@@ -4311,7 +4296,7 @@ export const useDMStore = defineStore('dm', {
                     console.log(this.deepers)
                 }
                 setTimeout(() => {
-                    document.getElementById('alb'+ item.id).scrollIntoView({ behavior: "smooth"})
+                    document.getElementById('alb' + item.id).scrollIntoView({behavior: "smooth"})
                 }, 100);
             },
             async deeperAlbumMob(payload) {
@@ -4530,7 +4515,7 @@ export const useDMStore = defineStore('dm', {
                         // console.log(second)
                         const finded = new Promise(function (resolve, reject) {
                             let first = playlists.find(playlists => playlists.name === newvalue || playlists.name.startsWith('The Sound ') && playlists.owner.id === 'thesoundsofspotify')
-                            let second = playlists.find(playlists => playlists.name === value || playlists.name.startsWith('The Sound ')  && playlists.owner.id === 'thesoundsofspotify')
+                            let second = playlists.find(playlists => playlists.name === value || playlists.name.startsWith('The Sound ') && playlists.owner.id === 'thesoundsofspotify')
                             if (first) {
                                 resolve(first)
                             } else if (second) {
@@ -4978,7 +4963,7 @@ export const useDMStore = defineStore('dm', {
             backToTop(id) {
                 console.log(id)
                 setTimeout(() => {
-                    document.getElementById(id).scrollIntoView({ behavior: "smooth"})
+                    document.getElementById(id).scrollIntoView({behavior: "smooth"})
                 }, 10);
             },
             paginate(array, page_size, page_number) {
@@ -5074,7 +5059,7 @@ export const useDMStore = defineStore('dm', {
                 if (this.listplaylists.length === 0) {
                     let ne = {}
                     ne.target = document.getElementById('playlistlist')
-                    this.fetchPlaylists({event:ne, offset:0})
+                    this.fetchPlaylists({event: ne, offset: 0})
                 }
             },
             createplaylist() {
@@ -5090,7 +5075,7 @@ export const useDMStore = defineStore('dm', {
                     .then(() => {
                         let ne = {}
                         ne.target = document.getElementById('playlistlist')
-                        this.fetchPlaylists({event:ne, offset:0})
+                        this.fetchPlaylists({event: ne, offset: 0})
                         // console.log(this.listplaylists)
                     })
 
