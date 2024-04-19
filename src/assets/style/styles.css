@@ -1049,3 +1049,7 @@ input[type=checkbox] {
 .text-center {
     text-align: center;
 }
+
+.w-100 {
+    width: 100%;
+}

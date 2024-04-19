@@ -1272,17 +1272,6 @@ export const useDMStore = defineStore('dm', {
                 let event = payload.event
                 // console.log('167'  + event.currentTarget.id)
                 let id = event.currentTarget.id
-                let allTracks = document.querySelectorAll("#sptplaylists > .rectrack > div");
-                if (allTracks != null) {
-                    for (let i = 0; i < allTracks.length; i++) {
-                        allTracks[i].style.display = 'none'
-                    }
-                }
-                let pl = document.querySelectorAll('#sptplaylists > div:not(.rectrack,.pl,.head,.sp)')
-                for (let i = 0; i < pl.length; i++) {
-                    pl[i].style.display = 'none'
-
-                }
                 if (document.getElementById('s' + id)) {
                     document.getElementById('s' + id).style.display = 'block'
                     // setTimeout(() => {
@@ -1292,43 +1281,50 @@ export const useDMStore = defineStore('dm', {
                     // },10)
                     return
                 }
-                axios.request({
-                    url: 'https://api.spotify.com/v1/playlists/' + id,
-                    method: 'get',
-                    headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
-                })
-                    .then((response) => {
-                        // console.log(response.data)
-                        let data = response.data
-                        this.setSptPlaylists(data)
-                        //раскоментить
-                        // axios.request({
-                        //   url:'https://api.spotify.com/v1/playlists/'+ id + '/followers/contains?ids=' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
-                        //   method: 'get',
-                        //   headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
-                        // })
-                        //     .then((response) =>{
-                        //       data.followed = response.data[0]
-                        //       this.sptplaylists.push(data)
-                        //     })
+                let exists = this.sptplaylists.find(dt => dt.id === id)
+                if (!exists) {
+                    axios.request({
+                        url: 'https://api.spotify.com/v1/playlists/' + id,
+                        method: 'get',
+                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                    })
+                        .then((response) => {
+                            // console.log(response.data)
+                            let data = response.data
+                            this.setCurrentSPl(data)
+                            this.setSptPlaylists(data)
+                            //раскоментить
+                            // axios.request({
+                            //   url:'https://api.spotify.com/v1/playlists/'+ id + '/followers/contains?ids=' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
+                            //   method: 'get',
+                            //   headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                            // })
+                            //     .then((response) =>{
+                            //       data.followed = response.data[0]
+                            //       this.sptplaylists.push(data)
+                            //     })
 
 
-                        // setTimeout(() => {
-                        //   window.scrollTo({
-                        //     top:(document.getElementById('s'+ id)).offsetTop,
-                        //     behavior:'smooth'});
-                        // },1000)
-                    })
-                    .catch(error => {
-                        if (error.response.status) {
-                            axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) => {
-                                // console.log(response.data)
-                                if (response.status === 200) {
-                                    this.SpotInit({event: event})
-                                }
-                            })
-                        }
-                    })
+                            // setTimeout(() => {
+                            //   window.scrollTo({
+                            //     top:(document.getElementById('s'+ id)).offsetTop,
+                            //     behavior:'smooth'});
+                            // },1000)
+                        })
+                        .catch(error => {
+                            console.log(error)
+                            if (error.response.status) {
+                                axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) => {
+                                    // console.log(response.data)
+                                    if (response.status === 200) {
+                                        this.SpotInit({event: event})
+                                    }
+                                })
+                            }
+                        })
+                } else {
+                    this.setCurrentSPl(exists)
+                }
             },
             search(e) {
                 // console.log(window.location.href)

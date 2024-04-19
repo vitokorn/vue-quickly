@@ -1,11 +1,33 @@
 <script setup>
 import {useDMStore} from "../stores/dm-store";
 import {Lists} from "../common/lists";
-import {ref} from "vue";
+import {computed, ref} from "vue";
+import SortTracks from "./SortTracks.vue";
 
-defineProps(['d', 'num'])
+const props = defineProps(['d', 'num'])
 const store = useDMStore()
 const selected = ref()
+const selectedSTSortOption = ref("")
+
+const sortedSTItems = computed(() => {
+  const itemsCopy = [...props.d.tracks];
+  switch (selectedSTSortOption.value) {
+    case 'track':
+      return itemsCopy.sort((a, b) => a.name.localeCompare(b.name));
+    case 'album':
+      return itemsCopy.sort((a, b) => a.album.name.localeCompare(b.album.name));
+    case 'artist':
+      return itemsCopy.sort((a, b) => a.artists[0].name.localeCompare(b.artists[0].name));
+    case 'popularity':
+      return itemsCopy.sort((a, b) => a.popularity > b.popularity);
+    case 'release_date':
+      return itemsCopy.sort((a, b) => a.album.release_date.localeCompare(b.album.release_date));
+    case 'duration':
+      return itemsCopy.sort((a, b) => a.duration_ms > b.duration_ms);
+    default:
+      return itemsCopy; // Default (unsorted) state
+  }
+})
 function setActive(id) {
   selected.value = id
 }
@@ -16,9 +38,10 @@ function setActive(id) {
     <div>Recommended songs based on {{ d.name }}
       <button class="btn" v-on:click="store.reloadST({num:num,id:d.id,name:d.name })"><img
           class="refresh-end" src="../assets/refresh-icon.png" alt=""></button>
+      <sort-tracks v-model="selectedSTSortOption"/>
     </div>
     <div class="card2">
-      <template v-for="(s,index) in d.tracks">
+      <template v-for="(s,index) in sortedSTItems">
         <div v-if="s.preview_url && s.album.images[0]" class="con3" v-bind:key="index"
              :class="selected===s.id ? 'selected' : ''"
              v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }"
