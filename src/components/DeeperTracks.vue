@@ -7,7 +7,7 @@ const store = useDMStore()
 </script>
 
 <template>
-  <div class="playlisttrack card2 display-flex my-3" v-bind:id="'d'+d.id" v-bind:key="index">
+  <div class="playlisttrack card2 display-flex my-3" v-bind:id="'d'+d.id">
     <track-cover :d="d" :cover=d.album.images[0]></track-cover>
     <div class="text-left ms-2" style="width: 50%;">
       <div>{{ d.name }}</div>

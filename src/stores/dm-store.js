@@ -2,6 +2,7 @@ import {defineStore} from 'pinia';
 import axios from "axios";
 import titleCase from "../common/titleCase";
 import {Lists} from "../common/lists";
+import {toRaw} from "vue";
 
 export const useDMStore = defineStore('dm', {
         state: () => ({
@@ -50,56 +51,62 @@ export const useDMStore = defineStore('dm', {
             currenttrack: null,
             loader: false,
             selectedArtistsRange: 1,
-            selectedTracksRange:1,
+            selectedTracksRange: 1,
             queueModal: false,
             unplayable_tracks: true,
             audio_preview: true,
-            open_links: true
+            open_links: true,
+            restart_song_on_hover: false,
+            artists_data: [],
+            tracks_data: [],
+            albums_data: [],
+            seed_artists_data: [],
+            seed_tracks_data: []
         }),
         getters: {
-            getDeeper1:  (state) => state.deeper1,
-            getDeeper2:  (state) => state.deeper2,
-            getDeeper22:  (state) => state.deeper22,
-            getDeeper23:  (state) => state.deeper23,
-            getDeeper3:  (state) => state.deeper3,
-            getDeeper32:  (state) => state.deeper32,
-            getDeeper33:  (state) => state.deeper33,
-            getDeeper4:  (state) => state.deeper4,
-            getDeeper5:  (state) => state.deeper5,
-            getDeeper6:  (state) => state.deeper6,
-            getDeeper7:  (state) => state.deeper7,
-            getDeeper8:  (state) => state.deeper8,
-            getDeeper9:  (state) => state.deeper9,
-            getDeepers:  (state) => state.deepers,
-            getQueue:  (state) => state.queue,
-            getQueueArr:  (state) => state.queuearr,
-            getListPlaylists:  (state) => state.listplaylists,
-            getPlayinfo:  (state) => state.playinfo,
-            getPlaylists:  (state) => state.playlists,
-            getTopArtist:  (state) => state.topartist,
-            getTopArtist6:  (state) => state.topartist6,
-            getTopArtista:  (state) => state.topartista,
-            getTaactivetab:  (state) => state.taactivetab,
-            getTtactivetab:  (state) => state.ttactivetab,
-            getSavedAlbums:  (state) => state.savedalbums,
-            getSavedTracks:  (state) => state.savedtracks,
-            getNewReleases:  (state) => state.newreleases,
-            getFollowedArtists:  (state) => state.followedartists,
-            getItems:  (state) => state.items,
-            getItemsM:  (state) => state.itemsm,
-            getItemsL:  (state) => state.itemsl,
-            getSpotPlaylists:  (state) => state.spotplaylists,
-            getSptInfo:  (state) => state.sptinfo,
-            getSptPlaylists:  (state) => state.sptplaylists,
-            getAlbums:  (state) => state.albums,
-            getArtists:  (state) => state.artists,
-            getTracks:  (state) => state.tracks,
-            getSPlaylists:  (state) => state.splaylists,
-            getCurrentPl:  (state) => state.currentpl,
-            getCurrentSPl:  (state) => state.currentspl,
-            getSearchTimer:  (state) => state.searchtimer,
-            getCurrentTrack:  (state) => state.currenttrack,
-            getLoader:  (state) => state.loader,
+            getDeeper1: (state) => state.deeper1,
+            getDeeper2: (state) => state.deeper2,
+            getDeeper22: (state) => state.deeper22,
+            getDeeper23: (state) => state.deeper23,
+            getDeeper3: (state) => state.deeper3,
+            getDeeper32: (state) => state.deeper32,
+            getDeeper33: (state) => state.deeper33,
+            getDeeper4: (state) => state.deeper4,
+            getDeeper5: (state) => state.deeper5,
+            getDeeper6: (state) => state.deeper6,
+            getDeeper7: (state) => state.deeper7,
+            getDeeper8: (state) => state.deeper8,
+            getDeeper9: (state) => state.deeper9,
+            getDeepers: (state) => state.deepers,
+            getQueue: (state) => state.queue,
+            getQueueArr: (state) => state.queuearr,
+            getListPlaylists: (state) => state.listplaylists,
+            getPlayinfo: (state) => state.playinfo,
+            getPlaylists: (state) => state.playlists,
+            getTopArtist: (state) => state.topartist,
+            getTopArtist6: (state) => state.topartist6,
+            getTopArtista: (state) => state.topartista,
+            getTaactivetab: (state) => state.taactivetab,
+            getTtactivetab: (state) => state.ttactivetab,
+            getSavedAlbums: (state) => state.savedalbums,
+            getSavedTracks: (state) => state.savedtracks,
+            getNewReleases: (state) => state.newreleases,
+            getFollowedArtists: (state) => state.followedartists,
+            getItems: (state) => state.items,
+            getItemsM: (state) => state.itemsm,
+            getItemsL: (state) => state.itemsl,
+            getSpotPlaylists: (state) => state.spotplaylists,
+            getSptInfo: (state) => state.sptinfo,
+            getSptPlaylists: (state) => state.sptplaylists,
+            getAlbums: (state) => state.albums,
+            getArtists: (state) => state.artists,
+            getTracks: (state) => state.tracks,
+            getSPlaylists: (state) => state.splaylists,
+            getCurrentPl: (state) => state.currentpl,
+            getCurrentSPl: (state) => state.currentspl,
+            getSearchTimer: (state) => state.searchtimer,
+            getCurrentTrack: (state) => state.currenttrack,
+            getLoader: (state) => state.loader,
         },
         actions: {
             setDeeper1(deeper1) {
@@ -155,8 +162,8 @@ export const useDMStore = defineStore('dm', {
                 if (empty) {
                     this.listplaylists = []
                 } else if (value) {
-                        this.listplaylists.push(...value);
-                    }
+                    this.listplaylists.push(...value);
+                }
             },
             setPlayInfo(playinfo) {
                 this.playinfo.push(playinfo);
@@ -224,26 +231,32 @@ export const useDMStore = defineStore('dm', {
             setSPlaylists(splaylists) {
                 this.splaylists = splaylists
             },
-            setCurrentPl(currentpl) {
-                this.currentpl = currentpl
+            setCurrentPl(currentPl) {
+                this.currentpl = currentPl
             },
-            setCurrentSPl(currentspl) {
-                this.currentspl = currentspl
+            setCurrentSPl(currentSPl) {
+                this.currentspl = currentSPl
             },
             setSearchTimer(searchtimer) {
                 this.searchtimer = searchtimer
             },
-            setCurrentTrack(currenttrack) {
-                this.currenttrack = currenttrack
+            setCurrentTrack(currentTrack) {
+                this.currenttrack = currentTrack
             },
-            click(payload) {
-                let target = payload.event.target
+            click(event) {
+                let target = event.target
                 let audios = target.lastChild
                 if (this.currenttrack != null && this.currenttrack !== audios) {
                     this.currenttrack.pause()
+                    if (this.restart_song_on_hover) {
+                        this.currenttrack.currentTime = 0
+                    }
                 }
                 if (audios.paused === false) {
                     audios.pause()
+                    if (this.restart_song_on_hover) {
+                        audios.currentTime = 0
+                    }
                 } else
                     audios.play()
                 this.currenttrack = audios
@@ -264,55 +277,77 @@ export const useDMStore = defineStore('dm', {
                 if (indexing === -1) {
                     this.deepers.push(item)
                 }
+                setTimeout(() => {
+                    document.getElementById('p' + item.id).scrollIntoView({behavior: "smooth"})
+                }, 10);
             },
-            deeper(payload) {
+            playlM(payload) {
+                let item = payload.item,
+                    parent = payload.parent
+                let pls = document.querySelectorAll('#search> .rectrack > div')
+                for (let i = 0; i < pls.length; i++) {
+                    if (document.getElementById('p' + item.id) != null && pls[i].id === document.getElementById('p' + item.id).id) {
+                        document.getElementById('p' + item.id).style.display = 'block'
+                    } else {
+                        pls[i].style.display = 'none'
+                    }
+                }
+                item.type = 'deeperplaylist'
+                item.parentId = parent
+                let indexing = this.deepers.indexOf(item)
+                if (indexing === -1) {
+                    this.deepers.push(item)
+                }
+                setTimeout(() => {
+                    document.getElementById('p' + item.id).scrollIntoView({behavior: "smooth"})
+                }, 10);
+            },
+            async deeper(payload) {
                 console.log(261)
                 let item = payload.item,
                     num = payload.num,
                     event = payload.event
-                // console.log(item)
+                console.log(item)
                 let target = event.target
-                if (num === 10) {
-                    let allTracks = document.querySelectorAll(".rectrack > div:not(.playlist)");
-                    if (allTracks != null) {
-                        for (let i = 0; i < allTracks.length; i++) {
-                            // eslint-disable-next-line no-empty
-                            if (document.getElementById('d' + item.id) != null && allTracks[i].id === document.getElementById('d' + item.id).id) {
-
-                            } else {
-                                allTracks[i].style.display = 'none'
-                            }
-
-
-                        }
-
-                    }
+                let exists = false
+                if (item.track) {
+                    exists = this.tracks_data.find(dt => dt.id === item.track.id)
                 } else {
-                    let allTracks = document.querySelectorAll(".rectrack > div");
-                    if (allTracks != null) {
-                        for (let i = 0; i < allTracks.length; i++) {
-                            // eslint-disable-next-line no-empty
-                            if (document.getElementById('d' + item.id) != null && allTracks[i].id === document.getElementById('d' + item.id).id) {
-
-                            } else {
-                                allTracks[i].style.display = 'none'
-                            }
-
-
-                        }
-
-                    }
+                    exists = this.tracks_data.find(dt => dt.id === item.id)
                 }
-                if (document.getElementById('d' + item.id) !== null) {
-                    document.getElementById('d' + item.id).style.display = 'flex'
-                    return
-                }
+
                 let tracktrack = []
                 tracktrack = item
+                if (item.track) {
+                    tracktrack = item.track
+                }
                 tracktrack.type = 'pl'
-                if (num !== 1 && num !== 5)
+                tracktrack = toRaw(tracktrack)
+
+                let allTracks = document.querySelectorAll(".rectrack > div");
+                if (allTracks != null) {
+                    for await(let i of allTracks) {
+                        // eslint-disable-next-line no-empty
+                        console.log(item.id)
+                        if (i.id === 'd' + item.id) {
+                            i.style.display = 'flex'
+                        } else {
+                            console.log(301)
+                            i.style.display = 'none'
+                        }
+                    }
+                }
+
+                if (exists) {
+                    tracktrack = exists
+                } else {
+                    let clone = structuredClone(tracktrack);
+                    this.tracks_data.push(clone)
+                }
+
+                if (!exists) {
                     axios.request({
-                        url: 'https://api.spotify.com/v1/me/tracks/contains?ids=' + item.id,
+                        url: 'https://api.spotify.com/v1/me/tracks/contains?ids=' + tracktrack.id,
                         method: 'get',
                         headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
@@ -329,173 +364,66 @@ export const useDMStore = defineStore('dm', {
                                 })
                             }
                         })
+                }
                 if (num === 1) {
-                    if (document.getElementById('d' + item.track.id) !== null) {
-                        document.getElementById('d' + item.track.id).style.display = 'flex'
-                        let child = target.parentElement.children
-                        for (let i = 0; i < child.length; i++) {
-                            if (child[i] === target) {
-                                child[i].className = 'con3 selected'
-                            } else {
-                                child[i].className = 'con3'
-                            }
-                        }
-                        return
+                    let indexing = this.deeper1.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
+                        this.setDeeper1(tracktrack)
                     }
-                    let tt = []
-                    tt = item.track
-                    tt.type = 'pl'
-                    // console.log(tt)
-                    // console.log(item.track.id)
-                    let child = target.parentElement.children
-                    for (let i = 0; i < child.length; i++) {
-                        if (child[i] === target) {
-                            child[i].className = 'con3 selected'
-                        } else {
-                            child[i].className = 'con3'
-                        }
-                    }
-                    if (item.track.id === null)
-                        return null
-                    axios.request({
-                        url: 'https://api.spotify.com/v1/me/tracks/contains?ids=' + item.track.id,
-                        method: 'get',
-                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
-                    })
-                        .then((response) => {
-                            tt.followed = response.data[0]
-                            let indexing = this.deeper1.indexOf(tt)
-                            if (indexing === -1) {
-                                // eslint-disable-next-line no-undef
-                                this.setDeeper1(tt)
-                                // setTimeout(() => {
-                                //   // console.log('3542')
-                                //   window.scrollTo({
-                                //     top:(document.getElementById('d'+ tt.id)).offsetTop + 300,
-                                //     behavior:'smooth'});
-                                // }, 800);
-                            }
-                        })
-                        .catch(error => {
-                            if (error.response.status === 401) {
-                                axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) => {
-                                    if (response.status === 200) {
-                                        this.deeper(payload)
-                                    }
-                                })
-                            }
-                        })
-                    // console.log(tracktrack)
-                    // console.log(this.deeper1)
                 } else if (num === 2) {
-                    let indexing = this.deeper2.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper2.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper2(tracktrack)
                     }
                     // console.log(tracktrack)
                     // console.log(this.deeper2)
                 } else if (num === 22) {
-                    let indexing = this.deeper22.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper22.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper22(tracktrack)
                     }
                     // console.log(tracktrack)
                     // console.log(this.deeper22)
                 } else if (num === 23) {
-                    let indexing = this.deeper23.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper23.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper23(tracktrack)
                     }
                     // console.log(tracktrack)
                     // console.log(this.deeper23)
                 } else if (num === 3) {
-                    let indexing = this.deeper3.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper3.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper3(tracktrack)
                     }
                     // console.log(tracktrack)
                     // console.log(this.deeper3)
                 } else if (num === 32) {
-                    let indexing = this.deeper32.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper32.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper32(tracktrack)
                     }
                     // console.log(tracktrack)
                     // console.log(this.deeper32)
                 } else if (num === 33) {
-                    let indexing = this.deeper33.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper33.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper33(tracktrack)
                     }
                     // console.log(tracktrack)
                     // console.log(this.deeper33)
                 } else if (num === 4) {
-                    let indexing = this.deeper4.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper4.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper4(tracktrack)
                     }
                     // console.log(tracktrack)
                     // console.log(this.deeper4)
                 } else if (num === 5) {
-                    let child = document.querySelectorAll('#savedtrack > div.albumbody')
-                    // console.log(child)
-                    // console.log(target)
-                    for (let i = 0; i < child.length; i++) {
-                        if (child[i].children[0] === target) {
-                            child[i].children[0].className = 'con3 selected'
-                        } else if (child[i].children[0]) {
-                            child[i].children[0].className = 'con3'
-                        }
-                    }
-                    if (document.getElementById('d' + item.track.id) !== null) {
-                        let recs = document.querySelectorAll('.rectrack > div')
-                        for (let i of recs) {
-                            if (document.getElementById('d' + item.track.id) === i) {
-                                i.style.display = 'flex'
-                                // i.className = 'card2 plls'
-                            } else {
-                                i.style.display = 'none'
-                            }
-                        }
-                        // let child = target.parentElement.children
-                        // console.log(child)
-                        // for (let i = 0; i < child.length; i++) {
-                        //   if (child[i] === target){
-                        //     console.log('11111')
-                        //     console.log(target)
-                        //     child[i].className = 'con3 selected'
-                        //   } else{
-                        //     child[i].className = 'con3'
-                        //   }
-                        // }
-                        return
-                    }
-                    let tt = []
-                    tt = item.track
-                    tt.type = 'pl'
-
-                    axios.request({
-                        url: 'https://api.spotify.com/v1/me/tracks/contains?ids=' + tt.id,
-                        method: 'get',
-                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
-                    })
-                        .then((response) => {
-                            tt.followed = response.data[0]
-                        })
-                        .catch(error => {
-                            if (error.response.status === 401) {
-                                axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) => {
-                                    if (response.status === 200) {
-                                        this.deeper(payload)
-                                    }
-                                    // console.log(response.data)
-                                })
-                            }
-                        })
                     // console.log(item.track)
-                    let indexing = this.deeper5.indexOf(tt)
-                    if (indexing === -1) {
-                        this.setDeeper5(tt)
+                    let indexing = this.deeper5.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
+                        this.setDeeper5(tracktrack)
                     }
                     // setTimeout(() => {
                     //   window.scrollTo({
@@ -504,135 +432,101 @@ export const useDMStore = defineStore('dm', {
                     // }, 10);
                     // console.log(this.deeper5)
                 } else if (num === 6) {
-                    let indexing = this.deeper6.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper6.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper6(tracktrack)
                     }
                     // console.log(tracktrack)
                     // console.log(this.deeper6)
                 } else if (num === 7) {
                     tracktrack.preview_url = item.tracks.items[0].preview_url
-                    let indexing = this.deeper7.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper7.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper7(tracktrack)
                     }
                     // console.log(this.deeper7)
                 } else if (num === 8) {
-                    let indexing = this.deeper8.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper8.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper8(tracktrack)
                     }
                     // console.log(tracktrack)
                     // console.log(this.deeper8)
                 } else if (num === 9) {
-                    if (document.getElementById('d' + item.track.id) !== null) {
-                        document.getElementById('d' + item.track.id).style.display = 'flex'
-                        let child = target.parentElement.children
-                        for (let i = 0; i < child.length; i++) {
-                            if (child[i] === target) {
-                                child[i].className = 'con3 selected'
-                            } else {
-                                child[i].className = 'con3'
-                            }
-                        }
-                        return
-                    }
-                    let tt = []
-                    tt = item.track
-                    tt.type = 'pl'
-                    let child = target.parentElement.children
-                    for (let i = 0; i < child.length; i++) {
-                        if (child[i] === target) {
-                            child[i].className = 'con3 selected'
-                        } else {
-                            child[i].className = 'con3'
-                        }
-                    }
+
                     let indexing = this.deeper9.indexOf(tt)
-                    if (indexing === -1) {
+                    if (!indexing) {
                         this.setDeeper9(tracktrack)
                     }
                     // console.log(tt)
                     // console.log(this.deeper9)
                 } else if (num === 10) {
-                    let indexing = this.deepers.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deepers.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeepers(tracktrack)
                     }
                     // console.log(this.deepers)
                 }
-                if (num !== 1 && num !== 5) {
+                if (num !== 1 && num !== 5 && num !== 8 && !exists) {
                     // setTimeout(() => {
                     //   window.scrollTo({
                     //     top:(document.getElementById('d'+ tracktrack.id)).offsetTop,
                     //     behavior:'smooth'});
                     // }, 10);
                 }
+                setTimeout(() => {
+                    document.getElementById('d' + tracktrack.id).scrollIntoView({behavior: "smooth"})
+                }, 10);
+
             },
             deepermobile: async function (payload) {
                 console.log(570)
                 let item = payload.item,
                     num = payload.num,
-                    event = payload.event
+                    event = payload.event,
+                    parent = payload.parent
                 let target = event.target
-                // target.nextElementSibling.offsetHeight
-                if (num === 10) {
-                    let allTracks = document.querySelectorAll(".rectrack > div:not(.playlist)");
-                    if (allTracks != null) {
-                        for (let i = 0; i < allTracks.length; i++) {
-                            // eslint-disable-next-line no-empty
-                            if (document.getElementById('d' + item.id) != null && allTracks[i].id === document.getElementById('d' + item.id).id) {
-
-                            } else {
-                                allTracks[i].style.display = 'none'
-                            }
-
-
-                        }
-
-                    }
+                console.log(parent)
+                let exists = false
+                if (item.track) {
+                    exists = this.tracks_data.find(dt => dt.id === item.track.id)
                 } else {
-                    let allTracks = document.querySelectorAll(".rectrack > div");
-                    if (allTracks != null) {
-                        for (let i = 0; i < allTracks.length; i++) {
-                            // eslint-disable-next-line no-empty
-                            if (document.getElementById('d' + item.id) != null && allTracks[i].id === document.getElementById('d' + item.id).id) {
-
-                            } else {
-                                allTracks[i].style.display = 'none'
-                            }
-
-
-                        }
-
-                    }
+                    exists = this.tracks_data.find(dt => dt.id === item.id)
                 }
-                if (document.getElementById('d' + item.id) !== null) {
-                    document.getElementById('d' + item.id).style.display = 'flex'
-                    if (num === 3 || num === 32 || num === 33 || num === 7) {
-                        setTimeout(async () => {
-                            await this.hideall(target.nextElementSibling)
-                            // console.log(target.nextElementSibling)
-                            let lst = target.nextElementSibling.children[0].children
-                            // console.log(lst)
-                            let newarray = []
-                            for await(let i of lst) {
-                                // console.log(i)
-                                newarray.push(i.offsetHeight)
-                            }
-                            // console.log(newarray.reduce((a, b) => a + b, 0))
-                            target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 50 + 'px'
-                        }, 0)
-                    }
-                    return
-                }
+
                 let tracktrack = []
                 tracktrack = item
+                if (item.track) {
+                    tracktrack = item.track
+                }
                 tracktrack.type = 'pl'
-                tracktrack.pid = item.id
-                if (num !== 1 && num !== 5 && num !== 9)
-                    await axios.request({
-                        url: 'https://api.spotify.com/v1/me/tracks/contains?ids=' + item.id,
+                tracktrack.parentId = parent
+                tracktrack = toRaw(tracktrack)
+
+                let allTracks = document.querySelectorAll(".rectrack > div");
+                if (allTracks != null) {
+                    for await(let i of allTracks) {
+                        // eslint-disable-next-line no-empty
+                        console.log(item.id)
+                        if (i.id === 'd' + item.id) {
+                            i.style.display = 'flex'
+                        } else {
+                            console.log(301)
+                            i.style.display = 'none'
+                        }
+                    }
+                }
+
+                if (exists) {
+                    tracktrack = exists
+                } else {
+                    let clone = structuredClone(tracktrack);
+                    this.tracks_data.push(clone)
+                }
+
+                if (!exists) {
+                    axios.request({
+                        url: 'https://api.spotify.com/v1/me/tracks/contains?ids=' + tracktrack.id,
                         method: 'get',
                         headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
@@ -649,314 +543,119 @@ export const useDMStore = defineStore('dm', {
                                 })
                             }
                         })
+                }
                 if (num === 1) {
-                    console.log(649)
-                    if (document.getElementById('d' + item.track.id) !== null) {
-                        document.getElementById('d' + item.track.id).style.display = 'flex'
-                        await this.hideall(target.nextElementSibling)
-                        setTimeout(async () => {
-                            let lst = target.nextElementSibling.children[0].children
-                            let newarray = []
-                            for await(let i of lst) {
-                                newarray.push(i.offsetHeight)
-                            }
-                            target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 50 + 'px'
-                        }, 0)
-                        return
+                    let indexing = this.deeper1.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
+                        this.setDeeper1(tracktrack)
                     }
-                    let tt = []
-                    tt = item.track
-                    tt.type = 'pl'
-                    tt.pid = item.track.id
-                    axios.request({
-                        url: 'https://api.spotify.com/v1/me/tracks/contains?ids=' + item.track.id,
-                        method: 'get',
-                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
-                    })
-                        .then((response) => {
-                            tt.followed = response.data[0]
-                            let indexing = this.deeper1.indexOf(tt)
-                            if (indexing === -1) {
-                                this.setDeeper1(tt)
-                                // console.log(this)
-                                // console.log(tt)
-                                setTimeout(async () => {
-                                    await this.hideall(target.nextElementSibling)
-
-                                    // console.log(target.nextElementSibling)
-                                    let lst = target.nextElementSibling.children[0].children
-                                    // console.log(lst)
-                                    let newarray = []
-                                    for await(let i of lst) {
-                                        // console.log(i)
-                                        newarray.push(i.offsetHeight)
-                                    }
-                                    // console.log(newarray.reduce((a, b) => a + b, 0))
-                                    target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 50 + 'px'
-                                }, 0)
-                                window.addEventListener('resize', function () {
-                                    setTimeout(async () => {
-                                        // console.log('3826')
-                                        // console.log(target.nextElementSibling)
-                                        let lst = target.nextElementSibling.children[0].children
-                                        // console.log(lst)
-                                        let newarray = []
-                                        for await(let i of lst) {
-                                            // console.log(i)
-                                            newarray.push(i.offsetHeight)
-                                        }
-                                        target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 50 + 'px'
-                                    }, 0)
-                                })
-                            }
-                        })
-                        .catch(error => {
-                            if (error.response.status === 401) {
-                                axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) => {
-                                    if (response.status === 200) {
-                                        this.deeper(payload)
-                                    }
-                                })
-                            }
-                        })
                 } else if (num === 2) {
-                    let indexing = this.deeper2.indexOf(tracktrack)
-                    if (indexing === -1) {
-                        this.setDeeper12(tracktrack)
+                    let indexing = this.deeper2.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
+                        this.setDeeper2(tracktrack)
                     }
+                    // console.log(tracktrack)
+                    // console.log(this.deeper2)
                 } else if (num === 22) {
-                    let indexing = this.deeper22.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper22.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper22(tracktrack)
                     }
+                    // console.log(tracktrack)
+                    // console.log(this.deeper22)
                 } else if (num === 23) {
-                    let indexing = this.deeper23.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper23.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper23(tracktrack)
                     }
+                    // console.log(tracktrack)
+                    // console.log(this.deeper23)
                 } else if (num === 3) {
-                    let indexing = this.deeper3.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper3.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper3(tracktrack)
                     }
+                    // console.log(tracktrack)
+                    // console.log(this.deeper3)
                 } else if (num === 32) {
-                    let indexing = this.deeper32.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper32.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper32(tracktrack)
                     }
+                    // console.log(tracktrack)
+                    // console.log(this.deeper32)
                 } else if (num === 33) {
-                    let indexing = this.deeper33.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper33.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper33(tracktrack)
                     }
+                    // console.log(tracktrack)
+                    // console.log(this.deeper33)
                 } else if (num === 4) {
-                    let indexing = this.deeper4.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper4.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper4(tracktrack)
                     }
+                    // console.log(tracktrack)
+                    // console.log(this.deeper4)
                 } else if (num === 5) {
-                    if (document.getElementById('d' + item.id) !== null) {
-                        document.getElementById('d' + item.id).style.display = 'flex'
-                        setTimeout(async () => {
-                            await this.hideall(target.nextElementSibling)
-                            // console.log(target.nextElementSibling)
-                            let lst = target.nextElementSibling.children[0].children
-                            // console.log(lst)
-                            let newarray = []
-                            for await(let i of lst) {
-                                // console.log(i)
-                                newarray.push(i.offsetHeight)
-                            }
-                            // console.log(newarray.reduce((a, b) => a + b, 0))
-                            target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 50 + 'px'
-                        }, 0)
-                        return
-                    }
-                    window.addEventListener('resize', function () {
-                        setTimeout(async () => {
-                            // console.log(target.nextElementSibling)
-                            let lst = target.nextElementSibling.children[0].children
-                            // console.log(lst)
-                            let newarray = []
-                            for await(let i of lst) {
-                                // console.log(i)
-                                newarray.push(i.offsetHeight)
-                            }
-                            // console.log(newarray.reduce((a, b) => a + b, 0))
-                            target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 50 + 'px'
-                        }, 0)
-                    })
-                    let tt = []
-                    tt = item.track
-                    tt.type = 'pl'
-                    tt.pid = tt.id
-                    await axios.request({
-                        url: 'https://api.spotify.com/v1/me/tracks/contains?ids=' + tt.id,
-                        method: 'get',
-                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
-                    })
-                        .then((response) => {
-                            tt.followed = response.data[0]
-                        })
-                        .catch(error => {
-                            if (error.response.status === 401) {
-                                axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) => {
-                                    if (response.status === 200) {
-                                        this.deeper(payload)
-                                    }
-                                })
-                            }
-                        })
-                    let indexing = this.deeper5.indexOf(tt)
-                    if (indexing === -1) {
+                    // console.log(item.track)
+                    let indexing = this.deeper5.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper5(tracktrack)
                     }
+                    // setTimeout(() => {
+                    //   window.scrollTo({
+                    //     top:(document.getElementById('d'+ tt.id)).offsetTop,
+                    //     behavior:'smooth'});
+                    // }, 10);
+                    // console.log(this.deeper5)
                 } else if (num === 6) {
-                    let indexing = this.deeper6.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper6.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper6(tracktrack)
                     }
+                    // console.log(tracktrack)
+                    // console.log(this.deeper6)
                 } else if (num === 7) {
                     tracktrack.preview_url = item.tracks.items[0].preview_url
-                    let indexing = this.deeper7.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper7.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper7(tracktrack)
                     }
-                    setTimeout(async () => {
-                        await this.hideall(target.nextElementSibling)
-                        // console.log(target.nextElementSibling)
-                        let lst = target.nextElementSibling.children[0].children
-                        // console.log(lst)
-                        let newarray = []
-                        for await(let i of lst) {
-                            // console.log(i)
-                            newarray.push(i.offsetHeight)
-                        }
-                        // console.log(newarray.reduce((a, b) => a + b, 0))
-                        target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 50 + 'px'
-                    }, 0)
+                    // console.log(this.deeper7)
                 } else if (num === 8) {
-                    let indexing = this.deeper8.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deeper8.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeeper8(tracktrack)
                     }
+                    // console.log(tracktrack)
+                    // console.log(this.deeper8)
                 } else if (num === 9) {
-                    if (document.getElementById('d' + item.id) !== null) {
-                        document.getElementById('d' + item.id).style.display = 'flex'
-                        await setTimeout(async () => {
-                            await this.hideall(target.nextElementSibling)
-                            let lst = target.nextElementSibling.children[0].children
-                            let newarray = []
-                            for await(let i of lst) {
-                                newarray.push(i.offsetHeight)
-                            }
-                            target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
-                        }, 0)
-                        window.addEventListener('resize', function () {
-                            setTimeout(async () => {
-                                let lst = target.nextElementSibling.children[0].children
-                                let newarray = []
-                                for await(let i of lst) {
-                                    newarray.push(i.offsetHeight)
-                                }
-                                target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
-                            }, 0)
-                        })
 
-
-                    } else {
-                        let tt = []
-                        tt = item.track
-                        tt.type = 'pl'
-                        tt.pid = item.track.id
-
-                        axios.request({
-                            url: 'https://api.spotify.com/v1/me/tracks/contains?ids=' + item.track.id,
-                            method: 'get',
-                            headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
-                        })
-                            .then((response) => {
-                                tt.followed = response.data[0]
-                                let indexing = this.deeper9.indexOf(tt)
-                                if (indexing === -1) {
-                                    this.deeper9.push(tt)
-                                    setTimeout(async () => {
-                                        await this.hideall(target.nextElementSibling)
-                                        // console.log(target.nextElementSibling)
-                                        let lst = target.nextElementSibling.children[0].children
-                                        // console.log(lst)
-                                        // console.log(lst)
-                                        let newarray = []
-                                        for await(let i of lst) {
-                                            // console.log(i)
-                                            newarray.push(i.offsetHeight)
-                                        }
-                                        // console.log(newarray.reduce((a, b) => a + b, 0))
-                                        target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 20 + 'px'
-                                    }, 0)
-                                    window.addEventListener('resize', function () {
-                                        setTimeout(async () => {
-                                            // console.log('3826')
-                                            // console.log(target.nextElementSibling)
-                                            let lst = target.nextElementSibling.children[0].children
-                                            // console.log(lst)
-                                            let newarray = []
-                                            for await(let i of lst) {
-                                                // console.log(i)
-                                                newarray.push(i.offsetHeight)
-                                            }
-                                            target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
-
-                                        }, 0)
-                                    })
-                                }
-                            })
-                            .catch(error => {
-                                if (error.response.status === 401) {
-                                    axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) => {
-                                        if (response.status === 200) {
-                                            this.deeper(payload)
-                                        }
-                                    })
-                                }
-                            })
+                    let indexing = this.deeper9.indexOf(tt)
+                    if (!indexing) {
+                        this.setDeeper9(tracktrack)
                     }
+                    // console.log(tt)
+                    // console.log(this.deeper9)
                 } else if (num === 10) {
-                    let indexing = this.deepers.indexOf(tracktrack)
-                    if (indexing === -1) {
+                    let indexing = this.deepers.find(dt => dt.id === tracktrack.id)
+                    if (!indexing) {
                         this.setDeepers(tracktrack)
                     }
+                    // console.log(this.deepers)
                 }
-                if (num === 3 || num === 32 || num === 33 || num === 5 || num === 7) {
-                    setTimeout(async () => {
-                        await this.hideall(target.nextElementSibling)
-
-                        // console.log(target.nextElementSibling)
-                        let lst = target.nextElementSibling.children[0].children
-                        // console.log(lst)
-                        let newarray = []
-                        for await(let i of lst) {
-                            // console.log(i)
-                            newarray.push(i.offsetHeight)
-                        }
-                        // console.log(newarray.reduce((a, b) => a + b, 0))
-                        target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 50 + 'px'
-                    }, 0)
-                    window.addEventListener('resize', function () {
-                        setTimeout(async () => {
-                            // console.log('3826')
-                            // console.log(target.nextElementSibling)
-                            let lst = target.nextElementSibling.children[0].children
-                            // console.log(lst)
-                            let newarray = []
-                            for await(let i of lst) {
-                                // console.log(i)
-                                newarray.push(i.offsetHeight)
-                            }
-                            target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 50 + 'px'
-                        }, 0)
-                    })
+                if (num !== 1 && num !== 5 && num !== 8 && !exists) {
+                    // setTimeout(() => {
+                    //   window.scrollTo({
+                    //     top:(document.getElementById('d'+ tracktrack.id)).offsetTop,
+                    //     behavior:'smooth'});
+                    // }, 10);
                 }
+                setTimeout(() => {
+                    document.getElementById('d' + tracktrack.id).scrollIntoView({behavior: "smooth"})
+                }, 10);
             },
             fetchPlaylists(payload) {
                 let event = payload.event,
@@ -972,8 +671,8 @@ export const useDMStore = defineStore('dm', {
                         if (response.data['items'].length > 0) {
                             this.setListPlaylists(event.offset += 50)
                         }
-                        if (response.data['items'].length > 49 ) {
-                            this.fetchPlaylists({event:event,offset:offset+=50})
+                        if (response.data['items'].length > 49) {
+                            this.fetchPlaylists({event: event, offset: offset += 50})
                         }
                         this.loader = false
                     })
@@ -994,30 +693,12 @@ export const useDMStore = defineStore('dm', {
                 let event = payload.event
                 // console.log('167 '  + event.currentTarget.id)
                 let id = event.currentTarget.id
-                let allTracks = document.querySelectorAll("#yourplaylists > .rectrack > div");
-                if (allTracks != null) {
-                    for (let i = 0; i < allTracks.length; i++) {
-                        allTracks[i].style.display = 'none'
-                    }
-                }
-                let pl = document.querySelectorAll('#yourplaylists > div:not(.rectrack,.pl,.rel)')
-                for (let i = 0; i < pl.length; i++) {
-                    pl[i].style.display = 'none'
-
-                }
                 if (document.getElementById('p' + id)) {
                     // console.log(document.getElementById('p'+ id))
                     document.getElementById('p' + id).style.display = 'block'
                     // console.log(this.currentpl)
                     // this.commit('setCurrentPl',document.getElementById(id))
-                    if (this.currentpl) {
-                        this.currentpl.className = 'hr-line-dashed'
-                        this.setCurrentPl(document.getElementById(id))
-                        this.currentpl.className = 'hr-line-dashed activetab'
-                    } else {
-                        this.setCurrentPl(document.getElementById(id))
-                        this.currentpl.className = 'hr-line-dashed activetab'
-                    }
+
                     // setTimeout(() => {
                     //   window.scrollTo({
                     //     top:(document.getElementById('p'+ id)).offsetTop,
@@ -1025,16 +706,23 @@ export const useDMStore = defineStore('dm', {
                     // },10)
                     return
                 }
-                axios.request({
-                    url: 'https://api.spotify.com/v1/playlists/' + id,
-                    method: 'get',
-                    headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
-                })
-                    .then((response) => {
-                        // console.log(response.data)
-                        let data = response.data
-                        this.setPlaylists2(data)
+                let exists = this.playlists.find(dt => dt.id === id)
+                if (!exists) {
+                    axios.request({
+                        url: 'https://api.spotify.com/v1/playlists/' + id,
+                        method: 'get',
+                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
+                        .then((response) => {
+                            // console.log(response.data)
+                            let data = response.data
+                            console.log(data)
+                            this.setCurrentPl(data)
+                            this.setPlaylists2(data)
+                        })
+                } else {
+                    this.setCurrentPl(exists)
+                }
             },
             fetchArtist(payload) {
                 let event = payload.event
@@ -1152,7 +840,7 @@ export const useDMStore = defineStore('dm', {
                                 .then((response) => {
                                     // console.log('247' + response.data)
                                     let tracks = response.data['tracks']
-                                    if (tracks[0]['preview_url']) {
+                                    if (tracks && tracks[0]['preview_url']) {
                                         i.preview_url = tracks[0]['preview_url']
                                     }
                                     i.tracks = tracks
@@ -1564,9 +1252,9 @@ export const useDMStore = defineStore('dm', {
                 })
                     .then((response) => {
                         this.setSpotPlaylists(response.data['items'])
-                        // if (response.data['items'].length > 0){
-                        //   this.fetchSpotPlaylists(offset+=50)
-                        // }
+                        if (response.data['items'].length > 0) {
+                            this.fetchSpotPlaylists(offset += 50)
+                        }
                     })
                     .catch(error => {
                         if (error.response.status) {
@@ -1584,27 +1272,8 @@ export const useDMStore = defineStore('dm', {
                 let event = payload.event
                 // console.log('167'  + event.currentTarget.id)
                 let id = event.currentTarget.id
-                let allTracks = document.querySelectorAll("#sptplaylists > .rectrack > div");
-                if (allTracks != null) {
-                    for (let i = 0; i < allTracks.length; i++) {
-                        allTracks[i].style.display = 'none'
-                    }
-                }
-                let pl = document.querySelectorAll('#sptplaylists > div:not(.rectrack,.pl,.head,.sp)')
-                for (let i = 0; i < pl.length; i++) {
-                    pl[i].style.display = 'none'
-
-                }
                 if (document.getElementById('s' + id)) {
                     document.getElementById('s' + id).style.display = 'block'
-                    if (this.currentspl) {
-                        this.currentspl.className = 'hr-line-dashed'
-                        this.setCurrentSPl(document.getElementById(id))
-                        this.currentspl.className = 'hr-line-dashed activetab'
-                    } else {
-                        this.setCurrentSPl(document.getElementById(id))
-                        this.currentspl.className = 'hr-line-dashed activetab'
-                    }
                     // setTimeout(() => {
                     //   window.scrollTo({
                     //     top:(document.getElementById('s'+ id)).offsetTop,
@@ -1612,51 +1281,50 @@ export const useDMStore = defineStore('dm', {
                     // },10)
                     return
                 }
-                axios.request({
-                    url: 'https://api.spotify.com/v1/playlists/' + id,
-                    method: 'get',
-                    headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
-                })
-                    .then((response) => {
-                        // console.log(response.data)
-                        let data = response.data
-                        this.setSptPlaylists(data)
-                        //раскоментить
-                        // axios.request({
-                        //   url:'https://api.spotify.com/v1/playlists/'+ id + '/followers/contains?ids=' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
-                        //   method: 'get',
-                        //   headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
-                        // })
-                        //     .then((response) =>{
-                        //       data.followed = response.data[0]
-                        //       this.sptplaylists.push(data)
-                        //       if (this.currentspl){
-                        //         this.currentspl.className = 'hr-line-dashed'
-                        //         this.currentspl = document.getElementById(id)
-                        //         this.currentspl.className = 'hr-line-dashed activetab'
-                        //       } else {
-                        //         this.currentspl = document.getElementById(id)
-                        //         this.currentspl.className = 'hr-line-dashed activetab'
-                        //       }
-                        //     })
+                let exists = this.sptplaylists.find(dt => dt.id === id)
+                if (!exists) {
+                    axios.request({
+                        url: 'https://api.spotify.com/v1/playlists/' + id,
+                        method: 'get',
+                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                    })
+                        .then((response) => {
+                            // console.log(response.data)
+                            let data = response.data
+                            this.setCurrentSPl(data)
+                            this.setSptPlaylists(data)
+                            //раскоментить
+                            // axios.request({
+                            //   url:'https://api.spotify.com/v1/playlists/'+ id + '/followers/contains?ids=' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
+                            //   method: 'get',
+                            //   headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                            // })
+                            //     .then((response) =>{
+                            //       data.followed = response.data[0]
+                            //       this.sptplaylists.push(data)
+                            //     })
 
 
-                        // setTimeout(() => {
-                        //   window.scrollTo({
-                        //     top:(document.getElementById('s'+ id)).offsetTop,
-                        //     behavior:'smooth'});
-                        // },1000)
-                    })
-                    .catch(error => {
-                        if (error.response.status) {
-                            axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) => {
-                                // console.log(response.data)
-                                if (response.status === 200) {
-                                    this.SpotInit({event: event})
-                                }
-                            })
-                        }
-                    })
+                            // setTimeout(() => {
+                            //   window.scrollTo({
+                            //     top:(document.getElementById('s'+ id)).offsetTop,
+                            //     behavior:'smooth'});
+                            // },1000)
+                        })
+                        .catch(error => {
+                            console.log(error)
+                            if (error.response.status) {
+                                axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) => {
+                                    // console.log(response.data)
+                                    if (response.status === 200) {
+                                        this.SpotInit({event: event})
+                                    }
+                                })
+                            }
+                        })
+                } else {
+                    this.setCurrentSPl(exists)
+                }
             },
             search(e) {
                 // console.log(window.location.href)
@@ -1955,14 +1623,14 @@ export const useDMStore = defineStore('dm', {
                 let event = payload.event
                 let target = event.target
                 target.className = 'refresh-start'
-                this.setListPlaylists([],true)
+                this.setListPlaylists([], true)
                 this.setPlaylists([])
                 let div = "<div id='reloader' class='loading waitingForConnection'>Reloading<span>.</span><span>.</span><span>.</span></div>"
                 document.querySelector('#yourplaylists').insertAdjacentHTML("afterbegin", div)
                 setTimeout(() => {
                     let ne = {}
                     ne.target = document.getElementById('playlistlist')
-                    this.fetchPlaylists({event:ne, offset:0})
+                    this.fetchPlaylists({event: ne, offset: 0})
                     document.getElementById("reloader").remove()
                     target.className = 'refresh-end'
                 }, 1000)
@@ -2466,7 +2134,7 @@ export const useDMStore = defineStore('dm', {
                     })
                     .catch()
             },
-            seedTracks(payload) {
+            async seedTracks(payload) {
                 let pointer,
                     item = payload.item,
                     num = payload.num,
@@ -2494,7 +2162,7 @@ export const useDMStore = defineStore('dm', {
                     pointer = 'followedartist'
                 } else if (num === 7) {
                     pointer = 'newrelease'
-                } else if (num === 9) {
+                } else if (num === 8) {
                     pointer = 'sptplaylists'
                 } else if (num === 10) {
                     pointer = 'search'
@@ -2539,102 +2207,111 @@ export const useDMStore = defineStore('dm', {
                     // }, 10);
                     return
                 }
-                axios.request({
-                    url: 'https://api.spotify.com/v1/recommendations?seed_tracks=' + item['id'] + '&limit=50&offset=0&market=UA' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
-                    method: 'get',
-                    headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
-                })
-                    .then((response) => {
-                        let data = []
-                        // console.log(response.data['tracks'])
-                        data.tracks = response.data['tracks']
-                        data.type = 'seed_tracks'
-                        data.id = 'st' + item.id
-                        data.name = item.name
-                        data.artists = item.artists
-                        // console.log(data)
-                        if (num === 1) {
-                            let indexing = this.deeper1.indexOf(data)
-                            if (indexing === -1) {
-                                // eslint-disable-next-line no-undef
-                                this.setDeeper1(data)
-                            }
-                        } else if (num === 2) {
-                            let indexing = this.deeper2.indexOf(data)
-                            if (indexing === -1) {
-                                // eslint-disable-next-line no-undef
-                                this.setDeeper2(data)
-                            }
-                        } else if (num === 22) {
-                            let indexing = this.deeper22.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper22(data)
-                            }
-                        } else if (num === 23) {
-                            let indexing = this.deeper23.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper23(data)
-                            }
-                        } else if (num === 3) {
-                            let indexing = this.deeper3.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper3(data)
-                            }
-                        } else if (num === 32) {
-                            let indexing = this.deeper32.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper32(data)
-                            }
-                        } else if (num === 33) {
-                            let indexing = this.deeper33.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper33(data)
-                            }
-                        } else if (num === 4) {
-                            let indexing = this.deeper4.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper4(data)
-                            }
-                        } else if (num === 5) {
-                            let indexing = this.deeper5.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper5(data)
-                            }
-                        } else if (num === 6) {
-                            let indexing = this.deeper6.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper6(data)
-                            }
-                        } else if (num === 7) {
-                            let indexing = this.deeper7.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper7(data)
-                            }
-                        } else if (num === 8) {
-                            let indexing = this.deeper8.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper8(data)
-                            }
-                        } else if (num === 9) {
-                            let indexing = this.deeper9.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper9(data)
-                            }
-                        } else if (num === 10) {
-                            let indexing = this.deepers.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeepers(data)
-                            }
-                        }
-                        // setTimeout(() => {
-                        //   window.scrollTo({
-                        //     top:(document.getElementById('st'+ item.id)).offsetTop,
-                        //     behavior:'smooth'});
-                        // }, 10);
+                let exists = this.seed_tracks_data.find(dt => dt.id === 'st' + item.id)
+
+                let data = []
+                if (exists) {
+                    data = exists
+                }
+                if (!exists) {
+                    await axios.request({
+                        url: 'https://api.spotify.com/v1/recommendations?seed_tracks=' + item['id'] + '&limit=50&offset=0&market=UA' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
+                        method: 'get',
+                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
-                    .catch()
+                        .then((response) => {
+
+                            // console.log(response.data['tracks'])
+                            data.tracks = response.data['tracks']
+                            data.type = 'seed_tracks'
+                            data.id = 'st' + item.id
+                            data.name = item.name
+                            data.artists = item.artists
+                            this.seed_tracks_data.push(data)
+                            // console.log(data)
+
+
+                        })
+                        .catch()
+                }
+                if (num === 1) {
+                    let indexing = this.deeper1.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        // eslint-disable-next-line no-undef
+                        this.setDeeper1(data)
+                    }
+                } else if (num === 2) {
+                    let indexing = this.deeper2.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        // eslint-disable-next-line no-undef
+                        this.setDeeper2(data)
+                    }
+                } else if (num === 22) {
+                    let indexing = this.deeper22.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        this.setDeeper22(data)
+                    }
+                } else if (num === 23) {
+                    let indexing = this.deeper23.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        this.setDeeper23(data)
+                    }
+                } else if (num === 3) {
+                    let indexing = this.deeper3.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        this.setDeeper3(data)
+                    }
+                } else if (num === 32) {
+                    let indexing = this.deeper32.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        this.setDeeper32(data)
+                    }
+                } else if (num === 33) {
+                    let indexing = this.deeper33.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        this.setDeeper33(data)
+                    }
+                } else if (num === 4) {
+                    let indexing = this.deeper4.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        this.setDeeper4(data)
+                    }
+                } else if (num === 5) {
+                    let indexing = this.deeper5.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        this.setDeeper5(data)
+                    }
+                } else if (num === 6) {
+                    let indexing = this.deeper6.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        this.setDeeper6(data)
+                    }
+                } else if (num === 7) {
+                    let indexing = this.deeper7.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        this.setDeeper7(data)
+                    }
+                } else if (num === 8) {
+                    let indexing = this.deeper8.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        this.setDeeper8(data)
+                    }
+                } else if (num === 9) {
+                    let indexing = this.deeper9.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        this.setDeeper9(data)
+                    }
+                } else if (num === 10) {
+                    let indexing = this.deepers.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        this.setDeepers(data)
+                    }
+                }
+                setTimeout(() => {
+                    document.getElementById('st' + item.id).scrollIntoView({behavior: "smooth"})
+                }, 100);
             },
-            seedTracksM(payload) {
+            async seedTracksM(payload) {
                 let pointer,
                     item = payload.item,
                     num = payload.num,
@@ -2663,11 +2340,12 @@ export const useDMStore = defineStore('dm', {
                     pointer = 'followedartist'
                 } else if (num === 7) {
                     pointer = 'newrelease'
-                } else if (num === 9) {
+                } else if (num === 8) {
                     pointer = 'sptplaylists'
                 } else if (num === 10) {
                     pointer = 'search'
                 }
+                // console.log(item)
                 let alltop = document.querySelectorAll('#' + pointer + '> .rectrack > div.' + sib)
                 // console.log(alltop)
                 // console.log(sib)
@@ -2700,217 +2378,117 @@ export const useDMStore = defineStore('dm', {
                 }
                 if (document.getElementById('st' + item.id)) {
                     document.getElementById('st' + item.id).style.display = 'flex'
-                    if (num === 3 || num === 32 || num === 33 || num === 7) {
-                        setTimeout(async () => {
-                            let target = document.getElementById(parent.id)
-
-                            // console.log(target.children[1])
-                            let lst = target.children[1].children[0].children
-                            // console.log(lst)
-                            let newarray = []
-                            for await(let i of lst) {
-                                // console.log(i)
-                                newarray.push(i.offsetHeight)
-                            }
-                            // console.log(newarray.reduce((a, b) => a + b, 0))
-                            target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
-                        }, 0)
-                    } else if (num === 5) {
-                        setTimeout(async () => {
-                            let target = document.getElementById(parent.id)
-
-                            // console.log(target.children[1])
-                            let lst = target.children[1].children[0].children
-                            // console.log(lst)
-                            let newarray = []
-                            for await(let i of lst) {
-                                // console.log(i)
-                                newarray.push(i.offsetHeight)
-                            }
-                            // console.log(newarray.reduce((a, b) => a + b, 0))
-                            target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
-                        }, 0)
-                    } else {
-                        setTimeout(async () => {
-                            let target = document.getElementById(parent.id)
-
-                            // console.log(target.nextElementSibling)
-                            let lst = target.nextElementSibling.children[0].children
-                            // console.log(lst)
-                            let newarray = []
-                            for await(let i of lst) {
-                                // console.log(i)
-                                newarray.push(i.offsetHeight)
-                            }
-                            // console.log(newarray.reduce((a, b) => a + b, 0))
-                            if (num === 4) {
-                                target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 300 + 'px'
-                            } else {
-                                target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
-                            }
-                        }, 0)
-                    }
+                    // setTimeout(() => {
+                    //   window.scrollTo({
+                    //     top:(document.getElementById('st'+ item.id)).offsetTop,
+                    //     behavior:'smooth'});
+                    // }, 10);
                     return
                 }
-                axios.request({
-                    url: 'https://api.spotify.com/v1/recommendations?seed_tracks=' + item['id'] + '&limit=50&offset=0&market=UA' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
-                    method: 'get',
-                    headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
-                })
-                    .then((response) => {
-                        let data = []
-                        // console.log(response.data['tracks'])
-                        data.tracks = response.data['tracks']
-                        data.type = 'seed_tracks'
-                        data.id = 'st' + item.id
-                        data.name = item.name
-                        data.pid = parent.id
-                        // console.log(data)
-                        if (num === 1) {
-                            let indexing = this.deeper1.indexOf(data)
-                            if (indexing === -1) {
-                                // eslint-disable-next-line no-undef
-                                this.setDeeper1(data)
-                            }
-                        } else if (num === 2) {
-                            let indexing = this.deeper2.indexOf(data)
-                            if (indexing === -1) {
-                                // eslint-disable-next-line no-undef
-                                this.setDeeper2(data)
-                            }
-                        } else if (num === 22) {
-                            let indexing = this.deeper22.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper22(data)
-                            }
-                        } else if (num === 23) {
-                            let indexing = this.deeper23.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper23(data)
-                            }
-                        } else if (num === 3) {
-                            let indexing = this.deeper3.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper3(data)
-                            }
-                        } else if (num === 32) {
-                            let indexing = this.deeper32.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper32(data)
-                            }
-                        } else if (num === 33) {
-                            let indexing = this.deeper33.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper33(data)
-                            }
-                        } else if (num === 4) {
-                            let indexing = this.deeper4.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper4(data)
-                            }
-                        } else if (num === 5) {
-                            let indexing = this.deeper5.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper5(data)
-                            }
-                        } else if (num === 6) {
-                            let indexing = this.deeper6.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper6(data)
-                            }
-                        } else if (num === 7) {
-                            let indexing = this.deeper7.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper7(data)
-                            }
-                        } else if (num === 8) {
-                            let indexing = this.deeper8.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper8(data)
-                            }
-                        } else if (num === 9) {
-                            let indexing = this.deeper9.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper9(data)
-                            }
-                        } else if (num === 10) {
-                            let indexing = this.deepers.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeepers(data)
-                            }
-                        }
-                        if (num === 3 || num === 32 || num === 33 || num === 7) {
-                            setTimeout(async () => {
-                                let target = document.getElementById(parent.id)
+                let exists = this.seed_tracks_data.find(dt => dt.id === 'st' + item.id)
 
-                                // console.log(target.children[1])
-                                let lst = target.children[1].children[0].children
-                                // console.log(lst)
-                                let newarray = []
-                                for await(let i of lst) {
-                                    // console.log(i)
-                                    newarray.push(i.offsetHeight)
-                                }
-                                // console.log(newarray.reduce((a, b) => a + b, 0))
-                                target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
-                            }, 0)
-                        } else if (num === 5) {
-                            setTimeout(async () => {
-                                let target = document.getElementById(parent.id)
-
-                                // console.log(target.children[1])
-                                let lst = target.children[1].children[0].children
-                                // console.log(lst)
-                                let newarray = []
-                                for await(let i of lst) {
-                                    // console.log(i)
-                                    newarray.push(i.offsetHeight)
-                                }
-                                // console.log(newarray.reduce((a, b) => a + b, 0))
-                                target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
-                            }, 0)
-                        } else {
-                            if (num === 2 || num === 22 || num === 23 || num === 4 || num === 6) {
-                                setTimeout(async () => {
-                                    let target = document.getElementById(parent.id)
-
-                                    // console.log(target.children[1])
-                                    let lst = target.children[1].children[0].children
-                                    // console.log(lst)
-                                    let newarray = []
-                                    for await(let i of lst) {
-                                        // console.log(i)
-                                        newarray.push(i.offsetHeight)
-                                    }
-                                    // console.log(newarray.reduce((a, b) => a + b, 0))
-                                    target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
-                                }, 0)
-                            } else {
-                                setTimeout(async () => {
-                                    // console.log(parent.id)
-                                    let target = document.getElementById(parent.id)
-
-                                    // console.log(target.nextElementSibling)
-                                    let lst = target.nextElementSibling.children[0].children
-                                    // console.log(lst)
-                                    let newarray = []
-                                    for await(let i of lst) {
-                                        // console.log(i)
-                                        newarray.push(i.offsetHeight)
-                                    }
-                                    // console.log(newarray.reduce((a, b) => a + b, 0))
-                                    target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
-                                }, 0)
-                            }
-
-                        }
-                        // setTimeout(() => {
-                        //   window.scrollTo({
-                        //     top:(document.getElementById('st'+ item.id)).offsetTop,
-                        //     behavior:'smooth'});
-                        // }, 10);
+                let data = []
+                if (exists) {
+                    data = exists
+                }
+                if (!exists) {
+                    await axios.request({
+                        url: 'https://api.spotify.com/v1/recommendations?seed_tracks=' + item['id'] + '&limit=50&offset=0&market=UA' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
+                        method: 'get',
+                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
-                    .catch()
+                        .then((response) => {
+
+                            // console.log(response.data['tracks'])
+                            data.tracks = response.data['tracks']
+                            data.type = 'seed_tracks'
+                            data.id = 'st' + item.id
+                            data.name = item.name
+                            data.artists = item.artists
+                            data.parentId = parent
+                            this.seed_tracks_data.push(data)
+                            // console.log(data)
+
+
+                        })
+                        .catch()
+                }
+                if (num === 1) {
+                    let indexing = this.deeper1.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        // eslint-disable-next-line no-undef
+                        this.setDeeper1(data)
+                    }
+                } else if (num === 2) {
+                    let indexing = this.deeper2.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        // eslint-disable-next-line no-undef
+                        this.setDeeper2(data)
+                    }
+                } else if (num === 22) {
+                    let indexing = this.deeper22.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        this.setDeeper22(data)
+                    }
+                } else if (num === 23) {
+                    let indexing = this.deeper23.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        this.setDeeper23(data)
+                    }
+                } else if (num === 3) {
+                    let indexing = this.deeper3.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        this.setDeeper3(data)
+                    }
+                } else if (num === 32) {
+                    let indexing = this.deeper32.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        this.setDeeper32(data)
+                    }
+                } else if (num === 33) {
+                    let indexing = this.deeper33.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        this.setDeeper33(data)
+                    }
+                } else if (num === 4) {
+                    let indexing = this.deeper4.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        this.setDeeper4(data)
+                    }
+                } else if (num === 5) {
+                    let indexing = this.deeper5.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        this.setDeeper5(data)
+                    }
+                } else if (num === 6) {
+                    let indexing = this.deeper6.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        this.setDeeper6(data)
+                    }
+                } else if (num === 7) {
+                    let indexing = this.deeper7.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        this.setDeeper7(data)
+                    }
+                } else if (num === 8) {
+                    let indexing = this.deeper8.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        this.setDeeper8(data)
+                    }
+                } else if (num === 9) {
+                    let indexing = this.deeper9.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        this.setDeeper9(data)
+                    }
+                } else if (num === 10) {
+                    let indexing = this.deepers.find(dt => dt.id === data.id)
+                    if (!indexing) {
+                        this.setDeepers(data)
+                    }
+                }
+                setTimeout(() => {
+                    document.getElementById('st' + item.id).scrollIntoView({behavior: "smooth"})
+                }, 100);
             },
             deeperTracks(payload) {
                 let item = payload.item,
@@ -2920,6 +2498,7 @@ export const useDMStore = defineStore('dm', {
                     child = payload.child,
                     pointer
                 item.type = 'deepertracks'
+                let exists = this.tracks_data.find(dt => dt.id === item.id)
                 // console.log(item)
                 // console.log(flag)
                 // console.log(sib)
@@ -2945,10 +2524,16 @@ export const useDMStore = defineStore('dm', {
                     pointer = 'followedartist'
                 } else if (num === 7) {
                     pointer = 'newrelease'
-                } else if (num === 9) {
+                } else if (num === 8) {
                     pointer = 'sptplaylists'
                 } else if (num === 10) {
                     pointer = 'search'
+                }
+                if (exists) {
+                    item = exists
+                } else {
+                    let clone = structuredClone(toRaw(item));
+                    this.tracks_data.push(clone)
                 }
                 let all = document.querySelectorAll('#' + pointer + '> .rectrack > div')
                 if (child) {
@@ -2978,14 +2563,6 @@ export const useDMStore = defineStore('dm', {
                         }
 
                     }
-                    let newall = Array.from(all)
-                    let track = newall.indexOf(document.getElementById('d' + item.id))
-                    let album = newall.indexOf(alltop[alltop.length - 1])
-                    // console.log(track)
-                    if (track !== -1 && track < album) {
-                        alltop[alltop.length - 1].insertAdjacentElement('afterend', document.getElementById('d' + item.id));
-                        // all.parentNode.insertBefore(newall[album],newall[track])
-                    }
                 } else if (flag === true) {
                     if (all.length !== 0 && all.length !== 0) {
                         for (let i = 0; i < all.length; i++) {
@@ -3002,102 +2579,103 @@ export const useDMStore = defineStore('dm', {
                     // }, 10);
                     return
                 }
-                axios.request({
-                    url: 'https://api.spotify.com/v1/me/tracks/contains?ids=' + item.id,
-                    method: 'get',
-                    headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
-                })
-                    .then((response) => {
-                        item.followed = response.data[0]
+                if (!exists) {
+                    axios.request({
+                        url: 'https://api.spotify.com/v1/me/tracks/contains?ids=' + item.id,
+                        method: 'get',
+                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
-                    .catch(error => {
-                        if (error.response.status === 401) {
-                            axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) => {
-                                // console.log(response.data)
-                                if (response.status === 200) {
-                                    this.deeperTracks(pointer, item, num, flag, sib, child)
-                                }
-                            })
-                        }
-                    })
+                        .then((response) => {
+                            item.followed = response.data[0]
+                        })
+                        .catch(error => {
+                            if (error.response.status === 401) {
+                                axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) => {
+                                    // console.log(response.data)
+                                    if (response.status === 200) {
+                                        this.deeperTracks(pointer, item, num, flag, sib, child)
+                                    }
+                                })
+                            }
+                        })
+                }
                 if (num === 1) {
-                    let indexing = this.deeper1.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper1.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         // eslint-disable-next-line no-undef
                         this.setDeeper1(item)
                     }
                 } else if (num === 2) {
-                    let indexing = this.deeper2.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper2.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         // eslint-disable-next-line no-undef
                         this.setDeeper2(item)
                     }
                 } else if (num === 22) {
-                    let indexing = this.deeper22.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper22.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper22(item)
                     }
                 } else if (num === 23) {
-                    let indexing = this.deeper23.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper23.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper23(item)
                     }
                 } else if (num === 3) {
-                    let indexing = this.deeper3.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper3.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper3(item)
                     }
                 } else if (num === 32) {
-                    let indexing = this.deeper32.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper32.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper32(item)
                     }
                 } else if (num === 33) {
-                    let indexing = this.deeper33.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper33.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper33(item)
                     }
                 } else if (num === 4) {
-                    let indexing = this.deeper4.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper4.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper4(item)
                     }
                 } else if (num === 5) {
-                    let indexing = this.deeper5.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper5.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper5(item)
                     }
                 } else if (num === 6) {
-                    let indexing = this.deeper6.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper6.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper6(item)
                     }
                 } else if (num === 7) {
-                    let indexing = this.deeper7.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper7.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper7(item)
                     }
                 } else if (num === 8) {
-                    let indexing = this.deeper8.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper8.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper8(item)
                     }
                 } else if (num === 9) {
-                    let indexing = this.deeper9.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper9.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper9(item)
                     }
                 } else if (num === 10) {
-                    let indexing = this.deepers.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deepers.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeepers(item)
                     }
                 }
-                // setTimeout(() => {
-                //   window.scrollTo({
-                //     top:(document.getElementById('alb'+ item.id)).offsetTop,
-                //     behavior:'smooth'});
-                // }, 10);
+
+                setTimeout(() => {
+                    document.getElementById('d' + item.id).scrollIntoView({behavior: "smooth"})
+                }, 10);
             },
             deeperTracks2(payload) {
                 let pointer,
@@ -3107,6 +2685,7 @@ export const useDMStore = defineStore('dm', {
                     // flag = payload.flag,
                     sib = payload.sib,
                     child = payload.child
+                let exists = this.tracks_data.find(dt => dt.id === item.id)
                 if (num === 1) {
                     pointer = 'yourplaylists'
                 } else if (num === 2) {
@@ -3129,7 +2708,7 @@ export const useDMStore = defineStore('dm', {
                     pointer = 'followedartist'
                 } else if (num === 7) {
                     pointer = 'newrelease'
-                } else if (num === 9) {
+                } else if (num === 8) {
                     pointer = 'sptplaylists'
                 } else if (num === 10) {
                     pointer = 'search'
@@ -3167,14 +2746,6 @@ export const useDMStore = defineStore('dm', {
                         }
 
                     }
-                    let newall = Array.from(all)
-                    let track = newall.indexOf(document.getElementById('d' + item.id))
-                    let album = newall.indexOf(alltop[alltop.length - 1])
-                    // console.log(track)
-                    if (track !== -1 && track < album) {
-                        alltop[alltop.length - 1].insertAdjacentElement('afterend', document.getElementById('d' + item.id));
-                        // all.parentNode.insertBefore(newall[album],newall[track])
-                    }
                 }
                 if (document.getElementById('d' + item.id)) {
                     document.getElementById('d' + item.id).style.display = 'flex'
@@ -3185,96 +2756,141 @@ export const useDMStore = defineStore('dm', {
                     // }, 10);
                     return
                 }
+
+                if (exists) {
+                    item = exists
+                } else {
+                    let clone = structuredClone(toRaw(item));
+                    this.tracks_data.push(clone)
+                }
+
                 if (num === 1) {
-                    let indexing = this.deeper1.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper1.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         // eslint-disable-next-line no-undef
                         this.setDeeper1(item)
                     }
                 } else if (num === 2) {
-                    let indexing = this.deeper2.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper2.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         // eslint-disable-next-line no-undef
                         this.setDeeper2(item)
                     }
                 } else if (num === 22) {
-                    let indexing = this.deeper22.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper22.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper22(item)
                     }
                 } else if (num === 23) {
-                    let indexing = this.deeper23.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper23.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper23(item)
                     }
                 } else if (num === 3) {
-                    let indexing = this.deeper3.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper3.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper3(item)
                     }
                 } else if (num === 32) {
-                    let indexing = this.deeper32.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper32.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper32(item)
                     }
                 } else if (num === 33) {
-                    let indexing = this.deeper33.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper33.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper33(item)
                     }
                 } else if (num === 4) {
-                    let indexing = this.deeper4.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper4.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper4(item)
                     }
                 } else if (num === 5) {
-                    let indexing = this.deeper5.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper5.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper5(item)
                     }
                 } else if (num === 6) {
-                    let indexing = this.deeper6.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper6.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper6(item)
                     }
                 } else if (num === 7) {
-                    let indexing = this.deeper7.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper7.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper7(item)
                     }
                 } else if (num === 8) {
-                    let indexing = this.deeper8.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper8.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper8(item)
                     }
                 } else if (num === 9) {
-                    let indexing = this.deeper9.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper9.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper9(item)
                     }
                 } else if (num === 10) {
-                    let indexing = this.deepers.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deepers.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeepers(item)
                     }
                 }
-                // setTimeout(() => {
-                //   window.scrollTo({
-                //     top:(document.getElementById('d'+ item.id)).offsetTop,
-                //     behavior:'smooth'});
-                // }, 10);
+
+                setTimeout(() => {
+                    document.getElementById('d' + item.id).scrollIntoView({behavior: "smooth"})
+                }, 10);
             },
             deeperTracksM: async function (payload) {
-                let item = payload.item,
+                let pointer,
+                    item = payload.item,
                     num = payload.num,
                     flag = payload.flag,
                     sib = payload.sib,
                     child = payload.child,
                     parent = payload.parent
                 // console.log(item)
+                let exists = this.tracks_data.find(dt => dt.id === item.id)
                 item.type = 'deepertracks'
-                item.pid = parent.id
-                let all = document.querySelectorAll('.item-container > .rectrack > div.hcontent > div')
+                item.parentId = parent
+                // console.log(item)
+                // console.log(flag)
+                // console.log(sib)
+                if (num === 1) {
+                    pointer = 'yourplaylists'
+                } else if (num === 2) {
+                    pointer = 'topartist'
+                } else if (num === 22) {
+                    pointer = 'topartist6'
+                } else if (num === 23) {
+                    pointer = 'topartista'
+                } else if (num === 3) {
+                    pointer = 'toptrack'
+                } else if (num === 32) {
+                    pointer = 'toptrack6'
+                } else if (num === 33) {
+                    pointer = 'toptrackall'
+                } else if (num === 4) {
+                    pointer = 'savedalbum'
+                } else if (num === 5) {
+                    pointer = 'savedtrack'
+                } else if (num === 6) {
+                    pointer = 'followedartist'
+                } else if (num === 7) {
+                    pointer = 'newrelease'
+                } else if (num === 8) {
+                    pointer = 'sptplaylists'
+                } else if (num === 10) {
+                    pointer = 'search'
+                }
+                if (exists) {
+                    item = exists
+                } else {
+                    let clone = structuredClone(toRaw(item));
+                    this.tracks_data.push(clone)
+                }
+                let all = document.querySelectorAll('#' + pointer + '> .rectrack > div')
                 if (child) {
                     let par = document.getElementById(child).parentElement.nextElementSibling
                     while (par != null) {
@@ -3288,7 +2904,7 @@ export const useDMStore = defineStore('dm', {
                         }
                     }
                 } else if (sib) {
-                    let alltop = document.querySelectorAll('.item-container > .rectrack > div.hcontent > div.' + sib)
+                    let alltop = document.querySelectorAll('#' + pointer + '> .rectrack > div.' + sib)
                     let current = alltop[alltop.length - 1].nextElementSibling
                     while (current != null) {
                         // console.log(current)
@@ -3302,14 +2918,6 @@ export const useDMStore = defineStore('dm', {
                         }
 
                     }
-                    let newall = Array.from(all)
-                    let track = newall.indexOf(document.getElementById('d' + item.id))
-                    let album = newall.indexOf(alltop[alltop.length - 1])
-                    // console.log(track)
-                    if (track !== -1 && track < album) {
-                        alltop[alltop.length - 1].insertAdjacentElement('afterend', document.getElementById('d' + item.id));
-                        // all.parentNode.insertBefore(newall[album],newall[track])
-                    }
                 } else if (flag === true) {
                     if (all.length !== 0 && all.length !== 0) {
                         for (let i = 0; i < all.length; i++) {
@@ -3319,226 +2927,151 @@ export const useDMStore = defineStore('dm', {
                 }
                 if (document.getElementById('d' + item.id)) {
                     document.getElementById('d' + item.id).style.display = 'flex'
-                    if (num === 3 || num === 32 || num === 33 || num === 7 || num === 2 || num === 22 || num === 23 || num === 6) {
-                        setTimeout(async () => {
-                            let target = document.getElementById(parent.id)
-
-                            // console.log(target.children[1])
-                            let lst = target.children[1].children[0].children
-                            // console.log(lst)
-                            let newarray = []
-                            for await(let i of lst) {
-                                // console.log(i)
-                                newarray.push(i.offsetHeight)
-                            }
-                            // console.log(newarray.reduce((a, b) => a + b, 0))
-                            target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
-                        }, 0)
-                    } else if (num === 5) {
-                        setTimeout(async () => {
-                            let target = document.getElementById(parent.id)
-
-                            // console.log(target.children[1])
-                            let lst = target.children[1].children[0].children
-                            // console.log(lst)
-                            let newarray = []
-                            for await(let i of lst) {
-                                // console.log(i)
-                                newarray.push(i.offsetHeight)
-                            }
-                            // console.log(newarray.reduce((a, b) => a + b, 0))
-                            target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
-                        }, 0)
-                    } else {
-                        setTimeout(async () => {
-                            let target = document.getElementById(parent.id)
-
-                            // console.log(target.nextElementSibling)
-                            let lst = target.nextElementSibling.children[0].children
-                            // console.log(lst)
-                            let newarray = []
-                            for await(let i of lst) {
-                                // console.log(i)
-                                newarray.push(i.offsetHeight)
-                            }
-                            // console.log(newarray.reduce((a, b) => a + b, 0))
-                            target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
-                        }, 0)
-                    }
+                    // setTimeout(() => {
+                    //   window.scrollTo({
+                    //     top:(document.getElementById('d'+ item.id)).offsetTop,
+                    //     behavior:'smooth'});
+                    // }, 10);
                     return
                 }
-                await axios.request({
-                    url: 'https://api.spotify.com/v1/me/tracks/contains?ids=' + item.id,
-                    method: 'get',
-                    headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
-                })
-                    .then((response) => {
-                        item.followed = response.data[0]
+                if (!exists) {
+                    axios.request({
+                        url: 'https://api.spotify.com/v1/me/tracks/contains?ids=' + item.id,
+                        method: 'get',
+                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
-                    .catch(error => {
-                        if (error.response.status === 401) {
-                            axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) => {
-                                // console.log(response.data)
-                                if (response.status === 200) {
-                                    this.deeperTracksM({
-                                        item: item,
-                                        num: num,
-                                        flag: flag,
-                                        sib: sib,
-                                        child: child,
-                                        parent: parent
-                                    })
-                                }
-                            })
-                        }
-                    })
+                        .then((response) => {
+                            item.followed = response.data[0]
+                        })
+                        .catch(error => {
+                            if (error.response.status === 401) {
+                                axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) => {
+                                    // console.log(response.data)
+                                    if (response.status === 200) {
+                                        this.deeperTracksM(payload)
+                                    }
+                                })
+                            }
+                        })
+                }
                 if (num === 1) {
-                    let indexing = this.deeper1.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper1.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         // eslint-disable-next-line no-undef
                         this.setDeeper1(item)
                     }
                 } else if (num === 2) {
-                    let indexing = this.deeper2.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper2.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         // eslint-disable-next-line no-undef
                         this.setDeeper2(item)
                     }
                 } else if (num === 22) {
-                    let indexing = this.deeper22.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper22.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper22(item)
                     }
                 } else if (num === 23) {
-                    let indexing = this.deeper23.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper23.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper23(item)
                     }
                 } else if (num === 3) {
-                    let indexing = this.deeper3.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper3.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper3(item)
                     }
                 } else if (num === 32) {
-                    let indexing = this.deeper32.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper32.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper32(item)
                     }
                 } else if (num === 33) {
-                    let indexing = this.deeper33.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper33.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper33(item)
                     }
                 } else if (num === 4) {
-                    let indexing = this.deeper4.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper4.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper4(item)
                     }
                 } else if (num === 5) {
-                    let indexing = this.deeper5.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper5.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper5(item)
                     }
                 } else if (num === 6) {
-                    let indexing = this.deeper6.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper6.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper6(item)
                     }
                 } else if (num === 7) {
-                    let indexing = this.deeper7.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper7.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper7(item)
                     }
                 } else if (num === 8) {
-                    let indexing = this.deeper8.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper8.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper8(item)
                     }
                 } else if (num === 9) {
-                    let indexing = this.deeper9.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper9.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper9(item)
                     }
                 } else if (num === 10) {
-                    let indexing = this.deepers.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deepers.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeepers(item)
                     }
                 }
-                if (num !== 2 && num !== 22 && num !== 23 && num !== 6 && num !== 3 && num !== 32 && num !== 33 && num !== 5 && num !== 7 && num !== 4) {
-                    setTimeout(async () => {
-                        // console.log(parent.id)
-                        let target = document.getElementById(parent.id)
 
-                        // console.log(target.nextElementSibling)
-                        let lst = target.nextElementSibling.children[0].children
-                        // console.log(lst)
-                        let newarray = []
-                        for await(let i of lst) {
-                            // console.log(i)
-                            newarray.push(i.offsetHeight)
-                        }
-                        // console.log(newarray.reduce((a, b) => a + b, 0))
-                        target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
-                    }, 0)
-                } else if (num === 3 || num === 32 || num === 33 || num === 7 || num === 4 || num === 6) {
-                    setTimeout(async () => {
-                        let target = document.getElementById(parent.id)
-
-                        // console.log(target.children[1])
-                        let lst = target.children[1].children[0].children
-                        // console.log(lst)
-                        let newarray = []
-                        for await(let i of lst) {
-                            // console.log(i)
-                            newarray.push(i.offsetHeight)
-                        }
-                        // console.log(newarray.reduce((a, b) => a + b, 0))
-                        target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
-                    }, 0)
-                } else if (num === 5) {
-                    setTimeout(async () => {
-                        let target = document.getElementById(parent.id)
-
-                        // console.log(target.children[1])
-                        let lst = target.children[1].children[0].children
-                        // console.log(lst)
-                        let newarray = []
-                        for await(let i of lst) {
-                            // console.log(i)
-                            newarray.push(i.offsetHeight)
-                        }
-                        // console.log(newarray.reduce((a, b) => a + b, 0))
-                        target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
-                    }, 0)
-                } else {
-                    setTimeout(async () => {
-                        let target = document.getElementById(parent.id)
-
-                        // console.log(target.children[0])
-                        let lst = target.children[0].nextElementSibling.children[0].children
-                        // console.log(lst)
-                        let newarray = []
-                        for await(let i of lst) {
-                            // console.log(i)
-                            newarray.push(i.offsetHeight)
-                        }
-                        // console.log(newarray.reduce((a, b) => a + b, 0))
-                        target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
-                    }, 0)
-                }
+                setTimeout(() => {
+                    document.getElementById('d' + item.id).scrollIntoView({behavior: "smooth"})
+                }, 10);
             },
             deeperTracks2M(payload) {
-                let item = payload.item,
+                let pointer,
+                    item = payload.item,
                     d = payload.d,
                     num = payload.num,
                     sib = payload.sib,
                     child = payload.child,
                     parent = payload.parent
+                let exists = this.tracks_data.find(dt => dt.id === item.id)
+                if (num === 1) {
+                    pointer = 'yourplaylists'
+                } else if (num === 2) {
+                    pointer = 'topartist'
+                } else if (num === 22) {
+                    pointer = 'topartist6'
+                } else if (num === 23) {
+                    pointer = 'topartista'
+                } else if (num === 3) {
+                    pointer = 'toptrack'
+                } else if (num === 32) {
+                    pointer = 'toptrack6'
+                } else if (num === 33) {
+                    pointer = 'toptrackall'
+                } else if (num === 4) {
+                    pointer = 'savedalbum'
+                } else if (num === 5) {
+                    pointer = 'savedtrack'
+                } else if (num === 6) {
+                    pointer = 'followedartist'
+                } else if (num === 7) {
+                    pointer = 'newrelease'
+                } else if (num === 8) {
+                    pointer = 'sptplaylists'
+                } else if (num === 10) {
+                    pointer = 'search'
+                }
                 item.images = d.images
                 item.type = 'deepertracks2'
-                item.pid = parent.id
-                let all = document.querySelectorAll('.item-container > .rectrack > div.hcontent > div')
+                item.parentId = parent
+                let all = document.querySelectorAll('#' + pointer + '> .rectrack > div')
                 if (child) {
                     let par = document.getElementById(child).parentElement.nextElementSibling
                     while (par != null) {
@@ -3552,9 +3085,13 @@ export const useDMStore = defineStore('dm', {
                         }
                     }
                 } else if (sib) {
-                    let alltop = document.querySelectorAll(' .item-container > .rectrack > div.hcontent > div.' + sib)
+                    let alltop = document.querySelectorAll('#' + pointer + '> .rectrack > div.' + sib)
+                    // console.log(pointer)
+                    console.log(sib)
+                    console.log(alltop)
                     let current = alltop[alltop.length - 1].nextElementSibling
                     while (current != null) {
+                        // console.log(current)
                         current.style.display = 'none'
                         if (current.nextElementSibling !== null && current.nextElementSibling.style.display !== 'none') {
                             current = current.nextElementSibling
@@ -3563,173 +3100,106 @@ export const useDMStore = defineStore('dm', {
                         } else if (current.nextElementSibling === null) {
                             current = null
                         }
+                    }
 
-                    }
-                    let newall = Array.from(all)
-                    let track = newall.indexOf(document.getElementById('d' + item.id))
-                    let album = newall.indexOf(alltop[alltop.length - 1])
-                    if (track !== -1 && track < album) {
-                        alltop[alltop.length - 1].insertAdjacentElement('afterend', document.getElementById('d' + item.id));
-                    }
+
                 }
                 if (document.getElementById('d' + item.id)) {
                     document.getElementById('d' + item.id).style.display = 'flex'
-                    setTimeout(async () => {
-                        let target = document.getElementById(parent.id)
-
-                        // console.log(target.nextElementSibling)
-                        let lst = target.nextElementSibling.children[0].children
-                        // console.log(lst)
-                        let newarray = []
-                        for await(let i of lst) {
-                            // console.log(i)
-                            newarray.push(i.offsetHeight)
-                        }
-                        // console.log(newarray.reduce((a, b) => a + b, 0))
-                        target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
-                    }, 0)
+                    // setTimeout(() => {
+                    //   window.scrollTo({
+                    //     top:(document.getElementById('d'+ item.id)).offsetTop,
+                    //     behavior:'smooth'});
+                    // }, 10);
                     return
                 }
-                if (num === 1) {
-                    let indexing = this.deeper1.indexOf(item)
-                    if (indexing === -1) {
-                        this.setDeeper1(item)
-                        setTimeout(async () => {
-                            let target = document.getElementById(parent.id)
 
-                            // console.log(target.nextElementSibling)
-                            let lst = target.nextElementSibling.children[0].children
-                            // console.log(lst)
-                            let newarray = []
-                            for await(let i of lst) {
-                                // console.log(i)
-                                newarray.push(i.offsetHeight)
-                            }
-                            // console.log(newarray.reduce((a, b) => a + b, 0))
-                            target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
-                        }, 0)
+                if (exists) {
+                    item = exists
+                } else {
+                    let clone = structuredClone(toRaw(item));
+                    this.tracks_data.push(clone)
+                }
+
+                if (num === 1) {
+                    let indexing = this.deeper1.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        // eslint-disable-next-line no-undef
+                        this.setDeeper1(item)
                     }
                 } else if (num === 2) {
-                    let indexing = this.deeper2.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper2.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         // eslint-disable-next-line no-undef
                         this.setDeeper2(item)
                     }
                 } else if (num === 22) {
-                    let indexing = this.deeper22.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper22.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper22(item)
                     }
                 } else if (num === 23) {
-                    let indexing = this.deeper23.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper23.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper23(item)
                     }
                 } else if (num === 3) {
-                    let indexing = this.deeper3.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper3.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper3(item)
                     }
                 } else if (num === 32) {
-                    let indexing = this.deeper32.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper32.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper32(item)
                     }
                 } else if (num === 33) {
-                    let indexing = this.deeper33.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper33.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper33(item)
                     }
                 } else if (num === 4) {
-                    let indexing = this.deeper4.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper4.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper4(item)
                     }
                 } else if (num === 5) {
-                    let indexing = this.deeper5.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper5.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper5(item)
                     }
                 } else if (num === 6) {
-                    let indexing = this.deeper6.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper6.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper6(item)
                     }
                 } else if (num === 7) {
-                    let indexing = this.deeper7.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper7.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper7(item)
                     }
                 } else if (num === 8) {
-                    let indexing = this.deeper8.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper8.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper8(item)
                     }
                 } else if (num === 9) {
-                    let indexing = this.deeper9.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deeper9.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeeper9(item)
                     }
                 } else if (num === 10) {
-                    let indexing = this.deepers.indexOf(item)
-                    if (indexing === -1) {
+                    let indexing = this.deepers.find(dt => dt.id === item.id)
+                    if (!indexing) {
                         this.setDeepers(item)
                     }
                 }
 
-                if (num !== 1 && num !== 5 && num !== 2 && num !== 22 && num !== 23 && num !== 3 && num !== 32 && num !== 33 && num !== 4 && num !== 6 && num !== 7) {
-                    setTimeout(async () => {
-                        let target = document.getElementById(parent.id)
-
-                        // console.log(target.children[1])
-                        let lst = target.parentElement.children[1].children[0].children
-                        // console.log(lst)
-                        let newarray = []
-                        for await(let i of lst) {
-                            // console.log(i)
-                            newarray.push(i.offsetHeight)
-                        }
-                        // console.log(target.parentElement.children[1])
-                        // console.log(target.parentElement.children[1].style.height)
-                        // console.log(newarray.reduce((a, b) => a + b, 0))
-                        target.parentElement.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
-                        // console.log(target.parentElement.children[1].style.height)
-                    }, 0)
-                } else if (num === 2 || num === 22 || num === 23 || num === 3 || num === 32 || num === 33 || num === 4 || num === 5 || num === 6 || num === 7) {
-                    setTimeout(async () => {
-                        let target = document.getElementById(parent.id)
-
-                        // console.log(target.children[1])
-                        let lst = target.children[1].children[0].children
-                        // console.log(lst)
-                        let newarray = []
-                        for await(let i of lst) {
-                            // console.log(i)
-                            newarray.push(i.offsetHeight)
-                        }
-                        // console.log(newarray.reduce((a, b) => a + b, 0))
-                        target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
-                    }, 0)
-                } else {
-                    setTimeout(async () => {
-                        // console.log(parent.track.id)
-                        // console.log(parent.id)
-                        let target = document.getElementById(parent.id)
-                        document.getElementById(parent.track.id)
-                        // console.log(target.children[1])
-                        let lst = target.parentElement.children[1].children[0].children
-                        // console.log(lst)
-                        let newarray = []
-                        for await(let i of lst) {
-                            // console.log(i)
-                            newarray.push(i.offsetHeight)
-                        }
-                        // console.log(newarray.reduce((a, b) => a + b, 0))
-                        target.parentElement.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
-                    }, 0)
-                }
+                setTimeout(() => {
+                    document.getElementById('d' + item.id).scrollIntoView({behavior: "smooth"})
+                }, 10);
             },
-            seedArtist(payload) {
+            async seedArtist(payload) {
                 let pointer,
                     item = payload.item,
                     num = payload.num,
@@ -3757,7 +3227,7 @@ export const useDMStore = defineStore('dm', {
                     pointer = 'followedartist'
                 } else if (num === 7) {
                     pointer = 'newrelease'
-                } else if (num === 9) {
+                } else if (num === 8) {
                     pointer = 'sptplaylists'
                 } else if (num === 10) {
                     pointer = 'search'
@@ -3799,106 +3269,146 @@ export const useDMStore = defineStore('dm', {
                     // }, 10);
                     return
                 }
-                axios.request({
-                    url: 'https://api.spotify.com/v1/recommendations?seed_artists=' + item['id'] + '&limit=50&offset=0&market=UA' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
-                    method: 'get',
-                    headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
-                })
-                    .then((response) => {
-                        let data = []
-                        data.tracks = response.data['tracks']
-                        data.type = 'seed_artists'
-                        data.id = 'sa' + item.id
-                        data.name = item.name
-                        // console.log(data)
-                        if (num === 1) {
-                            let indexing = this.deeper1.indexOf(data)
-                            if (indexing === -1) {
-                                // eslint-disable-next-line no-undef
-                                this.setDeeper1(data)
-                            }
-                        } else if (num === 2) {
-                            let indexing = this.deeper2.indexOf(data)
-                            if (indexing === -1) {
-                                // eslint-disable-next-line no-undef
-                                this.setDeeper2(data)
-                            }
-                        } else if (num === 22) {
-                            let indexing = this.deeper22.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper22(data)
-                            }
-                        } else if (num === 23) {
-                            let indexing = this.deeper23.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper23(data)
-                            }
-                        } else if (num === 3) {
-                            let indexing = this.deeper3.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper3(data)
-                            }
-                        } else if (num === 32) {
-                            let indexing = this.deeper32.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper32(data)
-                            }
-                        } else if (num === 33) {
-                            let indexing = this.deeper33.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper33(data)
-                            }
-                        } else if (num === 4) {
-                            let indexing = this.deeper4.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper4(data)
-                            }
-                        } else if (num === 5) {
-                            let indexing = this.deeper5.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper5(data)
-                            }
-                        } else if (num === 6) {
-                            let indexing = this.deeper6.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper6(data)
-                            }
-                        } else if (num === 7) {
-                            let indexing = this.deeper7.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper7(data)
-                            }
-                        } else if (num === 8) {
-                            let indexing = this.deeper8.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper8(data)
-                            }
-                        } else if (num === 9) {
-                            let indexing = this.deeper9.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper9(data)
-                            }
-                        } else if (num === 10) {
-                            let indexing = this.deepers.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeepers(data)
-                            }
-                        }
-                        // setTimeout(() => {
-                        //   window.scrollTo({
-                        //     top:(document.getElementById('sa'+ item.id)).offsetTop,
-                        //     behavior:'smooth'});
-                        // }, 10);
+                let exists = this.seed_artists_data.find(dt => dt.id === 'sa' + item.id)
+
+                let data = []
+                if (exists) {
+                    data = exists
+                }
+                if (!exists) {
+                    await axios.request({
+                        url: 'https://api.spotify.com/v1/recommendations?seed_artists=' + item['id'] + '&limit=50&offset=0&market=UA' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
+                        method: 'get',
+                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
-                    .catch()
+                        .then((response) => {
+                            data.tracks = response.data['tracks']
+                            data.type = 'seed_artists'
+                            data.id = 'sa' + item.id
+                            data.name = item.name
+                            this.seed_artists_data.push(data)
+                            // console.log(data)
+
+                            // setTimeout(() => {
+                            //   window.scrollTo({
+                            //     top:(document.getElementById('sa'+ item.id)).offsetTop,
+                            //     behavior:'smooth'});
+                            // }, 10);
+                        })
+                        .catch()
+                }
+                if (num === 1) {
+                    let indexing = this.deeper1.indexOf(data)
+                    if (indexing === -1) {
+                        // eslint-disable-next-line no-undef
+                        this.setDeeper1(data)
+                    }
+                } else if (num === 2) {
+                    let indexing = this.deeper2.indexOf(data)
+                    if (indexing === -1) {
+                        // eslint-disable-next-line no-undef
+                        this.setDeeper2(data)
+                    }
+                } else if (num === 22) {
+                    let indexing = this.deeper22.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper22(data)
+                    }
+                } else if (num === 23) {
+                    let indexing = this.deeper23.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper23(data)
+                    }
+                } else if (num === 3) {
+                    let indexing = this.deeper3.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper3(data)
+                    }
+                } else if (num === 32) {
+                    let indexing = this.deeper32.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper32(data)
+                    }
+                } else if (num === 33) {
+                    let indexing = this.deeper33.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper33(data)
+                    }
+                } else if (num === 4) {
+                    let indexing = this.deeper4.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper4(data)
+                    }
+                } else if (num === 5) {
+                    let indexing = this.deeper5.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper5(data)
+                    }
+                } else if (num === 6) {
+                    let indexing = this.deeper6.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper6(data)
+                    }
+                } else if (num === 7) {
+                    let indexing = this.deeper7.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper7(data)
+                    }
+                } else if (num === 8) {
+                    let indexing = this.deeper8.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper8(data)
+                    }
+                } else if (num === 9) {
+                    let indexing = this.deeper9.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper9(data)
+                    }
+                } else if (num === 10) {
+                    let indexing = this.deepers.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeepers(data)
+                    }
+                }
+                setTimeout(() => {
+                    document.getElementById('sa' + item.id).scrollIntoView({behavior: "smooth"})
+                }, 100);
             },
-            seedArtistM(payload) {
-                let item = payload.item,
+            async seedArtistM(payload) {
+                let pointer,
+                    item = payload.item,
                     num = payload.num,
                     sib = payload.sib,
                     child = payload.child,
                     parent = payload.parent
-                let alltop = document.querySelectorAll(' .item-container > .rectrack > div.hcontent > div.' + sib)
+                if (num === 1) {
+                    pointer = 'yourplaylists'
+                } else if (num === 2) {
+                    pointer = 'topartist'
+                } else if (num === 22) {
+                    pointer = 'topartist6'
+                } else if (num === 23) {
+                    pointer = 'topartista'
+                } else if (num === 3) {
+                    pointer = 'toptrack'
+                } else if (num === 32) {
+                    pointer = 'toptrack6'
+                } else if (num === 33) {
+                    pointer = 'toptrackall'
+                } else if (num === 4) {
+                    pointer = 'savedalbum'
+                } else if (num === 5) {
+                    pointer = 'savedtrack'
+                } else if (num === 6) {
+                    pointer = 'followedartist'
+                } else if (num === 7) {
+                    pointer = 'newrelease'
+                } else if (num === 8) {
+                    pointer = 'sptplaylists'
+                } else if (num === 10) {
+                    pointer = 'search'
+                }
+                let alltop = document.querySelectorAll('#' + pointer + '> .rectrack > div.' + sib)
                 // console.log(child)
                 if (child) {
                     let par = document.getElementById(child).parentElement.nextElementSibling
@@ -3928,158 +3438,142 @@ export const useDMStore = defineStore('dm', {
                 }
                 if (document.getElementById('sa' + item.id)) {
                     document.getElementById('sa' + item.id).style.display = 'flex'
-                    setTimeout(async () => {
-                        let target = document.getElementById(parent.id)
-
-                        // console.log(target.nextElementSibling)
-                        let lst = target.nextElementSibling.children[0].children
-                        // console.log(lst)
-                        let newarray = []
-                        for await(let i of lst) {
-                            // console.log(i)
-                            newarray.push(i.offsetHeight)
-                        }
-                        // console.log(newarray.reduce((a, b) => a + b, 0))
-                        target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
-                    }, 0)
+                    // setTimeout(() => {
+                    //   window.scrollTo({
+                    //     top:(document.getElementById('sa'+ item.id)).offsetTop,
+                    //     behavior:'smooth'});
+                    // }, 10);
                     return
                 }
-                axios.request({
-                    url: 'https://api.spotify.com/v1/recommendations?seed_artists=' + item['id'] + '&limit=50&offset=0&market=UA' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
-                    method: 'get',
-                    headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
-                })
-                    .then((response) => {
-                        let data = []
-                        data.tracks = response.data['tracks']
-                        data.type = 'seed_artists'
-                        data.id = 'sa' + item.id
-                        data.name = item.name
-                        data.pid = parent.id
-                        // console.log(data)
-                        if (num === 1) {
-                            let indexing = this.deeper1.indexOf(data)
-                            if (indexing === -1) {
-                                // eslint-disable-next-line no-undef
-                                this.setDeeper1(data)
-                            }
-                        } else if (num === 2) {
-                            let indexing = this.deeper2.indexOf(data)
-                            if (indexing === -1) {
-                                // eslint-disable-next-line no-undef
-                                this.setDeeper2(data)
-                            }
-                        } else if (num === 22) {
-                            let indexing = this.deeper22.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper22(data)
-                            }
-                        } else if (num === 23) {
-                            let indexing = this.deeper23.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper23(data)
-                            }
-                        } else if (num === 3) {
-                            let indexing = this.deeper3.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper3(data)
-                            }
-                        } else if (num === 32) {
-                            let indexing = this.deeper32.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper32(data)
-                            }
-                        } else if (num === 33) {
-                            let indexing = this.deeper33.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper33(data)
-                            }
-                        } else if (num === 4) {
-                            let indexing = this.deeper4.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper4(data)
-                            }
-                        } else if (num === 5) {
-                            let indexing = this.deeper5.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper5(data)
-                            }
-                        } else if (num === 6) {
-                            let indexing = this.deeper6.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper6(data)
-                            }
-                        } else if (num === 7) {
-                            let indexing = this.deeper7.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper7(data)
-                            }
-                        } else if (num === 8) {
-                            let indexing = this.deeper8.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper8(data)
-                            }
-                        } else if (num === 9) {
-                            let indexing = this.deeper9.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeeper9(data)
-                            }
-                        } else if (num === 10) {
-                            let indexing = this.deepers.indexOf(data)
-                            if (indexing === -1) {
-                                this.setDeepers(data)
-                            }
-                        }
-                        if (num === 3 || num === 32 || num === 33 || num === 7 || num === 2 || num === 22 || num === 23 || num === 6) {
-                            setTimeout(async () => {
-                                let target = document.getElementById(parent.id)
-                                // console.log(target)
+                let exists = this.seed_artists_data.find(dt => dt.id === 'sa' + item.id)
 
-                                // console.log(target.children[1])
-                                let lst = target.children[1].children[0].children
-                                // console.log(lst)
-                                let newarray = []
-                                for await(let i of lst) {
-                                    // console.log(i)
-                                    newarray.push(i.offsetHeight)
-                                }
-                                // console.log(newarray.reduce((a, b) => a + b, 0))
-                                target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
-                            }, 0)
-                        } else if (num === 5) {
-                            setTimeout(async () => {
-                                let target = document.getElementById(parent.id)
-                                document.getElementById(parent.track.id)
-                                // console.log(target.children[1])
-                                let lst = target.children[1].children[0].children
-                                // console.log(lst)
-                                let newarray = []
-                                for await(let i of lst) {
-                                    // console.log(i)
-                                    newarray.push(i.offsetHeight)
-                                }
-                                // console.log(newarray.reduce((a, b) => a + b, 0))
-                                target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
-                            }, 0)
-                        } else {
-                            setTimeout(async () => {
-                                let target = document.getElementById(parent.id)
-                                console.log(target)
-
-                                // console.log(target.nextElementSibling)
-                                let lst = target.nextElementSibling.children[0].children
-                                // console.log(lst)
-                                let newarray = []
-                                for await(let i of lst) {
-                                    // console.log(i)
-                                    newarray.push(i.offsetHeight)
-                                }
-                                // console.log(newarray.reduce((a, b) => a + b, 0))
-                                target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
-                            }, 0)
-                        }
+                let data = []
+                if (exists) {
+                    data = exists
+                    data.parentId = parent
+                }
+                if (!exists) {
+                    await axios.request({
+                        url: 'https://api.spotify.com/v1/recommendations?seed_artists=' + item['id'] + '&limit=50&offset=0&market=UA' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
+                        method: 'get',
+                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
-                    .catch()
+                        .then((response) => {
+                            data.tracks = response.data['tracks']
+                            data.type = 'seed_artists'
+                            data.id = 'sa' + item.id
+                            data.name = item.name
+                            data.parentId = parent
+                            this.seed_artists_data.push(data)
+                        })
+                        .catch()
+                }
+                if (num === 1) {
+                    let indexing = this.deeper1.indexOf(data)
+                    if (indexing === -1) {
+                        // eslint-disable-next-line no-undef
+                        this.setDeeper1(data)
+                    }
+                } else if (num === 2) {
+                    let indexing = this.deeper2.indexOf(data)
+                    if (indexing === -1) {
+                        // eslint-disable-next-line no-undef
+                        this.setDeeper2(data)
+                    }
+                } else if (num === 22) {
+                    let indexing = this.deeper22.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper22(data)
+                    }
+                } else if (num === 23) {
+                    let indexing = this.deeper23.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper23(data)
+                    }
+                } else if (num === 3) {
+                    let indexing = this.deeper3.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper3(data)
+                    }
+                } else if (num === 32) {
+                    let indexing = this.deeper32.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper32(data)
+                    }
+                } else if (num === 33) {
+                    let indexing = this.deeper33.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper33(data)
+                    }
+                } else if (num === 4) {
+                    let indexing = this.deeper4.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper4(data)
+                    }
+                } else if (num === 5) {
+                    let indexing = this.deeper5.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper5(data)
+                    }
+                } else if (num === 6) {
+                    let indexing = this.deeper6.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper6(data)
+                    }
+                } else if (num === 7) {
+                    let indexing = this.deeper7.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper7(data)
+                    }
+                } else if (num === 8) {
+                    let indexing = this.deeper8.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper8(data)
+                    }
+                } else if (num === 9) {
+                    let indexing = this.deeper9.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeeper9(data)
+                    }
+                } else if (num === 10) {
+                    let indexing = this.deepers.indexOf(data)
+                    if (indexing === -1) {
+                        this.setDeepers(data)
+                    }
+                }
+                setTimeout(() => {
+                    document.getElementById('sa' + item.id).scrollIntoView({behavior: "smooth"})
+                }, 100);
+            },
+            prepare: async function (payload) {
+                let num = payload.num
+
+                if (num === 1) {
+                    console.log(4225)
+                    this.deeper1 = []
+                } else if (num === 2 || num === 22 || num === 23) {
+                    this.deeper2 = []
+                    this.deeper22 = []
+                    this.deeper23 = []
+                } else if (num === 3 || num === 32 || num === 33) {
+                    this.deeper3 = []
+                    this.deeper32 = []
+                    this.deeper33 = []
+                } else if (num === 4) {
+                    this.deeper4 = []
+                } else if (num === 5) {
+                    this.deeper5 = []
+                } else if (num === 6) {
+                    this.deeper6 = []
+                } else if (num === 7) {
+                    this.deeper7 = []
+                } else if (num === 8) {
+                    this.deeper8 = []
+                } else if (num === 9) {
+                    this.deeper9 = []
+                } else if (num === 10) {
+                    this.deepers = []
+                }
             },
             deeperartist: async function (payload) {
                 console.log(4102)
@@ -4112,38 +3606,14 @@ export const useDMStore = defineStore('dm', {
                     pointer = 'followedartist'
                 } else if (num === 7) {
                     pointer = 'newrelease'
-                } else if (num === 9) {
+                } else if (num === 8) {
                     pointer = 'sptplaylists'
                 } else if (num === 10) {
                     pointer = 'search'
                 }
                 let trackartist = []
                 trackartist.type = 'trackartist'
-                // console.log(item.id)
-                // console.log(item)
-                // console.log(track)
-                // if (document.getElementById('art'+ item.id)){
-                //   document.getElementById('art'+ item.id).style.display = 'flex'
-                //
-                // } else if (document.getElementById('art6'+ item.id)){
-                //   document.getElementById('art6'+ item.id).style.display = 'flex'
-                //
-                // } else if (document.getElementById('artall'+ item.id)){
-                //   document.getElementById('artall'+ item.id).style.display = 'flex'
-                //
-                // } else if (document.getElementById('fa'+ item.id)){
-                //   document.getElementById('fa'+ item.id).style.display = 'flex'
-                //
-                // } else if (document.getElementById('tt'+ item.id)){
-                //   document.getElementById('tt'+ item.id).parentElement.style.display = 'flex'
-                //
-                // } else if (document.getElementById('tt6'+ item.id)){
-                //   document.getElementById('tt6'+ item.id).parentElement.style.display = 'flex'
-                //
-                // } else if (document.getElementById('ta'+ item.id)){
-                //   document.getElementById('ta'+ item.id).parentElement.style.display = 'flex'
-                //
-                // }
+
                 let all = document.querySelectorAll('#' + pointer + '> .rectrack > div')
                 let alltop = document.querySelectorAll('#' + pointer + '> .rectrack > div.' + sib)
                 let last = document.querySelector('#' + pointer + '> .rectrack > div.trackartist > div[id="art' + item.id + '"]')
@@ -4175,7 +3645,6 @@ export const useDMStore = defineStore('dm', {
                         }
                     }
                 } else if (related) {
-
                     let par = document.getElementById(related).parentElement.nextElementSibling
                     while (par != null) {
                         par.style.display = 'none'
@@ -4188,27 +3657,27 @@ export const useDMStore = defineStore('dm', {
                         }
                     }
                 }
-                if (last !== null && last.id === 'art' + item.id) {
-                    if (document.getElementById('art' + item.id)) {
-                        document.getElementById('art' + item.id).parentElement.style.display = 'flex'
-                    }
-                    // setTimeout(() => {
-                    //   window.scrollTo({
-                    //     top:(document.getElementById('art'+ item.id)).offsetTop,
-                    //     behavior:'smooth'});
-                    // }, 10);
-                    return
+
+                let exists = this.artists_data.find(dt => dt.id === item.id)
+                if (exists) {
+                    console.log(4203)
+                    trackartist = exists
+                } else {
+                    await this.deeperArtistself({
+                        item: item,
+                        track: track
+                    }).then(result => trackartist.push(result))
+                    await this.deeperArtisttt({item: item}).then(tt => trackartist.push(tt))
+                    await this.deeperArtistAlbums({item: item}).then(album => trackartist.push(album))
+                    await this.deeperArtistSingle({item: item}).then(single => trackartist.push(single))
+                    await this.deeperArtistAppear({item: item}).then(appear => trackartist.push(appear))
+                    await this.deeperArtistRelated({item: item}).then(related => trackartist.push(related))
+                    await new Promise(r => setTimeout(r, 2000));
+                    console.log(trackartist)
+                    let clone = structuredClone(trackartist);
+                    clone.id = item.id
+                    this.artists_data.push(clone)
                 }
-                await this.deeperArtistself({
-                    item: item,
-                    track: track
-                }).then(result => trackartist.push(result))
-                await this.deeperArtisttt({item: item}).then(tt => trackartist.push(tt))
-                await this.deeperArtistAlbums({item: item}).then(album => trackartist.push(album))
-                await this.deeperArtistSingle({item: item}).then(single => trackartist.push(single))
-                await this.deeperArtistAppear({item: item}).then(appear => trackartist.push(appear))
-                await this.deeperArtistRelated({item: item}).then(related => trackartist.push(related))
-                await new Promise(r => setTimeout(r, 2000));
                 if (num === 1) {
                     console.log(4225)
                     this.setDeeper1(trackartist)
@@ -4239,15 +3708,14 @@ export const useDMStore = defineStore('dm', {
                 } else if (num === 10) {
                     this.setDeepers(trackartist)
                 }
-                // setTimeout(() => {
-                //   window.scrollTo({
-                //     top:(document.getElementById('art'+ item.id)).offsetTop,
-                //     behavior:'smooth'});
-                // }, 10);
-                // console.log(trackartist)
+                setTimeout(() => {
+                    document.getElementById('art' + item.id).scrollIntoView({behavior: "smooth"})
+                }, 10);
+                console.log(trackartist)
             },
             deeperartistmob: async function (payload) {
-                let item = payload.item,
+                let pointer,
+                    item = payload.item,
                     track = payload.track,
                     num = payload.num,
                     flag = payload.flag,
@@ -4255,16 +3723,41 @@ export const useDMStore = defineStore('dm', {
                     related = payload.related,
                     parent = payload.parent
                 console.log(parent)
+                if (num === 1) {
+                    pointer = 'yourplaylists'
+                } else if (num === 2) {
+                    pointer = 'topartist'
+                } else if (num === 22) {
+                    pointer = 'topartist6'
+                } else if (num === 23) {
+                    pointer = 'topartista'
+                } else if (num === 3) {
+                    pointer = 'toptrack'
+                } else if (num === 32) {
+                    pointer = 'toptrack6'
+                } else if (num === 33) {
+                    pointer = 'toptrackall'
+                } else if (num === 4) {
+                    pointer = 'savedalbum'
+                } else if (num === 5) {
+                    pointer = 'savedtrack'
+                } else if (num === 6) {
+                    pointer = 'followedartist'
+                } else if (num === 7) {
+                    pointer = 'newrelease'
+                } else if (num === 8) {
+                    pointer = 'sptplaylists'
+                } else if (num === 10) {
+                    pointer = 'search'
+                }
                 let trackartist = []
-                // console.log(parent)
                 trackartist.type = 'trackartist'
-                trackartist.pid = parent.id
-                let all = document.querySelectorAll('.item-container > .rectrack > div.hcontent > div')
-                let alltop = document.querySelectorAll('.item-container > .rectrack > div.hcontent > div.' + sib)
-                let last = document.querySelector('.item-container > .rectrack > div.hcontent > div.trackartist > div[id="art' + item.id + '"]')
-                //  console.log(last)
-                // console.log(all)
-                // console.log(alltop)
+                trackartist.parentId = parent
+                let all = document.querySelectorAll('#' + pointer + '> .rectrack > div')
+                let alltop = document.querySelectorAll('#' + pointer + '> .rectrack > div.' + sib)
+                let last = document.querySelector('#' + pointer + '> .rectrack > div.trackartist > div[id="art' + item.id + '"]')
+                // console.log(last)
+                // console.log(item.id)
                 if (flag === true) {
                     // console.log(item.id)
                     if (all.length !== 0 && all.length !== 0) {
@@ -4291,7 +3784,6 @@ export const useDMStore = defineStore('dm', {
                         }
                     }
                 } else if (related) {
-
                     let par = document.getElementById(related).parentElement.nextElementSibling
                     while (par != null) {
                         par.style.display = 'none'
@@ -4304,85 +3796,39 @@ export const useDMStore = defineStore('dm', {
                         }
                     }
                 }
-                if (last !== null && last.id === 'art' + item.id) {
-                    if (document.getElementById('art' + item.id)) {
-                        document.getElementById('art' + item.id).parentElement.style.display = 'flex'
-                    }
-                    if (num === 1 || num === 8 || num === 9) {
-                        setTimeout(async () => {
-                            let target = document.getElementById(parent.id)
 
-                            // console.log(target.nextElementSibling)
-                            let lst = target.nextElementSibling.children[0].children
-                            // console.log(lst)
-                            let newarray = []
-                            for await(let i of lst) {
-                                // console.log(i)
-                                newarray.push(i.offsetHeight)
-                            }
-                            // console.log(newarray.reduce((a, b) => a + b, 0))
-                            target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
-                        }, 0)
-                    } else if (num === 5) {
-                        let target = document.getElementById(parent.track.id)
-                        document.getElementById(parent.track.id)
-                        // console.log(parent.track.id)
-                        // console.log(target.children[0])
-                        await this.hideall({elem: target.children[0].nextElementSibling})
-                        target.children[0].nextElementSibling.style.display = 'block'
-                        let lst = target.children[0].nextElementSibling.children[0].children
-                        // console.log(lst)
-                        let newarray = []
-                        for await(let i of lst) {
-                            // console.log(i)
-                            newarray.push(i.offsetHeight)
-                        }
-                        // console.log(newarray.reduce((a, b) => a + b, 0))
-                        target.children[0].nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
-                    } else {
-                        setTimeout(async () => {
-                            let target = document.getElementById(parent.id)
-
-                            await this.hideall({elem: target.children[0].nextElementSibling})
-                            let lst = target.children[0].nextElementSibling.children[0].children
-                            // console.log(lst)
-                            let newarray = []
-                            for await(let i of lst) {
-                                // console.log(i)
-                                newarray.push(i.offsetHeight)
-                            }
-                            // console.log(newarray.reduce((a, b) => a + b, 0))
-                            target.children[0].nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
-
-
-                        }, 0)
-                    }
-
-                    // setTimeout(() => {
-                    //   window.scrollTo({
-                    //     top:(document.getElementById('art'+ item.id)).offsetTop,
-                    //     behavior:'smooth'});
-                    // }, 10);
+                if (document.getElementById('art' + item.id)) {
+                    document.getElementById('art' + item.id).parentElement.style.display = 'flex'
                     return
                 }
-                console.log(track)
-                await this.deeperArtistself({
-                    item: item,
-                    track: track
-                }).then(result => trackartist.push(result))
-                await this.deeperArtisttt({item: item}).then(tt => trackartist.push(tt))
-                await this.deeperArtistAlbums({item: item}).then(album => trackartist.push(album))
-                await this.deeperArtistSingle({item: item}).then(single => trackartist.push(single))
-                await this.deeperArtistAppear({item: item}).then(appear => trackartist.push(appear))
-                await this.deeperArtistRelated({item: item}).then(related => trackartist.push(related))
-                await new Promise(r => setTimeout(r, 2000));
+
+                let exists = this.artists_data.find(dt => dt.id === item.id)
+                if (exists) {
+                    console.log(4203)
+                    trackartist = exists
+                    trackartist.parentId = parent
+                } else {
+                    await this.deeperArtistself({
+                        item: item,
+                        track: track
+                    }).then(result => trackartist.push(result))
+                    await this.deeperArtisttt({item: item}).then(tt => trackartist.push(tt))
+                    await this.deeperArtistAlbums({item: item}).then(album => trackartist.push(album))
+                    await this.deeperArtistSingle({item: item}).then(single => trackartist.push(single))
+                    await this.deeperArtistAppear({item: item}).then(appear => trackartist.push(appear))
+                    await this.deeperArtistRelated({item: item}).then(related => trackartist.push(related))
+                    await new Promise(r => setTimeout(r, 2000));
+                    console.log(trackartist)
+                    let clone = structuredClone(trackartist);
+                    clone.id = item.id
+                    this.artists_data.push(clone)
+                }
                 if (num === 1) {
+                    console.log(4225)
                     this.setDeeper1(trackartist)
                 } else if (num === 2) {
-                    console.log(trackartist)
                     this.setDeeper2(trackartist)
                 } else if (num === 22) {
-                    console.log(trackartist)
                     this.setDeeper22(trackartist)
                 } else if (num === 23) {
                     this.setDeeper23(trackartist)
@@ -4395,7 +3841,6 @@ export const useDMStore = defineStore('dm', {
                 } else if (num === 4) {
                     this.setDeeper4(trackartist)
                 } else if (num === 5) {
-                    trackartist.pid = parent.id
                     this.setDeeper5(trackartist)
                 } else if (num === 6) {
                     this.setDeeper6(trackartist)
@@ -4408,86 +3853,10 @@ export const useDMStore = defineStore('dm', {
                 } else if (num === 10) {
                     this.setDeepers(trackartist)
                 }
-                if (num === 1 || num === 8 || num === 9) {
-                    setTimeout(async () => {
-                        let target = document.getElementById(parent.id)
-                        console.log(target)
-
-                        // console.log(target.nextElementSibling)
-                        let lst = target.nextElementSibling.children[0].children
-                        // console.log(lst)
-                        let newarray = []
-                        for await(let i of lst) {
-                            // console.log(i)
-                            newarray.push(i.offsetHeight)
-                        }
-                        // console.log(newarray.reduce((a, b) => a + b, 0))
-                        target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
-                    }, 0)
-                } else if (num === 5) {
-                    setTimeout(async () => {
-                        let target = document.getElementById(parent.id)
-
-                        // console.log(parent.track.id)
-
-                        // console.log(target.children[0])
-                        await this.hideall({elem: target.children[0].nextElementSibling})
-                        let lst = target.children[0].nextElementSibling.children[0].children
-                        // console.log(lst)
-                        let newarray = []
-                        for await(let i of lst) {
-                            // console.log(i)
-                            newarray.push(i.offsetHeight)
-                        }
-                        // console.log(newarray.reduce((a, b) => a + b, 0))
-                        target.children[0].nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
-                    }, 0)
-                } else {
-                    setTimeout(async () => {
-                        let target = document.getElementById(parent.id)
-
-                        // console.log(parent.id)
-
-                        // console.log(target.children[0])
-                        if (target.children[0].nextElementSibling) {
-                            console.log(target.children[0].nextElementSibling)
-                            await this.hideall({elem: target.children[0].nextElementSibling})
-                            let lst = target.children[0].nextElementSibling.children[0].children
-                            let newarray = []
-                            for await(let i of lst) {
-                                // console.log(i)
-                                newarray.push(i.offsetHeight)
-                            }
-                            // console.log(newarray.reduce((a, b) => a + b, 0))
-                            target.children[0].nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
-                        }
-                    }, 0)
-                    window.addEventListener('resize', function () {
-                        setTimeout(async () => {
-                            let target = document.getElementById(parent.id)
-
-                            let lst = target.children[0].nextElementSibling.children[0].children
-                            // console.log(lst)
-                            let newarray = []
-                            for await(let i of lst) {
-                                // console.log(i)
-                                newarray.push(i.offsetHeight)
-                            }
-                            // console.log(newarray.reduce((a, b) => a + b, 0))
-                            if (num === 7) {
-                                target.children[0].nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 50 + 'px'
-                            } else {
-                                target.children[0].nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 200 + 'px'
-                            }
-                        }, 0)
-                    })
-                }
-                // setTimeout(() => {
-                //   window.scrollTo({
-                //     top:(document.getElementById('art'+ item.id)).offsetTop,
-                //     behavior:'smooth'});
-                // }, 10);
-                // console.log(trackartist)
+                setTimeout(() => {
+                    document.getElementById('art' + item.id).scrollIntoView({behavior: "smooth"})
+                }, 10);
+                console.log(trackartist)
             },
             deeperArtistself(payload) {
                 let item = payload.item,
@@ -4763,17 +4132,32 @@ export const useDMStore = defineStore('dm', {
                     })
             },
 
-            deeperAlbum(payload) {
+            deeperAlbum: async function (payload) {
                 let item = payload.item,
                     num = payload.num,
                     child = payload.child,
                     search = payload.search
-                if (num === 4 && item.album) {
+                if (item.album) {
                     item = item.album
                     item.album = true
                 }
                 item.type = 'deeperalbum'
-                // console.log(item.id)
+
+                let exists = false
+                if (item.album) {
+                    exists = await this.albums_data.find(dt => dt.id === item.album.id)
+                } else {
+                    exists = await this.albums_data.find(dt => dt.id === item.id)
+                }
+
+                if (exists) {
+                    item = exists
+                } else {
+                    let clone = structuredClone(toRaw(item));
+                    this.albums_data.push(clone)
+                }
+                console.log(exists)
+                console.log(child)
                 if (child) {
                     let par = document.getElementById(child).parentElement.nextElementSibling
                     while (par != null) {
@@ -4786,27 +4170,30 @@ export const useDMStore = defineStore('dm', {
                             par = null
                         }
                     }
-                }
-                if (search === true) {
-                    let albs = document.querySelectorAll('#search> .rectrack > div')
-                    for (let i = 0; i < albs.length; i++) {
-                        if (document.getElementById('alb' + item.id) != null && albs[i].id === document.getElementById('alb' + item.id).id) {
-                            document.getElementById('alb' + item.id).style.display = 'block'
+                } else {
+                    let albs = document.querySelectorAll(".rectrack > div")
+                    console.log(albs)
+                    for (let i of albs) {
+                        if (i.id === 'alb' + item.id) {
+                            i.style.display = 'flex'
                         } else {
-                            albs[i].style.display = 'none'
+                            i.style.display = 'none'
                         }
                     }
                 }
-                if (num !== 4 && document.getElementById('alb' + item.id)) {
+
+                if (document.getElementById('alb' + item.id)) {
                     document.getElementById('alb' + item.id).style.display = 'flex'
                     // setTimeout(() => {
                     //   window.scrollTo({
-                    //     top:(document.getElementById('alb'+ item.id)).offsetTop,
+                    //     top:(document.getElementById('sa'+ item.id)).offsetTop,
                     //     behavior:'smooth'});
                     // }, 10);
                     return
                 }
-                if (num !== 4) {
+
+                // console.log(item.id)
+                if (!exists) {
                     axios.request({
                         url: 'https://api.spotify.com/v1/me/albums/contains?ids=' + item.id,
                         method: 'get',
@@ -4814,79 +4201,7 @@ export const useDMStore = defineStore('dm', {
                     })
                         .then((response) => {
                             item.followed = response.data[0]
-                            if (num === 1) {
-                                let indexing = this.deeper1.indexOf(item)
-                                if (indexing === -1) {
-                                    // eslint-disable-next-line no-undef
-                                    this.setDeeper1(item)
-                                }
-                            } else if (num === 2) {
-                                let indexing = this.deeper2.indexOf(item)
-                                if (indexing === -1) {
-                                    // eslint-disable-next-line no-undef
-                                    this.setDeeper2(item)
-                                }
-                            } else if (num === 22) {
-                                let indexing = this.deeper22.indexOf(item)
-                                if (indexing === -1) {
-                                    this.setDeeper22(item)
-                                }
-                            } else if (num === 23) {
-                                let indexing = this.deeper23.indexOf(item)
-                                if (indexing === -1) {
-                                    this.setDeeper23(item)
-                                }
-                            } else if (num === 3) {
-                                let indexing = this.deeper3.indexOf(item)
-                                if (indexing === -1) {
-                                    this.setDeeper3(item)
-                                }
-                            } else if (num === 32) {
-                                let indexing = this.deeper32.indexOf(item)
-                                if (indexing === -1) {
-                                    this.setDeeper32(item)
-                                }
-                            } else if (num === 33) {
-                                let indexing = this.deeper33.indexOf(item)
-                                if (indexing === -1) {
-                                    this.setDeeper33(item)
-                                }
-                            } else if (num === 5) {
-                                let indexing = this.deeper5.indexOf(item)
-                                if (indexing === -1) {
-                                    this.setDeeper5(item)
-                                }
-                            } else if (num === 6) {
-                                let indexing = this.deeper6.indexOf(item)
-                                if (indexing === -1) {
-                                    this.setDeeper6(item)
-                                }
-                            } else if (num === 7) {
-                                let indexing = this.deeper7.indexOf(item)
-                                if (indexing === -1) {
-                                    this.setDeeper7(item)
-                                }
-                            } else if (num === 8) {
-                                let indexing = this.deeper8.indexOf(item)
-                                if (indexing === -1) {
-                                    this.setDeeper8(item)
-                                }
-                            } else if (num === 9) {
-                                let indexing = this.deeper9.indexOf(item)
-                                if (indexing === -1) {
-                                    this.setDeeper9(item)
-                                }
-                            } else if (num === 10) {
-                                let indexing = this.deepers.indexOf(item)
-                                if (indexing === -1) {
-                                    this.setDeepers(item)
-                                }
-                            }
-                            // setTimeout(() => {
-                            //   window.scrollTo({
-                            //     top:(document.getElementById('alb'+ item.id)).offsetTop,
-                            //     behavior:'smooth'});
-                            // }, 100);
+
                         })
                         .catch(error => {
                             if (error.response.status === 401) {
@@ -4900,67 +4215,114 @@ export const useDMStore = defineStore('dm', {
                         })
                 }
 
-                if (num === 4) {
-                    if (item.album) {
-                        axios.request({
-                            url: 'https://api.spotify.com/v1/me/albums/contains?ids=' + item.id,
-                            method: 'get',
-                            headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
-                        })
-                            .then(async (response) => {
-                                item.followed = response.data[0]
-                                let albs = document.querySelectorAll("#savedalbum >.rectrack > div")
-                                console.log(albs)
-                                for await(let i of albs) {
-                                    if (i.id === 'alb' + item.id) {
-                                        i.style.display = 'flex'
-                                    } else {
-                                        i.style.display = 'none'
-                                    }
-                                }
-                                console.log(item)
-                                let indexing = this.deeper4.indexOf(item)
-                                if (indexing === -1) {
-                                    this.setDeeper4(item)
-                                }
-                            })
-                            .catch(error => {
-                                console.log(error)
-                                if (error.response.status === 401) {
-                                    axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) => {
-                                        // console.log(response.data)
-                                        if (response.status === 200) {
-                                            this.deeperAlbum(payload)
-                                        }
-                                    })
-                                }
-                            })
 
-                    } else {
-                        if (document.getElementById('alb' + item.id)) {
-                            document.getElementById('alb' + item.id).style.display = 'flex'
-                            return
-                        }
-                        let indexing = this.deeper4.indexOf(item)
-                        if (indexing === -1) {
-                            this.setDeeper4(item)
-                        }
+                if (num === 1) {
+                    let indexing = this.deeper1.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        // eslint-disable-next-line no-undef
+                        this.setDeeper1(item)
                     }
+                } else if (num === 2) {
+                    let indexing = this.deeper2.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        // eslint-disable-next-line no-undef
+                        this.setDeeper2(item)
+                    }
+                } else if (num === 22) {
+                    let indexing = this.deeper22.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        this.setDeeper22(item)
+                    }
+                } else if (num === 23) {
+                    let indexing = this.deeper23.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        this.setDeeper23(item)
+                    }
+                } else if (num === 3) {
+                    let indexing = this.deeper3.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        this.setDeeper3(item)
+                    }
+                } else if (num === 32) {
+                    let indexing = this.deeper32.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        this.setDeeper32(item)
+                    }
+                } else if (num === 33) {
+                    let indexing = this.deeper33.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        this.setDeeper33(item)
+                    }
+                } else if (num === 4) {
+                    let indexing = this.deeper4.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        this.setDeeper4(item)
+                    }
+                } else if (num === 5) {
+                    let indexing = this.deeper5.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        this.setDeeper5(item)
+                    }
+                } else if (num === 6) {
+                    let indexing = this.deeper6.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        this.setDeeper6(item)
+                    }
+                } else if (num === 7) {
+                    let indexing = this.deeper7.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        this.setDeeper7(item)
+                    }
+                } else if (num === 8) {
+                    let indexing = this.deeper8.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        this.setDeeper8(item)
+                    }
+                } else if (num === 9) {
+                    let indexing = this.deeper9.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        this.setDeeper9(item)
+                    }
+                } else if (num === 10) {
+                    let indexing = this.deepers.find(dt => dt.id === item.id)
+                    console.log(indexing)
+                    if (!indexing) {
+                        this.setDeepers(item)
+                    }
+                    console.log(this.deepers)
                 }
+                setTimeout(() => {
+                    document.getElementById('alb' + item.id).scrollIntoView({behavior: "smooth"})
+                }, 100);
             },
-            deeperAlbumMob(payload) {
+            async deeperAlbumMob(payload) {
                 let item = payload.item,
                     num = payload.num,
                     child = payload.child,
                     search = payload.search,
                     parent = payload.parent
-                if (num === 4 && item.album) {
+                if (item.album) {
                     item = item.album
                     item.album = true
                 }
                 item.type = 'deeperalbum'
-                item.pid = parent.id
+                item.parentId = parent
                 // console.log(item.id)
+                let exists = false
+                if (item.album) {
+                    exists = await this.albums_data.find(dt => dt.id === item.album.id)
+                } else {
+                    exists = await this.albums_data.find(dt => dt.id === item.id)
+                }
+
+                if (exists) {
+                    item = exists
+                } else {
+                    let clone = structuredClone(toRaw(item));
+                    this.albums_data.push(clone)
+                }
+                console.log(exists)
+                console.log(child)
                 if (child) {
                     let par = document.getElementById(child).parentElement.nextElementSibling
                     while (par != null) {
@@ -4973,36 +4335,30 @@ export const useDMStore = defineStore('dm', {
                             par = null
                         }
                     }
-                }
-                if (search === true) {
-                    let albs = document.querySelectorAll('#search> .rectrack > div')
-                    for (let i = 0; i < albs.length; i++) {
-                        if (document.getElementById('alb' + item.id) != null && albs[i].id === document.getElementById('alb' + item.id).id) {
-                            document.getElementById('alb' + item.id).style.display = 'block'
+                } else {
+                    let albs = document.querySelectorAll(".rectrack > div")
+                    console.log(albs)
+                    for (let i of albs) {
+                        if (i.id === 'alb' + item.id) {
+                            i.style.display = 'flex'
                         } else {
-                            albs[i].style.display = 'none'
+                            i.style.display = 'none'
                         }
                     }
                 }
-                if (num !== 4 && document.getElementById('alb' + item.id)) {
-                    document.getElementById('alb' + item.id).style.display = 'flex'
-                    setTimeout(async () => {
-                        let target = document.getElementById(parent.id)
 
-                        // console.log(target.nextElementSibling)
-                        let lst = target.nextElementSibling.children[0].children
-                        // console.log(lst)
-                        let newarray = []
-                        for await(let i of lst) {
-                            // console.log(i)
-                            newarray.push(i.offsetHeight)
-                        }
-                        // console.log(newarray.reduce((a, b) => a + b, 0))
-                        target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
-                    }, 0)
+                if (document.getElementById('alb' + item.id)) {
+                    document.getElementById('alb' + item.id).style.display = 'flex'
+                    // setTimeout(() => {
+                    //   window.scrollTo({
+                    //     top:(document.getElementById('sa'+ item.id)).offsetTop,
+                    //     behavior:'smooth'});
+                    // }, 10);
                     return
                 }
-                if (num !== 4) {
+
+                // console.log(item.id)
+                if (!exists) {
                     axios.request({
                         url: 'https://api.spotify.com/v1/me/albums/contains?ids=' + item.id,
                         method: 'get',
@@ -5010,143 +4366,9 @@ export const useDMStore = defineStore('dm', {
                     })
                         .then((response) => {
                             item.followed = response.data[0]
-                            if (num === 1) {
-                                item.pid = parent.id
-                                let indexing = this.deeper1.indexOf(item)
-                                if (indexing === -1) {
-                                    this.setDeeper1(item)
-                                    setTimeout(async () => {
-                                        let target = document.getElementById(parent.id)
 
-                                        // console.log(target.nextElementSibling)
-                                        let lst = target.nextElementSibling.children[0].children
-                                        // console.log(lst)
-                                        let newarray = []
-                                        for await(let i of lst) {
-                                            // console.log(i)
-                                            newarray.push(i.offsetHeight)
-                                        }
-                                        // console.log(newarray.reduce((a, b) => a + b, 0))
-                                        target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
-                                    }, 0)
-                                }
-                            } else if (num === 2) {
-                                let indexing = this.deeper2.indexOf(item)
-                                if (indexing === -1) {
-                                    // eslint-disable-next-line no-undef
-                                    this.setDeeper2(item)
-                                    // console.log(this.deeper2)
-                                }
-                            } else if (num === 22) {
-                                let indexing = this.deeper22.indexOf(item)
-                                if (indexing === -1) {
-                                    this.setDeeper22(item)
-                                }
-                            } else if (num === 23) {
-                                let indexing = this.deeper23.indexOf(item)
-                                if (indexing === -1) {
-                                    this.setDeeper23(item)
-                                }
-                            } else if (num === 3) {
-                                let indexing = this.deeper3.indexOf(item)
-                                if (indexing === -1) {
-                                    this.setDeeper3(item)
-                                }
-                            } else if (num === 32) {
-                                let indexing = this.deeper32.indexOf(item)
-                                if (indexing === -1) {
-                                    this.setDeeper32(item)
-                                }
-                            } else if (num === 33) {
-                                let indexing = this.deeper33.indexOf(item)
-                                if (indexing === -1) {
-                                    this.setDeeper33(item)
-                                }
-                            } else if (num === 5) {
-                                let indexing = this.deeper5.indexOf(item)
-                                if (indexing === -1) {
-                                    this.setDeeper5(item)
-                                }
-                            } else if (num === 6) {
-                                let indexing = this.deeper6.indexOf(item)
-                                if (indexing === -1) {
-                                    this.setDeeper6(item)
-                                }
-                            } else if (num === 7) {
-                                let indexing = this.deeper7.indexOf(item)
-                                if (indexing === -1) {
-                                    this.setDeeper7(item)
-                                }
-                            } else if (num === 8) {
-                                let indexing = this.deeper8.indexOf(item)
-                                if (indexing === -1) {
-                                    this.setDeeper8(item)
-                                }
-                            } else if (num === 9) {
-                                let indexing = this.deeper9.indexOf(item)
-                                if (indexing === -1) {
-                                    this.setDeeper9(item)
-                                }
-                            } else if (num === 10) {
-                                let indexing = this.deepers.indexOf(item)
-                                if (indexing === -1) {
-                                    this.setDeepers(item)
-                                }
-                            }
-                            if (num === 2 || num === 22 || num === 23 || num === 6 || num === 3 || num === 32 || num === 33 || num === 7) {
-                                setTimeout(async () => {
-                                    let target = document.getElementById(parent.id)
-
-                                    // console.log(target.children[1])
-                                    let lst = target.children[1].children[0].children
-                                    // console.log(lst)
-                                    let newarray = []
-                                    for await(let i of lst) {
-                                        // console.log(i)
-                                        newarray.push(i.offsetHeight)
-                                    }
-                                    // console.log(newarray.reduce((a, b) => a + b, 0))
-                                    target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
-                                }, 0)
-                            } else if (num === 5) {
-                                setTimeout(async () => {
-                                    let target = document.getElementById(parent.id)
-
-                                    // console.log(target.children[1])
-                                    let lst = target.children[1].children[0].children
-                                    // console.log(lst)
-                                    let newarray = []
-                                    for await(let i of lst) {
-                                        // console.log(i)
-                                        newarray.push(i.offsetHeight)
-                                    }
-                                    // console.log(newarray.reduce((a, b) => a + b, 0))
-                                    target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
-                                }, 0)
-                            } else if (num === 9) {
-                                setTimeout(async () => {
-                                    let target = document.getElementById(parent.id)
-
-                                    // console.log(target.nextElementSibling)
-                                    let lst = target.nextElementSibling.children[0].children
-                                    // console.log(lst)
-                                    let newarray = []
-                                    for await(let i of lst) {
-                                        // console.log(i)
-                                        newarray.push(i.offsetHeight)
-                                    }
-                                    // console.log(newarray.reduce((a, b) => a + b, 0))
-                                    target.nextElementSibling.style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
-                                }, 0)
-                            }
-                            // setTimeout(() => {
-                            //   window.scrollTo({
-                            //     top:(document.getElementById('alb'+ item.id)).offsetTop,
-                            //     behavior:'smooth'});
-                            // }, 100);
                         })
                         .catch(error => {
-                            // console.log(error)
                             if (error.response.status === 401) {
                                 axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) => {
                                     // console.log(response.data)
@@ -5158,123 +4380,85 @@ export const useDMStore = defineStore('dm', {
                         })
                 }
 
-                if (num === 4) {
-                    if (item.album) {
-                        if (document.getElementById('alb' + item.id)) {
-                            document.getElementById('alb' + item.id).style.display = 'flex'
-                            setTimeout(async () => {
-                                let target = document.getElementById(parent.id)
 
-                                // console.log(target)
-                                // console.log(target.children[1])
-                                await this.hideall({elem: target.children[1]})
-                                let lst = target.children[1].children[0].children
-                                // console.log(lst)
-                                let newarray = []
-                                for await(let i of lst) {
-                                    // console.log(i)
-                                    newarray.push(i.offsetHeight)
-                                }
-                                // console.log(newarray.reduce((a, b) => a + b, 0))
-                                target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
-                            }, 0)
-                            return
-                        }
-                        axios.request({
-                            url: 'https://api.spotify.com/v1/me/albums/contains?ids=' + item.id,
-                            method: 'get',
-                            headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
-                        })
-                            .then((response) => {
-                                item.followed = response.data[0]
-                                let albs = document.querySelectorAll(".rectrack > div")
-                                for (let i = 0; i < albs.length; i++) {
-                                    if (albs[i].id === 'alb' + item.id) {
-                                        albs[i].style.display = 'flex'
-                                    } else {
-                                        albs[i].style.display = 'none'
-                                    }
-                                }
-                                let indexing = this.deeper4.indexOf(item)
-                                if (indexing === -1) {
-                                    // console.log(item)
-                                    this.setDeeper4(item)
-                                }
-                                setTimeout(async () => {
-                                    let target = document.getElementById(item.id)
-                                    // console.log(target)
-                                    // console.log(target.children)
-                                    document.getElementById(item.id)
-                                    // console.log(target)
-                                    // console.log(target.children[1])
-                                    await this.hideall({elem: target.children[1]})
-                                    let lst = target.children[1].children[0].children
-                                    // console.log(lst)
-                                    let newarray = []
-                                    for await(let i of lst) {
-                                        // console.log(i)
-                                        newarray.push(i.offsetHeight)
-                                    }
-                                    // console.log(newarray.reduce((a, b) => a + b, 0))
-                                    target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 300 + 'px'
-                                }, 0)
-                            })
-                            .catch(error => {
-                                // console.log(error)
-                                if (error.response.status === 401) {
-                                    axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) => {
-                                        // console.log(response.data)
-                                        if (response.status === 200) {
-                                            this.deeperAlbum(payload)
-                                        }
-                                    })
-                                }
-                            })
-
-                    } else {
-                        if (document.getElementById('alb' + item.id)) {
-                            document.getElementById('alb' + item.id).style.display = 'flex'
-                            setTimeout(async () => {
-                                let target = document.getElementById(parent.id)
-
-                                await this.hideall({elem: target.children[1]})
-                                let lst = target.children[1].children[0].children
-                                // console.log(lst)
-                                let newarray = []
-                                for await(let i of lst) {
-                                    // console.log(i)
-                                    newarray.push(i.offsetHeight)
-                                }
-                                // console.log(newarray.reduce((a, b) => a + b, 0))
-                                target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 400 + 'px'
-                            }, 0)
-                            return
-                        }
-                        item.pid = parent.id
-                        item.album = item
-                        // console.log(item)
-                        let indexing = this.deeper4.indexOf(item)
-                        // console.log(indexing)
-                        if (indexing === -1) {
-                            this.setDeeper4(item)
-                        }
-                        setTimeout(async () => {
-                            let target = document.getElementById(parent.id)
-
-                            // console.log(target.nextElementSibling)
-                            await this.hideall({elem: target.children[1]})
-                            let lst = target.children[1].children[0].children
-                            // console.log(lst)
-                            let newarray = []
-                            for await(let i of lst) {
-                                // console.log(i)
-                                newarray.push(i.offsetHeight)
-                            }
-                            // console.log(newarray.reduce((a, b) => a + b, 0))
-                            target.children[1].style.height = newarray.reduce((a, b) => a + b, 0) + 100 + 'px'
-                        }, 100)
+                if (num === 1) {
+                    let indexing = this.deeper1.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        // eslint-disable-next-line no-undef
+                        this.setDeeper1(item)
                     }
+                } else if (num === 2) {
+                    let indexing = this.deeper2.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        // eslint-disable-next-line no-undef
+                        this.setDeeper2(item)
+                    }
+                } else if (num === 22) {
+                    let indexing = this.deeper22.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        this.setDeeper22(item)
+                    }
+                } else if (num === 23) {
+                    let indexing = this.deeper23.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        this.setDeeper23(item)
+                    }
+                } else if (num === 3) {
+                    let indexing = this.deeper3.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        this.setDeeper3(item)
+                    }
+                } else if (num === 32) {
+                    let indexing = this.deeper32.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        this.setDeeper32(item)
+                    }
+                } else if (num === 33) {
+                    let indexing = this.deeper33.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        this.setDeeper33(item)
+                    }
+                } else if (num === 4) {
+                    let indexing = this.deeper4.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        this.setDeeper4(item)
+                    }
+                } else if (num === 5) {
+                    let indexing = this.deeper5.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        this.setDeeper5(item)
+                    }
+                } else if (num === 6) {
+                    let indexing = this.deeper6.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        this.setDeeper6(item)
+                    }
+                } else if (num === 7) {
+                    let indexing = this.deeper7.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        this.setDeeper7(item)
+                    }
+                } else if (num === 8) {
+                    let indexing = this.deeper8.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        this.setDeeper8(item)
+                    }
+                } else if (num === 9) {
+                    let indexing = this.deeper9.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        this.setDeeper9(item)
+                    }
+                } else if (num === 10) {
+                    let indexing = this.deepers.find(dt => dt.id === item.id)
+                    console.log(indexing)
+                    if (!indexing) {
+                        this.setDeepers(item)
+                    }
+                    console.log(this.deepers)
                 }
+                setTimeout(() => {
+                    document.getElementById('alb' + item.id).scrollIntoView({behavior: "smooth"})
+                }, 100);
             },
             deeperAlbum2(payload) {
                 let item = payload.item
@@ -5327,7 +4511,7 @@ export const useDMStore = defineStore('dm', {
                         // console.log(second)
                         const finded = new Promise(function (resolve, reject) {
                             let first = playlists.find(playlists => playlists.name === newvalue || playlists.name.startsWith('The Sound ') && playlists.owner.id === 'thesoundsofspotify')
-                            let second = playlists.find(playlists => playlists.name === value || playlists.name.startsWith('The Sound ')  && playlists.owner.id === 'thesoundsofspotify')
+                            let second = playlists.find(playlists => playlists.name === value || playlists.name.startsWith('The Sound ') && playlists.owner.id === 'thesoundsofspotify')
                             if (first) {
                                 resolve(first)
                             } else if (second) {
@@ -5678,6 +4862,9 @@ export const useDMStore = defineStore('dm', {
                 let audios = target.lastChild
                 if (this.audio_preview) {
                     audios.pause()
+                    if (this.restart_song_on_hover) {
+                        audios.currentTime = 0
+                    }
                 }
             },
             parentmouseOver: function (event) {
@@ -5696,53 +4883,52 @@ export const useDMStore = defineStore('dm', {
                 // console.log(audios)
                 if (audios && this.audio_preview) {
                     audios.pause()
+                    if (this.restart_song_on_hover) {
+                        audios.currentTime = 0
+                    }
                 }
             },
-            // click: function (payload) {
-            //     let event = payload.event
-            //     let target = event.target
-            //     // console.log(target)
-            //     let audios = target.lastChild
-            //     // console.log(audios)
-            //     if (this.currenttrack != null && this.currenttrack !== audios) {
-            //         this.currenttrack.pause()
-            //     }
-            //     // console.log(audios.paused)
-            //     if (audios.paused === false) {
-            //         audios.pause()
-            //     } else
-            //         audios.play()
-            //
-            //     this.setCurrentTrack(audios)
-            // },
-            parentClick: function (payload) {
-                let event = payload.event
+            parentClick: function (event) {
                 let target = event.target
+                console.log(target)
                 // console.log(target)
                 let audios = target.firstChild.lastChild
                 if (this.currenttrack != null && this.currenttrack !== audios) {
                     this.currenttrack.pause()
+                    if (this.restart_song_on_hover) {
+                        this.currenttrack.currentTime = 0
+                    }
                 }
                 if (this.audio_preview) {
                     if (audios.paused === false) {
                         audios.pause()
+                        if (this.restart_song_on_hover) {
+                            audios.currentTime = 0
+                        }
                     } else
                         audios.play()
                     this.setCurrentTrack(audios)
                 }
             },
             specialClick: function (event) {
-                let target = event.target.parentElement
-                // console.log(target)
+                let target = event.target
+                console.log(target)
 
-                let audios = target.lastChild
+                let audios = target.parentElement.parentElement.firstElementChild.lastChild
+
                 // console.log(audios)
                 if (this.currenttrack != null && this.currenttrack !== audios) {
                     this.currenttrack.pause()
+                    if (this.restart_song_on_hover) {
+                        this.currenttrack.currentTime = 0
+                    }
                 }
                 if (this.audio_preview) {
                     if (audios.paused === false) {
                         audios.pause()
+                        if (this.restart_song_on_hover) {
+                            audios.currentTime = 0
+                        }
                     } else
                         audios.play()
                     this.setCurrentTrack(audios)
@@ -5755,14 +4941,26 @@ export const useDMStore = defineStore('dm', {
                 let audios = target.parentElement.firstChild.lastChild
                 if (this.currenttrack != null && this.currenttrack !== audios) {
                     this.currenttrack.pause()
+                    if (this.restart_song_on_hover) {
+                        this.currenttrack.currentTime = 0
+                    }
                 }
                 if (this.audio_preview) {
                     if (audios.paused === false) {
                         audios.pause()
+                        if (this.restart_song_on_hover) {
+                            audios.currentTime = 0
+                        }
                     } else
                         audios.play()
                     this.setCurrentTrack(audios)
                 }
+            },
+            backToTop(id) {
+                console.log(id)
+                setTimeout(() => {
+                    document.getElementById(id).scrollIntoView({behavior: "smooth"})
+                }, 10);
             },
             paginate(array, page_size, page_number) {
                 return array.slice((page_number - 1) * page_size, page_number * page_size)
@@ -5857,7 +5055,7 @@ export const useDMStore = defineStore('dm', {
                 if (this.listplaylists.length === 0) {
                     let ne = {}
                     ne.target = document.getElementById('playlistlist')
-                    this.fetchPlaylists({event:ne, offset:0})
+                    this.fetchPlaylists({event: ne, offset: 0})
                 }
             },
             createplaylist() {
@@ -5873,26 +5071,10 @@ export const useDMStore = defineStore('dm', {
                     .then(() => {
                         let ne = {}
                         ne.target = document.getElementById('playlistlist')
-                        this.fetchPlaylists({event:ne, offset:0})
+                        this.fetchPlaylists({event: ne, offset: 0})
                         // console.log(this.listplaylists)
                     })
 
-            },
-            hideall(payload) {
-                // console.log()
-                // console.log(elem)
-                let elem = payload.elem
-                console.log(elem)
-                let all = document.querySelectorAll('.item-container > .rectrack')
-                for (let i of all) {
-                    console.log(i)
-                    if (i === elem) {
-                        i.style.display = 'block'
-                        i.children[0].style.display = 'block'
-                    } else {
-                        i.style.display = 'none'
-                    }
-                }
             },
             saveQueueToPlaylist(event) {
                 let target = event.target.id

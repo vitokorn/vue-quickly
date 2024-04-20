@@ -659,16 +659,16 @@ footer {
         width: 100%;
     }
 
-    .tabs a + div {
-        position: static;
-        float: left;
-    }
+    /*.tabs a + div {*/
+    /*    position: static;*/
+    /*    float: left;*/
+    /*}*/
 
-    .tabs li {
-        display: block;
-        overflow: hidden;
-        margin: 0 0 1px 0;
-    }
+    /*.tabs li {*/
+    /*    display: block;*/
+    /*    overflow: hidden;*/
+    /*    margin: 0 0 1px 0;*/
+    /*}*/
 
 }
 
@@ -1045,4 +1045,11 @@ input[type=checkbox] {
 }
 .display-flex {
     display: flex;
+}
+.text-center {
+    text-align: center;
+}
+
+.w-100 {
+    width: 100%;
 }

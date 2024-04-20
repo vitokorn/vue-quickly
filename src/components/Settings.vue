@@ -25,6 +25,11 @@ const store = useDMStore()
       <input type="checkbox" id="open" v-model="store.open_links">
       <label class="ms-1" for="open">Open Spotify links in browser</label>
     </div>
+    <div>
+      <input type="checkbox" id="restart" v-model="store.restart_song_on_hover">
+      <label class="ms-1" for="restart">Restart song on hover</label>
+    </div>
+
     <div class="mx-1 pointer">Clear cache & restart</div>
     <Logout/>
   </div>

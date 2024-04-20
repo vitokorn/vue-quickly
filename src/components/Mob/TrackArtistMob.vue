@@ -5,6 +5,7 @@ import {useDMStore} from "../../stores/dm-store";
 
 defineProps(['d', 'num', 'item'])
 const store = useDMStore()
+
 async function thesoundofmob(payload) {
   let pointer,
       name = payload.name,
@@ -330,13 +331,13 @@ async function thesoundofmob(payload) {
 </script>
 
 <template>
-  <div class="trackartist card2 text-left" style="gap: 16px;" v-bind:key="'ta'+index">
+  <div class="trackartist card2 text-left" style="gap: 16px;" >
     <template v-for="(ta,index) in d">
       <div v-if="ta.type==='artist'" class="recartist card2 text-left" v-bind:id="'art'+ta.id" v-bind:key="index"
            style="width: 100%;gap: 16px;">
         <div class="con3 text-left" v-if="ta.preview_url && ta.images[0]"
              v-bind:style="{ 'background-image': 'url(' + ta.images[0].url + ')' }"
-             v-on:click="store.click({event:$event})">{{ ta.name }}
+             v-on:click="store.click($event)">{{ ta.name }}
           <audio preload="auto" v-bind:src="ta.preview_url"></audio>
         </div>
         <div class="con3 text-left half-opacity" v-else-if="!ta.preview_url && ta.images[0]"
@@ -344,7 +345,7 @@ async function thesoundofmob(payload) {
           <audio></audio>
         </div>
         <div class="con3 text-left" v-else-if="ta.preview_url && !ta.images[0]"
-             v-on:click="store.click({event:$event})">{{ ta.name }}
+             v-on:click="store.click($event)">{{ ta.name }}
           <audio preload="auto" v-bind:src="ta.preview_url"></audio>
         </div>
         <div class="con3 text-left half-opacity" v-else>{{ ta.name }}
@@ -355,18 +356,19 @@ async function thesoundofmob(payload) {
           <div class="display-flex">
             <template v-for="(g,index) in ta['genres']">
               <div v-if="g === ta['genres'][ta['genres'].length - 1]"
-                   v-on:click="thesoundofmob({name:g,num:num,sib:'trackartist',child:false,parent:item})"
+                   v-on:click="thesoundofmob({name:g,num:num,sib:'trackartist',child:false,parent:'art' + d[0].id})"
                    v-bind:key="'2'+index" class="me-1">{{ g }}
               </div>
               <div v-else-if="g === ta['genres'][ta['genres'].length - 2]" v-bind:key="'3'+index"
-                   v-on:click="thesoundofmob({name:g,num:num,sib:'trackartist',child:false,parent:item})">{{ g }} &
+                   v-on:click="thesoundofmob({name:g,num:num,sib:'trackartist',child:false,parent:'art' + d[0].id})">{{ g }} &
               </div>
-              <div v-else v-bind:key="'4'+index" v-on:click="thesoundofmob({name:g,num:num,sib:'trackartist',child:false,parent:item})">{{ g }},
+              <div v-else v-bind:key="'4'+index"
+                   v-on:click="thesoundofmob({name:g,num:num,sib:'trackartist',child:false,parent:'art' + d[0].id})">{{ g }},
               </div>
             </template>
           </div>
           <div class="light-washed-rose"
-               v-on:click="store.seedArtistM({item:ta,num:num,sib:'trackartist',parent:item})">
+               v-on:click="store.seedArtistM({item:ta,num:num,sib:'trackartist',parent:'art' + d[0].id})">
             Recommended artists songs based on this
           </div>
           <div>
@@ -377,6 +379,7 @@ async function thesoundofmob(payload) {
                          v-model="ta.followed">
             <input type="checkbox" v-else @click.once="store.followArtist({artist:ta,event:$event})"
                    v-model="ta.followed">
+            <div @click="store.backToTop(d.parentId)">Back to top</div>
           </div>
         </div>
       </div>
@@ -385,23 +388,23 @@ async function thesoundofmob(payload) {
         <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
           <div v-if="tt.preview_url && tt.album.images[0]" class="con3"
                v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }"
-               v-on:click="store.click({event:$event}),store.deeperTracksM({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id,parent:item}); store.queuein(tt)">
+               v-on:click="store.click($event);store.deeperTracksM({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id,parent:'art' + d[0].id}); store.queuein(tt)">
             {{ tt.name }}
             <audio v-bind:src="tt.preview_url"></audio>
           </div>
           <div v-else-if="!tt.preview_url && tt.album.images[0]" class="con3 half-opacity"
                v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }"
-               v-on:click="store.deeperTracksM({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id,parent:item}); store.queuein(tt)">
+               v-on:click="store.deeperTracksM({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id,parent:'art' + d[0].id}); store.queuein(tt)">
             {{ tt.name }}
             <audio></audio>
           </div>
           <div v-else-if="tt.preview_url && !tt.album.images[0]" class="con3"
-               v-on:click="store.click({event:$event}), store.deeperTracksM({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id,parent:item}); store.queuein(tt)">
+               v-on:click="store.click($event); store.deeperTracksM({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id,parent:'art' + d[0].id}); store.queuein(tt)">
             {{ tt.name }}
             <audio v-bind:src="tt.preview_url"></audio>
           </div>
           <div v-else class="con3 half-opacity"
-               v-on:click="store.deeperTracksM({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id,parent:item}); store.queuein(tt)">
+               v-on:click="store.deeperTracksM({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id,parent:'art' + d[0].id}); store.queuein(tt)">
             {{ tt.name }}
             <audio></audio>
           </div>
@@ -415,23 +418,23 @@ async function thesoundofmob(payload) {
           v-bind:key="index" tabindex="0" class="card2">
         <div v-for="(a,index) in ta" v-bind:key="index">
           <div v-if="a.preview_url && a.images[0]" class="con3"
-               v-on:click="store.deeperAlbumMob({item:a,num:num,child:'art' + d[0].id,search:false,parent:item}),store.click({event:$event})"
+               v-on:click="store.deeperAlbumMob({item:a,num:num,child:'art' + d[0].id,search:false,parent:'art' + d[0].id}),store.click($event)"
                v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{ a.name }}
             <audio preload="auto" v-bind:src="a.preview_url"></audio>
           </div>
           <div v-else-if="!a.preview_url && a.images[0]" class="con3 half-opacity"
-               v-on:click="store.deeperAlbumMob({item:a,num:num,child:'art' + d[0].id,search:false,parent:item})"
+               v-on:click="store.deeperAlbumMob({item:a,num:num,child:'art' + d[0].id,search:false,parent:'art' + d[0].id})"
                v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{ a.name }}
             <audio></audio>
           </div>
           <div v-else-if="a.preview_url && !a.images[0]" class="con3"
-               v-on:click="store.deeperAlbumMob({item:a,num:num,child:'art' + d[0].id,search:false,parent:item}),store.click({event:$event})">
+               v-on:click="store.deeperAlbumMob({item:a,num:num,child:'art' + d[0].id,search:false,parent:'art' + d[0].id}),store.click($event)">
             {{ a.name }}
             <audio preload="auto" v-bind:src="a.preview_url"></audio>
           </div>
           <div v-else class="con3 half-opacity"
-               v-on:click="store.deeperAlbumMob({item:a,num:num,child:'art' + d[0].id,search:false,parent:item})"
-               >{{ a.name }}
+               v-on:click="store.deeperAlbumMob({item:a,num:num,child:'art' + d[0].id,search:false,parent:'art' + d[0].id})"
+          >{{ a.name }}
             <audio></audio>
           </div>
         </div>
@@ -441,20 +444,20 @@ async function thesoundofmob(payload) {
         <div v-for="(r,index) in ta" v-bind:key="index">
           <div v-if="r.preview_url && r.images[0]" tabindex="0" class="img-xs background-setting"
                v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }"
-               v-on:click="store.click({event:$event}),store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
+               v-on:click="store.click($event);store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id, parent:'art' + d[0].id})">
             <audio preload="auto" v-bind:src="r.preview_url"></audio>
           </div>
           <div v-else-if="!r.preview_url && r.images[0]" class="img-xs half-opacity"
                v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }"
-               v-on:click="store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
+               v-on:click="store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id, parent:'art' + d[0].id})">
             <audio></audio>
           </div>
           <div v-else-if="r.preview_url && !r.images[0]" tabindex="0" class="img-xs"
-               v-on:click="store.click({event:$event}),store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
+               v-on:click="store.click($event);store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id, parent:'art' + d[0].id})">
             <audio preload="auto" v-bind:src="r.preview_url"></audio>
           </div>
           <div v-else class="img-xs half-opacity"
-               v-on:click="store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
+               v-on:click="store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id, parent:'art' + d[0].id})">
             <audio></audio>
           </div>
         </div>
