@@ -1,62 +1,103 @@
 <script setup>
-import TrackCover from "./TrackCover.vue";
 import {useDMStore} from "../stores/dm-store";
+import {ref} from "vue";
+import TrackCover from "./TrackCover.vue";
 
 defineProps(['d', 'num'])
 const store = useDMStore()
+const selected = ref()
+
+function setActive(id) {
+  selected.value = id
+}
 </script>
 
 <template>
-  <div class="playlisttrack card2 display-flex my-3" v-bind:id="'d'+d.id">
-    <track-cover :d="d" :cover=d.album.images[0]></track-cover>
-    <div class="text-left ms-2" style="width: 50%;">
-      <div>{{ d.name }}</div>
-      <div class="display-flex align-items-center"><p>By </p>
-        <div v-for="(art,index) in d.artists" class="display-flex align-items-center" v-bind:key="index">
-          <div v-if="d.artists.length > 1 && d.artists.length - 1 === index">&</div>
-          <div v-if="d.artists.length >= 2 && d.artists.length - 1 !== index && index !== 0">,</div>
-          <div class="mx-1 pointer"
-               v-on:click="store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})">
-            {{ art.name }}
+  <div class="modern-track-card" :id="'d'+d.id">
+    <div class="track-main">
+      <track-cover :d="d" :cover="d.album.images[0]"></track-cover>
+      
+      <div class="track-info">
+        <h3 class="track-title">{{ d.name }}</h3>
+        
+        <div class="artists-section">
+          <span class="artists-label">By</span>
+          <div class="artists-list">
+            <div v-for="(art, index) in d.artists" :key="index" class="artist-item">
+              <span v-if="d.artists.length > 1 && d.artists.length - 1 === index" class="separator">&</span>
+              <span v-if="d.artists.length >= 2 && d.artists.length - 1 !== index && index !== 0" class="separator">,</span>
+              <button class="artist-link" @click="store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})">
+                {{ art.name }}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      <span class="light-washed-rose"
-            v-on:click="store.seedTracks({item:d,num:num,sib:'playlisttrack',child:'d'+ d.id})">Recommended songs based on this</span>
-      <div>
-        <button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in
-          Spotify</a></button>
-        <!--        Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">-->
-        <!--        <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">-->
+        
+        <div class="track-actions">
+          <button class="recommend-btn" @click="store.seedTracks({item:d,num:num,sib:'playlisttrack',child:'d'+ d.id})">
+            <span class="btn-icon">🎵</span>
+            Recommended songs based on this
+          </button>
+          <a class="spotify-link" :href="d['external_urls']['spotify']" target="_blank" rel="noopener">
+            <span class="link-icon">🎧</span>
+            Open in Spotify
+          </a>
+        </div>
       </div>
     </div>
-    <template v-for="(art,index) in d.artists">
-      <div class="artist-cirle con3" v-if="d.preview_url && d.album.images[0]" v-bind:key="index"
-           v-on:click="store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})"
-           v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
-        <audio preload="auto" v-bind:src="d.preview_url"></audio>
-        <div class="float-left" style="position: absolute; font-size: 0.7em;">{{ art.name }}</div>
+    
+    <div class="artists-grid">
+      <div v-for="(art, index) in d.artists" :key="index">
+        <div v-if="art.preview_url && art.images[0]" 
+             class="artist-card playable"
+             :class="selected === art.id ? 'selected' : ''"
+             :style="{ 'background-image': 'url(' + art.images[0].url + ')' }"
+             @mouseover="store.mouseOver($event)"
+             @mouseleave="store.mouseLeave($event)"
+             @click="setActive(art.id);store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})">
+          <div class="artist-overlay">
+            <div class="artist-name">{{ art.name }}</div>
+          </div>
+          <audio preload="auto" :src="art.preview_url"></audio>
+        </div>
+        
+        <div v-else-if="!art.preview_url && art.images[0]" 
+             class="artist-card unplayable"
+             :class="selected === art.id ? 'selected' : ''"
+             :style="{ 'background-image': 'url(' + art.images[0].url + ')' }"
+             @click="setActive(art.id);store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})">
+          <div class="artist-overlay">
+            <div class="artist-name">{{ art.name }}</div>
+          </div>
+          <audio></audio>
+        </div>
+        
+        <div v-else-if="art.preview_url && !art.images[0]" 
+             class="artist-card playable no-image"
+             :class="selected === art.id ? 'selected' : ''"
+             @mouseover="store.mouseOver($event)" 
+             @mouseleave="store.mouseLeave($event)"
+             @click="setActive(art.id);store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})">
+          <div class="artist-overlay">
+            <div class="artist-name">{{ art.name }}</div>
+          </div>
+          <audio preload="auto" :src="art.preview_url"></audio>
+        </div>
+        
+        <div v-else 
+             class="artist-card unplayable no-image"
+             :class="selected === art.id ? 'selected' : ''"
+             @click="setActive(art.id);store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})">
+          <div class="artist-overlay">
+            <div class="artist-name">{{ art.name }}</div>
+          </div>
+          <audio></audio>
+        </div>
       </div>
-      <div class="artist-cirle con3 half-opacity" v-else-if="!d.preview_url && d.album.images[0]" v-bind:key="'2'+index"
-           v-on:click="store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})"
-           v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
-        <audio></audio>
-        <div class="float-left" style="position: absolute; font-size: 0.7em;">{{ art.name }}</div>
-      </div>
-      <div class="artist-cirle con3" v-else-if="d.preview_url && !d.album.images[0]" v-bind:key="'3'+index"
-           v-on:click="store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})">
-        <audio preload="auto" v-bind:src="d.preview_url"></audio>
-        <div class="float-left" style="position: absolute; font-size: 0.7em;">{{ art.name }}</div>
-      </div>
-      <div class="artist-cirle con3 half-opacity" v-else-if="store.unplayable_tracks" v-bind:key="'4'+index"
-           v-on:click="store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})">
-        <audio preload="none"></audio>
-        <div class="float-left" style="position: absolute; font-size: 0.7em;">{{ art.name }}</div>
-      </div>
-    </template>
+    </div>
   </div>
 </template>
 
 <style scoped>
-
+/* Styles moved to main styles.css */
 </style>

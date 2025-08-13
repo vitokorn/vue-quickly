@@ -1,108 +1,145 @@
 <script setup>
-import {Lists} from "../common/lists";
 import {useDMStore} from "../stores/dm-store";
-import {computed, ref} from "vue";
+import {ref, computed} from "vue";
 import SortTracks from "./SortTracks.vue";
 
-const props = defineProps(['d', 'num'])
-const selectedDeeperPlaylistSortOption = ref("")
-
+defineProps(['d', 'num'])
 const store = useDMStore()
 const selected = ref()
+const selectedDeeperPlaylistSortOption = ref("")
+
 const sortedDeeperPlaylistItems = computed(() => {
-  const itemsCopy = [...props.d['tracks']['items']];
-  switch (selectedDeeperPlaylistSortOption.value) {
-    case 'track':
-      return itemsCopy.sort((a, b) => a.track.name.localeCompare(b.track.name));
-    case 'album':
-      return itemsCopy.sort((a, b) => a.track.album.name.localeCompare(b.track.album.name));
-    case 'artist':
-      return itemsCopy.sort((a, b) => a.track.artists[0].name.localeCompare(b.track.artists[0].name));
-    case 'popularity':
-      return itemsCopy.sort((a, b) => a.track.popularity > b.track.popularity);
-    case 'release_date':
-      return itemsCopy.sort((a, b) => a.track.album.release_date.localeCompare(b.track.album.release_date));
-    case 'duration':
-      return itemsCopy.sort((a, b) => a.track.duration_ms > b.track.duration_ms);
-    default:
-      return itemsCopy; // Default (unsorted) state
-  }
+  const items = d.tracks?.items || []
+  if (!selectedDeeperPlaylistSortOption.value) return items
+  
+  return [...items].sort((a, b) => {
+    const trackA = a.track
+    const trackB = b.track
+    
+    switch (selectedDeeperPlaylistSortOption.value) {
+      case 'track':
+        return trackA.name.localeCompare(trackB.name)
+      case 'album':
+        return trackA.album.name.localeCompare(trackB.album.name)
+      case 'artist':
+        return trackA.artists[0].name.localeCompare(trackB.artists[0].name)
+      case 'popularity':
+        return trackB.popularity - trackA.popularity
+      case 'release_date':
+        return new Date(trackB.album.release_date) - new Date(trackA.album.release_date)
+      case 'duration':
+        return trackA.duration_ms - trackB.duration_ms
+      default:
+        return 0
+    }
+  })
 })
+
 function setActive(id) {
   selected.value = id
 }
-function lists(artists) {
-  return Lists.Ls(artists)
-}
 </script>
+
 <template>
-  <div class="playlist card2" v-bind:id="'p' + d.id">
-    <div class="row align-items-center text-center w-100">
-      <div class="col-3 text-dark" style="font-weight: bold;color: black">
-        <div class="d-flex justify-content-center align-items-center">
-          <div>{{ d.name }}</div>
-          <button class="btn" v-on:click="store.reloader({num:1,event:$event})"><img
-              class="refresh-end" src="../assets/refresh-icon.png" alt=""></button>
+  <div class="modern-playlist-card" :id="'p' + d.id">
+    <div class="playlist-header">
+      <div class="playlist-info">
+        <div class="playlist-title-section">
+          <h2 class="playlist-title">{{ d.name }}</h2>
+          <button class="refresh-button" @click="store.reloader({num:1,event:$event})">
+            <img class="refresh-icon" src="../assets/refresh-icon.png" alt="Refresh">
+          </button>
         </div>
-
+        <div class="playlist-description" v-html="d.description"></div>
       </div>
-      <div class="col-4 aresset display-flex align-items-center flex-wrap pointer" v-html="d.description">
-
+      
+      <div class="playlist-cover" v-if="d.images[0]">
+        <img :src="d.images[0].url" alt="Playlist cover">
       </div>
-      <div v-if="d.images[0]" class="col-3">
-        <img style="max-height: 165px" :src="d.images[0].url">
-      </div>
-      <div class="col-2">
-        <div style="color: black;">Follow</div><input type="checkbox" v-if="d.followed"
-                                                      @click.once="store.followPlaylist($event)" checked
-                                                      v-model="d.followed">
-        <button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']"
-                                  target="_blank">Open in Spotify</a></button>
-        <sort-tracks v-model="selectedDeeperPlaylistSortOption"/>
+      
+      <div class="playlist-actions">
+        <div class="follow-section">
+          <span class="follow-label">Follow</span>
+          <label class="follow-checkbox">
+            <input type="checkbox" v-if="d.followed" @click.once="store.followPlaylist($event)" checked v-model="d.followed">
+            <input type="checkbox" v-else @click.once="store.followPlaylist($event)" v-model="d.followed">
+            <span class="checkmark"></span>
+          </label>
+        </div>
+        <a class="spotify-link" :href="d['external_urls']['spotify']" target="_blank" rel="noopener">
+          <span class="link-icon">🎧</span>
+          Open in Spotify
+        </a>
+        <div class="sort-section">
+          <sort-tracks v-model="selectedDeeperPlaylistSortOption"/>
+        </div>
       </div>
     </div>
-    <div class="con2 display-flex" style="color: black">
-      <div class="trackbody" v-for="(plitem,index) of sortedDeeperPlaylistItems" v-bind:key="index" @click="setActive(plitem.track.id);">
-        <div v-if="plitem.track && plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id"
-             tabindex="0" class="con3"
-             :class="selected===plitem.track.id ? 'selected' : ''"
-             v-on:click="store.deeperTracks({item:plitem.track,num:num,flag:false,sib:'playlist'})"
-             v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)"
-             v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }">
-          {{ lists(plitem['track']['artists']) }} - {{ plitem.track.name }}
-          <audio preload="auto" v-bind:src="plitem.track.preview_url"></audio>
+    
+    <div class="tracks-grid">
+      <div v-for="(item, index) in sortedDeeperPlaylistItems" :key="index" class="track-card">
+        <div v-if="item.track.preview_url && item.track.album.images[0]"
+             class="track-item playable"
+             :class="selected === item.track.id ? 'selected' : ''"
+             :style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }"
+             @mouseover="store.mouseOver($event)"
+             @mouseleave="store.mouseLeave($event)"
+             @click="setActive(item.track.id);store.deeperTracks({item:item.track,num:num,flag:false,sib:'deeperplaylist',child:'p'+ d.id}); store.queuein(item.track)">
+          <div class="track-overlay">
+            <div class="track-info">
+              <div class="track-artists">{{ item.track.artists.map(a => a.name).join(', ') }}</div>
+              <div class="track-name">{{ item.track.name }}</div>
+            </div>
+          </div>
+          <audio preload="auto" :src="item.track.preview_url"></audio>
         </div>
-        <div
-            v-else-if="plitem.track && !plitem.track.preview_url && plitem.track.album.images[0] && store.unplayable_tracks"
-            v-bind:id="plitem.track.id" tabindex="0" class="con3 half-opacity"
-            :class="selected===plitem.track.id ? 'selected' : ''"
-            v-on:click="store.deeperTracks({item:plitem.track,num:num,flag:false,sib:'playlist'});"
-            v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }">
-          {{ lists(plitem['track']['artists']) }} - {{ plitem.track.name }}
-          <audio preload="none"></audio>
+        
+        <div v-else-if="!item.track.preview_url && item.track.album.images[0]"
+             class="track-item unplayable"
+             :class="selected === item.track.id ? 'selected' : ''"
+             :style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }"
+             @click="setActive(item.track.id);store.deeperTracks({item:item.track,num:num,flag:false,sib:'deeperplaylist',child:'p'+ d.id}); store.queuein(item.track)">
+          <div class="track-overlay">
+            <div class="track-info">
+              <div class="track-artists">{{ item.track.artists.map(a => a.name).join(', ') }}</div>
+              <div class="track-name">{{ item.track.name }}</div>
+            </div>
+          </div>
+          <audio></audio>
         </div>
-        <div v-else-if="plitem.track && plitem.track.preview_url && !plitem.track.album.images[0]"
-             v-bind:id="plitem.track.id" tabindex="0" class="con3"
-             :class="selected===plitem.track.id ? 'selected' : ''"
-             v-on:click="store.deeperTracks({item:plitem.track,num:num,flag:false,sib:'playlist'})"
-             v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)">
-          {{ lists(plitem['track']['artists']) }} - {{ plitem.track.name }}
-          <audio preload="auto" v-bind:src="plitem.track.preview_url"></audio>
+        
+        <div v-else-if="item.track.preview_url && !item.track.album.images[0]"
+             class="track-item playable no-image"
+             :class="selected === item.track.id ? 'selected' : ''"
+             @mouseover="store.mouseOver($event)"
+             @mouseleave="store.mouseLeave($event)"
+             @click="setActive(item.track.id);store.deeperTracks({item:item.track,num:num,flag:false,sib:'deeperplaylist',child:'p'+ d.id}); store.queuein(item.track)">
+          <div class="track-overlay">
+            <div class="track-info">
+              <div class="track-artists">{{ item.track.artists.map(a => a.name).join(', ') }}</div>
+              <div class="track-name">{{ item.track.name }}</div>
+            </div>
+          </div>
+          <audio preload="auto" :src="item.track.preview_url"></audio>
         </div>
-        <div
-            v-else-if="plitem.track && plitem.track && !plitem.track.preview_url && !plitem.track.album.images[0] && store.unplayable_tracks"
-            tabindex="0" class="con3 half-opacity" v-bind:id="plitem.track.id"
-            :class="selected===plitem.track.id ? 'selected' : ''"
-            v-on:click="store.deeperTracks({item:plitem.track,num:num,flag:false,sib:'playlist'});">
-          {{ lists(plitem['track']['artists']) }} - {{ plitem.track.name }}
-          <audio preload="none"></audio>
+        
+        <div v-else
+             class="track-item unplayable no-image"
+             :class="selected === item.track.id ? 'selected' : ''"
+             @click="setActive(item.track.id);store.deeperTracks({item:item.track,num:num,flag:false,sib:'deeperplaylist',child:'p'+ d.id}); store.queuein(item.track)">
+          <div class="track-overlay">
+            <div class="track-info">
+              <div class="track-artists">{{ item.track.artists.map(a => a.name).join(', ') }}</div>
+              <div class="track-name">{{ item.track.name }}</div>
+            </div>
+          </div>
+          <audio></audio>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-
 <style scoped>
-
+/* Styles moved to main styles.css */
 </style>

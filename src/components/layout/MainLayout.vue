@@ -198,84 +198,96 @@ window.addEventListener('resize', () => {
     <!-- Main content -->
     <div class="content-wrapper">
       <!-- Top menu navigation -->
-      <ul class="tabs">
-        <li id="option1">
-          <a id="playlistlist"
-             @click="store.prepare({num:1});store.switchTabs({event:$event});setSelectedTopMenu(1)"
-             @click.self.once="store.fetchPlaylists({event:$event,offset:0})"
-             :class="{ active: selectedTopMenu === 1 }">
-            Playlists Pc
-          </a>
-        </li>
-        <li id="option2">
-          <a id="ta"
-             @click="store.prepare({num:2});store.switchTabs({event:$event});store.switchArtist({num:1});setSelectedTopMenu(2)"
-             @click.self.once="store.fetchArtist({event:$event})"
-             :class="{ active: selectedTopMenu === 2 }">
-            Top artists
-          </a>
-        </li>
-        <li id="option3">
-          <a @click="store.prepare({num:3});store.switchTabs({event:$event});store.switchTracks({num:1});setSelectedTopMenu(3)"
-             id="tt"
-             @click.self.once="store.fetchApi({event:$event})"
-             :class="{ active: selectedTopMenu === 3 }">
-            Top tracks
-          </a>
-        </li>
-        <li id="option4">
-          <a @click="store.prepare({num:4});store.switchTabs({event:$event});setSelectedTopMenu(4)"
-             id="sa"
-             @click.self.once="store.fetchAlbums({offset:0,event:$event})"
-             :class="{ active: selectedTopMenu === 4 }">
-            Saved albums
-          </a>
-        </li>
-        <li id="option5">
-          <a @click="store.prepare({num:5});store.switchTabs({event:$event});setSelectedTopMenu(5)"
-             id="st"
-             @click.self.once="store.fetchTracks({offset:0})"
-             :class="{ active: selectedTopMenu === 5 }">
-            Saved tracks
-          </a>
-        </li>
-        <li id="option6">
-          <a @click="store.prepare({num:6});store.switchTabs({event:$event});setSelectedTopMenu(6)"
-             id="fa"
-             @click.self.once="store.fetchFA()"
-             :class="{ active: selectedTopMenu === 6 }">
-            Followed artists
-          </a>
-        </li>
-        <li id="option7">
-          <a @click="store.prepare({num:7});store.switchTabs({event:$event});setSelectedTopMenu(7)"
-             id="nr"
-             @click.self.once="store.fetchNR({offset:0})"
-             :class="{ active: selectedTopMenu === 7 }">
-            New releases
-          </a>
-        </li>
-        <li id="option8">
-          <a @click="store.prepare({num:8});store.switchTabs({event:$event});setSelectedTopMenu(8)"
-             id="spt"
-             @click.self.once="store.fetchSpotPlaylists({offset:0})"
-             :class="{ active: selectedTopMenu === 8 }">
-            Spotify playlists
-          </a>
-        </li>
-        <li id="srch" class="srch">
-          <a id="sear" style="padding: 15px;">
-            <input type="search"
-                   class="inp pointer"
-                   v-model="search"
-                   @keyup="selectedTopMenu=10;store.search($event)"
-                   placeholder="Search...">
-          </a>
-        </li>
-      </ul>
+      <nav class="modern-tabs">
+        <ul class="tabs-list">
+          <li class="tab-item" id="option1">
+            <a id="playlistlist"
+               @click="store.prepare({num:1});store.switchTabs({event:$event});setSelectedTopMenu(1)"
+               @click.self.once="store.fetchPlaylists({event:$event,offset:0})"
+               :class="{ active: selectedTopMenu === 1 }">
+              <span class="tab-icon">📁</span>
+              <span class="tab-text">Playlists</span>
+            </a>
+          </li>
+          <li class="tab-item" id="option2">
+            <a id="ta"
+               @click="store.prepare({num:2});store.switchTabs({event:$event});store.switchArtist({num:1});setSelectedTopMenu(2)"
+               @click.self.once="store.fetchArtist({event:$event})"
+               :class="{ active: selectedTopMenu === 2 }">
+              <span class="tab-icon">👤</span>
+              <span class="tab-text">Top Artists</span>
+            </a>
+          </li>
+          <li class="tab-item" id="option3">
+            <a @click="store.prepare({num:3});store.switchTabs({event:$event});store.switchTracks({num:1});setSelectedTopMenu(3)"
+               id="tt"
+               @click.self.once="store.fetchApi({event:$event})"
+               :class="{ active: selectedTopMenu === 3 }">
+              <span class="tab-icon">🎵</span>
+              <span class="tab-text">Top Tracks</span>
+            </a>
+          </li>
+          <li class="tab-item" id="option4">
+            <a @click="store.prepare({num:4});store.switchTabs({event:$event});setSelectedTopMenu(4)"
+               id="sa"
+               @click.self.once="store.fetchAlbums({offset:0,event:$event})"
+               :class="{ active: selectedTopMenu === 4 }">
+              <span class="tab-icon">💿</span>
+              <span class="tab-text">Saved Albums</span>
+            </a>
+          </li>
+          <li class="tab-item" id="option5">
+            <a @click="store.prepare({num:5});store.switchTabs({event:$event});setSelectedTopMenu(5)"
+               id="st"
+               @click.self.once="store.fetchTracks({offset:0})"
+               :class="{ active: selectedTopMenu === 5 }">
+              <span class="tab-icon">❤️</span>
+              <span class="tab-text">Saved Tracks</span>
+            </a>
+          </li>
+          <li class="tab-item" id="option6">
+            <a @click="store.prepare({num:6});store.switchTabs({event:$event});setSelectedTopMenu(6)"
+               id="fa"
+               @click.self.once="store.fetchFA()"
+               :class="{ active: selectedTopMenu === 6 }">
+              <span class="tab-icon">⭐</span>
+              <span class="tab-text">Followed Artists</span>
+            </a>
+          </li>
+          <li class="tab-item" id="option7">
+            <a @click="store.prepare({num:7});store.switchTabs({event:$event});setSelectedTopMenu(7)"
+               id="nr"
+               @click.self.once="store.fetchNR({offset:0})"
+               :class="{ active: selectedTopMenu === 7 }">
+              <span class="tab-icon">🆕</span>
+              <span class="tab-text">New Releases</span>
+            </a>
+          </li>
+          <li class="tab-item" id="option8">
+            <a @click="store.prepare({num:8});store.switchTabs({event:$event});setSelectedTopMenu(8)"
+               id="spt"
+               @click.self.once="store.fetchSpotPlaylists({offset:0})"
+               :class="{ active: selectedTopMenu === 8 }">
+              <span class="tab-icon">🎧</span>
+              <span class="tab-text">Spotify Playlists</span>
+            </a>
+          </li>
+          <li class="tab-item search-tab" id="srch">
+            <div class="search-container">
+              <input type="search"
+                     class="modern-search"
+                     v-model="search"
+                     @keyup="selectedTopMenu=10;store.search($event)"
+                     placeholder="Search music...">
+              <span class="search-icon">🔍</span>
+            </div>
+          </li>
+        </ul>
+      </nav>
 
       <!-- Content sections -->
-      <div class="content-sections">
+      <div class="modern-content">
+        <div class="content-container">
         <!-- Personal Playlists Section -->
         <div v-if="selectedTopMenu === 1">
           <Loader v-if="store.loader"/>
@@ -297,27 +309,29 @@ window.addEventListener('resize', () => {
                 </template>
               </div>
               <div class="play" v-if="store.currentpl" :id="'p' + store.currentpl.id">
-                <div class="row align-items-center text-center w-100">
-                  <div class="col-3 text-dark" style="font-weight: bold;color: black">
-                    <div class="d-flex justify-content-center align-items-center">
-                      <div>{{ store.currentpl.name }}</div>
-                      <button class="btn" @click="store.reloader({num:1,event:$event})">
-                        <img class="refresh-end" src="../../assets/refresh-icon.png" alt="">
+                <div class="modern-playlist-header">
+                  <div class="playlist-info">
+                    <div class="playlist-title-section">
+                      <h2 class="playlist-title">{{ store.currentpl.name }}</h2>
+                      <button class="refresh-button" @click="store.reloader({num:1,event:$event})">
+                        <img class="refresh-icon" src="../../assets/refresh-icon.png" alt="Refresh">
                       </button>
                     </div>
+                    <div class="playlist-description" v-html="store.currentpl.description"></div>
                   </div>
-                  <div class="col-4 aresset display-flex align-items-center flex-wrap pointer"
-                       v-html="store.currentpl.description">
+                  
+                  <div class="playlist-cover" v-if="store.currentpl.images[0]">
+                    <img :src="store.currentpl.images[0].url" alt="Playlist cover">
                   </div>
-                  <div v-if="store.currentpl.images[0]" class="col-3">
-                    <img style="max-height: 165px" :src="store.currentpl.images[0].url">
-                  </div>
-                  <div class="col-2">
-                    <button class="button">
-                      <a class="linkresset" :href="store.currentpl['external_urls']['spotify']" target="_blank">
-                        Open in Spotify
-                      </a>
-                    </button>
+                  
+                  <div class="playlist-actions">
+                    <a class="spotify-link" 
+                       :href="store.currentpl['external_urls']['spotify']" 
+                       target="_blank"
+                       rel="noopener">
+                      <span class="link-icon">🎧</span>
+                      Open in Spotify
+                    </a>
                     <SortTracks v-model="selectedPlaylistSortOption"/>
                   </div>
                 </div>
@@ -331,7 +345,7 @@ window.addEventListener('resize', () => {
                              :class="selectedItem==='1' + pl.track.id ? 'selected' : ''"
                              @mouseover="store.mouseOver($event)"
                              @mouseleave="store.mouseLeave($event)"
-                             @click="setSelectedItem('1' + pl.track.id);store.prepare({num:1});store.deeper({item:pl,num:1,event:$event}); store.queuein(pl['track'])"
+                             @click.stop="setSelectedItem('1' + pl.track.id);store.prepare({num:1});store.deeper({item:pl,num:1,event:$event}); store.queuein(pl['track'])"
                              :style="{ 'background-image': 'url(' + pl.track.album.images[0].url + ')' }">
                           {{ formatArtistNames(pl['track']['artists']) }} - {{ pl.track.name }}
                           <audio preload="auto" :src="pl.track.preview_url"></audio>
@@ -341,21 +355,21 @@ window.addEventListener('resize', () => {
                              class="con3 half-opacity"
                              :class="selectedItem==='1' + pl.track.id ? 'selected' : ''"
                              :style="{ 'background-image': 'url(' + pl.track.album.images[0].url + ')' }"
-                             @click="setSelectedItem('1' + pl.track.id);store.prepare({num:1});store.deeper({item:pl,num:1,event:$event}); store.queuein(pl['track'])">
+                             @click.stop="setSelectedItem('1' + pl.track.id);store.prepare({num:1});store.deeper({item:pl,num:1,event:$event}); store.queuein(pl['track'])">
                           {{ formatArtistNames(pl['track']['artists']) }} - {{ pl.track.name }}
                           <audio preload="auto"></audio>
                         </div>
                         <div v-else-if="!pl.track.album.images[0] && pl.track.preview_url"
                              class="con3"
                              :class="selectedItem==='1' + pl.track.id ? 'selected' : ''"
-                             @click="setSelectedItem('1' + pl.track.id);store.prepare({num:1});store.deeper({item:pl,num:1,event:$event}); store.queuein(pl['track'])">
+                             @click.stop="setSelectedItem('1' + pl.track.id);store.prepare({num:1});store.deeper({item:pl,num:1,event:$event}); store.queuein(pl['track'])">
                           {{ formatArtistNames(pl['track']['artists']) }} - {{ pl.track.name }}
                           <audio preload="auto" :src="pl.track.preview_url"></audio>
                         </div>
                         <div v-else-if="store.unplayable_tracks"
                              class="con3 half-opacity"
                              :class="selectedItem==='1' + pl.track.id ? 'selected' : ''"
-                             @click="setSelectedItem('1' + pl.track.id);store.prepare({num:1});store.deeper({item:pl,num:1,event:$event}); store.queuein(pl['track'])">
+                             @click.stop="setSelectedItem('1' + pl.track.id);store.prepare({num:1});store.deeper({item:pl,num:1,event:$event}); store.queuein(pl['track'])">
                           {{ formatArtistNames(pl['track']['artists']) }} - {{ pl.track.name }}
                         </div>
                       </template>
@@ -1068,6 +1082,7 @@ window.addEventListener('resize', () => {
     <!-- Footer -->
     <Footer />
   </div>
+  </div>
 </template>
 
 <style scoped>
@@ -1075,6 +1090,8 @@ window.addEventListener('resize', () => {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background: linear-gradient(135deg, var(--main-color) 0%, rgba(240, 55, 165, 0.05) 100%);
+  overflow-x: hidden;
 }
 
 .content-wrapper {
@@ -1083,77 +1100,448 @@ window.addEventListener('resize', () => {
   flex-direction: column;
 }
 
-/* Original tab styling */
-.tabs {
+/* Modern Tab Styling */
+.modern-tabs {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  will-change: transform;
+  transform: translateZ(0);
+  transition: all 0.3s ease;
+}
+
+.modern-tabs::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.tabs-list {
   display: flex;
   list-style: none;
   margin: 0;
   padding: 0;
-  background: var(--tabs-background);
-  border-bottom: 1px solid var(--border-top);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
 }
 
-.tabs li {
+.tabs-list::-webkit-scrollbar {
+  display: none;
+}
+
+.tab-item {
+  flex-shrink: 0;
   margin: 0;
 }
 
-.tabs a {
-  display: block;
-  padding: 15px 20px;
+.tab-item a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 20px;
   text-decoration: none;
   color: var(--tabs-color);
   cursor: pointer;
-  transition: all 0.2s ease;
-  border-bottom: 2px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-bottom: 3px solid transparent;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
 }
 
-.tabs a:hover {
-  background: var(--tabs-target);
+.tab-item a::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(240, 55, 165, 0.1), transparent);
+  transition: left 0.5s;
 }
 
-.tabs a.active {
-  background: var(--active-tab);
+.tab-item a:hover::before {
+  left: 100%;
+}
+
+.tab-item a:hover {
+  background: rgba(240, 55, 165, 0.05);
+  transform: translateY(-1px);
+}
+
+.tab-item a.active {
+  background: linear-gradient(135deg, var(--active-tab), #e91e63);
   color: white;
   border-bottom-color: var(--active-tab);
+  box-shadow: 0 4px 15px rgba(240, 55, 165, 0.3);
 }
 
-.tabs .srch {
+.tab-icon {
+  font-size: 18px;
+  opacity: 0.8;
+}
+
+.tab-text {
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+/* Search Tab */
+.search-tab {
   margin-left: auto;
 }
 
-.tabs .srch input {
-  background: transparent;
+/* Modern Playlist Header */
+.modern-playlist-header {
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin-bottom: 24px;
+}
+
+.playlist-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.playlist-title-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.playlist-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--title-color);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.refresh-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.05);
   border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.refresh-button:hover {
+  background: rgba(240, 55, 165, 0.1);
+  transform: rotate(180deg);
+}
+
+.refresh-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.playlist-description {
+  font-size: 14px;
+  color: var(--search-color);
+  opacity: 0.8;
+  line-height: 1.4;
+}
+
+.playlist-cover {
+  flex-shrink: 0;
+}
+
+.playlist-cover img {
+  max-height: 165px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.playlist-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 200px;
+}
+
+.spotify-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #1DB954, #1ed760);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(29, 185, 84, 0.3);
+}
+
+.spotify-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(29, 185, 84, 0.4);
+}
+
+.link-icon {
+  font-size: 16px;
+}
+
+/* Mobile Responsive for Playlist Header */
+@media (max-width: 768px) {
+  .modern-playlist-header {
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .playlist-title {
+    font-size: 20px;
+  }
+  
+  .playlist-actions {
+    min-width: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  
+  .spotify-link {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .modern-playlist-header {
+    padding: 16px;
+  }
+  
+  .playlist-title {
+    font-size: 18px;
+  }
+  
+  .playlist-cover img {
+    max-height: 120px;
+  }
+}
+
+/* Dark mode support for playlist header */
+:root.dark .modern-playlist-header {
+  background: rgba(42, 46, 47, 0.9);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+:root.dark .refresh-button {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+}
+
+.modern-search {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 25px;
+  padding: 10px 40px 10px 16px;
   color: var(--search-color);
   outline: none;
-  width: 200px;
+  width: 250px;
+  transition: all 0.3s ease;
+  font-size: 14px;
 }
 
-.tabs .srch input::placeholder {
+.modern-search:focus {
+  background: white;
+  border-color: var(--active-tab);
+  box-shadow: 0 0 0 3px rgba(240, 55, 165, 0.1);
+  width: 300px;
+}
+
+.modern-search::placeholder {
   color: var(--search-color);
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
-/* Content sections */
-.content-sections {
+.search-icon {
+  position: absolute;
+  right: 24px;
+  font-size: 16px;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Modern Content Styling */
+.modern-content {
   flex: 1;
-  padding: 16px;
+  padding: 24px;
+  background: transparent;
 }
 
-/* Responsive design */
+.content-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 24px;
+  min-height: 500px;
+}
+
+/* Enhanced Card Styling */
+.con2, .con3 {
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.con3 {
+  position: relative;
+  overflow: hidden;
+}
+
+.con3::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.con3:hover::before {
+  opacity: 1;
+}
+
+.con3:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.con3.selected {
+  border: 3px solid var(--active-tab);
+  box-shadow: 0 0 20px rgba(240, 55, 165, 0.4);
+}
+
+/* Button Styling */
+.btn {
+  background: linear-gradient(135deg, var(--active-tab), #e91e63);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(240, 55, 165, 0.3);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(240, 55, 165, 0.4);
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-  .tabs {
+  .tabs-list {
     flex-wrap: wrap;
   }
 
-  .tabs a {
-    padding: 10px 15px;
-    font-size: 14px;
+  .tab-item a {
+    padding: 12px 16px;
+    font-size: 13px;
   }
 
-  .tabs .srch input {
+  .tab-icon {
+    font-size: 16px;
+  }
+
+  .modern-search {
+    width: 200px;
+  }
+
+  .modern-search:focus {
+    width: 220px;
+  }
+
+  .modern-content {
+    padding: 16px;
+  }
+
+  .content-container {
+    padding: 16px;
+    border-radius: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tab-text {
+    display: none;
+  }
+
+  .tab-item a {
+    padding: 12px;
+    justify-content: center;
+  }
+
+  .modern-search {
     width: 150px;
   }
+
+  .modern-search:focus {
+    width: 160px;
+  }
+}
+
+/* Dark mode support */
+:root.dark .modern-tabs {
+  background: rgba(34, 36, 38, 0.95);
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+:root.dark .content-container {
+  background: rgba(42, 46, 47, 0.8);
+}
+
+:root.dark .modern-search {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--search-color);
+}
+
+:root.dark .modern-search:focus {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--active-tab);
 }
 </style>
 

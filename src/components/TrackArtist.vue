@@ -5,150 +5,283 @@ import {ref} from "vue";
 defineProps(['d', 'num'])
 const store = useDMStore()
 const selected = ref()
+
 function setActive(id) {
   selected.value = id
 }
 </script>
+
 <template>
-  <div class="trackartist card2 text-left" style="gap: 16px;">
-    <template v-for="(ta,index) in d">
-      <div v-if="ta.type==='artist'" class="recartist card2 text-left" v-bind:id="'art'+ta.id" v-bind:key="index"
-           style="width: 100%;gap: 16px;">
-        <div class="con3 text-left" v-if="ta.preview_url && ta.images[0]"
-             v-bind:style="{ 'background-image': 'url(' + ta.images[0].url + ')' }"
-             v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)">{{ ta.name }}
-          <audio preload="auto" v-bind:src="ta.preview_url"></audio>
-        </div>
-        <div class="con3 text-left half-opacity" v-else-if="!ta.preview_url && ta.images[0]"
-             v-bind:style="{ 'background-image': 'url(' + ta.images[0].url + ')' }">{{ ta.name }}
-          <audio></audio>
-        </div>
-        <div class="con3 text-left" v-else-if="ta.preview_url && !ta.images[0]"
-             v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)">{{ ta.name }}
-          <audio preload="auto" v-bind:src="ta.preview_url"></audio>
-        </div>
-        <div class="con3 text-left half-opacity" v-else>{{ ta.name }}
-          <audio></audio>
-        </div>
-        <div>{{ ta.name }}
-          <div>{{ ta['followers']['total'] + ' followers' }}</div>
-          <div class="display-flex">
-            <template v-for="(g,index) in ta['genres']" v-bind:key="'2'+index">
-              <div v-if="ta['genres'].length > 1 && ta['genres'].length - 1 === index" class="me-2">&</div>
-              <div v-if="ta['genres'].length >= 2 && ta['genres'].length - 1 !== index && index !== 0" class="me-2">,</div>
-              <div
-                   v-on:click="store.thesoundof({name:g,num:num,sib:'trackartist',child:false})"
-                   class="me-2" >{{ g }}
+  <div class="modern-track-artist">
+    <template v-for="(ta, index) in d" :key="index">
+      <!-- Artist Section -->
+      <div v-if="ta.type==='artist'" class="artist-section" :id="'art'+ta.id">
+        <div class="artist-header">
+          <!-- Artist Cover -->
+          <div v-if="ta.preview_url && ta.images[0]" 
+               class="artist-cover playable"
+               :style="{ 'background-image': 'url(' + ta.images[0].url + ')' }"
+               @mouseover="store.mouseOver($event)" 
+               @mouseleave="store.mouseLeave($event)">
+            <div class="cover-overlay">
+              <div class="artist-name">{{ ta.name }}</div>
+            </div>
+            <audio preload="auto" :src="ta.preview_url"></audio>
+          </div>
+          
+          <div v-else-if="!ta.preview_url && ta.images[0]" 
+               class="artist-cover unplayable"
+               :style="{ 'background-image': 'url(' + ta.images[0].url + ')' }">
+            <div class="cover-overlay">
+              <div class="artist-name">{{ ta.name }}</div>
+            </div>
+            <audio></audio>
+          </div>
+          
+          <div v-else-if="ta.preview_url && !ta.images[0]" 
+               class="artist-cover playable no-image"
+               @mouseover="store.mouseOver($event)" 
+               @mouseleave="store.mouseLeave($event)">
+            <div class="cover-overlay">
+              <div class="artist-name">{{ ta.name }}</div>
+            </div>
+            <audio preload="auto" :src="ta.preview_url"></audio>
+          </div>
+          
+          <div v-else 
+               class="artist-cover unplayable no-image">
+            <div class="cover-overlay">
+              <div class="artist-name">{{ ta.name }}</div>
+            </div>
+            <audio></audio>
+          </div>
+          
+          <!-- Artist Info -->
+          <div class="artist-info">
+            <h2 class="artist-title">{{ ta.name }}</h2>
+            <div class="artist-stats">
+              <span class="followers-count">{{ ta['followers']['total'].toLocaleString() }} followers</span>
+            </div>
+            
+            <!-- Genres -->
+            <div class="genres-section">
+              <div class="genres-list">
+                <template v-for="(g, gIndex) in ta['genres']" :key="'genre-'+gIndex">
+                  <span v-if="ta['genres'].length > 1 && ta['genres'].length - 1 === gIndex" class="separator">&</span>
+                  <span v-if="ta['genres'].length >= 2 && ta['genres'].length - 1 !== gIndex && gIndex !== 0" class="separator">,</span>
+                  <button class="genre-tag"
+                          @click="store.thesoundof({name:g,num:num,sib:'trackartist',child:false})">
+                    {{ g }}
+                  </button>
+                </template>
               </div>
-            </template>
-          </div>
-          <div class="light-washed-rose" v-on:click="store.seedArtist({item:ta,num:num,sib:'trackartist'})">
-            Recommended artists songs based on this
-          </div>
-          <div>
-            <button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open
-              in Spotify</a></button>
-            Follow<input type="checkbox" v-if="ta.followed" @click.once="store.followArtist({artist:ta,event:$event})"
-                         checked v-model="ta.followed">
-            <input type="checkbox" v-else @click.once="store.followArtist({artist:ta,event:$event})"
-                   v-model="ta.followed">
-          </div>
-        </div>
-      </div>
-      <div v-if="ta.type==='top_tracks'" class="break" v-bind:key="index">Top tracks</div>
-      <div v-if="ta.type==='top_tracks'" v-bind:key="index" tabindex="0" class="top-tracks card2">
-        <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
-          <div v-if="tt.preview_url && tt.album.images[0]" class="con3"
-               :class="selected===tt.id ? 'selected' : ''"
-               v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }"
-               v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)"
-               v-on:click="setActive(tt.id);store.deeperTracks({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id}); store.queuein(tt)">
-            {{ tt.name }}
-            <audio v-bind:src="tt.preview_url"></audio>
-          </div>
-          <div v-else-if="!tt.preview_url && tt.album.images[0]" class="con3 half-opacity"
-               :class="selected===tt.id ? 'selected' : ''"
-               v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }"
-               v-on:click="setActive(tt.id);store.deeperTracks({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id}); store.queuein(tt)">
-            {{ tt.name }}
-            <audio></audio>
-          </div>
-          <div v-else-if="tt.preview_url && !tt.album.images[0]" class="con3"
-               :class="selected===tt.id ? 'selected' : ''"
-               v-on:mouseover="store.mouseOver($event)"
-               v-on:mouseleave="store.mouseLeave($event)"
-               v-on:click="setActive(tt.id);store.deeperTracks({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id}); store.queuein(tt)">
-            {{ tt.name }}
-            <audio v-bind:src="tt.preview_url"></audio>
-          </div>
-          <div v-else class="con3 half-opacity"
-               :class="selected===tt.id ? 'selected' : ''"
-               v-on:click="setActive(tt.id);store.deeperTracks({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id}); store.queuein(tt)">
-            {{ tt.name }}
-            <audio></audio>
+            </div>
+            
+            <!-- Actions -->
+            <div class="artist-actions">
+              <button class="recommend-btn"
+                      @click="store.seedArtist({item:ta,num:num,sib:'trackartist'})">
+                <span class="btn-icon">🎵</span>
+                Recommended artists songs based on this
+              </button>
+              
+              <a class="spotify-link" 
+                 :href="ta['external_urls']['spotify']" 
+                 target="_blank"
+                 rel="noopener">
+                <span class="link-icon">🎧</span>
+                Open in Spotify
+              </a>
+              
+              <div class="follow-section">
+                <span class="follow-label">Follow</span>
+                <label class="follow-checkbox">
+                  <input type="checkbox" 
+                         v-if="ta.followed"
+                         @click.once="store.followArtist({artist:ta,event:$event})"
+                         checked
+                         v-model="ta.followed">
+                  <input type="checkbox" 
+                         v-else
+                         @click.once="store.followArtist({artist:ta,event:$event})"
+                         v-model="ta.followed">
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <div v-if="ta.type==='albums' && ta.length > 0" class="break" v-bind:key="index">Albums</div>
-      <div v-if="ta.type==='single' && ta.length > 0" class="break" v-bind:key="index">Single</div>
-      <div v-if="ta.type==='appears_on' && ta.length > 0" class="break" v-bind:key="index">Appears on</div>
-      <div
-          v-if="ta.type==='albums' && ta.length > 0 || ta.type==='single' && ta.length > 0 || ta.type==='appears_on' && ta.length > 0"
-          v-bind:key="index" tabindex="0" class="card2">
-        <div v-for="(a,index) in ta" v-bind:key="index">
-          <div v-if="a.preview_url && a.images[0]" class="con3"
-               :class="selected===a.id ? 'selected' : ''"
-               v-on:click="setActive(a.id);store.deeperAlbum({item:a,num:num,child:'art' + d[0].id,search:false})"
-               v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)"
-               v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{ a.name }}
-            <audio preload="auto" v-bind:src="a.preview_url"></audio>
+      
+      <!-- Top Tracks Section -->
+      <div v-if="ta.type==='top_tracks'" class="section-header">
+        <h3 class="section-title">Top tracks</h3>
+      </div>
+      
+      <div v-if="ta.type==='top_tracks'" class="tracks-grid">
+        <div v-for="(tt, ttIndex) in ta['tracks']" :key="ttIndex">
+          <div v-if="tt.preview_url && tt.album.images[0]" 
+               class="track-card playable"
+               :class="selected === tt.id ? 'selected' : ''"
+               :style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }"
+               @mouseover="store.mouseOver($event)" 
+               @mouseleave="store.mouseLeave($event)"
+               @click="setActive(tt.id);store.deeperTracks({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id}); store.queuein(tt)">
+            <div class="track-overlay">
+              <div class="track-name">{{ tt.name }}</div>
+            </div>
+            <audio :src="tt.preview_url"></audio>
           </div>
-          <div v-else-if="!a.preview_url && a.images[0]" class="con3 half-opacity"
-               :class="selected===a.id ? 'selected' : ''"
-               v-on:click="setActive(a.id);store.deeperAlbum({item:a,num:num,child:'art' + d[0].id,search:false})"
-               v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{ a.name }}
+          
+          <div v-else-if="!tt.preview_url && tt.album.images[0]" 
+               class="track-card unplayable"
+               :class="selected === tt.id ? 'selected' : ''"
+               :style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }"
+               @click="setActive(tt.id);store.deeperTracks({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id}); store.queuein(tt)">
+            <div class="track-overlay">
+              <div class="track-name">{{ tt.name }}</div>
+            </div>
             <audio></audio>
           </div>
-          <div v-else-if="a.preview_url && !a.images[0]" class="con3"
-               :class="selected===a.id ? 'selected' : ''"
-               v-on:click="setActive(a.id);store.deeperAlbum({item:a,num:num,child:'art' + d[0].id,search:false})"
-               v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)">{{ a.name }}
-            <audio preload="auto" v-bind:src="a.preview_url"></audio>
+          
+          <div v-else-if="tt.preview_url && !tt.album.images[0]" 
+               class="track-card playable no-image"
+               :class="selected === tt.id ? 'selected' : ''"
+               @mouseover="store.mouseOver($event)"
+               @mouseleave="store.mouseLeave($event)"
+               @click="setActive(tt.id);store.deeperTracks({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id}); store.queuein(tt)">
+            <div class="track-overlay">
+              <div class="track-name">{{ tt.name }}</div>
+            </div>
+            <audio :src="tt.preview_url"></audio>
           </div>
-          <div v-else class="con3 half-opacity"
-               :class="selected===a.id ? 'selected' : ''"
-               v-on:click="setActive(a.id);store.deeperAlbum({item:a,num:num,child:'art' + d[0].id,search:false})"
-               >{{ a.name }}
+          
+          <div v-else 
+               class="track-card unplayable no-image"
+               :class="selected === tt.id ? 'selected' : ''"
+               @click="setActive(tt.id);store.deeperTracks({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id}); store.queuein(tt)">
+            <div class="track-overlay">
+              <div class="track-name">{{ tt.name }}</div>
+            </div>
             <audio></audio>
           </div>
         </div>
       </div>
-      <div v-if="ta.type==='related-artists' && ta.length > 0" class="break" v-bind:key="index">Related Artist</div>
-      <div v-if="ta.type==='related-artists' && ta.length > 0" v-bind:key="index" class="card2">
-        <div v-for="(r,index) in ta" v-bind:key="index">
-          <div v-if="r.preview_url && r.images[0]" tabindex="0" class="img-xs background-setting"
-               :class="selected===r.id ? 'selected' : ''"
-               v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }"
-               v-on:mouseover="store.mouseOver($event)"
-               v-on:mouseleave="store.mouseLeave($event)"
-               v-on:click="setActive(r.id);store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
-            <audio preload="auto" v-bind:src="r.preview_url"></audio>
+      
+      <!-- Albums Section -->
+      <div v-if="ta.type==='albums' && ta.length > 0" class="section-header">
+        <h3 class="section-title">Albums</h3>
+      </div>
+      
+      <div v-if="ta.type==='single' && ta.length > 0" class="section-header">
+        <h3 class="section-title">Single</h3>
+      </div>
+      
+      <div v-if="ta.type==='appears_on' && ta.length > 0" class="section-header">
+        <h3 class="section-title">Appears on</h3>
+      </div>
+      
+      <div v-if="ta.type==='albums' && ta.length > 0 || ta.type==='single' && ta.length > 0 || ta.type==='appears_on' && ta.length > 0"
+           class="albums-grid">
+        <div v-for="(a, aIndex) in ta" :key="aIndex">
+          <div v-if="a.preview_url && a.images[0]" 
+               class="album-card playable"
+               :class="selected === a.id ? 'selected' : ''"
+               @click="setActive(a.id);store.deeperAlbum({item:a,num:num,child:'art' + d[0].id,search:false})"
+               @mouseover="store.mouseOver($event)" 
+               @mouseleave="store.mouseLeave($event)"
+               :style="{ 'background-image': 'url(' + a.images[0].url + ')' }">
+            <div class="album-overlay">
+              <div class="album-name">{{ a.name }}</div>
+            </div>
+            <audio preload="auto" :src="a.preview_url"></audio>
           </div>
-          <div v-else-if="!r.preview_url && r.images[0]" class="img-xs half-opacity"
-               :class="selected===r.id ? 'selected' : ''"
-               v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }"
-               v-on:click="setActive(r.id);store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
+          
+          <div v-else-if="!a.preview_url && a.images[0]" 
+               class="album-card unplayable"
+               :class="selected === a.id ? 'selected' : ''"
+               @click="setActive(a.id);store.deeperAlbum({item:a,num:num,child:'art' + d[0].id,search:false})"
+               :style="{ 'background-image': 'url(' + a.images[0].url + ')' }">
+            <div class="album-overlay">
+              <div class="album-name">{{ a.name }}</div>
+            </div>
             <audio></audio>
           </div>
-          <div v-else-if="r.preview_url && !r.images[0]" tabindex="0" class="img-xs"
-               :class="selected===r.id ? 'selected' : ''"
-               v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)"
-               v-on:click="setActive(r.id);store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
-            <audio preload="auto" v-bind:src="r.preview_url"></audio>
+          
+          <div v-else-if="a.preview_url && !a.images[0]" 
+               class="album-card playable no-image"
+               :class="selected === a.id ? 'selected' : ''"
+               @click="setActive(a.id);store.deeperAlbum({item:a,num:num,child:'art' + d[0].id,search:false})"
+               @mouseover="store.mouseOver($event)" 
+               @mouseleave="store.mouseLeave($event)">
+            <div class="album-overlay">
+              <div class="album-name">{{ a.name }}</div>
+            </div>
+            <audio preload="auto" :src="a.preview_url"></audio>
           </div>
-          <div v-else class="img-xs half-opacity"
-               :class="selected===r.id ? 'selected' : ''"
-               v-on:click="setActive(r.id);store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
+          
+          <div v-else 
+               class="album-card unplayable no-image"
+               :class="selected === a.id ? 'selected' : ''"
+               @click="setActive(a.id);store.deeperAlbum({item:a,num:num,child:'art' + d[0].id,search:false})">
+            <div class="album-overlay">
+              <div class="album-name">{{ a.name }}</div>
+            </div>
+            <audio></audio>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Related Artists Section -->
+      <div v-if="ta.type==='related-artists' && ta.length > 0" class="section-header">
+        <h3 class="section-title">Related Artists</h3>
+      </div>
+      
+      <div v-if="ta.type==='related-artists' && ta.length > 0" class="related-artists-grid">
+        <div v-for="(r, rIndex) in ta" :key="rIndex">
+          <div v-if="r.preview_url && r.images[0]" 
+               class="related-artist-card playable"
+               :class="selected === r.id ? 'selected' : ''"
+               :style="{ 'background-image': 'url(' + r.images[0].url + ')' }"
+               @mouseover="store.mouseOver($event)"
+               @mouseleave="store.mouseLeave($event)"
+               @click="setActive(r.id);store.deeperartist({item:r,track:ta[rIndex],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
+            <div class="artist-overlay">
+              <div class="artist-name">{{ r.name }}</div>
+            </div>
+            <audio preload="auto" :src="r.preview_url"></audio>
+          </div>
+          
+          <div v-else-if="!r.preview_url && r.images[0]" 
+               class="related-artist-card unplayable"
+               :class="selected === r.id ? 'selected' : ''"
+               :style="{ 'background-image': 'url(' + r.images[0].url + ')' }"
+               @click="setActive(r.id);store.deeperartist({item:r,track:ta[rIndex],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
+            <div class="artist-overlay">
+              <div class="artist-name">{{ r.name }}</div>
+            </div>
+            <audio></audio>
+          </div>
+          
+          <div v-else-if="r.preview_url && !r.images[0]" 
+               class="related-artist-card playable no-image"
+               :class="selected === r.id ? 'selected' : ''"
+               @mouseover="store.mouseOver($event)" 
+               @mouseleave="store.mouseLeave($event)"
+               @click="setActive(r.id);store.deeperartist({item:r,track:ta[rIndex],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
+            <div class="artist-overlay">
+              <div class="artist-name">{{ r.name }}</div>
+            </div>
+            <audio preload="auto" :src="r.preview_url"></audio>
+          </div>
+          
+          <div v-else 
+               class="related-artist-card unplayable no-image"
+               :class="selected === r.id ? 'selected' : ''"
+               @click="setActive(r.id);store.deeperartist({item:r,track:ta[rIndex],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
+            <div class="artist-overlay">
+              <div class="artist-name">{{ r.name }}</div>
+            </div>
             <audio></audio>
           </div>
         </div>
@@ -157,7 +290,444 @@ function setActive(id) {
   </div>
 </template>
 
-
 <style scoped>
+.modern-track-artist {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
 
+.artist-section {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.artist-section:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.artist-header {
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+}
+
+.artist-cover {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.artist-cover:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.artist-cover.unplayable {
+  opacity: 0.6;
+}
+
+.artist-cover.no-image {
+  background: linear-gradient(135deg, rgba(240, 55, 165, 0.1), rgba(233, 30, 99, 0.1));
+}
+
+.cover-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  padding: 20px;
+  color: white;
+}
+
+.artist-name {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.artist-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.artist-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--title-color);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.artist-stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.followers-count {
+  font-size: 16px;
+  color: var(--search-color);
+  opacity: 0.8;
+  font-weight: 500;
+}
+
+.genres-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.genres-list {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.separator {
+  font-size: 14px;
+  color: var(--search-color);
+  opacity: 0.6;
+}
+
+.genre-tag {
+  background: rgba(240, 55, 165, 0.1);
+  border: 1px solid rgba(240, 55, 165, 0.2);
+  border-radius: 20px;
+  padding: 6px 12px;
+  color: var(--active-tab);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.genre-tag:hover {
+  background: rgba(240, 55, 165, 0.2);
+  transform: translateY(-1px);
+}
+
+.artist-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.recommend-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, var(--active-tab), #e91e63);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(240, 55, 165, 0.3);
+}
+
+.recommend-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(240, 55, 165, 0.4);
+}
+
+.btn-icon {
+  font-size: 16px;
+}
+
+.spotify-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #1DB954, #1ed760);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(29, 185, 84, 0.3);
+}
+
+.spotify-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(29, 185, 84, 0.4);
+}
+
+.link-icon {
+  font-size: 16px;
+}
+
+.follow-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.follow-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--title-color);
+}
+
+.follow-checkbox {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.follow-checkbox input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.checkmark {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background: rgba(0, 0, 0, 0.05);
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.follow-checkbox input[type="checkbox"]:checked + .checkmark {
+  background: var(--active-tab);
+  border-color: var(--active-tab);
+}
+
+.follow-checkbox input[type="checkbox"]:checked + .checkmark::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.section-header {
+  padding: 0 24px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--title-color);
+  margin: 0;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.tracks-grid,
+.albums-grid,
+.related-artists-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  padding: 24px;
+}
+
+.track-card,
+.album-card,
+.related-artist-card {
+  position: relative;
+  height: 120px;
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.track-card:hover,
+.album-card:hover,
+.related-artist-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.track-card.selected,
+.album-card.selected,
+.related-artist-card.selected {
+  border: 3px solid var(--active-tab);
+  box-shadow: 0 0 20px rgba(240, 55, 165, 0.4);
+}
+
+.track-card.unplayable,
+.album-card.unplayable,
+.related-artist-card.unplayable {
+  opacity: 0.6;
+}
+
+.track-card.no-image,
+.album-card.no-image,
+.related-artist-card.no-image {
+  background: linear-gradient(135deg, rgba(240, 55, 165, 0.1), rgba(233, 30, 99, 0.1));
+}
+
+.track-overlay,
+.album-overlay,
+.artist-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  padding: 16px;
+  color: white;
+}
+
+.track-name,
+.album-name {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .artist-header {
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .artist-cover {
+    width: 160px;
+    height: 160px;
+    align-self: center;
+  }
+  
+  .artist-title {
+    font-size: 24px;
+  }
+  
+  .artist-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .recommend-btn,
+  .spotify-link {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .tracks-grid,
+  .albums-grid,
+  .related-artists-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    padding: 20px;
+  }
+  
+  .track-card,
+  .album-card,
+  .related-artist-card {
+    height: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modern-track-artist {
+    gap: 24px;
+  }
+  
+  .artist-header {
+    padding: 16px;
+  }
+  
+  .artist-cover {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .artist-title {
+    font-size: 20px;
+  }
+  
+  .tracks-grid,
+  .albums-grid,
+  .related-artists-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+    padding: 16px;
+  }
+  
+  .track-card,
+  .album-card,
+  .related-artist-card {
+    height: 80px;
+  }
+  
+  .track-overlay,
+  .album-overlay,
+  .artist-overlay {
+    padding: 12px;
+  }
+  
+  .track-name,
+  .album-name {
+    font-size: 12px;
+  }
+}
+
+/* Dark mode support */
+:root.dark .artist-section {
+  background: rgba(42, 46, 47, 0.9);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+:root.dark .section-title {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+:root.dark .checkmark {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+:root.dark .genre-tag {
+  background: rgba(240, 55, 165, 0.2);
+  border-color: rgba(240, 55, 165, 0.3);
+}
+
+:root.dark .track-card.no-image,
+:root.dark .album-card.no-image,
+:root.dark .related-artist-card.no-image {
+  background: linear-gradient(135deg, rgba(240, 55, 165, 0.2), rgba(233, 30, 99, 0.2));
+}
 </style>

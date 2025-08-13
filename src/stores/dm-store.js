@@ -875,132 +875,16 @@ export const useDMStore = defineStore('dm', {
                     }
                 }
                 let target = event.target
-                if (target.id === 'playlistlist') {
-                    if (document.getElementById('playlistlist').className === 'tabs_target') {
-                        document.getElementById('playlistlist').className = ''
-                        return
-                    }
-                    document.getElementById('playlistlist').className = 'tabs_target'
-                    document.getElementById('ta').className = ''
-                    document.getElementById('tt').className = ''
-                    document.getElementById('sa').className = ''
-                    document.getElementById('st').className = ''
-                    document.getElementById('fa').className = ''
-                    document.getElementById('nr').className = ''
-                    document.getElementById('spt').className = ''
-                    document.getElementById('sear').className = ''
-                } else if (target.id === 'ta') {
-                    if (document.getElementById('ta').className === 'tabs_target') {
-                        document.getElementById('ta').className = ''
-                        return
-                    }
-                    document.getElementById('playlistlist').className = ''
-                    document.getElementById('ta').className = 'tabs_target'
-                    document.getElementById('tt').className = ''
-                    document.getElementById('sa').className = ''
-                    document.getElementById('st').className = ''
-                    document.getElementById('fa').className = ''
-                    document.getElementById('nr').className = ''
-                    document.getElementById('spt').className = ''
-                    document.getElementById('sear').className = ''
-                } else if (target.id === 'tt') {
-                    if (document.getElementById('tt').className === 'tabs_target') {
-                        document.getElementById('tt').className = ''
-                        return
-                    }
-                    document.getElementById('playlistlist').className = ''
-                    document.getElementById('ta').className = ''
-                    document.getElementById('tt').className = 'tabs_target'
-                    document.getElementById('sa').className = ''
-                    document.getElementById('st').className = ''
-                    document.getElementById('fa').className = ''
-                    document.getElementById('nr').className = ''
-                    document.getElementById('spt').className = ''
-                    document.getElementById('sear').className = ''
-                } else if (target.id === 'sa') {
-                    if (document.getElementById('sa').className === 'tabs_target') {
-                        document.getElementById('sa').className = ''
-                        return
-                    }
-                    document.getElementById('playlistlist').className = ''
-                    document.getElementById('ta').className = ''
-                    document.getElementById('tt').className = ''
-                    document.getElementById('sa').className = 'tabs_target'
-                    document.getElementById('st').className = ''
-                    document.getElementById('fa').className = ''
-                    document.getElementById('nr').className = ''
-                    document.getElementById('spt').className = ''
-                    document.getElementById('sear').className = ''
-                } else if (target.id === 'st') {
-                    if (document.getElementById('st').className === 'tabs_target') {
-                        document.getElementById('st').className = ''
-                        return
-                    }
-                    document.getElementById('playlistlist').className = ''
-                    document.getElementById('ta').className = ''
-                    document.getElementById('tt').className = ''
-                    document.getElementById('sa').className = ''
-                    document.getElementById('st').className = 'tabs_target'
-                    document.getElementById('fa').className = ''
-                    document.getElementById('nr').className = ''
-                    document.getElementById('spt').className = ''
-                    document.getElementById('sear').className = ''
-                } else if (target.id === 'fa') {
-                    if (document.getElementById('fa').className === 'tabs_target') {
-                        document.getElementById('fa').className = ''
-                        return
-                    }
-                    document.getElementById('playlistlist').className = ''
-                    document.getElementById('ta').className = ''
-                    document.getElementById('tt').className = ''
-                    document.getElementById('sa').className = ''
-                    document.getElementById('st').className = ''
-                    document.getElementById('fa').className = 'tabs_target'
-                    document.getElementById('nr').className = ''
-                    document.getElementById('spt').className = ''
-                    document.getElementById('sear').className = ''
-                } else if (target.id === 'nr') {
-                    if (document.getElementById('nr').className === 'tabs_target') {
-                        document.getElementById('nr').className = ''
-                        return
-                    }
-                    document.getElementById('playlistlist').className = ''
-                    document.getElementById('ta').className = ''
-                    document.getElementById('tt').className = ''
-                    document.getElementById('sa').className = ''
-                    document.getElementById('st').className = ''
-                    document.getElementById('fa').className = ''
-                    document.getElementById('nr').className = 'tabs_target'
-                    document.getElementById('spt').className = ''
-                    document.getElementById('sear').className = ''
-                } else if (target.id === 'spt') {
-                    if (document.getElementById('spt').className === 'tabs_target') {
-                        document.getElementById('spt').className = ''
-                        return
-                    }
-                    document.getElementById('playlistlist').className = ''
-                    document.getElementById('ta').className = ''
-                    document.getElementById('tt').className = ''
-                    document.getElementById('sa').className = ''
-                    document.getElementById('st').className = ''
-                    document.getElementById('fa').className = ''
-                    document.getElementById('nr').className = ''
-                    document.getElementById('spt').className = 'tabs_target'
-                    document.getElementById('sear').className = ''
-                } else if (target.id === 'sear') {
-                    if (document.getElementById('sear').className === 'tabs_target') {
-                        document.getElementById('sear').className = ''
-                        return
-                    }
-                    document.getElementById('playlistlist').className = ''
-                    document.getElementById('ta').className = ''
-                    document.getElementById('tt').className = ''
-                    document.getElementById('sa').className = ''
-                    document.getElementById('st').className = ''
-                    document.getElementById('fa').className = ''
-                    document.getElementById('nr').className = ''
-                    document.getElementById('spt').className = ''
-                    document.getElementById('sear').className = 'tabs_target'
+                
+                // Remove active class from all tab links
+                const allTabLinks = document.querySelectorAll('.tab-item a')
+                allTabLinks.forEach(link => {
+                    link.classList.remove('active')
+                })
+                
+                // Add active class to clicked tab
+                if (target.tagName === 'A') {
+                    target.classList.add('active')
                 }
             },
             switchArtist(payload) {

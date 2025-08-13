@@ -1,83 +1,121 @@
 <script setup>
 import {useDMStore} from "../stores/dm-store";
-import {Lists} from "../common/lists";
-import {computed, ref} from "vue";
+import {ref, computed} from "vue";
 import SortTracks from "./SortTracks.vue";
 
-const props = defineProps(['d', 'num'])
+defineProps(['d', 'num'])
 const store = useDMStore()
 const selected = ref()
 const selectedSASortOption = ref("")
 
 const sortedSAItems = computed(() => {
-  const itemsCopy = [...props.d.tracks];
-  switch (selectedSASortOption.value) {
-    case 'track':
-      return itemsCopy.sort((a, b) => a.name.localeCompare(b.name));
-    case 'album':
-      return itemsCopy.sort((a, b) => a.album.name.localeCompare(b.album.name));
-    case 'artist':
-      return itemsCopy.sort((a, b) => a.artists[0].name.localeCompare(b.artists[0].name));
-    case 'popularity':
-      return itemsCopy.sort((a, b) => a.popularity > b.popularity);
-    case 'release_date':
-      return itemsCopy.sort((a, b) => a.album.release_date.localeCompare(b.album.release_date));
-    case 'duration':
-      return itemsCopy.sort((a, b) => a.duration_ms > b.duration_ms);
-    default:
-      return itemsCopy; // Default (unsorted) state
-  }
+  const items = d.tracks || []
+  if (!selectedSASortOption.value) return items
+
+  return [...items].sort((a, b) => {
+    switch (selectedSASortOption.value) {
+      case 'track':
+        return a.name.localeCompare(b.name)
+      case 'album':
+        return a.album.name.localeCompare(b.album.name)
+      case 'artist':
+        return a.artists[0].name.localeCompare(b.artists[0].name)
+      case 'popularity':
+        return b.popularity - a.popularity
+      case 'release_date':
+        return new Date(b.album.release_date) - new Date(a.album.release_date)
+      case 'duration':
+        return a.duration_ms - b.duration_ms
+      default:
+        return 0
+    }
+  })
 })
+
 function setActive(id) {
   selected.value = id
 }
 </script>
 
 <template>
-  <div class="seed_artists card2" v-bind:id="d.id">
-    <div>Recommended songs based on {{ d.name }}
-      <button class="btn" v-on:click="store.reloadSA({num:num,id:d.id,name:d.name })"><img class="refresh-end"
-                                                                                           src="../assets/refresh-icon.png"
-                                                                                           alt=""></button>
-      <sort-tracks v-model="selectedSASortOption"/>
+  <div class="modern-seed-artists" :id="d.id">
+    <div class="seed-header">
+      <div class="seed-title">
+        <span class="title-icon">🎵</span>
+        <span class="title-text">Recommended songs based on {{ d.name }}</span>
+      </div>
+      <div class="seed-actions">
+        <button class="refresh-button" @click="store.reloadSA({num:num,id:d.id,name:d.name })">
+          <img class="refresh-icon" src="../assets/refresh-icon.png" alt="Refresh">
+        </button>
+        <sort-tracks v-model="selectedSASortOption"/>
+      </div>
     </div>
-    <div class="card2">
-      <template v-for="(s,index) in sortedSAItems">
-        <div v-if="s.preview_url && s.album.images[0]" class="con3" v-bind:key="index"
-             :class="selected===s.id ? 'selected' : ''"
-             v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }"
-             v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)"
-             v-on:click="setActive(s.id);store.deeperTracks({item:s,num:num,flag:false,sib:'seed_artists'}); store.queuein(s)">
-          {{Lists.Ls(s.artists)}} - {{ s.name }}
-          <audio preload="auto" v-bind:src="s.preview_url"></audio>
+
+    <div class="tracks-grid">
+      <div v-for="(track, index) in sortedSAItems" :key="index" class="track-card">
+        <div v-if="track.preview_url && track.album.images[0]"
+             class="track-item playable"
+             :class="selected === track.id ? 'selected' : ''"
+             :style="{ 'background-image': 'url(' + track.album.images[0].url + ')' }"
+             @mouseover="store.mouseOver($event)"
+             @mouseleave="store.mouseLeave($event)"
+             @click="setActive(track.id);store.deeperTracks({item:track,num:num,flag:false,sib:'seed_artists',child:'sa'+ d.id}); store.queuein(track)">
+          <div class="track-overlay">
+            <div class="track-info">
+              <div class="track-artists">{{ track.artists.map(a => a.name).join(', ') }}</div>
+              <div class="track-name">{{ track.name }}</div>
+            </div>
+          </div>
+          <audio preload="auto" :src="track.preview_url"></audio>
         </div>
-        <div v-else-if="!s.preview_url && s.album.images[0] && store.unplayable_tracks" tabindex="0"
-             class="con3 half-opacity" v-bind:key="'2'+index"
-             :class="selected===s.id ? 'selected' : ''"
-             v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }"
-             v-on:click="setActive(s.id);store.deeperTracks({item:s,num:num,flag:false,sib:'seed_artists'}); store.queuein(s)">
-          {{Lists.Ls(s.artists)}} - {{ s.name }}
-          <audio preload="none"></audio>
+
+        <div v-else-if="!track.preview_url && track.album.images[0]"
+             class="track-item unplayable"
+             :class="selected === track.id ? 'selected' : ''"
+             :style="{ 'background-image': 'url(' + track.album.images[0].url + ')' }"
+             @click="setActive(track.id);store.deeperTracks({item:track,num:num,flag:false,sib:'seed_artists',child:'sa'+ d.id}); store.queuein(track)">
+          <div class="track-overlay">
+            <div class="track-info">
+              <div class="track-artists">{{ track.artists.map(a => a.name).join(', ') }}</div>
+              <div class="track-name">{{ track.name }}</div>
+            </div>
+          </div>
+          <audio></audio>
         </div>
-        <div v-else-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="'3'+index"
-             :class="selected===s.id ? 'selected' : ''"
-             v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)"
-             v-on:click="setActive(s.id);store.deeperTracks({item:s,num:num,flag:false,sib:'seed_artists'}); store.queuein(s)">
-          {{Lists.Ls(s.artists)}} - {{ s.name }}
-          <audio preload="auto" v-bind:src="s.preview_url"></audio>
+
+        <div v-else-if="track.preview_url && !track.album.images[0]"
+             class="track-item playable no-image"
+             :class="selected === track.id ? 'selected' : ''"
+             @mouseover="store.mouseOver($event)"
+             @mouseleave="store.mouseLeave($event)"
+             @click="setActive(track.id);store.deeperTracks({item:track,num:num,flag:false,sib:'seed_artists',child:'sa'+ d.id}); store.queuein(track)">
+          <div class="track-overlay">
+            <div class="track-info">
+              <div class="track-artists">{{ track.artists.map(a => a.name).join(', ') }}</div>
+              <div class="track-name">{{ track.name }}</div>
+            </div>
+          </div>
+          <audio preload="auto" :src="track.preview_url"></audio>
         </div>
-        <div v-else-if="store.unplayable_tracks" tabindex="0" class="con3 half-opacity" v-bind:key="'4'+index"
-             :class="selected===s.id ? 'selected' : ''"
-             v-on:click="setActive(s.id);store.deeperTracks({item:s,num:num,flag:false,sib:'seed_artists'}); store.queuein(s)">
-          {{Lists.Ls(s.artists)}} - {{ s.name }}
-          <audio preload="none"></audio>
+
+        <div v-else
+             class="track-item unplayable no-image"
+             :class="selected === track.id ? 'selected' : ''"
+             @click="setActive(track.id);store.deeperTracks({item:track,num:num,flag:false,sib:'seed_artists',child:'sa'+ d.id}); store.queuein(track)">
+          <div class="track-overlay">
+            <div class="track-info">
+              <div class="track-artists">{{ track.artists.map(a => a.name).join(', ') }}</div>
+              <div class="track-name">{{ track.name }}</div>
+            </div>
+          </div>
+          <audio></audio>
         </div>
-      </template>
+      </div>
     </div>
   </div>
 </template>
 
-
 <style scoped>
-
+/* Styles moved to main styles.css */
 </style>
