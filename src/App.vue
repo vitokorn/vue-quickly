@@ -1,8 +1,6 @@
 <script setup>
 /* eslint-disable no-useless-escape */
-import Desktop from './components/Desktop.vue'
-import Mobile from './components/Mobile.vue'
-import {isMobile} from "./mixins/detectingMobileMixin";
+import MainLayout from './components/layout/MainLayout.vue'
 import Header from "./components/Header.vue";
 import QueueModal from "./components/QueueModal.vue";
 
@@ -11,8 +9,7 @@ import QueueModal from "./components/QueueModal.vue";
 <template>
   <Header/>
   <br>
-  <Desktop v-if="!isMobile()"></Desktop>
-  <Mobile v-else></Mobile>
+  <MainLayout />
   <QueueModal/>
 </template>
 
