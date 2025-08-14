@@ -1151,6 +1151,7 @@ input[type=checkbox] {
 }
 
 .track-item:hover {
+  /*  break background hover*/
   background: rgba(240, 55, 165, 0.05);
 }
 
@@ -1347,6 +1348,7 @@ input[type=checkbox] {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
 }
 
 .track-item:hover {
@@ -1857,7 +1859,7 @@ input[type=checkbox] {
 
 /* Modern Playlist Item */
 .modern-playlist-item {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgb(34, 36, 38);
   backdrop-filter: blur(10px);
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
@@ -1887,6 +1889,7 @@ input[type=checkbox] {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
 }
 
 .playlist-cover:hover {

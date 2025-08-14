@@ -3,7 +3,7 @@ import {useDMStore} from "../stores/dm-store";
 import {ref, computed} from "vue";
 import SortTracks from "./SortTracks.vue";
 
-defineProps(['d', 'num'])
+const props = defineProps(['d', 'num'])
 const store = useDMStore()
 const selected = ref()
 const selectedDeeperPlaylistSortOption = ref("")
@@ -11,11 +11,11 @@ const selectedDeeperPlaylistSortOption = ref("")
 const sortedDeeperPlaylistItems = computed(() => {
   const items = d.tracks?.items || []
   if (!selectedDeeperPlaylistSortOption.value) return items
-  
+
   return [...items].sort((a, b) => {
     const trackA = a.track
     const trackB = b.track
-    
+
     switch (selectedDeeperPlaylistSortOption.value) {
       case 'track':
         return trackA.name.localeCompare(trackB.name)
@@ -52,11 +52,11 @@ function setActive(id) {
         </div>
         <div class="playlist-description" v-html="d.description"></div>
       </div>
-      
+
       <div class="playlist-cover" v-if="d.images[0]">
         <img :src="d.images[0].url" alt="Playlist cover">
       </div>
-      
+
       <div class="playlist-actions">
         <div class="follow-section">
           <span class="follow-label">Follow</span>
@@ -75,7 +75,7 @@ function setActive(id) {
         </div>
       </div>
     </div>
-    
+
     <div class="tracks-grid">
       <div v-for="(item, index) in sortedDeeperPlaylistItems" :key="index" class="track-card">
         <div v-if="item.track.preview_url && item.track.album.images[0]"
@@ -93,7 +93,7 @@ function setActive(id) {
           </div>
           <audio preload="auto" :src="item.track.preview_url"></audio>
         </div>
-        
+
         <div v-else-if="!item.track.preview_url && item.track.album.images[0]"
              class="track-item unplayable"
              :class="selected === item.track.id ? 'selected' : ''"
@@ -107,7 +107,7 @@ function setActive(id) {
           </div>
           <audio></audio>
         </div>
-        
+
         <div v-else-if="item.track.preview_url && !item.track.album.images[0]"
              class="track-item playable no-image"
              :class="selected === item.track.id ? 'selected' : ''"
@@ -122,7 +122,7 @@ function setActive(id) {
           </div>
           <audio preload="auto" :src="item.track.preview_url"></audio>
         </div>
-        
+
         <div v-else
              class="track-item unplayable no-image"
              :class="selected === item.track.id ? 'selected' : ''"

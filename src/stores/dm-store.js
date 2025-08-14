@@ -277,9 +277,9 @@ export const useDMStore = defineStore('dm', {
                 if (indexing === -1) {
                     this.deepers.push(item)
                 }
-                setTimeout(() => {
-                    document.getElementById('p' + item.id).scrollIntoView({behavior: "smooth"})
-                }, 10);
+                // setTimeout(() => {
+                //     document.getElementById('p' + item.id).scrollIntoView({behavior: "smooth"})
+                // }, 10);
             },
             playlM(payload) {
                 let item = payload.item,
@@ -298,9 +298,9 @@ export const useDMStore = defineStore('dm', {
                 if (indexing === -1) {
                     this.deepers.push(item)
                 }
-                setTimeout(() => {
-                    document.getElementById('p' + item.id).scrollIntoView({behavior: "smooth"})
-                }, 10);
+                // setTimeout(() => {
+                //     document.getElementById('p' + item.id).scrollIntoView({behavior: "smooth"})
+                // }, 10);
             },
             async deeper(payload) {
                 console.log(261)
@@ -346,9 +346,7 @@ export const useDMStore = defineStore('dm', {
                 }
 
                 if (!exists) {
-                    axios.request({
-                        url: 'https://api.spotify.com/v1/me/tracks/contains?ids=' + tracktrack.id,
-                        method: 'get',
+                    axios.get('https://api.spotify.com/v1/me/tracks/contains?ids=' + tracktrack.id,{
                         headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
                         .then((response) => {
@@ -474,9 +472,9 @@ export const useDMStore = defineStore('dm', {
                     //     behavior:'smooth'});
                     // }, 10);
                 }
-                setTimeout(() => {
-                    document.getElementById('d' + tracktrack.id).scrollIntoView({behavior: "smooth"})
-                }, 10);
+                // setTimeout(() => {
+                //     document.getElementById('d' + tracktrack.id).scrollIntoView({behavior: "smooth"})
+                // }, 10);
 
             },
             deepermobile: async function (payload) {
@@ -525,10 +523,8 @@ export const useDMStore = defineStore('dm', {
                 }
 
                 if (!exists) {
-                    axios.request({
-                        url: 'https://api.spotify.com/v1/me/tracks/contains?ids=' + tracktrack.id,
-                        method: 'get',
-                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                    axios.get('https://api.spotify.com/v1/me/tracks/contains?ids=' + tracktrack.id,
+                    {headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
                         .then((response) => {
                             tracktrack.followed = response.data[0]
@@ -653,9 +649,9 @@ export const useDMStore = defineStore('dm', {
                     //     behavior:'smooth'});
                     // }, 10);
                 }
-                setTimeout(() => {
-                    document.getElementById('d' + tracktrack.id).scrollIntoView({behavior: "smooth"})
-                }, 10);
+                // setTimeout(() => {
+                //     document.getElementById('d' + tracktrack.id).scrollIntoView({behavior: "smooth"})
+                // }, 10);
             },
             fetchPlaylists(payload) {
                 let event = payload.event,
@@ -708,10 +704,8 @@ export const useDMStore = defineStore('dm', {
                 }
                 let exists = this.playlists.find(dt => dt.id === id)
                 if (!exists) {
-                    axios.request({
-                        url: 'https://api.spotify.com/v1/playlists/' + id,
-                        method: 'get',
-                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                    axios.get('https://api.spotify.com/v1/playlists/' + id,
+                        {headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
                         .then((response) => {
                             // console.log(response.data)
@@ -875,13 +869,13 @@ export const useDMStore = defineStore('dm', {
                     }
                 }
                 let target = event.target
-                
+
                 // Remove active class from all tab links
                 const allTabLinks = document.querySelectorAll('.tab-item a')
                 allTabLinks.forEach(link => {
                     link.classList.remove('active')
                 })
-                
+
                 // Add active class to clicked tab
                 if (target.tagName === 'A') {
                     target.classList.add('active')
@@ -1167,10 +1161,8 @@ export const useDMStore = defineStore('dm', {
                 }
                 let exists = this.sptplaylists.find(dt => dt.id === id)
                 if (!exists) {
-                    axios.request({
-                        url: 'https://api.spotify.com/v1/playlists/' + id,
-                        method: 'get',
-                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                    axios.get('https://api.spotify.com/v1/playlists/' + id,
+                    {headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
                         .then((response) => {
                             // console.log(response.data)
@@ -2098,10 +2090,8 @@ export const useDMStore = defineStore('dm', {
                     data = exists
                 }
                 if (!exists) {
-                    await axios.request({
-                        url: 'https://api.spotify.com/v1/recommendations?seed_tracks=' + item['id'] + '&limit=50&offset=0&market=UA' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
-                        method: 'get',
-                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                    await axios.get('https://api.spotify.com/v1/recommendations?seed_tracks=' + item['id'] + '&limit=50&offset=0&market=UA' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
+                        {headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
                         .then((response) => {
 
@@ -2191,9 +2181,9 @@ export const useDMStore = defineStore('dm', {
                         this.setDeepers(data)
                     }
                 }
-                setTimeout(() => {
-                    document.getElementById('st' + item.id).scrollIntoView({behavior: "smooth"})
-                }, 100);
+                // setTimeout(() => {
+                //     document.getElementById('st' + item.id).scrollIntoView({behavior: "smooth"})
+                // }, 100);
             },
             async seedTracksM(payload) {
                 let pointer,
@@ -2276,10 +2266,8 @@ export const useDMStore = defineStore('dm', {
                     data = exists
                 }
                 if (!exists) {
-                    await axios.request({
-                        url: 'https://api.spotify.com/v1/recommendations?seed_tracks=' + item['id'] + '&limit=50&offset=0&market=UA' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
-                        method: 'get',
-                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                    await axios.get('https://api.spotify.com/v1/recommendations?seed_tracks=' + item['id'] + '&limit=50&offset=0&market=UA' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
+                        {headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
                         .then((response) => {
 
@@ -2370,9 +2358,9 @@ export const useDMStore = defineStore('dm', {
                         this.setDeepers(data)
                     }
                 }
-                setTimeout(() => {
-                    document.getElementById('st' + item.id).scrollIntoView({behavior: "smooth"})
-                }, 100);
+                // setTimeout(() => {
+                //     document.getElementById('st' + item.id).scrollIntoView({behavior: "smooth"})
+                // }, 100);
             },
             deeperTracks(payload) {
                 let item = payload.item,
@@ -2464,11 +2452,7 @@ export const useDMStore = defineStore('dm', {
                     return
                 }
                 if (!exists) {
-                    axios.request({
-                        url: 'https://api.spotify.com/v1/me/tracks/contains?ids=' + item.id,
-                        method: 'get',
-                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
-                    })
+                    axios.get('https://api.spotify.com/v1/me/tracks/contains?ids=' + item.id, {headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}})
                         .then((response) => {
                             item.followed = response.data[0]
                         })
@@ -2506,8 +2490,11 @@ export const useDMStore = defineStore('dm', {
                         this.setDeeper23(item)
                     }
                 } else if (num === 3) {
+                    console.log(num)
                     let indexing = this.deeper3.find(dt => dt.id === item.id)
                     if (!indexing) {
+                        console.log(indexing)
+                        console.log(item)
                         this.setDeeper3(item)
                     }
                 } else if (num === 32) {
@@ -2557,9 +2544,12 @@ export const useDMStore = defineStore('dm', {
                     }
                 }
 
-                setTimeout(() => {
-                    document.getElementById('d' + item.id).scrollIntoView({behavior: "smooth"})
-                }, 10);
+                // setTimeout(() => {
+                //     const element = document.getElementById('d' + item.id);
+                //     if (element) {
+                //         element.scrollIntoView({behavior: "smooth"});
+                //     }
+                // }, 100);
             },
             deeperTracks2(payload) {
                 let pointer,
@@ -2722,9 +2712,9 @@ export const useDMStore = defineStore('dm', {
                     }
                 }
 
-                setTimeout(() => {
-                    document.getElementById('d' + item.id).scrollIntoView({behavior: "smooth"})
-                }, 10);
+                // setTimeout(() => {
+                //     document.getElementById('d' + item.id).scrollIntoView({behavior: "smooth"})
+                // }, 10);
             },
             deeperTracksM: async function (payload) {
                 let pointer,
@@ -2819,10 +2809,8 @@ export const useDMStore = defineStore('dm', {
                     return
                 }
                 if (!exists) {
-                    axios.request({
-                        url: 'https://api.spotify.com/v1/me/tracks/contains?ids=' + item.id,
-                        method: 'get',
-                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                    axios.get('https://api.spotify.com/v1/me/tracks/contains?ids=' + item.id,
+                        {headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
                         .then((response) => {
                             item.followed = response.data[0]
@@ -2912,9 +2900,9 @@ export const useDMStore = defineStore('dm', {
                     }
                 }
 
-                setTimeout(() => {
-                    document.getElementById('d' + item.id).scrollIntoView({behavior: "smooth"})
-                }, 10);
+                // setTimeout(() => {
+                //     document.getElementById('d' + item.id).scrollIntoView({behavior: "smooth"})
+                // }, 10);
             },
             deeperTracks2M(payload) {
                 let pointer,
@@ -3079,9 +3067,9 @@ export const useDMStore = defineStore('dm', {
                     }
                 }
 
-                setTimeout(() => {
-                    document.getElementById('d' + item.id).scrollIntoView({behavior: "smooth"})
-                }, 10);
+                // setTimeout(() => {
+                //     document.getElementById('d' + item.id).scrollIntoView({behavior: "smooth"})
+                // }, 10);
             },
             async seedArtist(payload) {
                 let pointer,
@@ -3131,7 +3119,7 @@ export const useDMStore = defineStore('dm', {
                             par = null
                         }
                     }
-                } else if (sib !== false && alltop[alltop.length - 1].nextElementSibling !== null) {
+                } else if (sib !== false && alltop[alltop.length - 1] && alltop[alltop.length - 1].nextElementSibling !== null) {
                     let par = alltop[alltop.length - 1].nextElementSibling
                     while (par != null) {
                         par.style.display = 'none'
@@ -3160,10 +3148,8 @@ export const useDMStore = defineStore('dm', {
                     data = exists
                 }
                 if (!exists) {
-                    await axios.request({
-                        url: 'https://api.spotify.com/v1/recommendations?seed_artists=' + item['id'] + '&limit=50&offset=0&market=UA' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
-                        method: 'get',
-                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                    await axios.get('https://api.spotify.com/v1/recommendations?seed_artists=' + item['id'] + '&limit=50&offset=0&market=UA' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
+                        {headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
                         .then((response) => {
                             data.tracks = response.data['tracks']
@@ -3254,9 +3240,9 @@ export const useDMStore = defineStore('dm', {
                         this.setDeepers(data)
                     }
                 }
-                setTimeout(() => {
-                    document.getElementById('sa' + item.id).scrollIntoView({behavior: "smooth"})
-                }, 100);
+                // setTimeout(() => {
+                //     document.getElementById('sa' + item.id).scrollIntoView({behavior: "smooth"})
+                // }, 100);
             },
             async seedArtistM(payload) {
                 let pointer,
@@ -3337,10 +3323,8 @@ export const useDMStore = defineStore('dm', {
                     data.parentId = parent
                 }
                 if (!exists) {
-                    await axios.request({
-                        url: 'https://api.spotify.com/v1/recommendations?seed_artists=' + item['id'] + '&limit=50&offset=0&market=UA' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
-                        method: 'get',
-                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                    await axios.get('https://api.spotify.com/v1/recommendations?seed_artists=' + item['id'] + '&limit=50&offset=0&market=UA' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
+                        {headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
                         .then((response) => {
                             data.tracks = response.data['tracks']
@@ -3425,9 +3409,9 @@ export const useDMStore = defineStore('dm', {
                         this.setDeepers(data)
                     }
                 }
-                setTimeout(() => {
-                    document.getElementById('sa' + item.id).scrollIntoView({behavior: "smooth"})
-                }, 100);
+                // setTimeout(() => {
+                //     document.getElementById('sa' + item.id).scrollIntoView({behavior: "smooth"})
+                // }, 100);
             },
             prepare: async function (payload) {
                 let num = payload.num
@@ -3592,9 +3576,12 @@ export const useDMStore = defineStore('dm', {
                 } else if (num === 10) {
                     this.setDeepers(trackartist)
                 }
-                setTimeout(() => {
-                    document.getElementById('art' + item.id).scrollIntoView({behavior: "smooth"})
-                }, 10);
+                // setTimeout(() => {
+                //     const element = document.getElementById('art' + item.id);
+                //     if (element) {
+                //         element.scrollIntoView({behavior: "smooth"});
+                //     }
+                // }, 100);
                 console.log(trackartist)
             },
             deeperartistmob: async function (payload) {
@@ -3737,9 +3724,12 @@ export const useDMStore = defineStore('dm', {
                 } else if (num === 10) {
                     this.setDeepers(trackartist)
                 }
-                setTimeout(() => {
-                    document.getElementById('art' + item.id).scrollIntoView({behavior: "smooth"})
-                }, 10);
+                // setTimeout(() => {
+                //     const element = document.getElementById('art' + item.id);
+                //     if (element) {
+                //         element.scrollIntoView({behavior: "smooth"});
+                //     }
+                // }, 100);
                 console.log(trackartist)
             },
             deeperArtistself(payload) {
@@ -4078,10 +4068,8 @@ export const useDMStore = defineStore('dm', {
 
                 // console.log(item.id)
                 if (!exists) {
-                    axios.request({
-                        url: 'https://api.spotify.com/v1/me/albums/contains?ids=' + item.id,
-                        method: 'get',
-                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                    axios.get('https://api.spotify.com/v1/me/albums/contains?ids=' + item.id,
+                        {headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
                         .then((response) => {
                             item.followed = response.data[0]
@@ -4175,9 +4163,9 @@ export const useDMStore = defineStore('dm', {
                     }
                     console.log(this.deepers)
                 }
-                setTimeout(() => {
-                    document.getElementById('alb' + item.id).scrollIntoView({behavior: "smooth"})
-                }, 100);
+                // setTimeout(() => {
+                //     document.getElementById('alb' + item.id).scrollIntoView({behavior: "smooth"})
+                // }, 100);
             },
             async deeperAlbumMob(payload) {
                 let item = payload.item,
@@ -4243,10 +4231,8 @@ export const useDMStore = defineStore('dm', {
 
                 // console.log(item.id)
                 if (!exists) {
-                    axios.request({
-                        url: 'https://api.spotify.com/v1/me/albums/contains?ids=' + item.id,
-                        method: 'get',
-                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                    axios.get('https://api.spotify.com/v1/me/albums/contains?ids=' + item.id,
+                        {headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
                         .then((response) => {
                             item.followed = response.data[0]
@@ -4340,9 +4326,9 @@ export const useDMStore = defineStore('dm', {
                     }
                     console.log(this.deepers)
                 }
-                setTimeout(() => {
-                    document.getElementById('alb' + item.id).scrollIntoView({behavior: "smooth"})
-                }, 100);
+                // setTimeout(() => {
+                //     document.getElementById('alb' + item.id).scrollIntoView({behavior: "smooth"})
+                // }, 100);
             },
             deeperAlbum2(payload) {
                 let item = payload.item
@@ -4550,10 +4536,8 @@ export const useDMStore = defineStore('dm', {
                     event = payload.event
                 event.target.disabled = true
                 if (playlist.followed === false) {
-                    axios.request({
-                        url: 'https://api.spotify.com/v1/playlists/' + playlist.id + '/followers',
-                        method: 'put',
-                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                    axios.put('https://api.spotify.com/v1/playlists/' + playlist.id + '/followers',
+                        {},{headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
                         .then(() => {
                             playlist.followed = true
@@ -4569,10 +4553,8 @@ export const useDMStore = defineStore('dm', {
                             }
                         })
                 } else {
-                    axios.request({
-                        url: 'https://api.spotify.com/v1/playlists/' + playlist.id + '/followers',
-                        method: 'delete',
-                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                    axios.delete('https://api.spotify.com/v1/playlists/' + playlist.id + '/followers',
+                        {headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
                         .then(() => {
                             playlist.followed = false
@@ -4594,10 +4576,8 @@ export const useDMStore = defineStore('dm', {
                     event = payload.event
                 event.target.disabled = true
                 if (artist.followed === false) {
-                    axios.request({
-                        url: 'https://api.spotify.com/v1/me/following?type=artist&ids=' + artist.id,
-                        method: 'put',
-                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                    axios.put('https://api.spotify.com/v1/me/following?type=artist&ids=' + artist.id,
+                        {},{headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
                         .then((response) => {
                             if (response.status === 204) {
@@ -4615,10 +4595,8 @@ export const useDMStore = defineStore('dm', {
                             }
                         })
                 } else {
-                    axios.request({
-                        url: 'https://api.spotify.com/v1/me/following?type=artist&ids=' + artist.id,
-                        method: 'delete',
-                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                    axios.delete('https://api.spotify.com/v1/me/following?type=artist&ids=' + artist.id,
+                        {headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
                         .then((response) => {
                             if (response.status === 204) {
@@ -4643,10 +4621,8 @@ export const useDMStore = defineStore('dm', {
                 // console.log(album.followed)
                 event.target.disabled = true
                 if (album.followed === false) {
-                    axios.request({
-                        url: 'https://api.spotify.com/v1/me/albums?ids=' + album.id,
-                        method: 'put',
-                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                    axios.put('https://api.spotify.com/v1/me/albums?ids=' + album.id,
+                        {}, {headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
                         .then((response) => {
                             if (response.status === 200) {
@@ -4664,10 +4640,8 @@ export const useDMStore = defineStore('dm', {
                             }
                         })
                 } else {
-                    axios.request({
-                        url: 'https://api.spotify.com/v1/me/albums?ids=' + album.id,
-                        method: 'delete',
-                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                    axios.delete('https://api.spotify.com/v1/me/albums?ids=' + album.id,
+                        {headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
                         .then((response) => {
                             if (response.status === 200) {
@@ -4691,10 +4665,8 @@ export const useDMStore = defineStore('dm', {
                     event = payload.event
                 event.target.disabled = true
                 if (track.followed === false) {
-                    axios.request({
-                        url: 'https://api.spotify.com/v1/me/tracks?ids=' + track.id,
-                        method: 'put',
-                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                    axios.put('https://api.spotify.com/v1/me/tracks?ids=' + track.id,
+                        {headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
                         .then((response) => {
                             if (response.status === 200) {
@@ -4712,10 +4684,8 @@ export const useDMStore = defineStore('dm', {
                             }
                         })
                 } else {
-                    axios.request({
-                        url: 'https://api.spotify.com/v1/me/tracks?ids=' + track.id,
-                        method: 'delete',
-                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                    axios.delete('https://api.spotify.com/v1/me/tracks?ids=' + track.id,
+                        {headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
                         .then((response) => {
                             if (response.status === 200) {
@@ -4737,14 +4707,16 @@ export const useDMStore = defineStore('dm', {
             mouseOver: function (event) {
                 let target = event.target
                 let audios = target.lastChild
-                if (this.audio_preview) {
+                console.log(audios)
+                if (typeof audios.play === 'function' && this.audio_preview) {
                     audios.play()
                 }
             },
             mouseLeave: function (event) {
                 let target = event.target
                 let audios = target.lastChild
-                if (this.audio_preview) {
+                console.log(audios)
+                if (typeof audios.pause === 'function' && this.audio_preview) {
                     audios.pause()
                     if (this.restart_song_on_hover) {
                         audios.currentTime = 0
@@ -4842,9 +4814,9 @@ export const useDMStore = defineStore('dm', {
             },
             backToTop(id) {
                 console.log(id)
-                setTimeout(() => {
-                    document.getElementById(id).scrollIntoView({behavior: "smooth"})
-                }, 10);
+                // setTimeout(() => {
+                //     document.getElementById(id).scrollIntoView({behavior: "smooth"})
+                // }, 10);
             },
             paginate(array, page_size, page_number) {
                 return array.slice((page_number - 1) * page_size, page_number * page_size)
@@ -4900,10 +4872,8 @@ export const useDMStore = defineStore('dm', {
                             })
                             .catch()
                 } else {
-                    axios.request({
-                        url: 'https://api.spotify.com/v1/me/tracks?ids=' + this.queuearr.map(a => a.id).join(','),
-                        method: 'put',
-                        headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
+                    axios.put('https://api.spotify.com/v1/me/tracks?ids=' + this.queuearr.map(a => a.id).join(','),
+                        {headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}
                     })
                         .then((response) => {
                             if (response.status === 200) {

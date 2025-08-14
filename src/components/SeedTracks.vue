@@ -3,13 +3,13 @@ import {useDMStore} from "../stores/dm-store";
 import {ref, computed} from "vue";
 import SortTracks from "./SortTracks.vue";
 
-defineProps(['d', 'num'])
+const props = defineProps(['d', 'num'])
 const store = useDMStore()
 const selected = ref()
 const selectedSTSortOption = ref("")
 
 const sortedSTItems = computed(() => {
-  const items = d.tracks || []
+  const items = props.d.tracks || []
   if (!selectedSTSortOption.value) return items
 
   return [...items].sort((a, b) => {
