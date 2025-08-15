@@ -13,6 +13,7 @@ import Footer from '../Footer.vue'
 import SortTracks from '../SortTracks.vue'
 import SortArtists from '../SortArtists.vue'
 import SortAlbums from '../SortAlbums.vue'
+import ModernTabs from '../common/ModernTabs.vue'
 
 // Store
 const store = useDMStore()
@@ -33,6 +34,7 @@ const { search, filterres } = useFiltering()
 
 // Local state
 const accordionActive = ref(false)
+const expandedTabs = ref(new Set())
 const selectedPlaylistSortOption = ref("")
 const selectedTASortOption = ref("")
 const selectedTA6SortOption = ref("")
@@ -183,11 +185,111 @@ const findPos = (obj) => {
   }
 }
 
+// Tab click handler
+const handleTabClick = (tabNumber, event) => {
+  // Prevent event bubbling
+  event.stopPropagation()
+  
+  // Handle mobile accordion behavior
+  if (accordionActive.value) {
+    if (expandedTabs.value.has(tabNumber)) {
+      expandedTabs.value.delete(tabNumber)
+    } else {
+      // Close other tabs and open this one
+      expandedTabs.value.clear()
+      expandedTabs.value.add(tabNumber)
+    }
+  }
+  
+  // Set the selected menu
+  setSelectedTopMenu(tabNumber)
+  
+  // Handle specific tab logic
+  switch (tabNumber) {
+    case 1:
+      store.prepare({num: 1})
+      store.switchTabs({event})
+      if (!store.listplaylists || store.listplaylists.length === 0) {
+        store.fetchPlaylists({event, offset: 0})
+      }
+      break
+    case 2:
+      store.prepare({num: 2})
+      store.switchTabs({event})
+      store.switchArtist({num: 1})
+      if (!store.topartist || store.topartist.length === 0) {
+        store.fetchArtist({event})
+      }
+      break
+    case 3:
+      store.prepare({num: 3})
+      store.switchTabs({event})
+      store.switchTracks({num: 1})
+      if (!store.items || store.items.length === 0) {
+        store.fetchApi({event})
+      }
+      break
+    case 4:
+      store.prepare({num: 4})
+      store.switchTabs({event})
+      if (!store.savedalbums || store.savedalbums.length === 0) {
+        store.fetchAlbums({offset: 0, event})
+      }
+      break
+    case 5:
+      store.prepare({num: 5})
+      store.switchTabs({event})
+      if (!store.savedtracks || store.savedtracks.length === 0) {
+        store.fetchTracks({offset: 0})
+      }
+      break
+    case 6:
+      store.prepare({num: 6})
+      store.switchTabs({event})
+      if (!store.followedartists || store.followedartists.length === 0) {
+        store.fetchFA()
+      }
+      break
+    case 7:
+      store.prepare({num: 7})
+      store.switchTabs({event})
+      if (!store.newreleases || store.newreleases.length === 0) {
+        store.fetchNR({offset: 0})
+      }
+      break
+    case 8:
+      store.prepare({num: 8})
+      store.switchTabs({event})
+      if (!store.spotplaylists || store.spotplaylists.length === 0) {
+        store.fetchSpotPlaylists({offset: 0})
+      }
+      break
+  }
+}
+
+// Search handler
+const handleSearch = (event) => {
+  selectedTopMenu.value = 10
+  store.search(event)
+}
+
 // Resize event listener for accordion functionality
-window.addEventListener('resize', () => {
+const handleResize = () => {
+  const wasAccordionActive = accordionActive.value
   accordionActive.value = window.innerWidth < 1076
-  console.log(accordionActive.value)
-})
+  
+  // If switching to desktop mode, clear expanded tabs
+  if (wasAccordionActive && !accordionActive.value) {
+    expandedTabs.value.clear()
+  }
+  
+  console.log('Accordion active:', accordionActive.value)
+}
+
+window.addEventListener('resize', handleResize)
+
+// Initialize on mount
+handleResize()
 </script>
 
 <template>
@@ -198,101 +300,116 @@ window.addEventListener('resize', () => {
     <!-- Main content -->
     <div class="content-wrapper">
       <!-- Top menu navigation -->
-      <nav class="modern-tabs">
-        <ul class="tabs-list">
-          <li class="tab-item" id="option1">
-            <a id="playlistlist"
-               @click="store.prepare({num:1});store.switchTabs({event:$event});setSelectedTopMenu(1)"
-               @click.self.once="store.fetchPlaylists({event:$event,offset:0})"
-               :class="{ active: selectedTopMenu === 1 }">
-              <span class="tab-icon">📁</span>
-              <span class="tab-text">Playlists</span>
-            </a>
-          </li>
-          <li class="tab-item" id="option2">
-            <a id="ta"
-               @click="store.prepare({num:2});store.switchTabs({event:$event});store.switchArtist({num:1});setSelectedTopMenu(2)"
-               @click.self.once="store.fetchArtist({event:$event})"
-               :class="{ active: selectedTopMenu === 2 }">
-              <span class="tab-icon">👤</span>
-              <span class="tab-text">Top Artists</span>
-            </a>
-          </li>
-          <li class="tab-item" id="option3">
-            <a @click="store.prepare({num:3});store.switchTabs({event:$event});store.switchTracks({num:1});setSelectedTopMenu(3)"
-               id="tt"
-               @click.self.once="store.fetchApi({event:$event})"
-               :class="{ active: selectedTopMenu === 3 }">
-              <span class="tab-icon">🎵</span>
-              <span class="tab-text">Top Tracks</span>
-            </a>
-          </li>
-          <li class="tab-item" id="option4">
-            <a @click="store.prepare({num:4});store.switchTabs({event:$event});setSelectedTopMenu(4)"
-               id="sa"
-               @click.self.once="store.fetchAlbums({offset:0,event:$event})"
-               :class="{ active: selectedTopMenu === 4 }">
-              <span class="tab-icon">💿</span>
-              <span class="tab-text">Saved Albums</span>
-            </a>
-          </li>
-          <li class="tab-item" id="option5">
-            <a @click="store.prepare({num:5});store.switchTabs({event:$event});setSelectedTopMenu(5)"
-               id="st"
-               @click.self.once="store.fetchTracks({offset:0})"
-               :class="{ active: selectedTopMenu === 5 }">
-              <span class="tab-icon">❤️</span>
-              <span class="tab-text">Saved Tracks</span>
-            </a>
-          </li>
-          <li class="tab-item" id="option6">
-            <a @click="store.prepare({num:6});store.switchTabs({event:$event});setSelectedTopMenu(6)"
-               id="fa"
-               @click.self.once="store.fetchFA()"
-               :class="{ active: selectedTopMenu === 6 }">
-              <span class="tab-icon">⭐</span>
-              <span class="tab-text">Followed Artists</span>
-            </a>
-          </li>
-          <li class="tab-item" id="option7">
-            <a @click="store.prepare({num:7});store.switchTabs({event:$event});setSelectedTopMenu(7)"
-               id="nr"
-               @click.self.once="store.fetchNR({offset:0})"
-               :class="{ active: selectedTopMenu === 7 }">
-              <span class="tab-icon">🆕</span>
-              <span class="tab-text">New Releases</span>
-            </a>
-          </li>
-          <li class="tab-item" id="option8">
-            <a @click="store.prepare({num:8});store.switchTabs({event:$event});setSelectedTopMenu(8)"
-               id="spt"
-               @click.self.once="store.fetchSpotPlaylists({offset:0})"
-               :class="{ active: selectedTopMenu === 8 }">
-              <span class="tab-icon">🎧</span>
-              <span class="tab-text">Spotify Playlists</span>
-            </a>
-          </li>
-          <li class="tab-item search-tab" id="srch">
-            <div class="search-container">
-              <input type="search"
-                     class="modern-search"
-                     v-model="search"
-                     @keyup="selectedTopMenu=10;store.search($event)"
-                     placeholder="Search music...">
-              <span class="search-icon">🔍</span>
+      <ModernTabs 
+        :selected-tab="selectedTopMenu"
+        :search-query="search"
+        @tab-click="handleTabClick"
+        @search="handleSearch"
+      />
+
+      <!-- Mobile Accordion Content -->
+      <div v-if="accordionActive" class="accordion-content" 
+           :class="{ expanded: expandedTabs.has(selectedTopMenu) }">
+        <!-- Personal Playlists Section -->
+        <div v-if="selectedTopMenu === 1">
+          <Loader v-if="store.loader"/>
+          <div id="yourplaylists" class="con2">
+            <div class="rel">
+              <button class="btn" @click="store.reloadpl({event:$event})">
+                <img class="refresh-end" src="../../assets/refresh-icon.png" alt="">
+              </button>
             </div>
-          </li>
-        </ul>
-      </nav>
+            <div class="pl justify-content-center">
+              <template v-for="(item,index) of store.listplaylists" :key="index">
+                <div :id="item.id"
+                     @click="setSelectedPersonalPlaylist(item.id);store.fetchInit({event:$event})"
+                     class="hr-line-dashed"
+                     :class="selectedPersonalPlaylist===item.id ? 'activetab':''">
+                  {{ item.name }}
+                </div>
+              </template>
+            </div>
+            <div class="play" v-if="store.currentpl" :id="'p' + store.currentpl.id">
+              <div class="modern-playlist-header">
+                <div class="playlist-info">
+                  <div class="playlist-title-section">
+                    <h2 class="playlist-title">{{ store.currentpl.name }}</h2>
+                    <button class="refresh-button" @click="store.reloader({num:1,event:$event})">
+                      <img class="refresh-icon" src="../../assets/refresh-icon.png" alt="Refresh">
+                    </button>
+                  </div>
+                  <div class="playlist-description" v-html="store.currentpl.description"></div>
+                </div>
+
+                <div class="playlist-cover" v-if="store.currentpl.images[0]">
+                  <img :src="store.currentpl.images[0].url" alt="Playlist cover">
+                </div>
+
+                <div class="playlist-actions">
+                  <a class="spotify-link"
+                     :href="store.currentpl['external_urls']['spotify']"
+                     target="_blank"
+                     rel="noopener">
+                    <span class="link-icon">🎧</span>
+                    Open in Spotify
+                  </a>
+                  <SortTracks v-model="selectedPlaylistSortOption"/>
+                </div>
+              </div>
+              <div class="con2 display-flex" style="color: black">
+                <template v-if="store.currentpl.tracks">
+                  <template v-for="(pl,ind) of sortedPlaylistItems" :key="ind">
+                    <template v-if="pl.track">
+                      <div v-if="pl.track.preview_url && pl.track.album.images[0]"
+                           tabindex="0"
+                           class="con3"
+                           :class="selectedItem==='1' + pl.track.id ? 'selected' : ''"
+                           @mouseover="store.mouseOver($event)"
+                           @mouseleave="store.mouseLeave($event)"
+                           @click.stop="setSelectedItem('1' + pl.track.id);store.prepare({num:1});store.deeper({item:pl,num:1,event:$event}); store.queuein(pl['track'])"
+                           :style="{ 'background-image': 'url(' + pl.track.album.images[0].url + ')' }">
+                        {{ formatArtistNames(pl['track']['artists']) }} - {{ pl.track.name }}
+                        <audio preload="auto" :src="pl.track.preview_url"></audio>
+                      </div>
+                      <div v-else-if="pl.track.album.images[0] && !pl.track.preview_url && store.unplayable_tracks"
+                           tabindex="0"
+                           class="con3 half-opacity"
+                           :class="selectedItem==='1' + pl.track.id ? 'selected' : ''"
+                           :style="{ 'background-image': 'url(' + pl.track.album.images[0].url + ')' }"
+                           @click.stop="setSelectedItem('1' + pl.track.id);store.prepare({num:1});store.deeper({item:pl,num:1,event:$event}); store.queuein(pl['track'])">
+                        {{ formatArtistNames(pl['track']['artists']) }} - {{ pl.track.name }}
+                        <audio preload="auto"></audio>
+                      </div>
+                      <div v-else-if="!pl.track.album.images[0] && pl.track.preview_url"
+                           class="con3"
+                           :class="selectedItem==='1' + pl.track.id ? 'selected' : ''"
+                           @click.stop="setSelectedItem('1' + pl.track.id);store.prepare({num:1});store.deeper({item:pl,num:1,event:$event}); store.queuein(pl['track'])">
+                        {{ formatArtistNames(pl['track']['artists']) }} - {{ pl.track.name }}
+                        <audio preload="auto" :src="pl.track.preview_url"></audio>
+                      </div>
+                      <div v-else-if="store.unplayable_tracks"
+                           class="con3 half-opacity"
+                           :class="selectedItem==='1' + pl.track.id ? 'selected' : ''"
+                           @click.stop="setSelectedItem('1' + pl.track.id);store.prepare({num:1});store.deeper({item:pl,num:1,event:$event}); store.queuein(pl['track'])">
+                        {{ formatArtistNames(pl['track']['artists']) }} - {{ pl.track.name }}
+                      </div>
+                    </template>
+                  </template>
+                </template>
+              </div>
+            </div>
+            <RecTrack :num="1" />
+          </div>
+        </div>
+      </div>
 
       <!-- Content sections -->
       <div class="modern-content">
         <div class="content-container">
         <!-- Personal Playlists Section -->
-        <div v-if="selectedTopMenu === 1">
+        <div v-if="selectedTopMenu === 1 && !accordionActive">
           <Loader v-if="store.loader"/>
-          <teleport to="#option1" :disabled="!accordionActive">
-            <div id="yourplaylists" class="con2" v-show="selectedTopMenu===1">
+          <div id="yourplaylists" class="con2">
               <div class="rel">
                 <button class="btn" @click="store.reloadpl({event:$event})">
                   <img class="refresh-end" src="../../assets/refresh-icon.png" alt="">
@@ -379,7 +496,6 @@ window.addEventListener('resize', () => {
               </div>
               <RecTrack :num="1" />
             </div>
-          </teleport>
         </div>
 
         <!-- Top Artists Section -->
@@ -1102,108 +1218,7 @@ window.addEventListener('resize', () => {
   flex-direction: column;
 }
 
-/* Modern Tab Styling */
-.modern-tabs {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  will-change: transform;
-  transform: translateZ(0);
-  transition: all 0.3s ease;
-}
 
-.modern-tabs::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
-  pointer-events: none;
-}
-
-.tabs-list {
-  display: flex;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  -webkit-overflow-scrolling: touch;
-  scroll-behavior: smooth;
-}
-
-.tabs-list::-webkit-scrollbar {
-  display: none;
-}
-
-.tab-item {
-  flex-shrink: 0;
-  margin: 0;
-}
-
-.tab-item a {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 16px 20px;
-  text-decoration: none;
-  color: var(--tabs-color);
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border-bottom: 3px solid transparent;
-  font-weight: 500;
-  position: relative;
-  overflow: hidden;
-}
-
-.tab-item a::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(240, 55, 165, 0.1), transparent);
-  transition: left 0.5s;
-}
-
-.tab-item a:hover::before {
-  left: 100%;
-}
-
-.tab-item a:hover {
-  background: rgba(240, 55, 165, 0.05);
-  transform: translateY(-1px);
-}
-
-.tab-item a.active {
-  background: linear-gradient(135deg, var(--active-tab), #e91e63);
-  color: white;
-  border-bottom-color: var(--active-tab);
-  box-shadow: 0 4px 15px rgba(240, 55, 165, 0.3);
-}
-
-.tab-icon {
-  font-size: 18px;
-  opacity: 0.8;
-}
-
-.tab-text {
-  font-size: 14px;
-  white-space: nowrap;
-}
-
-/* Search Tab */
-.search-tab {
-  margin-left: auto;
-}
 
 /* Modern Playlist Header */
 .modern-playlist-header {
@@ -1359,44 +1374,7 @@ window.addEventListener('resize', () => {
   background: rgba(255, 255, 255, 0.1);
 }
 
-.search-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 8px 16px;
-}
 
-.modern-search {
-  background: rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 25px;
-  padding: 10px 40px 10px 16px;
-  color: var(--search-color);
-  outline: none;
-  width: 250px;
-  transition: all 0.3s ease;
-  font-size: 14px;
-}
-
-.modern-search:focus {
-  background: white;
-  border-color: var(--active-tab);
-  box-shadow: 0 0 0 3px rgba(240, 55, 165, 0.1);
-  width: 300px;
-}
-
-.modern-search::placeholder {
-  color: var(--search-color);
-  opacity: 0.6;
-}
-
-.search-icon {
-  position: absolute;
-  right: 24px;
-  font-size: 16px;
-  opacity: 0.6;
-  pointer-events: none;
-}
 
 /* Modern Content Styling */
 .modern-content {
@@ -1473,27 +1451,6 @@ window.addEventListener('resize', () => {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .tabs-list {
-    flex-wrap: wrap;
-  }
-
-  .tab-item a {
-    padding: 12px 16px;
-    font-size: 13px;
-  }
-
-  .tab-icon {
-    font-size: 16px;
-  }
-
-  .modern-search {
-    width: 200px;
-  }
-
-  .modern-search:focus {
-    width: 220px;
-  }
-
   .modern-content {
     padding: 16px;
   }
@@ -1504,22 +1461,64 @@ window.addEventListener('resize', () => {
   }
 }
 
-@media (max-width: 480px) {
-  .tab-text {
-    display: none;
+/* Mobile Accordion Styles */
+@media (max-width: 1076px) {
+  .modern-tabs {
+    position: relative;
   }
-
-  .tab-item a {
-    padding: 12px;
-    justify-content: center;
+  
+  .tabs-list {
+    flex-direction: column;
+    gap: 0;
   }
-
-  .modern-search {
-    width: 150px;
+  
+  .tab-item {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 0;
   }
-
-  .modern-search:focus {
-    width: 160px;
+  
+  .tab-item:last-child {
+    border-bottom: none;
+  }
+  
+  .tab-content {
+    padding: 16px 20px;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .tab-item::after {
+    content: '▼';
+    font-size: 12px;
+    transition: transform 0.3s ease;
+    opacity: 0.6;
+  }
+  
+  .tab-item.active::after {
+    transform: rotate(180deg);
+  }
+  
+  .tab-item:hover {
+    background: rgba(240, 55, 165, 0.05);
+    transform: none;
+  }
+  
+  .tab-item.active {
+    background: linear-gradient(135deg, var(--active-tab), #e91e63);
+    border-bottom-color: transparent;
+  }
+  
+  /* Accordion content animation */
+  .accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+    background: rgba(255, 255, 255, 0.95);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  .accordion-content.expanded {
+    max-height: 1000px;
   }
 }
 
