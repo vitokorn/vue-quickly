@@ -86,7 +86,7 @@
 :root.dq {
     --main-color: #3f3d58;
     --tabs-background: rgba(0, 0, 0, .3);
-    --tabs-color: black;
+    --tabs-color: white;
     --tabs-target: #f037a5;
     --recomended-color: #f037a5;
     --active-tab: #f037a5;
@@ -1139,9 +1139,10 @@ input[type=checkbox] {
 }
 
 .tracks-list {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+    gap: 16px;
+    padding: 24px;
 }
 
 .track-item {
@@ -1328,7 +1329,7 @@ input[type=checkbox] {
 
 .tracks-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 16px;
   padding: 24px;
 }
@@ -1800,7 +1801,7 @@ input[type=checkbox] {
 .albums-grid,
 .related-artists-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 16px;
   padding: 24px;
 }

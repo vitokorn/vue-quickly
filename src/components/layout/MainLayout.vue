@@ -103,7 +103,7 @@ const sortedNRItems = createAlbumSorter(
 )
 
 const sortedSpotPlaylistItems = createTrackSorter(
-  computed(() => store.currentspl?.tracks || []),
+  computed(() => store.currentspl?.tracks?.items || []),
   selectedSpotPlaylistSortOption
 )
 
@@ -319,14 +319,14 @@ window.addEventListener('resize', () => {
                     </div>
                     <div class="playlist-description" v-html="store.currentpl.description"></div>
                   </div>
-                  
+
                   <div class="playlist-cover" v-if="store.currentpl.images[0]">
                     <img :src="store.currentpl.images[0].url" alt="Playlist cover">
                   </div>
-                  
+
                   <div class="playlist-actions">
-                    <a class="spotify-link" 
-                       :href="store.currentpl['external_urls']['spotify']" 
+                    <a class="spotify-link"
+                       :href="store.currentpl['external_urls']['spotify']"
                        target="_blank"
                        rel="noopener">
                       <span class="link-icon">🎧</span>
@@ -528,7 +528,7 @@ window.addEventListener('resize', () => {
               <span id="toptracks6"
                     @click="store.switchTracks({num:2})"
                     :class="store.selectedTracksRange === 2 ? 'activetab':''"
-                    @click.self.once="store.fetchTracks2({event:$event})"
+                    @click.self.once="store.fetchApi2({event:$event})"
                     class="mx-2">
                 Last 6 month
               </span>
@@ -538,7 +538,7 @@ window.addEventListener('resize', () => {
               <span id="toptracksall"
                     @click="store.switchTracks({num:3})"
                     :class="store.selectedTracksRange === 3 ? 'activetab':''"
-                    @click.self.once="store.fetchTracks3({event:$event})"
+                    @click.self.once="store.fetchApi3({event:$event})"
                     class="mx-2">
                 All time
               </span>
@@ -547,7 +547,7 @@ window.addEventListener('resize', () => {
               </button>
             </div>
             <div id="toptracks"
-                 class="display-flex flex-wrap"
+                 class=""
                  style="color: black;width: auto;"
                  :class="store.selectedTracksRange===1 ? '': 'd-none'">
               <SortTracks v-model="selectedTTSortOption"/>
@@ -905,7 +905,8 @@ window.addEventListener('resize', () => {
                 <div class="display-flex flex-wrap" style="color: black">
                   <template v-if="store.currentspl.tracks">
                     <template v-for="(spl,index) of sortedSpotPlaylistItems" :key="index">
-                      <div v-if="spl.track.preview_url && spl.track.album.images[0]"
+                      <template v-if="spl">
+                      <div v-if="spl.track && spl.track.preview_url && spl.track.album.images[0]"
                            :id="spl.track.id"
                            tabindex="0"
                            class="con3"
@@ -917,7 +918,7 @@ window.addEventListener('resize', () => {
                         {{ formatArtistNames(spl['track']['artists']) }} - {{ spl.track.name }}
                         <audio preload="auto" :src="spl.track.preview_url"></audio>
                       </div>
-                      <div v-else-if="!spl.track.preview_url && spl.track.album.images[0] && store.unplayable_tracks"
+                      <div v-else-if="spl.track && !spl.track.preview_url && spl.track.album.images[0] && store.unplayable_tracks"
                            :id="spl.track.id"
                            tabindex="0"
                            class="con3 half-opacity"
@@ -927,7 +928,7 @@ window.addEventListener('resize', () => {
                         {{ formatArtistNames(spl['track']['artists']) }} - {{ spl.track.name }}
                         <audio preload="auto"></audio>
                       </div>
-                      <div v-else-if="spl.track.preview_url && !spl.track.album.images[0]"
+                      <div v-else-if="spl.track && spl.track.preview_url && !spl.track.album.images[0]"
                            :id="spl.track.id"
                            tabindex="0"
                            class="con3"
@@ -936,13 +937,14 @@ window.addEventListener('resize', () => {
                         {{ formatArtistNames(spl['track']['artists']) }} - {{ spl.track.name }}
                         <audio preload="auto" :src="spl.track.preview_url"></audio>
                       </div>
-                      <div v-else
+                      <div v-else-if="spl.track"
                            :id="spl.track.id"
                            class="con3 half-opacity"
                            :class="selectedItem==='8' + item.id ? 'selected' : ''"
                            @click="setSelectedItem('8' + spl.track.id);store.prepare({num:8});store.deeper({item:spl,num:8,event:$event}); store.queuein(spl['track'])">
                         {{ formatArtistNames(spl['track']['artists']) }} - {{ spl.track.name }}
                       </div>
+                      </template>
                     </template>
                   </template>
                 </div>
@@ -1109,7 +1111,6 @@ window.addEventListener('resize', () => {
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
-  z-index: 1000;
   will-change: transform;
   transform: translateZ(0);
   transition: all 0.3s ease;
@@ -1124,7 +1125,6 @@ window.addEventListener('resize', () => {
   bottom: 0;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
   pointer-events: none;
-  z-index: -1;
 }
 
 .tabs-list {
@@ -1317,18 +1317,18 @@ window.addEventListener('resize', () => {
     gap: 20px;
     padding: 20px;
   }
-  
+
   .playlist-title {
     font-size: 20px;
   }
-  
+
   .playlist-actions {
     min-width: auto;
     flex-direction: row;
     flex-wrap: wrap;
     gap: 12px;
   }
-  
+
   .spotify-link {
     width: 100%;
     justify-content: center;
@@ -1339,11 +1339,11 @@ window.addEventListener('resize', () => {
   .modern-playlist-header {
     padding: 16px;
   }
-  
+
   .playlist-title {
     font-size: 18px;
   }
-  
+
   .playlist-cover img {
     max-height: 120px;
   }
@@ -1542,6 +1542,17 @@ window.addEventListener('resize', () => {
 :root.dark .modern-search:focus {
   background: rgba(255, 255, 255, 0.15);
   border-color: var(--active-tab);
+}
+
+/* Dark mode support */
+:root.dq .modern-tabs {
+  background: #2c2a3d;
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+
+:root.dq .content-container {
+  background:  #2c2a3d;
 }
 </style>
 

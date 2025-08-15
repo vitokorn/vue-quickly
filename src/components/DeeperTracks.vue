@@ -1,21 +1,32 @@
 <script setup>
 import {useDMStore} from "../stores/dm-store";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import TrackCover from "./TrackCover.vue";
 
 defineProps(['d', 'num'])
 const store = useDMStore()
 const selected = ref()
+const cover = ref(null)
 
 function setActive(id) {
   selected.value = id
 }
+function resolveCover() {
+  if (props.d.album.images) {
+    cover.value = props.d.album.images[0]
+  } else if (props.d.images) {
+    cover.value = props.d.images[0]
+  }
+}
+onMounted(()=> {
+  resolveCover()
+})
 </script>
 
 <template>
   <div class="modern-track-card" :id="'d'+d.id">
     <div class="track-main">
-      <track-cover :d="d" :cover="d.album.images[0]"></track-cover>
+      <track-cover :d="d" :cover="cover"></track-cover>
 
       <div class="track-info">
         <h3 class="track-title">{{ d.name }}</h3>

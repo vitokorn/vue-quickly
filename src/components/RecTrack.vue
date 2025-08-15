@@ -79,7 +79,7 @@ function dab() {
         <DeeperTracks2 v-else-if="d.type==='deeper_tracks2'" :d="d" :num="num"></DeeperTracks2>
 
         <!-- Deeper album recommendations -->
-        <DeeperAlbum v-else-if="d.type==='deeper_album'" :d="d" :num="num"></DeeperAlbum>
+        <DeeperAlbum v-else-if="d.type==='deeperalbum'" :d="d" :num="num"></DeeperAlbum>
 
         <!-- Seed artists recommendations -->
         <SeedArtists v-else-if="d.type==='seed_artists'" :d="d" :num="num"></SeedArtists>

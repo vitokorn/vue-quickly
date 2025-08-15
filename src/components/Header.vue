@@ -47,7 +47,7 @@ window.addEventListener('resize', () => {
               <span class="theme-name">Light</span>
             </label>
           </div>
-          
+
           <div class="theme-option">
             <input id="dark" type="radio" v-model="userTheme" value="dark" @click="setTheme('dark')">
             <label for="dark" class="theme-label">
@@ -55,7 +55,7 @@ window.addEventListener('resize', () => {
               <span class="theme-name">Dark</span>
             </label>
           </div>
-          
+
           <div class="theme-option">
             <input id="dark-blue" type="radio" v-model="userTheme" value="dark-blue" @click="setTheme('dark-blue')">
             <label for="dark-blue" class="theme-label">
@@ -63,7 +63,7 @@ window.addEventListener('resize', () => {
               <span class="theme-name">Blue</span>
             </label>
           </div>
-          
+
           <div class="theme-option">
             <input id="dq" type="radio" v-model="userTheme" value="dq" @click="setTheme('dq')">
             <label for="dq" class="theme-label">
@@ -80,11 +80,11 @@ window.addEventListener('resize', () => {
           <span class="greeting-text">Hello,</span>
           <span class="username">{{ username }}</span>
         </div>
-        
+
         <div class="user-actions">
           <Settings />
           <Auth v-if="!isAuth()" />
-          
+
           <!-- Queue Button -->
           <div class="queue-button" @click="store.checkPlaylists()">
             <div class="queue-icon">
@@ -322,24 +322,24 @@ window.addEventListener('resize', () => {
     padding: 12px 16px;
     gap: 16px;
   }
-  
+
   .brand-title {
     font-size: 1.5rem;
   }
-  
+
   .logo-container {
     width: 40px;
     height: 40px;
   }
-  
+
   .user-greeting {
     display: none;
   }
-  
+
   .theme-section {
     order: 3;
   }
-  
+
   .user-section {
     order: 2;
   }
@@ -351,23 +351,23 @@ window.addEventListener('resize', () => {
     gap: 12px;
     padding: 12px;
   }
-  
+
   .brand-section {
     order: 1;
   }
-  
+
   .user-section {
     order: 2;
     width: 100%;
     justify-content: center;
   }
-  
+
   .theme-section {
     order: 3;
     width: 100%;
     justify-content: center;
   }
-  
+
   .theme-switcher {
     width: 100%;
     justify-content: center;
@@ -391,4 +391,9 @@ window.addEventListener('resize', () => {
 :root.dark .theme-preview {
   border-color: rgba(255, 255, 255, 0.2);
 }
+:root.dq .modern-header {
+  background: #2c2a3d;
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
 </style>
