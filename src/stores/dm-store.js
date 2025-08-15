@@ -123,8 +123,7 @@ export const useDMStore = defineStore('dm', {
                 this.deeper23.push(deeper23);
             },
             setDeeper3(deeper3) {
-                // Force reactivity by creating a new array
-                this.deeper3 = [...this.deeper3, deeper3]
+                this.deeper3.push(deeper3);
             },
             setDeeper32(deeper32) {
                 this.deeper32.push(deeper32);
