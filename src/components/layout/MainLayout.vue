@@ -103,7 +103,7 @@ const sortedNRItems = createAlbumSorter(
 )
 
 const sortedSpotPlaylistItems = createTrackSorter(
-  computed(() => store.currentspl?.tracks || []),
+    computed(() => store.currentspl?.tracks?.items || []),
   selectedSpotPlaylistSortOption
 )
 
@@ -514,7 +514,7 @@ window.addEventListener('resize', () => {
               <span id="toptracks6"
                     @click="store.switchTracks({num:2})"
                     :class="store.selectedTracksRange === 2 ? 'activetab':''"
-                    @click.self.once="store.fetchTracks2({event:$event})"
+                    @click.self.once="store.fetchApi2({event:$event})"
                     class="mx-2">
                 Last 6 month
               </span>
@@ -524,7 +524,7 @@ window.addEventListener('resize', () => {
               <span id="toptracksall"
                     @click="store.switchTracks({num:3})"
                     :class="store.selectedTracksRange === 3 ? 'activetab':''"
-                    @click.self.once="store.fetchTracks3({event:$event})"
+                    @click.self.once="store.fetchApi3({event:$event})"
                     class="mx-2">
                 All time
               </span>
