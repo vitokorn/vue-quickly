@@ -4801,9 +4801,9 @@ export const useDMStore = defineStore('dm', {
                 newque.id = track.id
                 newque.name = track.name
                 newque.artists = Lists.Ls(track.artists)
-                if (track.album) {
+                if (track.album && track.album.images && track.album.images[0]) {
                     newque.image = track.album.images[0]
-                } else if (track.images[0]) {
+                } else if (track.images && track.images[0]) {
                     newque.image = track.images[0]
                 }
                 let arr = JSON.parse(current)

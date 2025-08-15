@@ -12,11 +12,13 @@ function setActive(id) {
   selected.value = id
 }
 function resolveCover() {
-  if (props.d.album.images) {
+  console.log(props.d)
+  if (props.d.album && props.d.album.images) {
     cover.value = props.d.album.images[0]
   } else if (props.d.images) {
     cover.value = props.d.images[0]
   }
+  console.log(cover.value)
 }
 onMounted(()=> {
   resolveCover()
