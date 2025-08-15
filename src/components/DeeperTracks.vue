@@ -3,7 +3,7 @@ import {useDMStore} from "../stores/dm-store";
 import {onMounted, ref} from "vue";
 import TrackCover from "./TrackCover.vue";
 
-defineProps(['d', 'num'])
+const props = defineProps(['d', 'num'])
 const store = useDMStore()
 const selected = ref()
 const cover = ref(null)

@@ -123,7 +123,8 @@ export const useDMStore = defineStore('dm', {
                 this.deeper23.push(deeper23);
             },
             setDeeper3(deeper3) {
-                this.deeper3.push(deeper3)
+                // Force reactivity by creating a new array
+                this.deeper3 = [...this.deeper3, deeper3]
             },
             setDeeper32(deeper32) {
                 this.deeper32.push(deeper32);
@@ -339,7 +340,7 @@ export const useDMStore = defineStore('dm', {
                 }
 
                 if (exists) {
-                    tracktrack = exists
+                    tracktrack = structuredClone(exists)
                 } else {
                     let clone = structuredClone(tracktrack);
                     this.tracks_data.push(clone)
@@ -516,7 +517,7 @@ export const useDMStore = defineStore('dm', {
                 }
 
                 if (exists) {
-                    tracktrack = exists
+                    tracktrack = structuredClone(exists)
                 } else {
                     let clone = structuredClone(tracktrack);
                     this.tracks_data.push(clone)
@@ -2067,7 +2068,7 @@ export const useDMStore = defineStore('dm', {
 
                 let data = []
                 if (exists) {
-                    data = exists
+                    data = structuredClone(exists)
                 }
                 if (!exists) {
                     await axios.get('https://api.spotify.com/v1/recommendations?seed_tracks=' + item['id'] + '&limit=50&offset=0&market=UA' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
@@ -2243,7 +2244,7 @@ export const useDMStore = defineStore('dm', {
 
                 let data = []
                 if (exists) {
-                    data = exists
+                    data = structuredClone(exists)
                 }
                 if (!exists) {
                     await axios.get('https://api.spotify.com/v1/recommendations?seed_tracks=' + item['id'] + '&limit=50&offset=0&market=UA' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
@@ -2382,7 +2383,7 @@ export const useDMStore = defineStore('dm', {
                     pointer = 'search'
                 }
                 if (exists) {
-                    item = exists
+                    item = structuredClone(exists)
                 } else {
                     let clone = structuredClone(toRaw(item));
                     this.tracks_data.push(clone)
@@ -2612,7 +2613,7 @@ export const useDMStore = defineStore('dm', {
                 }
 
                 if (exists) {
-                    item = exists
+                    item = structuredClone(exists)
                 } else {
                     let clone = structuredClone(toRaw(item));
                     this.tracks_data.push(clone)
@@ -2739,7 +2740,7 @@ export const useDMStore = defineStore('dm', {
                     pointer = 'search'
                 }
                 if (exists) {
-                    item = exists
+                    item = structuredClone(exists)
                 } else {
                     let clone = structuredClone(toRaw(item));
                     this.tracks_data.push(clone)
@@ -2967,7 +2968,7 @@ export const useDMStore = defineStore('dm', {
                 }
 
                 if (exists) {
-                    item = exists
+                    item = structuredClone(exists)
                 } else {
                     let clone = structuredClone(toRaw(item));
                     this.tracks_data.push(clone)
@@ -3125,7 +3126,7 @@ export const useDMStore = defineStore('dm', {
 
                 let data = []
                 if (exists) {
-                    data = exists
+                    data = structuredClone(exists)
                 }
                 if (!exists) {
                     await axios.get('https://api.spotify.com/v1/recommendations?seed_artists=' + item['id'] + '&limit=50&offset=0&market=UA' + document.cookie.replace(/(?:(?:^|.*;\s*)country\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
@@ -3299,7 +3300,7 @@ export const useDMStore = defineStore('dm', {
 
                 let data = []
                 if (exists) {
-                    data = exists
+                    data = structuredClone(exists)
                     data.parentId = parent
                 }
                 if (!exists) {
@@ -3509,7 +3510,8 @@ export const useDMStore = defineStore('dm', {
                 let exists = this.artists_data.find(dt => dt.id === item.id)
                 if (exists) {
                     console.log(4203)
-                    trackartist = exists
+                    trackartist = structuredClone(exists)
+                    trackartist.type = 'trackartist'
                 } else {
                     await this.deeperArtistself({
                         item: item,
@@ -3543,6 +3545,7 @@ export const useDMStore = defineStore('dm', {
                 } else if (num === 33) {
                     this.setDeeper33(trackartist)
                 } else if (num === 4) {
+                    console.log(trackartist)
                     this.setDeeper4(trackartist)
                 } else if (num === 5) {
                     this.setDeeper5(trackartist)
@@ -3657,7 +3660,8 @@ export const useDMStore = defineStore('dm', {
                 let exists = this.artists_data.find(dt => dt.id === item.id)
                 if (exists) {
                     console.log(4203)
-                    trackartist = exists
+                    trackartist = structuredClone(exists)
+                    trackartist.type = 'trackartist'
                     trackartist.parentId = parent
                 } else {
                     await this.deeperArtistself({
@@ -3995,7 +3999,7 @@ export const useDMStore = defineStore('dm', {
                 }
 
                 if (exists) {
-                    item = exists
+                    item = structuredClone(exists)
                 } else {
                     let clone = structuredClone(toRaw(item));
                     this.albums_data.push(clone)
@@ -4159,7 +4163,7 @@ export const useDMStore = defineStore('dm', {
                 }
 
                 if (exists) {
-                    item = exists
+                    item = structuredClone(exists)
                 } else {
                     let clone = structuredClone(toRaw(item));
                     this.albums_data.push(clone)
