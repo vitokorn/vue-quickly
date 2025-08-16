@@ -1,25 +1,24 @@
 <script setup>
 import {useDMStore} from "../stores/dm-store";
+import {useMediaDisplay} from "../composables/useMediaDisplay";
+import {computed} from "vue";
 
-defineProps(['d', 'cover'])
+const props = defineProps(['d', 'cover'])
 const store = useDMStore()
 
+const { displayClass, backgroundStyle, audioPreload, audioSrc, hasPreview } = useMediaDisplay(computed(() => props.d), props.cover)
 </script>
 
 <template>
-  <div class="con3" v-if="d.preview_url && cover" v-bind:style="{ 'background-image': 'url(' + cover.url + ')' }" v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)">{{d.name}}
-    <audio preload="auto" v-bind:src="d.preview_url"></audio>
-  </div>
-  <div class="con3 half-opacity" v-else-if="!d.preview_url && cover" v-bind:style="{ 'background-image': 'url(' + cover.url + ')' }">{{d.name}}
-  </div>
-  <div class="con3" v-else-if="d.preview_url && !cover" v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)">{{d.name}}
-    <audio preload="auto" v-bind:src="d.preview_url"></audio>
-  </div>
-  <div class="con3 half-opacity" v-else>{{d.name}}
+  <div class="con3" 
+       :class="displayClass" 
+       :style="backgroundStyle" 
+       @mouseover="hasPreview && store.mouseOver($event)" 
+       @mouseleave="hasPreview && store.mouseLeave($event)">
+    {{d.name}}
+    <audio :preload="audioPreload" :src="audioSrc"></audio>
   </div>
 </template>
-
-
 
 <style scoped>
 

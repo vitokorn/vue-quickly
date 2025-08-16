@@ -1,11 +1,17 @@
 <script setup>
 import {useDMStore} from "../stores/dm-store";
-import {ref} from "vue";
+import {ref, computed} from "vue";
 import TrackCover from "./TrackCover.vue";
+import {useMediaDisplay} from "../composables/useMediaDisplay";
 
-defineProps(['d', 'num'])
+const props = defineProps(['d', 'num'])
 const store = useDMStore()
 const selected = ref()
+
+// Helper function to get media display for a track with album cover
+function getTrackMediaDisplay(track) {
+  return useMediaDisplay(computed(() => track), props.d.images?.[0])
+}
 
 function setActive(id) {
   selected.value = id
@@ -39,6 +45,11 @@ function setActive(id) {
           <span class="meta-icon">📅</span>
           <span>{{ d.release_date }}</span>
         </div>
+        <div class="album-actions">
+          <button class="refresh-button" @click="store.reloader({num:num,event:$event})">
+            <img class="refresh-icon" src="../assets/refresh-icon.png" alt="Refresh">
+          </button>
+        </div>
       </div>
     </div>
 
@@ -49,42 +60,13 @@ function setActive(id) {
       </div>
       <div class="tracks-list">
         <div v-for="(track, index) in d.tracks.items" :key="index" class="">
-          <div v-if="track.preview_url && d.images && d.images[0]"
-               class="con3 playable"
-               :class="selected === track.id ? 'selected' : ''"
-               :style="{ 'background-image': 'url(' + d.images[0].url + ')' }"
-               @mouseover="store.mouseOver($event)"
-               @mouseleave="store.mouseLeave($event)"
+          <div :class="['con3', getTrackMediaDisplay(track).displayClass.value, selected === track.id ? 'selected' : '']"
+               :style="getTrackMediaDisplay(track).backgroundStyle.value"
+               @mouseover="getTrackMediaDisplay(track).hasPreview.value && store.mouseOver($event)"
+               @mouseleave="getTrackMediaDisplay(track).hasPreview.value && store.mouseLeave($event)"
                @click="setActive(track.id);store.deeperTracks({item:track,num:num,flag:false,sib:'deeperalbum',child:'a'+ d.id}); store.queuein(track)">
             {{ track.name }}
-            <audio preload="auto" :src="track.preview_url"></audio>
-          </div>
-
-          <div v-else-if="!track.preview_url && d.images && d.images[0]"
-               class="con3 unplayable"
-               :class="selected === track.id ? 'selected' : ''"
-               :style="{ 'background-image': 'url(' + d.images[0].url + ')' }"
-               @click="setActive(track.id);store.deeperTracks({item:track,num:num,flag:false,sib:'deeperalbum',child:'a'+ d.id}); store.queuein(track)">
-            {{ track.name }}
-            <audio></audio>
-          </div>
-
-          <div v-else-if="track.preview_url && !d.images[0]"
-               class="con3 playable no-image"
-               :class="selected === track.id ? 'selected' : ''"
-               @mouseover="store.mouseOver($event)"
-               @mouseleave="store.mouseLeave($event)"
-               @click="setActive(track.id);store.deeperTracks({item:track,num:num,flag:false,sib:'deeperalbum',child:'a'+ d.id}); store.queuein(track)">
-            {{ track.name }}
-            <audio preload="auto" :src="track.preview_url"></audio>
-          </div>
-
-          <div v-else
-               class="con3 unplayable no-image"
-               :class="selected === track.id ? 'selected' : ''"
-               @click="setActive(track.id);store.deeperTracks({item:track,num:num,flag:false,sib:'deeperalbum',child:'a'+ d.id}); store.queuein(track)">
-            {{ track.name }}
-            <audio></audio>
+            <audio :preload="getTrackMediaDisplay(track).audioPreload.value" :src="getTrackMediaDisplay(track).audioSrc.value"></audio>
           </div>
         </div>
       </div>

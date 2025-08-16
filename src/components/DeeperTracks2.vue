@@ -1,11 +1,17 @@
 <script setup>
 import {useDMStore} from "../stores/dm-store";
-import {ref} from "vue";
+import {ref, computed} from "vue";
 import TrackCover from "./TrackCover.vue";
+import {useMediaDisplay} from "../composables/useMediaDisplay";
 
-defineProps(['d', 'num'])
+const props = defineProps(['d', 'num'])
 const store = useDMStore()
 const selected = ref()
+
+// Helper function to get media display for an artist
+function getArtistMediaDisplay(artist) {
+  return useMediaDisplay(computed(() => artist))
+}
 
 function setActive(id) {
   selected.value = id
@@ -48,50 +54,15 @@ function setActive(id) {
     
     <div class="artists-grid">
       <div v-for="(art, index) in d.artists" :key="index">
-        <div v-if="art.preview_url && art.images[0]" 
-             class="artist-card playable"
-             :class="selected === art.id ? 'selected' : ''"
-             :style="{ 'background-image': 'url(' + art.images[0].url + ')' }"
-             @mouseover="store.mouseOver($event)"
-             @mouseleave="store.mouseLeave($event)"
+        <div :class="['artist-card', getArtistMediaDisplay(art).displayClass.value, selected === art.id ? 'selected' : '']"
+             :style="getArtistMediaDisplay(art).backgroundStyle.value"
+             @mouseover="getArtistMediaDisplay(art).hasPreview.value && store.mouseOver($event)"
+             @mouseleave="getArtistMediaDisplay(art).hasPreview.value && store.mouseLeave($event)"
              @click="setActive(art.id);store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})">
           <div class="artist-overlay">
             <div class="artist-name">{{ art.name }}</div>
           </div>
-          <audio preload="auto" :src="art.preview_url"></audio>
-        </div>
-        
-        <div v-else-if="!art.preview_url && art.images[0]" 
-             class="artist-card unplayable"
-             :class="selected === art.id ? 'selected' : ''"
-             :style="{ 'background-image': 'url(' + art.images[0].url + ')' }"
-             @click="setActive(art.id);store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})">
-          <div class="artist-overlay">
-            <div class="artist-name">{{ art.name }}</div>
-          </div>
-          <audio></audio>
-        </div>
-        
-        <div v-else-if="art.preview_url && !art.images[0]" 
-             class="artist-card playable no-image"
-             :class="selected === art.id ? 'selected' : ''"
-             @mouseover="store.mouseOver($event)" 
-             @mouseleave="store.mouseLeave($event)"
-             @click="setActive(art.id);store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})">
-          <div class="artist-overlay">
-            <div class="artist-name">{{ art.name }}</div>
-          </div>
-          <audio preload="auto" :src="art.preview_url"></audio>
-        </div>
-        
-        <div v-else 
-             class="artist-card unplayable no-image"
-             :class="selected === art.id ? 'selected' : ''"
-             @click="setActive(art.id);store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})">
-          <div class="artist-overlay">
-            <div class="artist-name">{{ art.name }}</div>
-          </div>
-          <audio></audio>
+          <audio :preload="getArtistMediaDisplay(art).audioPreload.value" :src="getArtistMediaDisplay(art).audioSrc.value"></audio>
         </div>
       </div>
     </div>

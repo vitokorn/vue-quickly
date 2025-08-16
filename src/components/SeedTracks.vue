@@ -2,6 +2,7 @@
 import {useDMStore} from "../stores/dm-store";
 import {ref, computed} from "vue";
 import SortTracks from "./SortTracks.vue";
+import {useMediaDisplay} from "../composables/useMediaDisplay";
 
 const props = defineProps(['d', 'num'])
 const store = useDMStore()
@@ -32,6 +33,11 @@ const sortedSTItems = computed(() => {
   })
 })
 
+// Helper function to get media display for a track
+function getTrackMediaDisplay(track) {
+  return useMediaDisplay(computed(() => track))
+}
+
 function setActive(id) {
   selected.value = id
 }
@@ -54,12 +60,10 @@ function setActive(id) {
 
     <div class="tracks-grid">
       <div v-for="(track, index) in sortedSTItems" :key="index" class="track-card">
-        <div v-if="track.preview_url && track.album.images[0]"
-             class="track-item playable"
-             :class="selected === track.id ? 'selected' : ''"
-             :style="{ 'background-image': 'url(' + track.album.images[0].url + ')' }"
-             @mouseover="store.mouseOver($event)"
-             @mouseleave="store.mouseLeave($event)"
+        <div :class="['track-item', getTrackMediaDisplay(track).displayClass.value, selected === track.id ? 'selected' : '']"
+             :style="getTrackMediaDisplay(track).backgroundStyle.value"
+             @mouseover="getTrackMediaDisplay(track).hasPreview.value && store.mouseOver($event)"
+             @mouseleave="getTrackMediaDisplay(track).hasPreview.value && store.mouseLeave($event)"
              @click="setActive(track.id);store.deeperTracks({item:track,num:num,flag:false,sib:'seed_tracks',child:'st'+ d.id}); store.queuein(track)">
           <div class="track-overlay">
             <div class="track-info">
@@ -67,49 +71,7 @@ function setActive(id) {
               <div class="track-name">{{ track.name }}</div>
             </div>
           </div>
-          <audio preload="auto" :src="track.preview_url"></audio>
-        </div>
-
-        <div v-else-if="!track.preview_url && track.album.images[0]"
-             class="track-item unplayable"
-             :class="selected === track.id ? 'selected' : ''"
-             :style="{ 'background-image': 'url(' + track.album.images[0].url + ')' }"
-             @click="setActive(track.id);store.deeperTracks({item:track,num:num,flag:false,sib:'seed_tracks',child:'st'+ d.id}); store.queuein(track)">
-          <div class="track-overlay">
-            <div class="track-info">
-              <div class="track-artists">{{ track.artists.map(a => a.name).join(', ') }}</div>
-              <div class="track-name">{{ track.name }}</div>
-            </div>
-          </div>
-          <audio></audio>
-        </div>
-
-        <div v-else-if="track.preview_url && !track.album.images[0]"
-             class="track-item playable no-image"
-             :class="selected === track.id ? 'selected' : ''"
-             @mouseover="store.mouseOver($event)"
-             @mouseleave="store.mouseLeave($event)"
-             @click="setActive(track.id);store.deeperTracks({item:track,num:num,flag:false,sib:'seed_tracks',child:'st'+ d.id}); store.queuein(track)">
-          <div class="track-overlay">
-            <div class="track-info">
-              <div class="track-artists">{{ track.artists.map(a => a.name).join(', ') }}</div>
-              <div class="track-name">{{ track.name }}</div>
-            </div>
-          </div>
-          <audio preload="auto" :src="track.preview_url"></audio>
-        </div>
-
-        <div v-else
-             class="track-item unplayable no-image"
-             :class="selected === track.id ? 'selected' : ''"
-             @click="setActive(track.id);store.deeperTracks({item:track,num:num,flag:false,sib:'seed_tracks',child:'st'+ d.id}); store.queuein(track)">
-          <div class="track-overlay">
-            <div class="track-info">
-              <div class="track-artists">{{ track.artists.map(a => a.name).join(', ') }}</div>
-              <div class="track-name">{{ track.name }}</div>
-            </div>
-          </div>
-          <audio></audio>
+          <audio :preload="getTrackMediaDisplay(track).audioPreload.value" :src="getTrackMediaDisplay(track).audioSrc.value"></audio>
         </div>
       </div>
     </div>

@@ -316,8 +316,8 @@ handleResize()
           <Loader v-if="store.loader"/>
           <div id="yourplaylists" class="con2">
             <div class="rel">
-              <button class="btn" @click="store.reloadpl({event:$event})">
-                <img class="refresh-end" src="../../assets/refresh-icon.png" alt="">
+              <button class="refresh-button" @click="store.reloadpl({event:$event})">
+                <img class="refresh-icon" src="../../assets/refresh-icon.png" alt="Refresh">
               </button>
             </div>
             <div class="pl justify-content-center">
@@ -412,8 +412,8 @@ handleResize()
             <Loader v-if="store.loader"/>
             <div id="yourplaylists" class="con2">
               <div class="rel">
-                <button class="btn" @click="store.reloadpl({event:$event})">
-                  <img class="refresh-end" src="../../assets/refresh-icon.png" alt="">
+                <button class="refresh-button" @click="store.reloadpl({event:$event})">
+                  <img class="refresh-icon" src="../../assets/refresh-icon.png" alt="Refresh">
                 </button>
               </div>
               <div class="pl justify-content-center">
@@ -505,8 +505,8 @@ handleResize()
                     :class="store.selectedArtistsRange === 1 ? 'activetab':''">
                 Last month
               </span>
-                <button class="btn" @click="store.reloadartists({num:1,event:$event})">
-                  <img class="refresh-end" src="../../assets/refresh-icon.png" alt="">
+                <button class="refresh-button" @click="store.reloadartists({num:1,event:$event})">
+                  <img class="refresh-icon" src="../../assets/refresh-icon.png" alt="Refresh">
                 </button>
                 <span id="topartists6"
                       @click="store.switchArtist({num:2})"
@@ -515,8 +515,8 @@ handleResize()
                       class="mx-2">
                 Last 6 month
               </span>
-                <button class="btn" @click="store.reloadartists({num:2,event:$event})">
-                  <img class="refresh-end" src="../../assets/refresh-icon.png" alt="">
+                <button class="refresh-button" @click="store.reloadartists({num:2,event:$event})">
+                  <img class="refresh-icon" src="../../assets/refresh-icon.png" alt="Refresh">
                 </button>
                 <span id="topartistsall"
                       @click="store.switchArtist({num:3})"
@@ -525,8 +525,8 @@ handleResize()
                       class="mx-2">
                 All time
               </span>
-                <button class="btn" @click="store.reloadartists({num:3,event:$event})">
-                  <img class="refresh-end" src="../../assets/refresh-icon.png" alt="">
+                <button class="refresh-button" @click="store.reloadartists({num:3,event:$event})">
+                  <img class="refresh-icon" src="../../assets/refresh-icon.png" alt="Refresh">
                 </button>
               </div>
               <div id="topartist"
@@ -635,8 +635,8 @@ handleResize()
                     :class="store.selectedTracksRange === 1 ? 'activetab':''">
                 Last month
               </span>
-                <button class="btn" @click="store.reloadtracks({num:1,event:$event})">
-                  <img class="refresh-end" src="../../assets/refresh-icon.png" alt="">
+                <button class="refresh-button" @click="store.reloadtracks({num:1,event:$event})">
+                  <img class="refresh-icon" src="../../assets/refresh-icon.png" alt="Refresh">
                 </button>
                 <span id="toptracks6"
                       @click="store.switchTracks({num:2})"
@@ -645,8 +645,8 @@ handleResize()
                       class="mx-2">
                 Last 6 month
               </span>
-                <button class="btn" @click="store.reloadtracks({num:2,event:$event})">
-                  <img class="refresh-end" src="../../assets/refresh-icon.png" alt="">
+                <button class="refresh-button" @click="store.reloadtracks({num:2,event:$event})">
+                  <img class="refresh-icon" src="../../assets/refresh-icon.png" alt="Refresh">
                 </button>
                 <span id="toptracksall"
                       @click="store.switchTracks({num:3})"
@@ -655,8 +655,8 @@ handleResize()
                       class="mx-2">
                 All time
               </span>
-                <button class="btn" @click="store.reloadtracks({num:3,event:$event})">
-                  <img class="refresh-end" src="../../assets/refresh-icon.png" alt="">
+                <button class="refresh-button" @click="store.reloadtracks({num:3,event:$event})">
+                  <img class="refresh-icon" src="../../assets/refresh-icon.png" alt="Refresh">
                 </button>
               </div>
               <div id="toptracks"
@@ -799,6 +799,11 @@ handleResize()
             <Loader v-if="store.loader"/>
             <teleport to="#option4" :disabled="!accordionActive">
               <div id="savedalbum" class="display-flex flex-wrap" v-show="selectedTopMenu===4">
+                <div class="section-header">
+                  <button class="refresh-button" @click="store.reloadpl({event:$event})">
+                    <img class="refresh-icon" src="../../assets/refresh-icon.png" alt="Refresh">
+                  </button>
+                </div>
                 <SortAlbums v-model="selectedSASortOption"/>
                 <div class="display-flex flex-wrap">
                   <template v-for="(item,index) of sortedSAItems" :key="index">
@@ -829,6 +834,11 @@ handleResize()
             <Loader v-if="store.loader"/>
             <teleport to="#option5" :disabled="!accordionActive">
               <div id="savedtrack" class="display-flex flex-wrap" v-show="selectedTopMenu===5">
+                <div class="section-header">
+                  <button class="refresh-button" @click="store.reloadpl({event:$event})">
+                    <img class="refresh-icon" src="../../assets/refresh-icon.png" alt="Refresh">
+                  </button>
+                </div>
                 <SortTracks v-model="selectedSTSortOption"/>
                 <div class="display-flex flex-wrap">
                   <template v-for="(item,index) of sortedSTItems" :key="index">
@@ -877,6 +887,11 @@ handleResize()
             <Loader v-if="store.loader"/>
             <teleport to="#option6" :disabled="!accordionActive">
               <div id="followedartist" class="display-flex flex-wrap" v-show="selectedTopMenu===6">
+                <div class="section-header">
+                  <button class="refresh-button" @click="store.reloadartists({num:4,event:$event})">
+                    <img class="refresh-icon" src="../../assets/refresh-icon.png" alt="Refresh">
+                  </button>
+                </div>
                 <SortArtists v-model="selectedFASortOption"/>
                 <div class="display-flex flex-wrap">
                   <template v-for="(item,index) of sortedFAItems" :key="index">
@@ -912,6 +927,11 @@ handleResize()
             <Loader v-if="store.loader"/>
             <teleport to="#option7" :disabled="!accordionActive">
               <div id="newrelease" class="display-flex flex-wrap" v-show="selectedTopMenu===7">
+                <div class="section-header">
+                  <button class="refresh-button" @click="store.reloadpl({event:$event})">
+                    <img class="refresh-icon" src="../../assets/refresh-icon.png" alt="Refresh">
+                  </button>
+                </div>
                 <SortAlbums v-model="selectedNRSortOption"/>
                 <div class="display-flex flex-wrap">
                   <template v-for="(item,index) of sortedNRItems" :key="index">
@@ -1363,6 +1383,12 @@ handleResize()
 
 :root.dark .refresh-button {
   background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+:root.dark .refresh-button:hover {
+  background: rgba(240, 55, 165, 0.2);
+  box-shadow: 0 4px 12px rgba(240, 55, 165, 0.3);
 }
 
 
@@ -1531,6 +1557,50 @@ handleResize()
 :root.dark .modern-search:focus {
   background: rgba(255, 255, 255, 0.15);
   border-color: var(--active-tab);
+}
+
+/* Section Header Styling */
+.section-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+  padding: 8px 0;
+}
+
+.section-header .refresh-button {
+  margin-left: auto;
+}
+
+/* Enhanced Refresh Button Styling */
+.refresh-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(0, 0, 0, 0.05);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.refresh-button:hover {
+  background: rgba(240, 55, 165, 0.1);
+  transform: rotate(180deg);
+  box-shadow: 0 4px 12px rgba(240, 55, 165, 0.2);
+}
+
+.refresh-icon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.refresh-button:hover .refresh-icon {
+  opacity: 1;
 }
 
 /* Dark mode support */

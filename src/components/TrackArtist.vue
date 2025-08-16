@@ -1,10 +1,16 @@
 <script setup>
 import {useDMStore} from "../stores/dm-store";
-import {ref} from "vue";
+import {ref, computed} from "vue";
+import {useMediaDisplay} from "../composables/useMediaDisplay";
 
-defineProps(['d', 'num'])
+const props = defineProps(['d', 'num'])
 const store = useDMStore()
 const selected = ref()
+
+// Helper function to get media display for any item
+function getMediaDisplay(item) {
+  return useMediaDisplay(computed(() => item))
+}
 
 function setActive(id) {
   selected.value = id
@@ -18,42 +24,14 @@ function setActive(id) {
       <div v-if="ta.type==='artist'" class="artist-section" :id="'art'+ta.id">
         <div class="artist-header">
           <!-- Artist Cover -->
-          <div v-if="ta.preview_url && ta.images[0]"
-               class="artist-cover playable"
-               :style="{ 'background-image': 'url(' + ta.images[0].url + ')' }"
-               @mouseover="store.mouseOver($event)"
-               @mouseleave="store.mouseLeave($event)">
+          <div :class="['artist-cover', getMediaDisplay(ta).displayClass.value]"
+               :style="getMediaDisplay(ta).backgroundStyle.value"
+               @mouseover="getMediaDisplay(ta).hasPreview.value && store.mouseOver($event)"
+               @mouseleave="getMediaDisplay(ta).hasPreview.value && store.mouseLeave($event)">
             <div class="cover-overlay">
               <div class="artist-name">{{ ta.name }}</div>
             </div>
-            <audio preload="auto" :src="ta.preview_url"></audio>
-          </div>
-
-          <div v-else-if="!ta.preview_url && ta.images[0]"
-               class="artist-cover unplayable"
-               :style="{ 'background-image': 'url(' + ta.images[0].url + ')' }">
-            <div class="cover-overlay">
-              <div class="artist-name">{{ ta.name }}</div>
-            </div>
-            <audio></audio>
-          </div>
-
-          <div v-else-if="ta.preview_url && !ta.images[0]"
-               class="artist-cover playable no-image"
-               @mouseover="store.mouseOver($event)"
-               @mouseleave="store.mouseLeave($event)">
-            <div class="cover-overlay">
-              <div class="artist-name">{{ ta.name }}</div>
-            </div>
-            <audio preload="auto" :src="ta.preview_url"></audio>
-          </div>
-
-          <div v-else
-               class="artist-cover unplayable no-image">
-            <div class="cover-overlay">
-              <div class="artist-name">{{ ta.name }}</div>
-            </div>
-            <audio></audio>
+            <audio :preload="getMediaDisplay(ta).audioPreload.value" :src="getMediaDisplay(ta).audioSrc.value"></audio>
           </div>
 
           <!-- Artist Info -->
@@ -120,50 +98,15 @@ function setActive(id) {
 
       <div v-if="ta.type==='top_tracks'" class="tracks-grid">
         <div v-for="(tt, ttIndex) in ta['tracks']" :key="ttIndex">
-          <div v-if="tt.preview_url && tt.album.images[0]"
-               class="track-card playable"
-               :class="selected === tt.id ? 'selected' : ''"
-               :style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }"
-               @mouseover="store.mouseOver($event)"
-               @mouseleave="store.mouseLeave($event)"
+          <div :class="['track-card', getMediaDisplay(tt).displayClass.value, selected === tt.id ? 'selected' : '']"
+               :style="getMediaDisplay(tt).backgroundStyle.value"
+               @mouseover="getMediaDisplay(tt).hasPreview.value && store.mouseOver($event)"
+               @mouseleave="getMediaDisplay(tt).hasPreview.value && store.mouseLeave($event)"
                @click="setActive(tt.id);store.deeperTracks({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id}); store.queuein(tt)">
             <div class="track-overlay">
               <div class="track-name">{{ tt.name }}</div>
             </div>
-            <audio :src="tt.preview_url"></audio>
-          </div>
-
-          <div v-else-if="!tt.preview_url && tt.album.images[0]"
-               class="track-card unplayable"
-               :class="selected === tt.id ? 'selected' : ''"
-               :style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }"
-               @click="setActive(tt.id);store.deeperTracks({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id}); store.queuein(tt)">
-            <div class="track-overlay">
-              <div class="track-name">{{ tt.name }}</div>
-            </div>
-            <audio></audio>
-          </div>
-
-          <div v-else-if="tt.preview_url && !tt.album.images[0]"
-               class="track-card playable no-image"
-               :class="selected === tt.id ? 'selected' : ''"
-               @mouseover="store.mouseOver($event)"
-               @mouseleave="store.mouseLeave($event)"
-               @click="setActive(tt.id);store.deeperTracks({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id}); store.queuein(tt)">
-            <div class="track-overlay">
-              <div class="track-name">{{ tt.name }}</div>
-            </div>
-            <audio :src="tt.preview_url"></audio>
-          </div>
-
-          <div v-else
-               class="track-card unplayable no-image"
-               :class="selected === tt.id ? 'selected' : ''"
-               @click="setActive(tt.id);store.deeperTracks({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id}); store.queuein(tt)">
-            <div class="track-overlay">
-              <div class="track-name">{{ tt.name }}</div>
-            </div>
-            <audio></audio>
+            <audio :preload="getMediaDisplay(tt).audioPreload.value" :src="getMediaDisplay(tt).audioSrc.value"></audio>
           </div>
         </div>
       </div>
@@ -184,50 +127,15 @@ function setActive(id) {
       <div v-if="ta.type==='albums' && ta.length > 0 || ta.type==='single' && ta.length > 0 || ta.type==='appears_on' && ta.length > 0"
            class="albums-grid">
         <div v-for="(a, aIndex) in ta" :key="aIndex">
-          <div v-if="a.preview_url && a.images[0]"
-               class="album-card playable"
-               :class="selected === a.id ? 'selected' : ''"
+          <div :class="['album-card', getMediaDisplay(a).displayClass.value, selected === a.id ? 'selected' : '']"
+               :style="getMediaDisplay(a).backgroundStyle.value"
                @click="setActive(a.id);store.deeperAlbum({item:a,num:num,child:'art' + d[0].id,search:false})"
-               @mouseover="store.mouseOver($event)"
-               @mouseleave="store.mouseLeave($event)"
-               :style="{ 'background-image': 'url(' + a.images[0].url + ')' }">
+               @mouseover="getMediaDisplay(a).hasPreview.value && store.mouseOver($event)"
+               @mouseleave="getMediaDisplay(a).hasPreview.value && store.mouseLeave($event)">
             <div class="album-overlay">
               <div class="album-name">{{ a.name }}</div>
             </div>
-            <audio preload="auto" :src="a.preview_url"></audio>
-          </div>
-
-          <div v-else-if="!a.preview_url && a.images[0]"
-               class="album-card unplayable"
-               :class="selected === a.id ? 'selected' : ''"
-               @click="setActive(a.id);store.deeperAlbum({item:a,num:num,child:'art' + d[0].id,search:false})"
-               :style="{ 'background-image': 'url(' + a.images[0].url + ')' }">
-            <div class="album-overlay">
-              <div class="album-name">{{ a.name }}</div>
-            </div>
-            <audio></audio>
-          </div>
-
-          <div v-else-if="a.preview_url && !a.images[0]"
-               class="album-card playable no-image"
-               :class="selected === a.id ? 'selected' : ''"
-               @click="setActive(a.id);store.deeperAlbum({item:a,num:num,child:'art' + d[0].id,search:false})"
-               @mouseover="store.mouseOver($event)"
-               @mouseleave="store.mouseLeave($event)">
-            <div class="album-overlay">
-              <div class="album-name">{{ a.name }}</div>
-            </div>
-            <audio preload="auto" :src="a.preview_url"></audio>
-          </div>
-
-          <div v-else
-               class="album-card unplayable no-image"
-               :class="selected === a.id ? 'selected' : ''"
-               @click="setActive(a.id);store.deeperAlbum({item:a,num:num,child:'art' + d[0].id,search:false})">
-            <div class="album-overlay">
-              <div class="album-name">{{ a.name }}</div>
-            </div>
-            <audio></audio>
+            <audio :preload="getMediaDisplay(a).audioPreload.value" :src="getMediaDisplay(a).audioSrc.value"></audio>
           </div>
         </div>
       </div>
@@ -239,50 +147,15 @@ function setActive(id) {
 
       <div v-if="ta.type==='related-artists' && ta.length > 0" class="related-artists-grid">
         <div v-for="(r, rIndex) in ta" :key="rIndex">
-          <div v-if="r.preview_url && r.images[0]"
-               class="related-artist-card playable"
-               :class="selected === r.id ? 'selected' : ''"
-               :style="{ 'background-image': 'url(' + r.images[0].url + ')' }"
-               @mouseover="store.mouseOver($event)"
-               @mouseleave="store.mouseLeave($event)"
+          <div :class="['related-artist-card', getMediaDisplay(r).displayClass.value, selected === r.id ? 'selected' : '']"
+               :style="getMediaDisplay(r).backgroundStyle.value"
+               @mouseover="getMediaDisplay(r).hasPreview.value && store.mouseOver($event)"
+               @mouseleave="getMediaDisplay(r).hasPreview.value && store.mouseLeave($event)"
                @click="setActive(r.id);store.deeperartist({item:r,track:ta[rIndex],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
             <div class="artist-overlay">
               <div class="artist-name">{{ r.name }}</div>
             </div>
-            <audio preload="auto" :src="r.preview_url"></audio>
-          </div>
-
-          <div v-else-if="!r.preview_url && r.images[0]"
-               class="related-artist-card unplayable"
-               :class="selected === r.id ? 'selected' : ''"
-               :style="{ 'background-image': 'url(' + r.images[0].url + ')' }"
-               @click="setActive(r.id);store.deeperartist({item:r,track:ta[rIndex],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
-            <div class="artist-overlay">
-              <div class="artist-name">{{ r.name }}</div>
-            </div>
-            <audio></audio>
-          </div>
-
-          <div v-else-if="r.preview_url && !r.images[0]"
-               class="related-artist-card playable no-image"
-               :class="selected === r.id ? 'selected' : ''"
-               @mouseover="store.mouseOver($event)"
-               @mouseleave="store.mouseLeave($event)"
-               @click="setActive(r.id);store.deeperartist({item:r,track:ta[rIndex],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
-            <div class="artist-overlay">
-              <div class="artist-name">{{ r.name }}</div>
-            </div>
-            <audio preload="auto" :src="r.preview_url"></audio>
-          </div>
-
-          <div v-else
-               class="related-artist-card unplayable no-image"
-               :class="selected === r.id ? 'selected' : ''"
-               @click="setActive(r.id);store.deeperartist({item:r,track:ta[rIndex],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
-            <div class="artist-overlay">
-              <div class="artist-name">{{ r.name }}</div>
-            </div>
-            <audio></audio>
+            <audio :preload="getMediaDisplay(r).audioPreload.value" :src="getMediaDisplay(r).audioSrc.value"></audio>
           </div>
         </div>
       </div>

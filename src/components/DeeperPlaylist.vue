@@ -2,6 +2,7 @@
 import {useDMStore} from "../stores/dm-store";
 import {ref, computed} from "vue";
 import SortTracks from "./SortTracks.vue";
+import {useMediaDisplay} from "../composables/useMediaDisplay";
 
 const props = defineProps(['d', 'num'])
 const store = useDMStore()
@@ -9,7 +10,7 @@ const selected = ref()
 const selectedDeeperPlaylistSortOption = ref("")
 
 const sortedDeeperPlaylistItems = computed(() => {
-  const items = d.tracks?.items || []
+  const items = props.d.tracks?.items || []
   if (!selectedDeeperPlaylistSortOption.value) return items
 
   return [...items].sort((a, b) => {
@@ -34,6 +35,11 @@ const sortedDeeperPlaylistItems = computed(() => {
     }
   })
 })
+
+// Helper function to get media display for a track
+function getTrackMediaDisplay(track) {
+  return useMediaDisplay(computed(() => track))
+}
 
 function setActive(id) {
   selected.value = id
@@ -78,12 +84,10 @@ function setActive(id) {
 
     <div class="tracks-grid">
       <div v-for="(item, index) in sortedDeeperPlaylistItems" :key="index" class="track-card">
-        <div v-if="item.track.preview_url && item.track.album.images[0]"
-             class="track-item playable"
-             :class="selected === item.track.id ? 'selected' : ''"
-             :style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }"
-             @mouseover="store.mouseOver($event)"
-             @mouseleave="store.mouseLeave($event)"
+        <div :class="['track-item', getTrackMediaDisplay(item.track).displayClass.value, selected === item.track.id ? 'selected' : '']"
+             :style="getTrackMediaDisplay(item.track).backgroundStyle.value"
+             @mouseover="getTrackMediaDisplay(item.track).hasPreview.value && store.mouseOver($event)"
+             @mouseleave="getTrackMediaDisplay(item.track).hasPreview.value && store.mouseLeave($event)"
              @click="setActive(item.track.id);store.deeperTracks({item:item.track,num:num,flag:false,sib:'deeperplaylist',child:'p'+ d.id}); store.queuein(item.track)">
           <div class="track-overlay">
             <div class="track-info">
@@ -91,49 +95,7 @@ function setActive(id) {
               <div class="track-name">{{ item.track.name }}</div>
             </div>
           </div>
-          <audio preload="auto" :src="item.track.preview_url"></audio>
-        </div>
-
-        <div v-else-if="!item.track.preview_url && item.track.album.images[0]"
-             class="track-item unplayable"
-             :class="selected === item.track.id ? 'selected' : ''"
-             :style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }"
-             @click="setActive(item.track.id);store.deeperTracks({item:item.track,num:num,flag:false,sib:'deeperplaylist',child:'p'+ d.id}); store.queuein(item.track)">
-          <div class="track-overlay">
-            <div class="track-info">
-              <div class="track-artists">{{ item.track.artists.map(a => a.name).join(', ') }}</div>
-              <div class="track-name">{{ item.track.name }}</div>
-            </div>
-          </div>
-          <audio></audio>
-        </div>
-
-        <div v-else-if="item.track.preview_url && !item.track.album.images[0]"
-             class="track-item playable no-image"
-             :class="selected === item.track.id ? 'selected' : ''"
-             @mouseover="store.mouseOver($event)"
-             @mouseleave="store.mouseLeave($event)"
-             @click="setActive(item.track.id);store.deeperTracks({item:item.track,num:num,flag:false,sib:'deeperplaylist',child:'p'+ d.id}); store.queuein(item.track)">
-          <div class="track-overlay">
-            <div class="track-info">
-              <div class="track-artists">{{ item.track.artists.map(a => a.name).join(', ') }}</div>
-              <div class="track-name">{{ item.track.name }}</div>
-            </div>
-          </div>
-          <audio preload="auto" :src="item.track.preview_url"></audio>
-        </div>
-
-        <div v-else
-             class="track-item unplayable no-image"
-             :class="selected === item.track.id ? 'selected' : ''"
-             @click="setActive(item.track.id);store.deeperTracks({item:item.track,num:num,flag:false,sib:'deeperplaylist',child:'p'+ d.id}); store.queuein(item.track)">
-          <div class="track-overlay">
-            <div class="track-info">
-              <div class="track-artists">{{ item.track.artists.map(a => a.name).join(', ') }}</div>
-              <div class="track-name">{{ item.track.name }}</div>
-            </div>
-          </div>
-          <audio></audio>
+          <audio :preload="getTrackMediaDisplay(item.track).audioPreload.value" :src="getTrackMediaDisplay(item.track).audioSrc.value"></audio>
         </div>
       </div>
     </div>
