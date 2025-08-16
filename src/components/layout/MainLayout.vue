@@ -417,7 +417,7 @@ handleResize()
                    style="color: black;width: auto;"
                    :class="store.selectedArtistsRange===1 ? '': 'd-none'">
                 <SortArtists v-model="selectedTASortOption"/>
-                <div class="display-flex flex-wrap">
+                <div class="display-flex flex-wrap py-2">
                   <template v-for="(item,index) of sortedTAItems" :key="index">
                     <ArtistItem
                       :artist="item"
@@ -437,7 +437,7 @@ handleResize()
                    style="color: black;width: auto;"
                    :class="store.selectedArtistsRange===2 ? '': 'd-none'">
                 <SortArtists v-model="selectedTA6SortOption"/>
-                <div class="display-flex flex-wrap">
+                <div class="display-flex flex-wrap py-2">
                   <template v-for="(item,index) of sortedTA6Items" :key="index">
                     <ArtistItem
                       :artist="item"
@@ -457,7 +457,7 @@ handleResize()
                    style="color: black;width: auto;"
                    :class="store.selectedArtistsRange===3 ? '': 'd-none'">
                 <SortArtists v-model="selectedTALLSortOption"/>
-                <div class="display-flex flex-wrap">
+                <div class="display-flex flex-wrap py-2">
                   <template v-for="(item,index) of sortedTALLItems" :key="index">
                     <ArtistItem
                       :artist="item"
@@ -500,7 +500,7 @@ handleResize()
                    style="color: black;width: auto;"
                    :class="store.selectedTracksRange===1 ? '': 'd-none'">
                 <SortTracks v-model="selectedTTSortOption"/>
-                <div class="display-flex flex-wrap">
+                <div class="display-flex flex-wrap py-2">
                   <template v-for="(item,index) of sortedTTItems" :key="index">
                     <TrackItem
                       :track="item"
@@ -520,7 +520,7 @@ handleResize()
                    style="color: black;width: auto;"
                    :class="store.selectedTracksRange===2 ? '': 'd-none'">
                 <SortTracks v-model="selectedTTMSortOption"/>
-                <div class="display-flex flex-wrap">
+                <div class="display-flex flex-wrap py-2">
                   <template v-for="(item,index) of sortedTTMItems" :key="index">
                     <TrackItem
                       :track="item"
@@ -540,7 +540,7 @@ handleResize()
                    style="color: black;width: auto;"
                    :class="store.selectedTracksRange===3 ? '': 'd-none'">
                 <SortTracks v-model="selectedTTLSortOption"/>
-                <div class="display-flex flex-wrap">
+                <div class="display-flex flex-wrap py-2">
                   <template v-for="(item,index) of sortedTTLItems" :key="index">
                     <TrackItem
                       :track="item"
@@ -569,7 +569,7 @@ handleResize()
                   </button>
                 </div>
                 <SortAlbums v-model="selectedSASortOption"/>
-                <div class="display-flex flex-wrap">
+                <div class="display-flex flex-wrap py-2">
                   <template v-for="(item,index) of sortedSAItems" :key="index">
                     <AlbumItem
                       :album="item.album"
@@ -595,7 +595,7 @@ handleResize()
                   </button>
                 </div>
                 <SortTracks v-model="selectedSTSortOption"/>
-                <div class="display-flex flex-wrap">
+                <div class="display-flex flex-wrap py-2">
                   <template v-for="(item,index) of sortedSTItems" :key="index">
                     <TrackItem
                       :track="item.track"
@@ -624,7 +624,7 @@ handleResize()
                   </button>
                 </div>
                 <SortArtists v-model="selectedFASortOption"/>
-                <div class="display-flex flex-wrap">
+                <div class="display-flex flex-wrap py-2">
                   <template v-for="(item,index) of sortedFAItems" :key="index">
                     <ArtistItem
                       :artist="item"
@@ -653,7 +653,7 @@ handleResize()
                   </button>
                 </div>
                 <SortAlbums v-model="selectedNRSortOption"/>
-                <div class="display-flex flex-wrap">
+                <div class="display-flex flex-wrap py-2">
                   <template v-for="(item,index) of sortedNRItems" :key="index">
                     <NewReleaseItem
                       :album="item"
