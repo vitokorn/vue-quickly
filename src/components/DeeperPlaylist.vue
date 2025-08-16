@@ -1,13 +1,18 @@
 <script setup>
 import {useDMStore} from "../stores/dm-store";
-import {ref, computed} from "vue";
+import {ref, computed, onMounted} from "vue";
 import SortTracks from "./SortTracks.vue";
 import {useMediaDisplay} from "../composables/useMediaDisplay";
+import { useVisibilityManager } from "../composables/useVisibilityManager";
 
 const props = defineProps(['d', 'num'])
 const store = useDMStore()
 const selected = ref()
 const selectedDeeperPlaylistSortOption = ref("")
+const componentRef = ref(null)
+
+// Get visibility manager
+const visibilityManager = useVisibilityManager()
 
 const sortedDeeperPlaylistItems = computed(() => {
   const items = props.d.tracks?.items || []
@@ -44,10 +49,21 @@ function getTrackMediaDisplay(track) {
 function setActive(id) {
   selected.value = id
 }
+
+onMounted(() => {
+  // Register this component with the visibility manager
+  const playlistKey = `deeperplaylist_${props.d.id}`
+  visibilityManager.registerComponent(playlistKey, componentRef)
+  
+  // Initially hide the component
+  if (componentRef.value) {
+    componentRef.value.style.display = 'none'
+  }
+})
 </script>
 
 <template>
-  <div class="modern-playlist-card" :id="'p' + d.id">
+  <div class="modern-playlist-card" :id="'p' + d.id" ref="componentRef">
     <div class="playlist-header">
       <div class="playlist-info">
         <div class="playlist-title-section">

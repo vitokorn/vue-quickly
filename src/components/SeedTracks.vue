@@ -1,13 +1,18 @@
 <script setup>
 import {useDMStore} from "../stores/dm-store";
-import {ref, computed} from "vue";
+import {ref, computed, onMounted, nextTick} from "vue";
 import SortTracks from "./SortTracks.vue";
 import {useMediaDisplay} from "../composables/useMediaDisplay";
+import { useVisibilityManager } from "../composables/useVisibilityManager";
 
 const props = defineProps(['d', 'num'])
 const store = useDMStore()
 const selected = ref()
 const selectedSTSortOption = ref("")
+const componentRef = ref(null)
+
+// Get visibility manager
+const visibilityManager = useVisibilityManager()
 
 const sortedSTItems = computed(() => {
   const items = props.d.tracks || []
@@ -41,10 +46,19 @@ function getTrackMediaDisplay(track) {
 function setActive(id) {
   selected.value = id
 }
+
+onMounted(async () => {
+  // Wait for the next tick to ensure the ref is available
+  await nextTick()
+  
+  // Register this component with the visibility manager
+  const seedKey = `seed_tracks_${props.d.id}`
+  visibilityManager.registerComponent(seedKey, componentRef)
+})
 </script>
 
 <template>
-  <div class="modern-seed-tracks" :id="d.id">
+  <div class="modern-seed-tracks" :id="d.id" ref="componentRef">
     <div class="seed-header">
       <div class="seed-title">
         <span class="title-icon">🎵</span>

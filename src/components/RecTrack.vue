@@ -11,36 +11,40 @@ const props = defineProps(['num'])
 const store = useDMStore()
 
 function dab() {
-  console.log(props.num)
+  console.log('RecTrack dab() called with num:', props.num)
+  let result
   if (props.num === 1) {
-    return store.getDeeper1
+    result = store.getDeeper1
   } else if (props.num === 2) {
-    return store.getDeeper2
+    result = store.getDeeper2
   } else if (props.num === 3) {
-    return store.getDeeper3
+    result = store.getDeeper3
   } else if (props.num === 4) {
-    return store.getDeeper4
+    result = store.getDeeper4
   } else if (props.num === 5) {
-    return store.getDeeper5
+    result = store.getDeeper5
   } else if (props.num === 6) {
-    return store.getDeeper6
+    result = store.getDeeper6
   } else if (props.num === 7) {
-    return store.getDeeper7
+    result = store.getDeeper7
   } else if (props.num === 8) {
-    return store.getDeeper8
+    result = store.getDeeper8
   } else if (props.num === 9) {
-    return store.getDeeper9
+    result = store.getDeeper9
   } else if (props.num === 10) {
-    return store.getDeepers
+    result = store.getDeepers
   } else if (props.num === 22) {
-    return store.getDeeper22
+    result = store.getDeeper22
   } else if (props.num === 23) {
-    return store.getDeeper23
+    result = store.getDeeper23
   } else if (props.num === 32) {
-    return store.getDeeper32
+    result = store.getDeeper32
   } else if (props.num === 33) {
-    return store.getDeeper33
+    result = store.getDeeper33
   }
+  
+  console.log('RecTrack dab() returning:', result)
+  return result
 }
 </script>
 
@@ -48,6 +52,7 @@ function dab() {
   <div class="modern-recommendations">
     <div class="recommendations-container">
       <template v-for="(d, index) in dab()" :key="index">
+        <div style="display: none;">Debug: {{ d.type }} - {{ d.id }}</div>
 
         <!-- Seed tracks recommendations -->
         <SeedTracks v-if="d.type==='seed_tracks'" :id="d.id" :d="d" :num="num"></SeedTracks>

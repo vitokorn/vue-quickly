@@ -1,11 +1,16 @@
 <script setup>
 import {useDMStore} from "../stores/dm-store";
-import {ref, computed} from "vue";
+import {ref, computed, onMounted, nextTick, watch} from "vue";
 import {useMediaDisplay} from "../composables/useMediaDisplay";
+import { useVisibilityManager } from "../composables/useVisibilityManager";
 
 const props = defineProps(['d', 'num'])
 const store = useDMStore()
 const selected = ref()
+const componentRef = ref(null)
+
+// Get visibility manager
+const visibilityManager = useVisibilityManager()
 
 // Helper function to get media display for any item
 function getMediaDisplay(item) {
@@ -15,10 +20,19 @@ function getMediaDisplay(item) {
 function setActive(id) {
   selected.value = id
 }
+
+onMounted(async () => {
+  // Wait for the next tick to ensure the ref is available
+  await nextTick()
+  
+  // Register this component with the visibility manager
+  const artistKey = `trackartist_${props.d[0]?.id || 'default'}`
+  visibilityManager.registerComponent(artistKey, componentRef)
+})
 </script>
 
 <template>
-  <div class="modern-track-artist">
+  <div class="modern-track-artist" ref="componentRef">
     <template v-for="(ta, index) in d" :key="index">
       <!-- Artist Section -->
       <div v-if="ta.type==='artist'" class="artist-section" :id="'art'+ta.id">

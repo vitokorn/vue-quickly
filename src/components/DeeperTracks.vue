@@ -1,13 +1,18 @@
 <script setup>
 import {useDMStore} from "../stores/dm-store";
-import {onMounted, ref, computed} from "vue";
+import {onMounted, ref, computed, nextTick, watch} from "vue";
 import TrackCover from "./TrackCover.vue";
 import {useMediaDisplay} from "../composables/useMediaDisplay";
+import { useVisibilityManager } from "../composables/useVisibilityManager";
 
 const props = defineProps(['d', 'num'])
 const store = useDMStore()
 const selected = ref()
 const cover = ref(null)
+const componentRef = ref(null)
+
+// Get visibility manager
+const visibilityManager = useVisibilityManager()
 
 // Helper function to get media display for an artist
 function getArtistMediaDisplay(artist) {
@@ -30,13 +35,20 @@ function resolveCover() {
   console.log(cover.value)
 }
 
-onMounted(()=> {
-  resolveCover()
-})
+        onMounted(async ()=> {
+          resolveCover()
+          
+          // Wait for the next tick to ensure the ref is available
+          await nextTick()
+          
+          // Register this component with the visibility manager
+          const trackKey = `deepertracks_${props.d.id}`
+          visibilityManager.registerComponent(trackKey, componentRef)
+        })
 </script>
 
 <template>
-  <div class="modern-track-card" :id="'d'+d.id">
+  <div class="modern-track-card" :id="'d'+d.id" ref="componentRef">
     <div class="track-main">
       <track-cover :d="d" :cover="cover"></track-cover>
 

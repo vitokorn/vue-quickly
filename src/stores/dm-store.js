@@ -3,6 +3,7 @@ import axios from "axios";
 import titleCase from "../common/titleCase";
 import {Lists} from "../common/lists";
 import {toRaw} from "vue";
+import { useVisibilityManager } from "../composables/useVisibilityManager";
 
 export const useDMStore = defineStore('dm', {
         state: () => ({
@@ -110,8 +111,9 @@ export const useDMStore = defineStore('dm', {
         },
         actions: {
             setDeeper1(deeper1) {
-                console.log(deeper1)
+                console.log('setDeeper1 called with:', deeper1)
                 this.deeper1.push(deeper1)
+                console.log('deeper1 array now has:', this.deeper1.length, 'items')
             },
             setDeeper2(deeper2) {
                 this.deeper2.push(deeper2)
@@ -123,7 +125,9 @@ export const useDMStore = defineStore('dm', {
                 this.deeper23.push(deeper23);
             },
             setDeeper3(deeper3) {
+                console.log('setDeeper3 called with:', deeper3)
                 this.deeper3.push(deeper3);
+                console.log('deeper3 array now has:', this.deeper3.length, 'items')
             },
             setDeeper32(deeper32) {
                 this.deeper32.push(deeper32);
@@ -303,12 +307,16 @@ export const useDMStore = defineStore('dm', {
                 // }, 10);
             },
             async deeper(payload) {
-                console.log(261)
+                console.log('deeper called with:', payload)
                 let item = payload.item,
                     num = payload.num,
                     event = payload.event
                 console.log(item)
                 let target = event.target
+                
+                // Get visibility manager
+                const visibilityManager = useVisibilityManager()
+                
                 let exists = false
                 if (item.track) {
                     exists = this.tracks_data.find(dt => dt.id === item.track.id)
@@ -323,20 +331,23 @@ export const useDMStore = defineStore('dm', {
                 }
                 tracktrack.type = 'deepertracks'
                 tracktrack = toRaw(tracktrack)
-
-                let allTracks = document.querySelectorAll(".rectrack > div");
-                if (allTracks != null) {
-                    for await(let i of allTracks) {
-                        // eslint-disable-next-line no-empty
-                        console.log(item.id)
-                        if (i.id === 'd' + item.id) {
-                            i.style.display = 'flex'
-                        } else {
-                            console.log(301)
-                            i.style.display = 'none'
-                        }
-                    }
+                
+                // Use visibility manager instead of DOM manipulation
+                const trackKey = `deepertracks_${tracktrack.id}`
+                
+                console.log('deeper visibility management:', { trackKey, itemId: item.id })
+                console.log('Registered components:', visibilityManager.getRegisteredComponents())
+                console.log('Pending requests:', visibilityManager.getPendingRequests())
+                
+                // Check if component is already visible
+                if (visibilityManager.isComponentVisible(trackKey)) {
+                    console.log('Track component already visible:', trackKey)
+                    return
                 }
+                
+                // Hide all other components and show this one
+                console.log('Hiding all components and showing:', trackKey)
+                visibilityManager.hideAllComponents()
 
                 if (exists) {
                     tracktrack = exists
@@ -451,30 +462,26 @@ export const useDMStore = defineStore('dm', {
                     // console.log(tracktrack)
                     // console.log(this.deeper8)
                 } else if (num === 9) {
-
-                    let indexing = this.deeper9.indexOf(tt)
-                    if (!indexing) {
+                    console.log('Adding track to deeper9:', tracktrack.id)
+                    let indexing = this.deeper9.indexOf(tracktrack)
+                    if (indexing === -1) {
                         this.setDeeper9(tracktrack)
                     }
-                    // console.log(tt)
-                    // console.log(this.deeper9)
                 } else if (num === 10) {
+                    console.log('Adding track to deepers:', tracktrack.id)
                     let indexing = this.deepers.find(dt => dt.id === tracktrack.id)
                     if (!indexing) {
                         this.setDeepers(tracktrack)
                     }
-                    // console.log(this.deepers)
                 }
-                if (num !== 1 && num !== 5 && num !== 8 && !exists) {
-                    // setTimeout(() => {
-                    //   window.scrollTo({
-                    //     top:(document.getElementById('d'+ tracktrack.id)).offsetTop,
-                    //     behavior:'smooth'});
-                    // }, 10);
-                }
-                // setTimeout(() => {
-                //     document.getElementById('d' + tracktrack.id).scrollIntoView({behavior: "smooth"})
-                // }, 10);
+                
+                // Now show the specific track component
+                console.log('Showing track component:', trackKey)
+                visibilityManager.showComponent(trackKey)
+                
+                // Check if the request was pending
+                const pendingRequests = visibilityManager.getPendingRequests()
+                console.log('Pending requests after showComponent:', pendingRequests)
 
             },
             deepermobile: async function (payload) {
@@ -1991,11 +1998,16 @@ export const useDMStore = defineStore('dm', {
                     .catch()
             },
             async seedTracks(payload) {
+                console.log('seedTracks called with:', payload)
                 let pointer,
                     item = payload.item,
                     num = payload.num,
                     sib = payload.sib,
                     child = payload.child
+                
+                // Get visibility manager
+                const visibilityManager = useVisibilityManager()
+                
                 if (num === 1) {
                     pointer = 'yourplaylists'
                 } else if (num === 2) {
@@ -2023,44 +2035,30 @@ export const useDMStore = defineStore('dm', {
                 } else if (num === 10) {
                     pointer = 'search'
                 }
-                // console.log(item)
-                let alltop = document.querySelectorAll('#' + pointer + '> .rectrack > div.' + sib)
-                // console.log(alltop)
-                // console.log(sib)
-                // console.log(child)
+                
+                // Use visibility manager instead of DOM manipulation
+                const seedTracksKey = `seed_tracks_${item.id}`
+                
+                console.log('seedTracks visibility management:', { seedTracksKey, pointer, sib, child })
+                console.log('Registered components:', visibilityManager.getRegisteredComponents())
+                console.log('Pending requests:', visibilityManager.getPendingRequests())
+                
+                // Handle visibility based on parameters
                 if (child) {
-                    let par = document.getElementById(child).nextElementSibling
-                    // console.log(par)
-                    while (par != null) {
-                        par.style.display = 'none'
-                        if (par.nextElementSibling !== null && par.nextElementSibling.style.display !== 'none') {
-                            par = par.nextElementSibling
-                        } else if (par.nextElementSibling !== null && par.nextElementSibling.style.display === 'none') {
-                            par = par.nextElementSibling.nextElementSibling
-                        } else if (par.nextElementSibling === null) {
-                            par = null
-                        }
-                    }
-                } else if (sib !== false && alltop[alltop.length - 1].nextElementSibling !== null) {
-                    let par = alltop[alltop.length - 1].nextElementSibling
-                    while (par != null) {
-                        par.style.display = 'none'
-                        if (par.nextElementSibling !== null && par.nextElementSibling.style.display !== 'none') {
-                            par = par.nextElementSibling
-                        } else if (par.nextElementSibling !== null && par.nextElementSibling.style.display === 'none') {
-                            par = par.nextElementSibling.nextElementSibling
-                        } else if (par.nextElementSibling === null) {
-                            par = null
-                        }
-                    }
+                    // For child parameter, we want to keep existing components visible
+                    // and just show the new component
+                    console.log('Adding new seed tracks component with child:', child)
+                    // Don't hide existing components, just show the new one
+                } else if (sib !== false) {
+                    // For sibling parameter, we want to keep existing components visible
+                    // and just show the new component
+                    console.log('Adding new seed tracks component with sibling group:', sib)
+                    // Don't hide existing components, just show the new one
                 }
-                if (document.getElementById('st' + item.id)) {
-                    document.getElementById('st' + item.id).style.display = 'flex'
-                    // setTimeout(() => {
-                    //   window.scrollTo({
-                    //     top:(document.getElementById('st'+ item.id)).offsetTop,
-                    //     behavior:'smooth'});
-                    // }, 10);
+                
+                // Check if component is already visible
+                if (visibilityManager.isComponentVisible(seedTracksKey)) {
+                    console.log('Seed tracks component already visible:', seedTracksKey)
                     return
                 }
                 let exists = this.seed_tracks_data.find(dt => dt.id === 'st' + item.id)
@@ -2351,9 +2349,10 @@ export const useDMStore = defineStore('dm', {
                     pointer
                 item.type = 'deepertracks'
                 let exists = this.tracks_data.find(dt => dt.id === item.id)
-                // console.log(item)
-                // console.log(flag)
-                // console.log(sib)
+                
+                // Get visibility manager
+                const visibilityManager = useVisibilityManager()
+                
                 if (num === 1) {
                     pointer = 'yourplaylists'
                 } else if (num === 2) {
@@ -2381,56 +2380,138 @@ export const useDMStore = defineStore('dm', {
                 } else if (num === 10) {
                     pointer = 'search'
                 }
+                
                 if (exists) {
                     item = exists
                 } else {
                     let clone = structuredClone(toRaw(item));
                     this.tracks_data.push(clone)
                 }
-                let all = document.querySelectorAll('#' + pointer + '> .rectrack > div')
-                if (child) {
-                    let par = document.getElementById(child).parentElement.nextElementSibling
-                    while (par != null) {
-                        par.style.display = 'none'
-                        if (par.nextElementSibling !== null && par.nextElementSibling.style.display !== 'none') {
-                            par = par.nextElementSibling
-                        } else if (par.nextElementSibling !== null && par.nextElementSibling.style.display === 'none') {
-                            par = par.nextElementSibling.nextElementSibling
-                        } else if (par.nextElementSibling === null) {
-                            par = null
-                        }
+                
+                // First, add the item to the appropriate store array to ensure it gets rendered
+                if (num === 1) {
+                    let indexing = this.deeper1.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        console.log('Adding item to deeper1:', item.id)
+                        this.setDeeper1(item)
                     }
-                } else if (sib) {
-                    let alltop = document.querySelectorAll('#' + pointer + '> .rectrack > div.' + sib)
-                    let current = alltop[alltop.length - 1].nextElementSibling
-                    while (current != null) {
-                        // console.log(current)
-                        current.style.display = 'none'
-                        if (current.nextElementSibling !== null && current.nextElementSibling.style.display !== 'none') {
-                            current = current.nextElementSibling
-                        } else if (current.nextElementSibling !== null && current.nextElementSibling.style.display === 'none') {
-                            current = current.nextElementSibling.nextElementSibling
-                        } else if (current.nextElementSibling === null) {
-                            current = null
-                        }
-
+                } else if (num === 2) {
+                    let indexing = this.deeper2.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        console.log('Adding item to deeper2:', item.id)
+                        this.setDeeper2(item)
                     }
-                } else if (flag === true) {
-                    if (all.length !== 0 && all.length !== 0) {
-                        for (let i = 0; i < all.length; i++) {
-                            all[i].style.display = 'none'
-                        }
+                } else if (num === 22) {
+                    let indexing = this.deeper22.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        console.log('Adding item to deeper22:', item.id)
+                        this.setDeeper22(item)
+                    }
+                } else if (num === 23) {
+                    let indexing = this.deeper23.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        console.log('Adding item to deeper23:', item.id)
+                        this.setDeeper23(item)
+                    }
+                } else if (num === 3) {
+                    let indexing = this.deeper3.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        console.log('Adding item to deeper3:', item.id)
+                        this.setDeeper3(item)
+                    }
+                } else if (num === 32) {
+                    let indexing = this.deeper32.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        console.log('Adding item to deeper32:', item.id)
+                        this.setDeeper32(item)
+                    }
+                } else if (num === 33) {
+                    let indexing = this.deeper33.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        console.log('Adding item to deeper33:', item.id)
+                        this.setDeeper33(item)
+                    }
+                } else if (num === 4) {
+                    let indexing = this.deeper4.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        console.log('Adding item to deeper4:', item.id)
+                        this.setDeeper4(item)
+                    }
+                } else if (num === 5) {
+                    let indexing = this.deeper5.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        console.log('Adding item to deeper5:', item.id)
+                        this.setDeeper5(item)
+                    }
+                } else if (num === 6) {
+                    let indexing = this.deeper6.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        console.log('Adding item to deeper6:', item.id)
+                        this.setDeeper6(item)
+                    }
+                } else if (num === 7) {
+                    let indexing = this.deeper7.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        console.log('Adding item to deeper7:', item.id)
+                        this.setDeeper7(item)
+                    }
+                } else if (num === 8) {
+                    let indexing = this.deeper8.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        console.log('Adding item to deeper8:', item.id)
+                        this.setDeeper8(item)
+                    }
+                } else if (num === 9) {
+                    let indexing = this.deeper9.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        console.log('Adding item to deeper9:', item.id)
+                        this.setDeeper9(item)
+                    }
+                } else if (num === 10) {
+                    let indexing = this.deepers.find(dt => dt.id === item.id)
+                    if (!indexing) {
+                        console.log('Adding item to deepers:', item.id)
+                        this.setDeepers(item)
                     }
                 }
-                if (document.getElementById('d' + item.id)) {
-                    document.getElementById('d' + item.id).style.display = 'flex'
-                    // setTimeout(() => {
-                    //   window.scrollTo({
-                    //     top:(document.getElementById('d'+ item.id)).offsetTop,
-                    //     behavior:'smooth'});
-                    // }, 10);
+                
+                // Now use visibility manager to show the component
+                const trackKey = `deepertracks_${item.id}`
+                
+                console.log('deeperTracks called with:', { item: item.id, trackKey, pointer, child, sib, flag })
+                console.log('Registered components:', visibilityManager.getRegisteredComponents())
+                console.log('Pending requests:', visibilityManager.getPendingRequests())
+                
+                // Check if component is already visible
+                if (visibilityManager.isComponentVisible(trackKey)) {
+                    console.log('Component already visible:', trackKey)
                     return
                 }
+                
+                            // Handle visibility based on parameters
+            if (child) {
+                // For child parameter, we want to keep existing components visible
+                // and just show the new component
+                console.log('Adding new component with child:', pointer, child)
+                // Don't hide existing components, just show the new one
+            } else if (sib) {
+                // For sibling parameter, we want to keep existing components visible
+                // and just show the new component
+                console.log('Adding new component with sibling:', pointer, sib)
+                // Don't hide existing components, just show the new one
+            } else if (flag === true) {
+                // Hide all components in the section
+                console.log('Hiding section:', pointer)
+                visibilityManager.hideSection(pointer)
+            }
+                
+                // Show the specific track component
+                console.log('Showing component:', trackKey)
+                visibilityManager.showComponent(trackKey)
+                
+                // Check if the request was pending
+                const pendingRequests = visibilityManager.getPendingRequests()
+                console.log('Pending requests after showComponent:', pendingRequests)
                 if (!exists) {
                     axios.get('https://api.spotify.com/v1/me/tracks/contains?ids=' + item.id, {headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}})
                         .then((response) => {
@@ -2446,82 +2527,6 @@ export const useDMStore = defineStore('dm', {
                                 })
                             }
                         })
-                }
-                if (num === 1) {
-                    let indexing = this.deeper1.find(dt => dt.id === item.id)
-                    if (!indexing) {
-                        // eslint-disable-next-line no-undef
-                        this.setDeeper1(item)
-                    }
-                } else if (num === 2) {
-                    let indexing = this.deeper2.find(dt => dt.id === item.id)
-                    if (!indexing) {
-                        // eslint-disable-next-line no-undef
-                        this.setDeeper2(item)
-                    }
-                } else if (num === 22) {
-                    let indexing = this.deeper22.find(dt => dt.id === item.id)
-                    if (!indexing) {
-                        this.setDeeper22(item)
-                    }
-                } else if (num === 23) {
-                    let indexing = this.deeper23.find(dt => dt.id === item.id)
-                    if (!indexing) {
-                        this.setDeeper23(item)
-                    }
-                } else if (num === 3) {
-                    console.log(num)
-                    let indexing = this.deeper3.find(dt => dt.id === item.id)
-                    if (!indexing) {
-                        console.log(indexing)
-                        console.log(item)
-                        this.setDeeper3(item)
-                    }
-                } else if (num === 32) {
-                    let indexing = this.deeper32.find(dt => dt.id === item.id)
-                    if (!indexing) {
-                        this.setDeeper32(item)
-                    }
-                } else if (num === 33) {
-                    let indexing = this.deeper33.find(dt => dt.id === item.id)
-                    if (!indexing) {
-                        this.setDeeper33(item)
-                    }
-                } else if (num === 4) {
-                    let indexing = this.deeper4.find(dt => dt.id === item.id)
-                    if (!indexing) {
-                        this.setDeeper4(item)
-                    }
-                } else if (num === 5) {
-                    let indexing = this.deeper5.find(dt => dt.id === item.id)
-                    if (!indexing) {
-                        this.setDeeper5(item)
-                    }
-                } else if (num === 6) {
-                    let indexing = this.deeper6.find(dt => dt.id === item.id)
-                    if (!indexing) {
-                        this.setDeeper6(item)
-                    }
-                } else if (num === 7) {
-                    let indexing = this.deeper7.find(dt => dt.id === item.id)
-                    if (!indexing) {
-                        this.setDeeper7(item)
-                    }
-                } else if (num === 8) {
-                    let indexing = this.deeper8.find(dt => dt.id === item.id)
-                    if (!indexing) {
-                        this.setDeeper8(item)
-                    }
-                } else if (num === 9) {
-                    let indexing = this.deeper9.find(dt => dt.id === item.id)
-                    if (!indexing) {
-                        this.setDeeper9(item)
-                    }
-                } else if (num === 10) {
-                    let indexing = this.deepers.find(dt => dt.id === item.id)
-                    if (!indexing) {
-                        this.setDeepers(item)
-                    }
                 }
 
                 // setTimeout(() => {
@@ -2540,6 +2545,10 @@ export const useDMStore = defineStore('dm', {
                     sib = payload.sib,
                     child = payload.child
                 let exists = this.tracks_data.find(dt => dt.id === item.id)
+                
+                // Get visibility manager
+                const visibilityManager = useVisibilityManager()
+                
                 if (num === 1) {
                     pointer = 'yourplaylists'
                 } else if (num === 2) {
@@ -2569,132 +2578,139 @@ export const useDMStore = defineStore('dm', {
                 }
                 item.images = d.images
                 item.type = 'deepertracks2'
-                let all = document.querySelectorAll('#' + pointer + '> .rectrack > div')
-                if (child) {
-                    let par = document.getElementById(child).parentElement.nextElementSibling
-                    while (par != null) {
-                        par.style.display = 'none'
-                        if (par.nextElementSibling !== null && par.nextElementSibling.style.display !== 'none') {
-                            par = par.nextElementSibling
-                        } else if (par.nextElementSibling !== null && par.nextElementSibling.style.display === 'none') {
-                            par = par.nextElementSibling.nextElementSibling
-                        } else if (par.nextElementSibling === null) {
-                            par = null
-                        }
-                    }
-                } else if (sib) {
-                    let alltop = document.querySelectorAll('#' + pointer + '> .rectrack > div.' + sib)
-                    // console.log(pointer)
-                    // console.log(sib)
-                    // console.log(alltop)
-                    let current = alltop[alltop.length - 1].nextElementSibling
-                    while (current != null) {
-                        // console.log(current)
-                        current.style.display = 'none'
-                        if (current.nextElementSibling !== null && current.nextElementSibling.style.display !== 'none') {
-                            current = current.nextElementSibling
-                        } else if (current.nextElementSibling !== null && current.nextElementSibling.style.display === 'none') {
-                            current = current.nextElementSibling.nextElementSibling
-                        } else if (current.nextElementSibling === null) {
-                            current = null
-                        }
-
-                    }
-                }
-                if (document.getElementById('d' + item.id)) {
-                    document.getElementById('d' + item.id).style.display = 'flex'
-                    // setTimeout(() => {
-                    //   window.scrollTo({
-                    //     top:(document.getElementById('d'+ item.id)).offsetTop,
-                    //     behavior:'smooth'});
-                    // }, 10);
+                
+                // Use visibility manager instead of DOM manipulation
+                const trackKey = `deepertracks2_${item.id}`
+                
+                // Check if component is already visible
+                if (visibilityManager.isComponentVisible(trackKey)) {
                     return
                 }
-
-                if (exists) {
-                    item = exists
-                } else {
-                    let clone = structuredClone(toRaw(item));
-                    this.tracks_data.push(clone)
+                
+                // Handle visibility based on parameters
+                if (child) {
+                    // For child parameter, we want to keep existing components visible
+                    // and just show the new component
+                    console.log('Adding new deeperTracks2 component with child:', child)
+                    // Don't hide existing components, just show the new one
+                } else if (sib) {
+                    // For sibling parameter, we want to keep existing components visible
+                    // and just show the new component
+                    console.log('Adding new deeperTracks2 component with sibling:', sib)
+                    // Don't hide existing components, just show the new one
                 }
-
+                
+                // First, add the item to the appropriate store array to ensure it gets rendered
                 if (num === 1) {
+                    console.log('Adding deeperTracks2 to deeper1:', item.id)
                     let indexing = this.deeper1.find(dt => dt.id === item.id)
                     if (!indexing) {
-                        // eslint-disable-next-line no-undef
                         this.setDeeper1(item)
                     }
                 } else if (num === 2) {
+                    console.log('Adding deeperTracks2 to deeper2:', item.id)
                     let indexing = this.deeper2.find(dt => dt.id === item.id)
                     if (!indexing) {
-                        // eslint-disable-next-line no-undef
                         this.setDeeper2(item)
                     }
                 } else if (num === 22) {
+                    console.log('Adding deeperTracks2 to deeper22:', item.id)
                     let indexing = this.deeper22.find(dt => dt.id === item.id)
                     if (!indexing) {
                         this.setDeeper22(item)
                     }
                 } else if (num === 23) {
+                    console.log('Adding deeperTracks2 to deeper23:', item.id)
                     let indexing = this.deeper23.find(dt => dt.id === item.id)
                     if (!indexing) {
                         this.setDeeper23(item)
                     }
                 } else if (num === 3) {
+                    console.log('Adding deeperTracks2 to deeper3:', item.id)
                     let indexing = this.deeper3.find(dt => dt.id === item.id)
                     if (!indexing) {
                         this.setDeeper3(item)
                     }
                 } else if (num === 32) {
+                    console.log('Adding deeperTracks2 to deeper32:', item.id)
                     let indexing = this.deeper32.find(dt => dt.id === item.id)
                     if (!indexing) {
                         this.setDeeper32(item)
                     }
                 } else if (num === 33) {
+                    console.log('Adding deeperTracks2 to deeper33:', item.id)
                     let indexing = this.deeper33.find(dt => dt.id === item.id)
                     if (!indexing) {
                         this.setDeeper33(item)
                     }
                 } else if (num === 4) {
+                    console.log('Adding deeperTracks2 to deeper4:', item.id)
                     let indexing = this.deeper4.find(dt => dt.id === item.id)
                     if (!indexing) {
                         this.setDeeper4(item)
                     }
                 } else if (num === 5) {
+                    console.log('Adding deeperTracks2 to deeper5:', item.id)
                     let indexing = this.deeper5.find(dt => dt.id === item.id)
                     if (!indexing) {
                         this.setDeeper5(item)
                     }
                 } else if (num === 6) {
+                    console.log('Adding deeperTracks2 to deeper6:', item.id)
                     let indexing = this.deeper6.find(dt => dt.id === item.id)
                     if (!indexing) {
                         this.setDeeper6(item)
                     }
                 } else if (num === 7) {
+                    console.log('Adding deeperTracks2 to deeper7:', item.id)
                     let indexing = this.deeper7.find(dt => dt.id === item.id)
                     if (!indexing) {
                         this.setDeeper7(item)
                     }
                 } else if (num === 8) {
+                    console.log('Adding deeperTracks2 to deeper8:', item.id)
                     let indexing = this.deeper8.find(dt => dt.id === item.id)
                     if (!indexing) {
                         this.setDeeper8(item)
                     }
                 } else if (num === 9) {
+                    console.log('Adding deeperTracks2 to deeper9:', item.id)
                     let indexing = this.deeper9.find(dt => dt.id === item.id)
                     if (!indexing) {
                         this.setDeeper9(item)
                     }
                 } else if (num === 10) {
+                    console.log('Adding deeperTracks2 to deepers:', item.id)
                     let indexing = this.deepers.find(dt => dt.id === item.id)
                     if (!indexing) {
                         this.setDeepers(item)
                     }
                 }
+                
+                // Now show the specific track component
+                console.log('Showing deeperTracks2 component:', trackKey)
+                visibilityManager.showComponent(trackKey)
+                
+                if (!exists) {
+                    axios.get('https://api.spotify.com/v1/me/tracks/contains?ids=' + item.id, {headers: {'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)access_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")}})
+                        .then((response) => {
+                            item.followed = response.data[0]
+                        })
+                        .catch(error => {
+                            if (error.response.status === 401) {
+                                axios.get('/spotify/refresh_token/' + document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1")).then((response) => {
+                                    // console.log(response.data)
+                                    if (response.status === 200) {
+                                        this.deeperTracks(pointer, item, num, flag, sib, child)
+                                    }
+                                })
+                            }
+                        })
+                }
 
-                // setTimeout(() => {
-                //     document.getElementById('d' + item.id).scrollIntoView({behavior: "smooth"})
-                // }, 10);
+                // Check if the request was pending
+                const pendingRequests = visibilityManager.getPendingRequests()
+                console.log('Pending requests after showComponent:', pendingRequests)
             },
             deeperTracksM: async function (payload) {
                 let pointer,
@@ -3052,11 +3068,16 @@ export const useDMStore = defineStore('dm', {
                 // }, 10);
             },
             async seedArtist(payload) {
+                console.log('seedArtist called with:', payload)
                 let pointer,
                     item = payload.item,
                     num = payload.num,
                     sib = payload.sib,
                     child = payload.child
+                
+                // Get visibility manager
+                const visibilityManager = useVisibilityManager()
+                
                 if (num === 1) {
                     pointer = 'yourplaylists'
                 } else if (num === 2) {
@@ -3084,41 +3105,30 @@ export const useDMStore = defineStore('dm', {
                 } else if (num === 10) {
                     pointer = 'search'
                 }
-                let alltop = document.querySelectorAll('#' + pointer + '> .rectrack > div.' + sib)
-                // console.log(child)
+                
+                // Use visibility manager instead of DOM manipulation
+                const seedArtistKey = `seed_artists_${item.id}`
+                
+                console.log('seedArtist visibility management:', { seedArtistKey, pointer, sib, child })
+                console.log('Registered components:', visibilityManager.getRegisteredComponents())
+                console.log('Pending requests:', visibilityManager.getPendingRequests())
+                
+                // Handle visibility based on parameters
                 if (child) {
-                    let par = document.getElementById(child).parentElement.nextElementSibling
-                    // console.log(par)
-                    while (par != null) {
-                        par.style.display = 'none'
-                        if (par.nextElementSibling !== null && par.nextElementSibling.style.display !== 'none') {
-                            par = par.nextElementSibling
-                        } else if (par.nextElementSibling !== null && par.nextElementSibling.style.display === 'none') {
-                            par = par.nextElementSibling.nextElementSibling
-                        } else if (par.nextElementSibling === null) {
-                            par = null
-                        }
-                    }
-                } else if (sib !== false && alltop[alltop.length - 1] && alltop[alltop.length - 1].nextElementSibling !== null) {
-                    let par = alltop[alltop.length - 1].nextElementSibling
-                    while (par != null) {
-                        par.style.display = 'none'
-                        if (par.nextElementSibling !== null && par.nextElementSibling.style.display !== 'none') {
-                            par = par.nextElementSibling
-                        } else if (par.nextElementSibling !== null && par.nextElementSibling.style.display === 'none') {
-                            par = par.nextElementSibling.nextElementSibling
-                        } else if (par.nextElementSibling === null) {
-                            par = null
-                        }
-                    }
+                    // For child parameter, we want to keep existing components visible
+                    // and just show the new component
+                    console.log('Adding new seed artist component with child:', child)
+                    // Don't hide existing components, just show the new one
+                } else if (sib !== false) {
+                    // For sibling parameter, we want to keep existing components visible
+                    // and just show the new component
+                    console.log('Adding new seed artist component with sibling group:', sib)
+                    // Don't hide existing components, just show the new one
                 }
-                if (document.getElementById('sa' + item.id)) {
-                    document.getElementById('sa' + item.id).style.display = 'flex'
-                    // setTimeout(() => {
-                    //   window.scrollTo({
-                    //     top:(document.getElementById('sa'+ item.id)).offsetTop,
-                    //     behavior:'smooth'});
-                    // }, 10);
+                
+                // Check if component is already visible
+                if (visibilityManager.isComponentVisible(seedArtistKey)) {
+                    console.log('Seed artist component already visible:', seedArtistKey)
                     return
                 }
                 let exists = this.seed_artists_data.find(dt => dt.id === 'sa' + item.id)
@@ -3424,7 +3434,7 @@ export const useDMStore = defineStore('dm', {
                 }
             },
             deeperartist: async function (payload) {
-                console.log(4102)
+                console.log('deeperartist called with:', payload)
                 let pointer,
                     item = payload.item,
                     track = payload.track,
@@ -3432,6 +3442,10 @@ export const useDMStore = defineStore('dm', {
                     flag = payload.flag,
                     sib = payload.sib,
                     related = payload.related
+                
+                // Get visibility manager
+                const visibilityManager = useVisibilityManager()
+                
                 if (num === 1) {
                     pointer = 'yourplaylists'
                 } else if (num === 2) {
@@ -3459,59 +3473,41 @@ export const useDMStore = defineStore('dm', {
                 } else if (num === 10) {
                     pointer = 'search'
                 }
+                
                 let trackartist = []
                 trackartist.type = 'trackartist'
-
-                let all = document.querySelectorAll('#' + pointer + '> .rectrack > div')
-                let alltop = document.querySelectorAll('#' + pointer + '> .rectrack > div.' + sib)
-                let last = document.querySelector('#' + pointer + '> .rectrack > div.trackartist > div[id="art' + item.id + '"]')
-                // console.log(last)
-                // console.log(item.id)
+                
+                // Use visibility manager instead of DOM manipulation
+                const artistKey = `trackartist_${item.id}`
+                
+                console.log('deeperartist visibility management:', { artistKey, pointer, flag, sib, related })
+                console.log('Registered components:', visibilityManager.getRegisteredComponents())
+                console.log('Pending requests:', visibilityManager.getPendingRequests())
+                
+                // Handle visibility based on parameters
                 if (flag === true) {
-                    // console.log(item.id)
-                    if (all.length !== 0 && all.length !== 0) {
-                        for (let i = 0; i < all.length; i++) {
-                            // console.log(all[i])
-                            if (last !== null && all[i].firstChild.id === last.id && last.id === item.id) {
-                                last.parentElement.style.display = 'block'
-                            } else {
-                                // console.log(all[i])
-                                all[i].style.display = 'none'
-                            }
-                        }
-                    }
-                } else if (alltop.length !== 0 && alltop[alltop.length - 1].nextElementSibling !== null) {
-                    let par = alltop[alltop.length - 1].nextElementSibling
-                    while (par != null) {
-                        par.style.display = 'none'
-                        if (par.nextElementSibling !== null && par.nextElementSibling.style.display !== 'none') {
-                            par = par.nextElementSibling
-                        } else if (par.nextElementSibling !== null && par.nextElementSibling.style.display === 'none') {
-                            par = par.nextElementSibling.nextElementSibling
-                        } else if (par.nextElementSibling === null) {
-                            par = null
-                        }
-                    }
+                    // Hide all components except the current artist
+                    console.log('Hiding all components except current artist')
+                    visibilityManager.hideSection(pointer)
+                } else if (sib) {
+                    // For sibling parameter, we want to keep existing components visible
+                    // and just show the new component
+                    console.log('Adding new artist component with sibling:', pointer, sib)
+                    // Don't hide existing components, just show the new one
                 } else if (related) {
-                    let par = document.getElementById(related).parentElement.nextElementSibling
-                    while (par != null) {
-                        par.style.display = 'none'
-                        if (par.nextElementSibling !== null && par.nextElementSibling.style.display !== 'none') {
-                            par = par.nextElementSibling
-                        } else if (par.nextElementSibling !== null && par.nextElementSibling.style.display === 'none') {
-                            par = par.nextElementSibling.nextElementSibling
-                        } else if (par.nextElementSibling === null) {
-                            par = null
-                        }
-                    }
+                    // For related parameter, we want to keep existing components visible
+                    // and just show the new component
+                    console.log('Adding new artist component with related:', pointer, related)
+                    // Don't hide existing components, just show the new one
                 }
 
                 let exists = this.artists_data.find(dt => dt.id === item.id)
                 if (exists) {
-                    console.log(4203)
+                    console.log('Artist data already exists:', item.id)
                     trackartist = exists
                     trackartist.type = 'trackartist'
                 } else {
+                    console.log('Fetching new artist data for:', item.id)
                     await this.deeperArtistself({
                         item: item,
                         track: track
@@ -3522,50 +3518,65 @@ export const useDMStore = defineStore('dm', {
                     await this.deeperArtistAppear({item: item}).then(appear => trackartist.push(appear))
                     await this.deeperArtistRelated({item: item}).then(related => trackartist.push(related))
                     await new Promise(r => setTimeout(r, 2000));
-                    console.log(trackartist)
+                    console.log('Artist data fetched:', trackartist)
                     let clone = structuredClone(trackartist);
                     clone.id = item.id
                     this.artists_data.push(clone)
                 }
+                // First, add the item to the appropriate store array to ensure it gets rendered
                 if (num === 1) {
-                    console.log(4225)
+                    console.log('Adding artist to deeper1:', item.id)
                     this.setDeeper1(trackartist)
                 } else if (num === 2) {
+                    console.log('Adding artist to deeper2:', item.id)
                     this.setDeeper2(trackartist)
                 } else if (num === 22) {
+                    console.log('Adding artist to deeper22:', item.id)
                     this.setDeeper22(trackartist)
                 } else if (num === 23) {
+                    console.log('Adding artist to deeper23:', item.id)
                     this.setDeeper23(trackartist)
                 } else if (num === 3) {
-                    console.log(trackartist)
+                    console.log('Adding artist to deeper3:', item.id)
                     this.setDeeper3(trackartist)
                 } else if (num === 32) {
+                    console.log('Adding artist to deeper32:', item.id)
                     this.setDeeper32(trackartist)
                 } else if (num === 33) {
+                    console.log('Adding artist to deeper33:', item.id)
                     this.setDeeper33(trackartist)
                 } else if (num === 4) {
-                    console.log(trackartist)
+                    console.log('Adding artist to deeper4:', item.id)
                     this.setDeeper4(trackartist)
                 } else if (num === 5) {
+                    console.log('Adding artist to deeper5:', item.id)
                     this.setDeeper5(trackartist)
                 } else if (num === 6) {
+                    console.log('Adding artist to deeper6:', item.id)
                     this.setDeeper6(trackartist)
                 } else if (num === 7) {
+                    console.log('Adding artist to deeper7:', item.id)
                     this.setDeeper7(trackartist)
                 } else if (num === 8) {
+                    console.log('Adding artist to deeper8:', item.id)
                     this.setDeeper8(trackartist)
                 } else if (num === 9) {
+                    console.log('Adding artist to deeper9:', item.id)
                     this.setDeeper9(trackartist)
                 } else if (num === 10) {
+                    console.log('Adding artist to deepers:', item.id)
                     this.setDeepers(trackartist)
                 }
-                // setTimeout(() => {
-                //     const element = document.getElementById('art' + item.id);
-                //     if (element) {
-                //         element.scrollIntoView({behavior: "smooth"});
-                //     }
-                // }, 100);
-                console.log(trackartist)
+                
+                // Now show the specific artist component
+                console.log('Showing artist component:', artistKey)
+                visibilityManager.showComponent(artistKey)
+                
+                // Check if the request was pending
+                const pendingRequests = visibilityManager.getPendingRequests()
+                console.log('Pending requests after showComponent:', pendingRequests)
+                
+                console.log('Artist component data:', trackartist)
             },
             deeperartistmob: async function (payload) {
                 let pointer,
@@ -3980,10 +3991,15 @@ export const useDMStore = defineStore('dm', {
             },
 
             deeperAlbum: async function (payload) {
+                console.log('deeperAlbum called with:', payload)
                 let item = payload.item,
                     num = payload.num,
                     child = payload.child,
                     search = payload.search
+                
+                // Get visibility manager
+                const visibilityManager = useVisibilityManager()
+                
                 if (item.album) {
                     item = item.album
                     item.album = true
@@ -4003,39 +4019,30 @@ export const useDMStore = defineStore('dm', {
                     let clone = structuredClone(toRaw(item));
                     this.albums_data.push(clone)
                 }
-                console.log(exists)
-                console.log(child)
+                
+                // Use visibility manager instead of DOM manipulation
+                const albumKey = `deeperalbum_${item.id}`
+                
+                console.log('deeperAlbum visibility management:', { albumKey, child, search })
+                console.log('Registered components:', visibilityManager.getRegisteredComponents())
+                console.log('Pending requests:', visibilityManager.getPendingRequests())
+                
+                // Handle visibility based on parameters
                 if (child) {
-                    let par = document.getElementById(child).parentElement.nextElementSibling
-                    while (par != null) {
-                        par.style.display = 'none'
-                        if (par.nextElementSibling !== null && par.nextElementSibling.style.display !== 'none') {
-                            par = par.nextElementSibling
-                        } else if (par.nextElementSibling !== null && par.nextElementSibling.style.display === 'none') {
-                            par = par.nextElementSibling.nextElementSibling
-                        } else if (par.nextElementSibling === null) {
-                            par = null
-                        }
-                    }
+                    // For child parameter, we want to keep existing components visible
+                    // and just show the new component
+                    console.log('Adding new album component with child:', child)
+                    // Don't hide existing components, just show the new one
                 } else {
-                    let albs = document.querySelectorAll(".rectrack > div")
-                    console.log(albs)
-                    for (let i of albs) {
-                        if (i.id === 'alb' + item.id) {
-                            i.style.display = 'flex'
-                        } else {
-                            i.style.display = 'none'
-                        }
-                    }
+                    // For albums without child, we want to keep existing components visible
+                    // and just show the new component
+                    console.log('Adding new album component')
+                    // Don't hide existing components, just show the new one
                 }
-
-                if (document.getElementById('alb' + item.id)) {
-                    document.getElementById('alb' + item.id).style.display = 'flex'
-                    // setTimeout(() => {
-                    //   window.scrollTo({
-                    //     top:(document.getElementById('sa'+ item.id)).offsetTop,
-                    //     behavior:'smooth'});
-                    // }, 10);
+                
+                // Check if component is already visible
+                if (visibilityManager.isComponentVisible(albumKey)) {
+                    console.log('Album component already visible:', albumKey)
                     return
                 }
 
@@ -4061,82 +4068,100 @@ export const useDMStore = defineStore('dm', {
                 }
 
 
+                // First, add the item to the appropriate store array to ensure it gets rendered
                 if (num === 1) {
+                    console.log('Adding album to deeper1:', item.id)
                     let indexing = this.deeper1.find(dt => dt.id === item.id)
                     if (!indexing) {
-                        // eslint-disable-next-line no-undef
                         this.setDeeper1(item)
                     }
                 } else if (num === 2) {
+                    console.log('Adding album to deeper2:', item.id)
                     let indexing = this.deeper2.find(dt => dt.id === item.id)
                     if (!indexing) {
-                        // eslint-disable-next-line no-undef
                         this.setDeeper2(item)
                     }
                 } else if (num === 22) {
+                    console.log('Adding album to deeper22:', item.id)
                     let indexing = this.deeper22.find(dt => dt.id === item.id)
                     if (!indexing) {
                         this.setDeeper22(item)
                     }
                 } else if (num === 23) {
+                    console.log('Adding album to deeper23:', item.id)
                     let indexing = this.deeper23.find(dt => dt.id === item.id)
                     if (!indexing) {
                         this.setDeeper23(item)
                     }
                 } else if (num === 3) {
+                    console.log('Adding album to deeper3:', item.id)
                     let indexing = this.deeper3.find(dt => dt.id === item.id)
                     if (!indexing) {
                         this.setDeeper3(item)
                     }
                 } else if (num === 32) {
+                    console.log('Adding album to deeper32:', item.id)
                     let indexing = this.deeper32.find(dt => dt.id === item.id)
                     if (!indexing) {
                         this.setDeeper32(item)
                     }
                 } else if (num === 33) {
+                    console.log('Adding album to deeper33:', item.id)
                     let indexing = this.deeper33.find(dt => dt.id === item.id)
                     if (!indexing) {
                         this.setDeeper33(item)
                     }
                 } else if (num === 4) {
-                    console.log(item)
+                    console.log('Adding album to deeper4:', item.id)
                     let indexing = this.deeper4.find(dt => dt.id === item.id)
                     if (!indexing) {
                         this.setDeeper4(item)
                     }
                 } else if (num === 5) {
+                    console.log('Adding album to deeper5:', item.id)
                     let indexing = this.deeper5.find(dt => dt.id === item.id)
                     if (!indexing) {
                         this.setDeeper5(item)
                     }
                 } else if (num === 6) {
+                    console.log('Adding album to deeper6:', item.id)
                     let indexing = this.deeper6.find(dt => dt.id === item.id)
                     if (!indexing) {
                         this.setDeeper6(item)
                     }
                 } else if (num === 7) {
+                    console.log('Adding album to deeper7:', item.id)
                     let indexing = this.deeper7.find(dt => dt.id === item.id)
                     if (!indexing) {
                         this.setDeeper7(item)
                     }
                 } else if (num === 8) {
+                    console.log('Adding album to deeper8:', item.id)
                     let indexing = this.deeper8.find(dt => dt.id === item.id)
                     if (!indexing) {
                         this.setDeeper8(item)
                     }
                 } else if (num === 9) {
+                    console.log('Adding album to deeper9:', item.id)
                     let indexing = this.deeper9.find(dt => dt.id === item.id)
                     if (!indexing) {
                         this.setDeeper9(item)
                     }
                 } else if (num === 10) {
+                    console.log('Adding album to deepers:', item.id)
                     let indexing = this.deepers.find(dt => dt.id === item.id)
-                    console.log(indexing)
                     if (!indexing) {
                         this.setDeepers(item)
                     }
-                    console.log(this.deepers)
                 }
+                
+                // Now show the specific album component
+                console.log('Showing album component:', albumKey)
+                visibilityManager.showComponent(albumKey)
+                
+                // Check if the request was pending
+                const pendingRequests = visibilityManager.getPendingRequests()
+                console.log('Pending requests after showComponent:', pendingRequests)
                 // setTimeout(() => {
                 //     document.getElementById('alb' + item.id).scrollIntoView({behavior: "smooth"})
                 // }, 100);

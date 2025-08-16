@@ -1,13 +1,18 @@
 <script setup>
 import {useDMStore} from "../stores/dm-store";
-import {ref, computed, onMounted} from "vue";
+import {ref, computed, onMounted, nextTick} from "vue";
 import TrackCover from "./TrackCover.vue";
 import {useMediaDisplay} from "../composables/useMediaDisplay";
+import { useVisibilityManager } from "../composables/useVisibilityManager";
 
 const props = defineProps(['d', 'num'])
 const store = useDMStore()
 const selected = ref()
 const tracks = ref([])
+const componentRef = ref(null)
+
+// Get visibility manager
+const visibilityManager = useVisibilityManager()
 
 // Helper function to get media display for a track with album cover
 function getTrackMediaDisplay(track) {
@@ -17,6 +22,7 @@ function getTrackMediaDisplay(track) {
 function setActive(id) {
   selected.value = id
 }
+
 function resolveTracks() {
   if (props.d.tracks && props.d.tracks.items) {
     tracks.value = props.d.tracks.items
@@ -26,14 +32,22 @@ function resolveTracks() {
     tracks.value = props.d.items;
   }
 }
-onMounted(()=> {
+
+onMounted(async ()=> {
   resolveTracks()
+  
+  // Wait for the next tick to ensure the ref is available
+  await nextTick()
+  
+  // Register this component with the visibility manager
+  const albumKey = `deeperalbum_${props.d.id}`
+  visibilityManager.registerComponent(albumKey, componentRef)
 })
 </script>
 
 <template>
 
-  <div class="modern-album-card" :id="'a'+d.id">
+  <div class="modern-album-card" :id="'a'+d.id" ref="componentRef">
     <div class="track-main">
       <track-cover :d="d" :cover="d.images[0]"></track-cover>
 
