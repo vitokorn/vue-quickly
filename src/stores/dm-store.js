@@ -1581,67 +1581,40 @@ export const useDMStore = defineStore('dm', {
                 let num = payload.num,
                     event = payload.event
                 let target = event.target
-                // console.log(target.previousSibling)
+                
+                // Set refresh button state
                 target.className = 'refresh-start'
+                
+                // Clear the appropriate items array based on num
                 if (num === 1) {
-                    let div = "<div id='reloader' class='loading waitingForConnection'>Reloading<span>.</span><span>.</span><span>.</span></div>"
-                    document.querySelector('#toptrack').insertAdjacentHTML("afterbegin", div)
                     this.setItems([])
                     setTimeout(() => {
                         let event = {}
                         event.target = document.querySelector('#toptracks')
                         this.fetchApi(event)
-                        document.getElementById("reloader").remove()
                         target.className = 'refresh-end'
                     }, 1000)
                 } else if (num === 2) {
                     this.setItemsM([])
-                    let div = "<div id='reloader' class='loading waitingForConnection'>Reloading<span>.</span><span>.</span><span>.</span></div>"
-                    document.querySelector('#toptrack6').insertAdjacentHTML("afterbegin", div)
                     setTimeout(() => {
                         let event = {}
                         event.target = document.querySelector('#toptrackssix')
                         this.fetchApi2(event)
-                        document.getElementById("reloader").remove()
                         target.className = 'refresh-end'
                     }, 1000)
                 } else if (num === 3) {
                     this.setItemsL([])
-                    let div = "<div id='reloader' class='loading waitingForConnection'>Reloading<span>.</span><span>.</span><span>.</span></div>"
-                    document.querySelector('#toptrackall').insertAdjacentHTML("afterbegin", div)
                     setTimeout(() => {
                         let event = {}
                         event.target = document.querySelector('#toptracksall')
                         this.fetchApi3(event)
-                        document.getElementById("reloader").remove()
                         target.className = 'refresh-end'
                     }, 1000)
                 }
-                if (num === 1) {
-                    document.getElementById('toptrack').style.display = 'flex'
-                    document.getElementById('toptracks').className = 'activetab'
-                    document.getElementById('toptrack6').style.display = 'none'
-                    document.getElementById('toptrackssix').className = ''
-                    document.getElementById('toptrackall').style.display = 'none'
-                    document.getElementById('toptracksall').className = ''
-                    this.setTtactivetab(document.getElementById('toptrack'))
-                } else if (num === 2) {
-                    document.getElementById('toptrack').style.display = 'none'
-                    document.getElementById('toptracks').className = ''
-                    document.getElementById('toptrack6').style.display = 'flex'
-                    document.getElementById('toptrackssix').className = 'activetab'
-                    document.getElementById('toptrackall').style.display = 'none'
-                    document.getElementById('toptracksall').className = ''
-                    this.setTtactivetab(document.getElementById('toptrack6'))
-                } else if (num === 3) {
-                    document.getElementById('toptrack').style.display = 'none'
-                    document.getElementById('toptracks').className = ''
-                    document.getElementById('toptrack6').style.display = 'none'
-                    document.getElementById('toptrackssix').className = ''
-                    document.getElementById('toptrackall').style.display = 'flex'
-                    document.getElementById('toptracksall').className = 'activetab'
-                    this.setTtactivetab(document.getElementById('toptrackall'))
-                }
+                
+                // Note: The tab switching logic should be handled by the component itself
+                // rather than direct DOM manipulation. The component should react to
+                // changes in the store state to show/hide appropriate tabs.
             },
             reloadSA(payload) {
                 let num = payload.num,
@@ -1811,12 +1784,12 @@ export const useDMStore = defineStore('dm', {
                                 this.setDeepers(data)
                             }
                         }
+                        // Use visibility manager to scroll to the component
+                        const visibilityManager = useVisibilityManager()
+                        const seedArtistKey = `seed_artists_${id}`
                         setTimeout(() => {
-                            window.scrollTo({
-                                top: (document.getElementById(id)).offsetTop,
-                                behavior: 'smooth'
-                            });
-                        }, 10);
+                            visibilityManager.scrollToComponent(seedArtistKey)
+                        }, 100);
                     })
                     .catch()
             },
@@ -1988,12 +1961,12 @@ export const useDMStore = defineStore('dm', {
                                 this.setDeepers(data)
                             }
                         }
+                        // Use visibility manager to scroll to the component
+                        const visibilityManager = useVisibilityManager()
+                        const seedTracksKey = `seed_tracks_${id}`
                         setTimeout(() => {
-                            window.scrollTo({
-                                top: (document.getElementById(id)).offsetTop,
-                                behavior: 'smooth'
-                            });
-                        }, 10);
+                            visibilityManager.scrollToComponent(seedTracksKey)
+                        }, 100);
                     })
                     .catch()
             },
