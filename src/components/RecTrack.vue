@@ -4,7 +4,6 @@ import Playlist from "./Playlist.vue";
 import SeedTracks from "./SeedTracks.vue";
 import TrackArtist from "./TrackArtist.vue";
 import DeeperTracks from "./DeeperTracks.vue";
-import DeeperTracks2 from "./DeeperTracks2.vue";
 import DeeperAlbum from "./DeeperAlbum.vue";
 import SeedArtists from "./SeedArtists.vue";
 import DeeperPlaylist from "./DeeperPlaylist.vue";
@@ -72,11 +71,9 @@ function dab() {
         <!-- Track artist recommendations -->
         <TrackArtist v-else-if="d.type==='trackartist'" :d="d" :num="num"></TrackArtist>
 
-        <!-- Deeper tracks recommendations -->
+        <!-- Deeper tracks recommendations (merged DeeperTracks and DeeperTracks2) -->
         <DeeperTracks v-else-if="d.type==='deepertracks'" :d="d" :num="num"></DeeperTracks>
-
-        <!-- Deeper tracks 2 recommendations -->
-        <DeeperTracks2 v-else-if="d.type==='deeper_tracks2'" :d="d" :num="num"></DeeperTracks2>
+        <DeeperTracks v-else-if="d.type==='deepertracks2'" :d="d" :num="num"></DeeperTracks>
 
         <!-- Deeper album recommendations -->
         <DeeperAlbum v-else-if="d.type==='deeperalbum'" :d="d" :num="num"></DeeperAlbum>

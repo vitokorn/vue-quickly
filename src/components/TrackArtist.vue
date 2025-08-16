@@ -167,7 +167,7 @@ function setActive(id) {
 .modern-track-artist {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 16px;
 }
 
 .artist-section {
@@ -424,8 +424,8 @@ function setActive(id) {
 .related-artists-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 16px;
-  padding: 24px;
+  gap: 0px;
+  padding: 0 24px;
 }
 
 .track-card,
@@ -523,8 +523,8 @@ function setActive(id) {
   .albums-grid,
   .related-artists-grid {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 12px;
-    padding: 20px;
+    gap: 0px;
+    padding: 0 20px;
   }
 
   .track-card,
@@ -536,7 +536,7 @@ function setActive(id) {
 
 @media (max-width: 480px) {
   .modern-track-artist {
-    gap: 24px;
+    gap: 12px;
   }
 
   .artist-header {
@@ -556,8 +556,8 @@ function setActive(id) {
   .albums-grid,
   .related-artists-grid {
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 8px;
-    padding: 16px;
+    gap: 0px;
+    padding: 0 16px;
   }
 
   .track-card,

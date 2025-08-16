@@ -93,7 +93,7 @@
     --button-background-color: transparent;
     --button-background-border: 2px solid #4caf50;
     --reset-color: black;
-    --title-color: black;
+    --title-color: white;
     --card2-background-color: #3f3d58;
     --pl-color: #333;
     --pl-background-color: white;
@@ -103,7 +103,7 @@
     --input-color: grey;
     --border-top: #e7eaec;
     --box-shadow: 0 2px 4px 1px rgba(0, 0, 0, .18);
-    --search-color: black;
+    --search-color: grey;
     --checkbox-color: invert(0%) hue-rotate(70deg) brightness(150.1%);
     --modal-background: #0a0a0a;
     --modal-color: #ffffff;
@@ -1142,7 +1142,6 @@ input[type=checkbox] {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
     gap: 16px;
-    padding: 24px;
 }
 
 .track-item {
@@ -1330,7 +1329,7 @@ input[type=checkbox] {
 .tracks-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 16px;
+  gap: 0px;
   padding: 24px;
 }
 
@@ -1657,7 +1656,7 @@ input[type=checkbox] {
 .modern-track-artist {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 16px;
 }
 
 .artist-section {
@@ -1803,7 +1802,7 @@ input[type=checkbox] {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 16px;
-  padding: 24px;
+  padding: 0 24px;
 }
 
 .album-card,
@@ -1941,8 +1940,8 @@ input[type=checkbox] {
   .albums-grid,
   .related-artists-grid {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 12px;
-    padding: 20px;
+    gap: 0px;
+    padding: 0 20px;
   }
 
   .track-item,
@@ -1989,7 +1988,7 @@ input[type=checkbox] {
   .modern-seed-artists,
   .modern-seed-tracks,
   .modern-track-artist {
-    margin-bottom: 16px;
+    margin-bottom: 8px;
   }
 
   .album-header,
@@ -2016,8 +2015,8 @@ input[type=checkbox] {
   .albums-grid,
   .related-artists-grid {
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 8px;
-    padding: 16px;
+    gap: 0px;
+    padding: 0 16px;
   }
 
   .track-item,
