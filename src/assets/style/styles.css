@@ -209,6 +209,8 @@ h1 {
 .con3:hover {
     color: white;
     text-shadow: black 0 0 3px;
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
     cursor: pointer;
 }
 
@@ -272,6 +274,8 @@ h1 {
     .con3:hover {
         color: white;
         text-shadow: black 0 0 3px;
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         cursor: pointer;
     }
 }
@@ -301,6 +305,8 @@ h1 {
     .con3:hover {
         color: white;
         text-shadow: black 0 0 3px;
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         cursor: pointer;
     }
 }
@@ -326,6 +332,8 @@ h1 {
     .con3:hover {
         color: white;
         text-shadow: black 0 0 3px;
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         cursor: pointer;
     }
 }
@@ -351,6 +359,8 @@ h1 {
     .con3:hover {
         color: white;
         text-shadow: black 0 0 3px;
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         cursor: pointer;
     }
 }
@@ -1347,7 +1357,7 @@ input[type=checkbox] {
 }
 
 .track-card {
-  position: relative;
+    position: relative;
 }
 
 .track-card:hover {
@@ -1398,7 +1408,17 @@ input[type=checkbox] {
     right: 0;
     background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
     padding: 16px;
-    color: white;
+    color: transparent !important;
+    transition: color 0.3s ease;
+    pointer-events: none;
+}
+
+.track-card:hover .track-overlay {
+    color: white !important;
+}
+
+.track-card.selected .track-overlay {
+    color: white !important;
 }
 
 .track-info {
@@ -1579,7 +1599,17 @@ input[type=checkbox] {
     right: 0;
     background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
     padding: 12px;
-    color: white;
+    color: transparent !important;
+    transition: color 0.3s ease;
+    pointer-events: none;
+}
+
+.related-artist-card:hover .artist-overlay {
+    color: white !important;
+}
+
+.related-artist-card.selected .artist-overlay {
+    color: white !important;
 }
 
 .artist-name {
@@ -1884,7 +1914,17 @@ input[type=checkbox] {
     right: 0;
     background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
     padding: 16px;
-    color: white;
+    color: transparent !important;
+    transition: color 0.3s ease;
+    pointer-events: none;
+}
+
+.album-card:hover .album-overlay {
+    color: white !important;
+}
+
+.album-card.selected .album-overlay {
+    color: white !important;
 }
 
 .album-name {

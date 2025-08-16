@@ -974,6 +974,8 @@ handleResize()
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1));
   opacity: 0;
   transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: -1;
 }
 
 .con3:hover::before {
@@ -985,7 +987,45 @@ handleResize()
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
+.con3.half-opacity {
+  opacity: 0.6;
+}
+
+.con3.half-opacity:hover {
+  opacity: 0.8;
+}
+
+.con3.no-image {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.con3.no-image::before {
+  display: none;
+}
+
+/* Audio element styling */
+.con3 audio {
+  display: none;
+}
+
+/* Focus styles for accessibility */
+.con3:focus {
+  outline: 2px solid var(--active-tab);
+  outline-offset: 2px;
+}
+
+/* Dark mode support */
+:root.dark .con3 {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+:root.dark .con3:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
 .con3.selected {
+  color: white;
+  text-shadow: black 0 0 3px;
   border: 3px solid var(--active-tab);
   box-shadow: 0 0 20px rgba(240, 55, 165, 0.4);
 }

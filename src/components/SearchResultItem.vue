@@ -210,6 +210,8 @@ const shouldDisplay = computed(() => {
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1));
   opacity: 0;
   transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: -1;
 }
 
 .itemImg:hover::before {
