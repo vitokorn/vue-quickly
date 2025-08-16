@@ -153,22 +153,41 @@ export const useDeeperStore = defineStore('deeper', {
       // Initialize visibility manager before any usage
       const visibilityManager = useVisibilityManager()
 
-      // If this is a new ROOT track, replace root and purge children of previous root
+      // If this is a new ROOT track, replace root and purge entire subtree of previous root
       if (!effectiveParentKey) {
         const sectionItems = this.sections[sectionName] || []
         const prevRoot = sectionItems.find(it => it.type === 'deepertracks' && (!it.parentKey || it.parentKey === null))
         if (prevRoot && prevRoot.id !== trackData.id) {
-          // Remove children of previous root from section (any type with parentKey = prevRoot.id)
-          this.sections[sectionName] = sectionItems.filter(it => !(it.parentKey === prevRoot.id))
-          // Hide their components
-          const parentTag = `__p:${prevRoot.id}__`
-          for (const key of visibilityManager.getRegisteredComponents()) {
-            if (key.includes(parentTag)) {
-              visibilityManager.hideComponent(key)
+          // Build full subtree (prevRoot and all descendants)
+          const toRemove = new Set([prevRoot.id])
+          let added = true
+          while (added) {
+            added = false
+            for (const it of sectionItems) {
+              if (it.parentKey && toRemove.has(it.parentKey) && !toRemove.has(it.id)) {
+                toRemove.add(it.id)
+                added = true
+              }
             }
           }
-          // Hide previous root component as well
-          this.hideRootComponentForParent('deepertracks', visibilityManager, prevRoot.id)
+          // Remove all subtree items from section
+          this.sections[sectionName] = sectionItems.filter(it => !toRemove.has(it.id))
+          // Hide all subtree components
+          for (const key of visibilityManager.getRegisteredComponents()) {
+            // Hide root key
+            if (key === `deepertracks_${prevRoot.id}`) {
+              visibilityManager.hideComponent(key)
+              continue
+            }
+            // Hide any key whose parent tag matches any toRemove id
+            for (const remId of toRemove) {
+              const tag = `__p:${remId}__`
+              if (key.includes(tag)) {
+                visibilityManager.hideComponent(key)
+                break
+              }
+            }
+          }
         }
       }
 
@@ -188,9 +207,7 @@ export const useDeeperStore = defineStore('deeper', {
       const targetKey = `deepertracks_${trackData.id}${effectiveParentKey ? `__p:${effectiveParentKey}__` : ''}`
       visibilityManager.showComponent(targetKey)
       
-      // Don't call showComponent here - let the component show itself when it's registered
       console.log('Track added to section, component will show when registered')
-      
       return trackData
     },
 
