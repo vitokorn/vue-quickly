@@ -37,18 +37,21 @@ function resolveCover() {
 
         onMounted(async ()=> {
           resolveCover()
-          
+
           // Wait for the next tick to ensure the ref is available
           await nextTick()
-          
+
           // Register this component with the visibility manager
-          const trackKey = `deepertracks_${props.d.id}`
+          const trackKey = `${props.d.type}_${props.d.id}`
+          console.log('Registering component with ref:', componentRef.value)
+          console.log('Ref element:', componentRef.value?.tagName, componentRef.value?.className)
+          console.log('Registering with key:', trackKey)
           visibilityManager.registerComponent(trackKey, componentRef)
         })
 </script>
 
 <template>
-  <div class="modern-track-card" :id="'d'+d.id" ref="componentRef">
+  <div class="modern-track-card" ref="componentRef">
     <div class="track-main">
       <track-cover :d="d" :cover="cover"></track-cover>
 

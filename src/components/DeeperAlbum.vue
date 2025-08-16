@@ -35,10 +35,10 @@ function resolveTracks() {
 
 onMounted(async ()=> {
   resolveTracks()
-  
+
   // Wait for the next tick to ensure the ref is available
   await nextTick()
-  
+
   // Register this component with the visibility manager
   const albumKey = `deeperalbum_${props.d.id}`
   visibilityManager.registerComponent(albumKey, componentRef)
@@ -47,7 +47,7 @@ onMounted(async ()=> {
 
 <template>
 
-  <div class="modern-album-card" :id="'a'+d.id" ref="componentRef">
+  <div class="modern-album-card" ref="componentRef">
     <div class="track-main">
       <track-cover :d="d" :cover="d.images[0]"></track-cover>
 

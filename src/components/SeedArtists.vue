@@ -50,7 +50,7 @@ function setActive(id) {
 onMounted(async () => {
   // Wait for the next tick to ensure the ref is available
   await nextTick()
-  
+
   // Register this component with the visibility manager
   const seedKey = `seed_artists_${props.d.id}`
   visibilityManager.registerComponent(seedKey, componentRef)
@@ -58,7 +58,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="modern-seed-artists" :id="d.id" ref="componentRef">
+  <div class="modern-seed-artists" ref="componentRef">
     <div class="seed-header">
       <div class="seed-title">
         <span class="title-icon">🎵</span>

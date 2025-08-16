@@ -24,7 +24,7 @@ function setActive(id) {
 onMounted(async () => {
   // Wait for the next tick to ensure the ref is available
   await nextTick()
-  
+
   // Register this component with the visibility manager
   const artistKey = `trackartist_${props.d[0]?.id || 'default'}`
   visibilityManager.registerComponent(artistKey, componentRef)
@@ -35,7 +35,7 @@ onMounted(async () => {
   <div class="modern-track-artist" ref="componentRef">
     <template v-for="(ta, index) in d" :key="index">
       <!-- Artist Section -->
-      <div v-if="ta.type==='artist'" class="artist-section" :id="'art'+ta.id">
+      <div v-if="ta.type==='artist'" class="artist-section">
         <div class="artist-header">
           <!-- Artist Cover -->
           <div :class="['artist-cover', getMediaDisplay(ta).displayClass.value]"

@@ -54,7 +54,7 @@ onMounted(() => {
   // Register this component with the visibility manager
   const playlistKey = `deeperplaylist_${props.d.id}`
   visibilityManager.registerComponent(playlistKey, componentRef)
-  
+
   // Initially hide the component
   if (componentRef.value) {
     componentRef.value.style.display = 'none'
@@ -63,7 +63,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="modern-playlist-card" :id="'p' + d.id" ref="componentRef">
+  <div class="modern-playlist-card" ref="componentRef">
     <div class="playlist-header">
       <div class="playlist-info">
         <div class="playlist-title-section">

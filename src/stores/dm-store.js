@@ -339,10 +339,10 @@ export const useDMStore = defineStore('dm', {
                 console.log('Registered components:', visibilityManager.getRegisteredComponents())
                 console.log('Pending requests:', visibilityManager.getPendingRequests())
                 
-                // Check if component is already visible
+                // Check if component is already visible - but still show it to ensure it's actually visible
                 if (visibilityManager.isComponentVisible(trackKey)) {
-                    console.log('Track component already visible:', trackKey)
-                    return
+                    console.log('Track component already visible, but ensuring it shows:', trackKey)
+                    // Don't return, continue to show the component
                 }
                 
                 // Hide all other components and show this one
@@ -2037,7 +2037,7 @@ export const useDMStore = defineStore('dm', {
                 }
                 
                 // Use visibility manager instead of DOM manipulation
-                const seedTracksKey = `seed_tracks_${item.id}`
+                const seedTracksKey = `seed_tracks_st${item.id}`
                 
                 console.log('seedTracks visibility management:', { seedTracksKey, pointer, sib, child })
                 console.log('Registered components:', visibilityManager.getRegisteredComponents())
@@ -2056,10 +2056,10 @@ export const useDMStore = defineStore('dm', {
                     // Don't hide existing components, just show the new one
                 }
                 
-                // Check if component is already visible
+                // Check if component is already visible - but still show it to ensure it's actually visible
                 if (visibilityManager.isComponentVisible(seedTracksKey)) {
-                    console.log('Seed tracks component already visible:', seedTracksKey)
-                    return
+                    console.log('Seed tracks component already visible, but ensuring it shows:', seedTracksKey)
+                    // Don't return, continue to show the component
                 }
                 let exists = this.seed_tracks_data.find(dt => dt.id === 'st' + item.id)
 
@@ -2159,9 +2159,14 @@ export const useDMStore = defineStore('dm', {
                         this.setDeepers(data)
                     }
                 }
-                // setTimeout(() => {
-                //     document.getElementById('st' + item.id).scrollIntoView({behavior: "smooth"})
-                // }, 100);
+                
+                // Now show the specific seed tracks component
+                console.log('Showing seed tracks component:', seedTracksKey)
+                visibilityManager.showComponent(seedTracksKey)
+                
+                // Check if the request was pending
+                const pendingRequests = visibilityManager.getPendingRequests()
+                console.log('Pending requests after showComponent:', pendingRequests)
             },
             async seedTracksM(payload) {
                 let pointer,
@@ -2482,10 +2487,10 @@ export const useDMStore = defineStore('dm', {
                 console.log('Registered components:', visibilityManager.getRegisteredComponents())
                 console.log('Pending requests:', visibilityManager.getPendingRequests())
                 
-                // Check if component is already visible
+                // Check if component is already visible - but still show it to ensure it's actually visible
                 if (visibilityManager.isComponentVisible(trackKey)) {
-                    console.log('Component already visible:', trackKey)
-                    return
+                    console.log('Component already visible, but ensuring it shows:', trackKey)
+                    // Don't return, continue to show the component
                 }
                 
                             // Handle visibility based on parameters
@@ -2582,9 +2587,10 @@ export const useDMStore = defineStore('dm', {
                 // Use visibility manager instead of DOM manipulation
                 const trackKey = `deepertracks2_${item.id}`
                 
-                // Check if component is already visible
+                // Check if component is already visible - but still show it to ensure it's actually visible
                 if (visibilityManager.isComponentVisible(trackKey)) {
-                    return
+                    console.log('deeperTracks2 component already visible, but ensuring it shows:', trackKey)
+                    // Don't return, continue to show the component
                 }
                 
                 // Handle visibility based on parameters
@@ -2708,6 +2714,10 @@ export const useDMStore = defineStore('dm', {
                         })
                 }
 
+                // Now show the specific deeperTracks2 component
+                console.log('Showing deeperTracks2 component:', trackKey)
+                visibilityManager.showComponent(trackKey)
+                
                 // Check if the request was pending
                 const pendingRequests = visibilityManager.getPendingRequests()
                 console.log('Pending requests after showComponent:', pendingRequests)
@@ -3107,7 +3117,7 @@ export const useDMStore = defineStore('dm', {
                 }
                 
                 // Use visibility manager instead of DOM manipulation
-                const seedArtistKey = `seed_artists_${item.id}`
+                const seedArtistKey = `seed_artists_sa${item.id}`
                 
                 console.log('seedArtist visibility management:', { seedArtistKey, pointer, sib, child })
                 console.log('Registered components:', visibilityManager.getRegisteredComponents())
@@ -3126,10 +3136,10 @@ export const useDMStore = defineStore('dm', {
                     // Don't hide existing components, just show the new one
                 }
                 
-                // Check if component is already visible
+                // Check if component is already visible - but still show it to ensure it's actually visible
                 if (visibilityManager.isComponentVisible(seedArtistKey)) {
-                    console.log('Seed artist component already visible:', seedArtistKey)
-                    return
+                    console.log('Seed artist component already visible, but ensuring it shows:', seedArtistKey)
+                    // Don't return, continue to show the component
                 }
                 let exists = this.seed_artists_data.find(dt => dt.id === 'sa' + item.id)
 
@@ -3230,9 +3240,14 @@ export const useDMStore = defineStore('dm', {
                         this.setDeepers(data)
                     }
                 }
-                // setTimeout(() => {
-                //     document.getElementById('sa' + item.id).scrollIntoView({behavior: "smooth"})
-                // }, 100);
+                
+                // Now show the specific seed artist component
+                console.log('Showing seed artist component:', seedArtistKey)
+                visibilityManager.showComponent(seedArtistKey)
+                
+                // Check if the request was pending
+                const pendingRequests = visibilityManager.getPendingRequests()
+                console.log('Pending requests after showComponent:', pendingRequests)
             },
             async seedArtistM(payload) {
                 let pointer,
@@ -4040,10 +4055,10 @@ export const useDMStore = defineStore('dm', {
                     // Don't hide existing components, just show the new one
                 }
                 
-                // Check if component is already visible
+                // Check if component is already visible - but still show it to ensure it's actually visible
                 if (visibilityManager.isComponentVisible(albumKey)) {
-                    console.log('Album component already visible:', albumKey)
-                    return
+                    console.log('Album component already visible, but ensuring it shows:', albumKey)
+                    // Don't return, continue to show the component
                 }
 
                 // console.log(item.id)
