@@ -14,7 +14,7 @@ import SortAlbums from '../SortAlbums.vue'
 import ModernTabs from '../common/ModernTabs.vue'
 import TrackCover from "../TrackCover.vue"
 import Playlist from '../Playlist.vue'
-import SpotifyPlaylist from '../SpotifyPlaylist.vue'
+import PlaylistSelector from '../PlaylistSelector.vue'
 import TrackItem from '../TrackItem.vue'
 import ArtistItem from '../ArtistItem.vue'
 import TimeRangeSelector from '../TimeRangeSelector.vue'
@@ -38,7 +38,7 @@ const {
   setSelectedSpotifyPlaylist,
   setSelectedTopMenu
 } = useSelection()
-const {search, filterres} = useFiltering()
+const {search} = useFiltering()
 
 // Local state
 const accordionActive = ref(false)
@@ -362,16 +362,12 @@ handleResize()
               <div class="rel">
                 <RefreshButton :on-click="(event) => store.reloadpl({event})"/>
               </div>
-              <div class="pl justify-content-center">
-                <template v-for="(item,index) of store.listplaylists" :key="index">
-                  <div :id="item.id"
-                       @click="setSelectedPersonalPlaylist(item.id);store.fetchInit({event:$event})"
-                       class="hr-line-dashed"
-                       :class="selectedPersonalPlaylist===item.id ? 'activetab':''">
-                    {{ item.name }}
-                  </div>
-                </template>
-              </div>
+              <PlaylistSelector
+                :playlists="store.listplaylists"
+                :selected-playlist="selectedPersonalPlaylist"
+                placeholder="Search personal playlists..."
+                @playlist-select="(playlistId, event) => { setSelectedPersonalPlaylist(playlistId); store.fetchInit({event: event}) }"
+              />
               <Playlist
                   v-if="store.currentpl"
                   :playlist="store.currentpl"
@@ -661,25 +657,12 @@ handleResize()
             <Loader v-if="store.loader"/>
             <teleport to="#option8" :disabled="!accordionActive">
               <div id="sptplaylists" class="con2" v-show="selectedTopMenu===8">
-                <div class="head">
-                  <input class="inp"
-                         type="text"
-                         @keyup="filterres"
-                         placeholder="Please enter a search term.."
-                         title="Type in a name">
-                </div>
-                <div class="sp">
-                  <div class="pl justify-content-center">
-                    <template v-for="item of store.spotplaylists" :key="item.id">
-                      <div :id="item.id"
-                           @click="setSelectedSpotifyPlaylist(item.id);store.SpotInit({event:$event})"
-                           class="hr-line-dashed"
-                           :class="selectedSpotifyPlaylist===item.id ? 'activetab':''">
-                        {{ item.name }}
-                      </div>
-                    </template>
-                  </div>
-                </div>
+                <PlaylistSelector
+                  :playlists="store.spotplaylists"
+                  :selected-playlist="selectedSpotifyPlaylist"
+                  placeholder="Search Spotify playlists..."
+                  @playlist-select="(playlistId, event) => { setSelectedSpotifyPlaylist(playlistId); store.SpotInit({event: event}) }"
+                />
                 <Playlist
                     v-if="store.currentspl"
                     :playlist="store.currentspl"
