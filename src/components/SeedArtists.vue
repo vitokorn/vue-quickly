@@ -1,12 +1,18 @@
 <script setup>
-import {useDMStore} from "../stores/dm-store";
+import {useSpotifyStore} from "../stores/spotify-store";
+import {useAudioStore} from "../stores/audio-store";
+import {useQueueStore} from "../stores/queue-store";
+import {useDeeperStore} from "../stores/deeper-store";
 import {ref, computed, onMounted, nextTick} from "vue";
 import SortTracks from "./SortTracks.vue";
 import {useMediaDisplay} from "../composables/useMediaDisplay";
 import { useVisibilityManager } from "../composables/useVisibilityManager";
 
 const props = defineProps(['d', 'num'])
-const store = useDMStore()
+const spotifyStore = useSpotifyStore()
+const audioStore = useAudioStore()
+const queueStore = useQueueStore()
+const deeperStore = useDeeperStore()
 const selected = ref()
 const selectedSASortOption = ref("")
 const componentRef = ref(null)
@@ -65,7 +71,7 @@ onMounted(async () => {
         <span class="title-text">Recommended songs based on {{ d.name }}</span>
       </div>
       <div class="seed-actions">
-        <button class="refresh-button" @click="store.reloadSA({num:num,id:d.id,name:d.name })">
+        <button class="refresh-button" @click="spotifyStore.reloadSA({num:num,id:d.id,name:d.name })">
           <img class="refresh-icon" src="../assets/refresh-icon.png" alt="Refresh">
         </button>
         <sort-tracks v-model="selectedSASortOption"/>
@@ -77,9 +83,9 @@ onMounted(async () => {
         <div
             :class="['track-item', getTrackMediaDisplay(track).displayClass.value, selected === track.id ? 'selected' : '']"
             :style="getTrackMediaDisplay(track).backgroundStyle.value"
-            @mouseover="getTrackMediaDisplay(track).hasPreview.value && store.mouseOver($event)"
-            @mouseleave="getTrackMediaDisplay(track).hasPreview.value && store.mouseLeave($event)"
-            @click="setActive(track.id);store.deeperTracks({item:track,num:num,flag:false,sib:'seed_artists',child:'sa'+ d.id}); store.queuein(track)">
+            @mouseover="getTrackMediaDisplay(track).hasPreview.value && audioStore.handleAudioHover($event)"
+            @mouseleave="getTrackMediaDisplay(track).hasPreview.value && audioStore.handleAudioLeave($event)"
+            @click="setActive(track.id);deeperStore.getTrackDetails(track, 'seed_artists'); queueStore.addToQueue(track)">
           <div class="track-overlay">
             <div class="track-info">
               <div class="track-artists">{{ track.artists.map(a => a.name).join(', ') }}</div>

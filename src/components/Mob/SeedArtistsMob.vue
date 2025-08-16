@@ -1,11 +1,17 @@
 <script setup>
-import {useDMStore} from "../../stores/dm-store";
+import {useSpotifyStore} from "../../stores/spotify-store";
+import {useAudioStore} from "../../stores/audio-store";
+import {useQueueStore} from "../../stores/queue-store";
+import {useDeeperStore} from "../../stores/deeper-store";
 import {Lists} from "../../common/lists";
 import {computed, ref} from "vue";
 import SortTracks from "../SortTracks.vue";
 
 const props = defineProps(['d', 'num', 'item'])
-const store = useDMStore()
+const spotifyStore = useSpotifyStore()
+const audioStore = useAudioStore()
+const queueStore = useQueueStore()
+const deeperStore = useDeeperStore()
 const selected = ref()
 const selectedSASortOption = ref("")
 
@@ -46,27 +52,27 @@ function setActive(id) {
         <div v-if="s.preview_url && s.album.images[0]" class="con3" v-bind:key="index"
              :class="selected===s.id ? 'selected' : ''"
              v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }"
-             v-on:click="setActive(s.id);store.click($event);store.deeperTracksM({item:s,num:num,flag:false,sib:'seed_artists',parent:d.id}); store.queuein(s)">
+             v-on:click="setActive(s.id);;deeperStore.getTrackDetails(s, 'seed_artists'); queueStore.addToQueue(s)">
           {{Lists.Ls(s.artists)}} - {{ s.name }}
           <audio preload="auto" v-bind:src="s.preview_url"></audio>
         </div>
-        <div v-else-if="!s.preview_url && s.album.images[0] && store.unplayable_tracks" tabindex="0" class="con3 half-opacity"
+        <div v-else-if="!s.preview_url && s.album.images[0] && audioStore.unplayableTracks" tabindex="0" class="con3 half-opacity"
              :class="selected===s.id ? 'selected' : ''"
              v-bind:key="'2'+index"
              v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }"
-             v-on:click="setActive(s.id);store.deeperTracksM({item:s,num:num,flag:false,sib:'seed_artists',parent:d.id}); store.queuein(s)">
+             v-on:click="setActive(s.id);deeperStore.getTrackDetails(s, 'seed_artists'); queueStore.addToQueue(s)">
           {{Lists.Ls(s.artists)}} - {{ s.name }}
           <audio preload="none"></audio>
         </div>
         <div v-else-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="'3'+index"
              :class="selected===s.id ? 'selected' : ''"
-             v-on:click="setActive(s.id);store.click($event);store.deeperTracksM({item:s,num:num,flag:false,sib:'seed_artists',parent:d.id}); store.queuein(s)">
+             v-on:click="setActive(s.id);;deeperStore.getTrackDetails(s, 'seed_artists'); queueStore.addToQueue(s)">
           {{Lists.Ls(s.artists)}} - {{ s.name }}
           <audio preload="auto" v-bind:src="s.preview_url"></audio>
         </div>
-        <div v-else-if="store.unplayable_tracks" tabindex="0" class="con3 half-opacity" v-bind:key="'4'+index"
+        <div v-else-if="audioStore.unplayableTracks" tabindex="0" class="con3 half-opacity" v-bind:key="'4'+index"
              :class="selected===s.id ? 'selected' : ''"
-             v-on:click="setActive(s.id);store.deeperTracksM({item:s,num:num,flag:false,sib:'seed_artists',parent:d.id}); store.queuein(s)">
+             v-on:click="setActive(s.id);deeperStore.getTrackDetails(s, 'seed_artists'); queueStore.addToQueue(s)">
           {{Lists.Ls(s.artists)}} - {{ s.name }}
           <audio preload="none"></audio>
         </div>

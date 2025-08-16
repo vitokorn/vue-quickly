@@ -1,13 +1,19 @@
 <script setup>
-import {useDMStore} from "../../stores/dm-store";
+import {useSpotifyStore} from "../../stores/spotify-store";
+import {useAudioStore} from "../../stores/audio-store";
+import {useQueueStore} from "../../stores/queue-store";
+import {useDeeperStore} from "../../stores/deeper-store";
 
 const props = defineProps(['d', 'index', 'num', 'cover', 'item'])
-const store = useDMStore()
+const spotifyStore = useSpotifyStore()
+const audioStore = useAudioStore()
+const queueStore = useQueueStore()
+const deeperStore = useDeeperStore()
 </script>
 <template>
   <div v-if="d.type==='pl'" v-bind:key="index" v-bind:id="'d'+d.id" class="card2 plls display-flex my-3">
     <div class="con3" v-if="d.preview_url && cover" v-bind:style="{ 'background-image': 'url(' + cover.url + ')' }"
-         v-on:click="store.click($event)">
+         v-on:click="// store.click removed">
       <div class="track-overlay">
         <div class="track-info">
           <div class="track-artists">{{ d.artists.map(a => a.name).join(', ') }}</div>
@@ -16,7 +22,7 @@ const store = useDMStore()
       </div>
       <audio preload="auto" v-bind:src="d.preview_url"></audio>
     </div>
-    <div class="con3 half-opacity" v-else-if="!d.preview_url && cover && store.unplayable_tracks"
+    <div class="con3 half-opacity" v-else-if="!d.preview_url && cover && audioStore.unplayableTracks"
          v-bind:style="{ 'background-image': 'url(' + cover.url + ')' }">
       <div class="track-overlay">
         <div class="track-info">
@@ -26,7 +32,7 @@ const store = useDMStore()
       </div>
       <audio preload="none"></audio>
     </div>
-    <div class="con3" v-else-if="d.preview_url && !cover" v-on:click="store.click($event)">
+    <div class="con3" v-else-if="d.preview_url && !cover" v-on:click="// store.click removed">
       <div class="track-overlay">
         <div class="track-info">
           <div class="track-artists">{{ d.artists.map(a => a.name).join(', ') }}</div>
@@ -35,7 +41,7 @@ const store = useDMStore()
       </div>
       <audio preload="auto" v-bind:src="d.preview_url"></audio>
     </div>
-    <div class="con3 half-opacity" v-else-if="store.unplayable_tracks">
+    <div class="con3 half-opacity" v-else-if="audioStore.unplayableTracks">
       <div class="track-overlay">
         <div class="track-info">
           <div class="track-artists">{{ d.artists.map(a => a.name).join(', ') }}</div>
@@ -51,13 +57,13 @@ const store = useDMStore()
           <div v-if="d.artists.length > 1 && d.artists.length - 1 === index">&</div>
           <div v-if="d.artists.length >= 2 && d.artists.length - 1 !== index && index !== 0">,</div>
           <div class="mx-1 pointer"
-               v-on:click="store.deeperartistmob({item:art,track:d,num:num,flag:false,sib:'plls',parent:'d'+d.id})">
+               v-on:click="deeperStore.getArtistDetails(art, 'plls')">
             {{ art.name }}
           </div>
         </div>
       </div>
       <span class="light-washed-rose" v-if="num !== 7"
-            v-on:click="store.seedTracksM({item:d,num:num,sib:'pl',child:'d'+ d.id,parent:'d'+d.id})">Recommended songs based on this</span>
+            v-on:click="deeperStore.seedTracksM({item:d,num:num,sib:'pl',child:'d'+ d.id,parent:'d'+d.id})">Recommended songs based on this</span>
       <div>
         <button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in
           Spotify</a></button>
@@ -68,24 +74,24 @@ const store = useDMStore()
     </div>
     <template v-for="(art,index) in d.artists">
       <div class="artist-cirle con3" v-if="d.preview_url && cover" v-bind:key="index"
-           v-on:click="store.deeperartistmob({item:art,track:d,num:num,flag:false,sib:'plls',parent:'d'+d.id})"
+           v-on:click="deeperStore.getArtistDetails(art, 'plls')"
            v-bind:style="{ 'background-image': 'url(' + cover.url + ')' }">
         <audio preload="auto" v-bind:src="d.preview_url"></audio>
         <div class="float-left" style="position: absolute; font-size: 0.7em;">{{ art.name }}</div>
       </div>
-      <div class="artist-cirle con3 half-opacity" v-else-if="!d.preview_url && cover && store.unplayable_tracks" v-bind:key="'2'+index"
-           v-on:click="store.deeperartistmob({item:art,track:d,num:num,flag:false,sib:'plls',parent:'d'+d.id})"
+      <div class="artist-cirle con3 half-opacity" v-else-if="!d.preview_url && cover && audioStore.unplayableTracks" v-bind:key="'2'+index"
+           v-on:click="deeperStore.getArtistDetails(art, 'plls')"
            v-bind:style="{ 'background-image': 'url(' + cover.url + ')' }">
         <audio preload="none"></audio>
         <div class="float-left" style="position: absolute; font-size: 0.7em;">{{ art.name }}</div>
       </div>
       <div class="artist-cirle con3" v-else-if="d.preview_url && !cover" v-bind:key="'3'+index"
-           v-on:click="store.deeperartistmob({item:art,track:d,num:num,flag:false,sib:'plls',parent:'d'+d.id})">
+           v-on:click="deeperStore.getArtistDetails(art, 'plls')">
         <audio preload="auto" v-bind:src="d.preview_url"></audio>
         <div class="float-left" style="position: absolute; font-size: 0.7em;">{{ art.name }}</div>
       </div>
       <div class="artist-cirle con3 half-opacity" v-else v-bind:key="'4'+index"
-           v-on:click="store.deeperartistmob({item:art,track:d,num:num,flag:false,sib:'plls',parent:'d'+d.id})"
+           v-on:click="deeperStore.getArtistDetails(art, 'plls')"
            >
         <audio preload="none"></audio>
         <div class="float-left" style="position: absolute; font-size: 0.7em;">{{ art.name }}</div>

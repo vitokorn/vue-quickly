@@ -1,12 +1,18 @@
 <script setup>
-import {useDMStore} from "../stores/dm-store";
+import {useSpotifyStore} from "../stores/spotify-store";
+import {useAudioStore} from "../stores/audio-store";
+import {useQueueStore} from "../stores/queue-store";
+import {useDeeperStore} from "../stores/deeper-store";
 import {ref, computed, onMounted, nextTick} from "vue";
 import TrackCover from "./TrackCover.vue";
 import {useMediaDisplay} from "../composables/useMediaDisplay";
 import { useVisibilityManager } from "../composables/useVisibilityManager";
 
 const props = defineProps(['d', 'num'])
-const store = useDMStore()
+const spotifyStore = useSpotifyStore()
+const audioStore = useAudioStore()
+const queueStore = useQueueStore()
+const deeperStore = useDeeperStore()
 const selected = ref()
 const tracks = ref([])
 const componentRef = ref(null)
@@ -17,6 +23,26 @@ const visibilityManager = useVisibilityManager()
 // Helper function to get media display for a track with album cover
 function getTrackMediaDisplay(track) {
   return useMediaDisplay(computed(() => track), props.d.images?.[0])
+}
+
+// Helper function to get section name from num
+function getSectionName(num) {
+  switch (num) {
+    case 1: return 'yourPlaylists'
+    case 2: return 'topArtists'
+    case 3: return 'topTracks'
+    case 4: return 'savedAlbums'
+    case 5: return 'savedTracks'
+    case 6: return 'followedArtists'
+    case 7: return 'newReleases'
+    case 8: return 'spotifyPlaylists'
+    case 10: return 'search'
+    case 22: return 'topArtists6'
+    case 23: return 'topArtistsAll'
+    case 32: return 'topTracks6'
+    case 33: return 'topTracksAll'
+    default: return 'search'
+  }
 }
 
 function setActive(id) {
@@ -62,7 +88,7 @@ onMounted(async ()=> {
               <span v-if="d.artists.length >= 2 && d.artists.length - 1 !== index && index !== 0"
                     class="separator">,</span>
               <button class="artist-link"
-                      @click="store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})">
+                      @click="deeperStore.getArtistDetails(art, getSectionName(num))">
                 {{ art.name }}
               </button>
             </div>
@@ -73,9 +99,7 @@ onMounted(async ()=> {
           <span>{{ d.release_date }}</span>
         </div>
         <div class="album-actions">
-          <button class="refresh-button" @click="store.reloader({num:num,event:$event})">
-            <img class="refresh-icon" src="../assets/refresh-icon.png" alt="Refresh">
-          </button>
+          <!-- Refresh functionality will be implemented later -->
         </div>
       </div>
     </div>
@@ -89,9 +113,9 @@ onMounted(async ()=> {
         <template v-for="(track, index) in tracks" :key="index" class="">
           <div :class="['con3', getTrackMediaDisplay(track).displayClass.value, selected === track.id ? 'selected' : '']"
                :style="getTrackMediaDisplay(track).backgroundStyle.value"
-               @mouseover="getTrackMediaDisplay(track).hasPreview.value && store.mouseOver($event)"
-               @mouseleave="getTrackMediaDisplay(track).hasPreview.value && store.mouseLeave($event)"
-               @click="setActive(track.id);store.deeperTracks({item:track,num:num,flag:false,sib:'deeperalbum',child:'a'+ d.id}); store.queuein(track)">
+               @mouseover="getTrackMediaDisplay(track).hasPreview.value && audioStore.handleAudioHover($event)"
+               @mouseleave="getTrackMediaDisplay(track).hasPreview.value && audioStore.handleAudioLeave($event)"
+               @click="setActive(track.id);deeperStore.getTrackDetails(track, getSectionName(num)); queueStore.addToQueue(track)">
             {{ track.name }}
             <audio :preload="getTrackMediaDisplay(track).audioPreload.value" :src="getTrackMediaDisplay(track).audioSrc.value"></audio>
           </div>

@@ -1,5 +1,5 @@
 <script setup>
-import {useDMStore} from "../stores/dm-store";
+import {useDeeperStore} from "../stores/deeper-store";
 import SeedTracks from "./SeedTracks.vue";
 import TrackArtist from "./TrackArtist.vue";
 import DeeperTracks from "./DeeperTracks.vue";
@@ -8,75 +8,103 @@ import SeedArtists from "./SeedArtists.vue";
 import DeeperPlaylist from "./DeeperPlaylist.vue";
 
 const props = defineProps(['num'])
-const store = useDMStore()
+const deeperStore = useDeeperStore()
 
 function dab() {
-  console.log('RecTrack dab() called with num:', props.num)
-  let result
-  if (props.num === 1) {
-    result = store.getDeeper1
-  } else if (props.num === 2) {
-    result = store.getDeeper2
-  } else if (props.num === 3) {
-    result = store.getDeeper3
-  } else if (props.num === 4) {
-    result = store.getDeeper4
-  } else if (props.num === 5) {
-    result = store.getDeeper5
-  } else if (props.num === 6) {
-    result = store.getDeeper6
-  } else if (props.num === 7) {
-    result = store.getDeeper7
-  } else if (props.num === 8) {
-    result = store.getDeeper8
-  } else if (props.num === 9) {
-    result = store.getDeeper9
-  } else if (props.num === 10) {
-    result = store.getDeepers
-  } else if (props.num === 22) {
-    result = store.getDeeper22
-  } else if (props.num === 23) {
-    result = store.getDeeper23
-  } else if (props.num === 32) {
-    result = store.getDeeper32
-  } else if (props.num === 33) {
-    result = store.getDeeper33
+  const sectionName = getSectionName(props.num)
+  const data = deeperStore.getSectionData(sectionName)
+  console.log('RecTrack - Num:', props.num, 'Section name:', sectionName, 'Data length:', data.length, 'Data:', data)
+  
+  // Set the current section so other components know what section is being displayed
+  deeperStore.setCurrentSection(sectionName)
+  
+  // Debug: Log any deepertracks items
+  const deepertracksItems = data.filter(item => item.type === 'deepertracks')
+  if (deepertracksItems.length > 0) {
+    console.log('RecTrack: Found deepertracks items:', deepertracksItems)
   }
   
-  console.log('RecTrack dab() returning:', result)
-  return result
+  return data
+}
+
+function getSectionName(num) {
+  switch (num) {
+    case 1: return 'yourPlaylists'
+    case 2: return 'topArtists'
+    case 3: return 'topTracks'
+    case 4: return 'savedAlbums'
+    case 5: return 'savedTracks'
+    case 6: return 'followedArtists'
+    case 7: return 'newReleases'
+    case 8: return 'spotifyPlaylists'
+    case 10: return 'search'
+    case 22: return 'topArtists6'
+    case 23: return 'topArtistsAll'
+    case 32: return 'topTracks6'
+    case 33: return 'topTracksAll'
+    default: return 'search'
+  }
 }
 </script>
 
 <template>
   <div class="modern-recommendations">
-    <div class="recommendations-container">
-      <template v-for="(d, index) in dab()" :key="index">
-        <div style="display: none;">Debug: {{ d.type }} - {{ d.id }}</div>
-
-        <!-- Seed tracks recommendations -->
-        <SeedTracks v-if="d.type==='seed_tracks'" :id="d.id" :d="d" :num="num"></SeedTracks>
-
-        <!-- Track artist recommendations -->
-        <TrackArtist v-else-if="d.type==='trackartist'" :d="d" :num="num"></TrackArtist>
-
-        <!-- Deeper tracks recommendations (merged DeeperTracks and DeeperTracks2) -->
-        <DeeperTracks v-else-if="d.type==='deepertracks'" :d="d" :num="num"></DeeperTracks>
-        <DeeperTracks v-else-if="d.type==='deepertracks2'" :d="d" :num="num"></DeeperTracks>
-
-        <!-- Deeper album recommendations -->
-        <DeeperAlbum v-else-if="d.type==='deeperalbum'" :d="d" :num="num"></DeeperAlbum>
-
-        <!-- Seed artists recommendations -->
-        <SeedArtists v-else-if="d.type==='seed_artists'" :d="d" :num="num"></SeedArtists>
-
-        <!-- Deeper playlist recommendations -->
-        <DeeperPlaylist v-else-if="d.type==='deeper_playlist'" :d="d" :num="num"></DeeperPlaylist>
+    <div class="rectrack">
+      <template v-for="(item, index) in dab()" :key="index">
+        <!-- Seed Tracks -->
+        <SeedTracks 
+          v-if="item.type === 'seed_tracks'" 
+          :d="item" 
+          :num="num"
+        />
+        
+        <!-- Track Artist -->
+        <TrackArtist 
+          v-else-if="item.type === 'trackartist'" 
+          :d="item" 
+          :num="num"
+        />
+        
+        <!-- Deeper Tracks -->
+        <DeeperTracks 
+          v-else-if="item.type === 'deepertracks'" 
+          :d="item" 
+          :num="num"
+        />
+        
+        <!-- Deeper Album -->
+        <DeeperAlbum 
+          v-else-if="item.type === 'deeperalbum'" 
+          :d="item" 
+          :num="num"
+        />
+        
+        <!-- Seed Artists -->
+        <SeedArtists 
+          v-else-if="item.type === 'seed_artists'" 
+          :d="item" 
+          :num="num"
+        />
+        
+        <!-- Deeper Playlist -->
+        <DeeperPlaylist 
+          v-else-if="item.type === 'deeperplaylist'" 
+          :d="item" 
+          :num="num"
+        />
       </template>
     </div>
   </div>
 </template>
 
 <style scoped>
-/* Styles moved to main styles.css */
+.modern-recommendations {
+  margin-top: 24px;
+}
+
+.rectrack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 </style>

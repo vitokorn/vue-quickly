@@ -2,10 +2,16 @@
 import {Lists} from "../../common/lists";
 import AlbumTrackListMob from "./AlbumTrackListMob.vue";
 import AlbumCoverMob from "./AlbumCoverMob.vue";
-import {useDMStore} from "../../stores/dm-store";
+import {useSpotifyStore} from "../../stores/spotify-store";
+import {useAudioStore} from "../../stores/audio-store";
+import {useQueueStore} from "../../stores/queue-store";
+import {useDeeperStore} from "../../stores/deeper-store";
 
 const props = defineProps(['d', 'num', 'item'])
-const store = useDMStore()
+const spotifyStore = useSpotifyStore()
+const audioStore = useAudioStore()
+const queueStore = useQueueStore()
+const deeperStore = useDeeperStore()
 
 function lists(artists) {
   return Lists.Ls(artists)

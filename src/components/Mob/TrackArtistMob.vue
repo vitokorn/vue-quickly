@@ -1,10 +1,16 @@
 <script setup>
 import titleCase from "../../common/titleCase";
 import axios from "axios";
-import {useDMStore} from "../../stores/dm-store";
+import {useSpotifyStore} from "../../stores/spotify-store";
+import {useAudioStore} from "../../stores/audio-store";
+import {useQueueStore} from "../../stores/queue-store";
+import {useDeeperStore} from "../../stores/deeper-store";
 
 defineProps(['d', 'num', 'item'])
-const store = useDMStore()
+const spotifyStore = useSpotifyStore()
+const audioStore = useAudioStore()
+const queueStore = useQueueStore()
+const deeperStore = useDeeperStore()
 
 async function thesoundofmob(payload) {
   let pointer,
@@ -147,74 +153,74 @@ async function thesoundofmob(payload) {
                 playlist.pid = parent.id
                 // console.log(playlist)
                 if (num === 1) {
-                  let indexing = store.deeper1.indexOf(playlist)
+                  let indexing = deeperStore.getTrackDetails1.indexOf(playlist)
                   if (indexing === -1) {
                     // eslint-disable-next-line no-undef
-                    store.setDeeper1(playlist)
+                    deeperStore.addToSection('yourPlaylists')(playlist)
                   }
                 } else if (num === 2) {
-                  let indexing = store.deeper2.indexOf(playlist)
+                  let indexing = deeperStore.getTrackDetails2.indexOf(playlist)
                   if (indexing === -1) {
                     // eslint-disable-next-line no-undef
-                    store.setDeeper2(playlist)
+                    deeperStore.addToSection('topArtists')(playlist)
                   }
                 } else if (num === 22) {
-                  let indexing = store.deeper22.indexOf(playlist)
+                  let indexing = deeperStore.getTrackDetails22.indexOf(playlist)
                   if (indexing === -1) {
-                    store.setDeeper22(playlist)
+                    deeperStore.addToSection('topArtists')2(playlist)
                   }
                 } else if (num === 23) {
-                  let indexing = store.deeper23.indexOf(playlist)
+                  let indexing = deeperStore.getTrackDetails23.indexOf(playlist)
                   if (indexing === -1) {
-                    store.setDeeper23(playlist)
+                    deeperStore.addToSection('topArtists')3(playlist)
                   }
                 } else if (num === 3) {
-                  let indexing = store.deeper3.indexOf(playlist)
+                  let indexing = deeperStore.getTrackDetails3.indexOf(playlist)
                   if (indexing === -1) {
-                    store.setDeeper3(playlist)
+                    deeperStore.addToSection('topTracks')(playlist)
                   }
                 } else if (num === 32) {
-                  let indexing = store.deeper32.indexOf(playlist)
+                  let indexing = deeperStore.getTrackDetails32.indexOf(playlist)
                   if (indexing === -1) {
-                    store.setDeeper32(playlist)
+                    deeperStore.addToSection('topTracks')2(playlist)
                   }
                 } else if (num === 33) {
-                  let indexing = store.deeper33.indexOf(playlist)
+                  let indexing = deeperStore.getTrackDetails33.indexOf(playlist)
                   if (indexing === -1) {
-                    store.setDeeper33(playlist)
+                    deeperStore.addToSection('topTracks')3(playlist)
                   }
                 } else if (num === 4) {
-                  let indexing = store.deeper4.indexOf(playlist)
+                  let indexing = deeperStore.getTrackDetails4.indexOf(playlist)
                   if (indexing === -1) {
-                    store.setDeeper4(playlist)
+                    deeperStore.addToSection('savedAlbums')(playlist)
                   }
                 } else if (num === 5) {
-                  let indexing = store.deeper5.indexOf(playlist)
+                  let indexing = deeperStore.getTrackDetails5.indexOf(playlist)
                   if (indexing === -1) {
-                    store.setDeeper5(playlist)
+                    deeperStore.addToSection('savedTracks')(playlist)
                   }
                 } else if (num === 6) {
-                  let indexing = store.deeper6.indexOf(playlist)
+                  let indexing = deeperStore.getTrackDetails6.indexOf(playlist)
                   if (indexing === -1) {
-                    store.setDeeper6(playlist)
+                    deeperStore.addToSection('followedArtists')(playlist)
                   }
                 } else if (num === 7) {
-                  let indexing = store.deeper7.indexOf(playlist)
+                  let indexing = deeperStore.getTrackDetails7.indexOf(playlist)
                   if (indexing === -1) {
-                    store.setDeeper7(playlist)
+                    deeperStore.addToSection('newReleases')(playlist)
                   }
                 } else if (num === 8) {
-                  let indexing = store.deeper8.indexOf(playlist)
+                  let indexing = deeperStore.getTrackDetails8.indexOf(playlist)
                   if (indexing === -1) {
-                    store.setDeeper8(playlist)
+                    deeperStore.addToSection('spotifyPlaylists')(playlist)
                   }
                 } else if (num === 9) {
-                  let indexing = store.deeper9.indexOf(playlist)
+                  let indexing = deeperStore.getTrackDetails9.indexOf(playlist)
                   if (indexing === -1) {
-                    store.setDeeper9(playlist)
+                    deeperStore.addToSection('search')(playlist)
                   }
                 } else if (num === 10) {
-                  let indexing = store.deepers.indexOf(playlist)
+                  let indexing = deeperStore.getTrackDetailss.indexOf(playlist)
                   if (indexing === -1) {
                     store.setDeepers(playlist)
                   }
@@ -337,7 +343,7 @@ async function thesoundofmob(payload) {
            style="width: 100%;gap: 16px;">
         <div class="con3 text-left" v-if="ta.preview_url && ta.images[0]"
              v-bind:style="{ 'background-image': 'url(' + ta.images[0].url + ')' }"
-             v-on:click="store.click($event)">{{ ta.name }}
+             v-on:click="// store.click removed">{{ ta.name }}
           <audio preload="auto" v-bind:src="ta.preview_url"></audio>
         </div>
         <div class="con3 text-left half-opacity" v-else-if="!ta.preview_url && ta.images[0]"
@@ -345,7 +351,7 @@ async function thesoundofmob(payload) {
           <audio></audio>
         </div>
         <div class="con3 text-left" v-else-if="ta.preview_url && !ta.images[0]"
-             v-on:click="store.click($event)">{{ ta.name }}
+             v-on:click="// store.click removed">{{ ta.name }}
           <audio preload="auto" v-bind:src="ta.preview_url"></audio>
         </div>
         <div class="con3 text-left half-opacity" v-else>{{ ta.name }}
@@ -368,16 +374,16 @@ async function thesoundofmob(payload) {
             </template>
           </div>
           <div class="light-washed-rose"
-               v-on:click="store.seedArtistM({item:ta,num:num,sib:'trackartist',parent:'art' + d[0].id})">
+               v-on:click="deeperStore.getSeedArtistRecommendationsM({item:ta,num:num,sib:'trackartist',parent:'art' + d[0].id})">
             Recommended artists songs based on this
           </div>
           <div>
             <button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open
               in Spotify</a></button>
             Follow<input type="checkbox" v-if="ta.followed"
-                         @click.once="store.followArtist({artist:ta,event:$event})" checked
+                         @click.once="spotifyStore.followArtist({artist:ta,event:$event})" checked
                          v-model="ta.followed">
-            <input type="checkbox" v-else @click.once="store.followArtist({artist:ta,event:$event})"
+            <input type="checkbox" v-else @click.once="spotifyStore.followArtist({artist:ta,event:$event})"
                    v-model="ta.followed">
             <div @click="store.backToTop(d.parentId)">Back to top</div>
           </div>
@@ -388,23 +394,23 @@ async function thesoundofmob(payload) {
         <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
           <div v-if="tt.preview_url && tt.album.images[0]" class="con3"
                v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }"
-               v-on:click="store.click($event);store.deeperTracksM({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id,parent:'art' + d[0].id}); store.queuein(tt)">
+               v-on:click="// store.click removed;deeperStore.getTrackDetails(tt, 'trackartist'); queueStore.addToQueue(tt)">
             {{ tt.name }}
             <audio v-bind:src="tt.preview_url"></audio>
           </div>
           <div v-else-if="!tt.preview_url && tt.album.images[0]" class="con3 half-opacity"
                v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }"
-               v-on:click="store.deeperTracksM({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id,parent:'art' + d[0].id}); store.queuein(tt)">
+               v-on:click="deeperStore.getTrackDetails(tt, 'trackartist'); queueStore.addToQueue(tt)">
             {{ tt.name }}
             <audio></audio>
           </div>
           <div v-else-if="tt.preview_url && !tt.album.images[0]" class="con3"
-               v-on:click="store.click($event); store.deeperTracksM({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id,parent:'art' + d[0].id}); store.queuein(tt)">
+               v-on:click="// store.click removed; deeperStore.getTrackDetails(tt, 'trackartist'); queueStore.addToQueue(tt)">
             {{ tt.name }}
             <audio v-bind:src="tt.preview_url"></audio>
           </div>
           <div v-else class="con3 half-opacity"
-               v-on:click="store.deeperTracksM({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id,parent:'art' + d[0].id}); store.queuein(tt)">
+               v-on:click="deeperStore.getTrackDetails(tt, 'trackartist'); queueStore.addToQueue(tt)">
             {{ tt.name }}
             <audio></audio>
           </div>
@@ -418,22 +424,22 @@ async function thesoundofmob(payload) {
           v-bind:key="index" tabindex="0" class="card2">
         <div v-for="(a,index) in ta" v-bind:key="index">
           <div v-if="a.preview_url && a.images[0]" class="con3"
-               v-on:click="store.deeperAlbumMob({item:a,num:num,child:'art' + d[0].id,search:false,parent:'art' + d[0].id}),store.click($event)"
+               v-on:click="deeperStore.getTrackDetailsAlbumMob({item:a,num:num,child:'art' + d[0].id,search:false,parent:'art' + d[0].id}),// store.click removed"
                v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{ a.name }}
             <audio preload="auto" v-bind:src="a.preview_url"></audio>
           </div>
           <div v-else-if="!a.preview_url && a.images[0]" class="con3 half-opacity"
-               v-on:click="store.deeperAlbumMob({item:a,num:num,child:'art' + d[0].id,search:false,parent:'art' + d[0].id})"
+               v-on:click="deeperStore.getTrackDetailsAlbumMob({item:a,num:num,child:'art' + d[0].id,search:false,parent:'art' + d[0].id})"
                v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{ a.name }}
             <audio></audio>
           </div>
           <div v-else-if="a.preview_url && !a.images[0]" class="con3"
-               v-on:click="store.deeperAlbumMob({item:a,num:num,child:'art' + d[0].id,search:false,parent:'art' + d[0].id}),store.click($event)">
+               v-on:click="deeperStore.getTrackDetailsAlbumMob({item:a,num:num,child:'art' + d[0].id,search:false,parent:'art' + d[0].id}),// store.click removed">
             {{ a.name }}
             <audio preload="auto" v-bind:src="a.preview_url"></audio>
           </div>
           <div v-else class="con3 half-opacity"
-               v-on:click="store.deeperAlbumMob({item:a,num:num,child:'art' + d[0].id,search:false,parent:'art' + d[0].id})"
+               v-on:click="deeperStore.getTrackDetailsAlbumMob({item:a,num:num,child:'art' + d[0].id,search:false,parent:'art' + d[0].id})"
           >{{ a.name }}
             <audio></audio>
           </div>
@@ -444,20 +450,20 @@ async function thesoundofmob(payload) {
         <div v-for="(r,index) in ta" v-bind:key="index">
           <div v-if="r.preview_url && r.images[0]" tabindex="0" class="img-xs background-setting"
                v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }"
-               v-on:click="store.click($event);store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id, parent:'art' + d[0].id})">
+               v-on:click="// store.click removed;deeperStore.getArtistDetails(r, 'trackartist')">
             <audio preload="auto" v-bind:src="r.preview_url"></audio>
           </div>
           <div v-else-if="!r.preview_url && r.images[0]" class="img-xs half-opacity"
                v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }"
-               v-on:click="store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id, parent:'art' + d[0].id})">
+               v-on:click="deeperStore.getArtistDetails(r, 'trackartist')">
             <audio></audio>
           </div>
           <div v-else-if="r.preview_url && !r.images[0]" tabindex="0" class="img-xs"
-               v-on:click="store.click($event);store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id, parent:'art' + d[0].id})">
+               v-on:click="// store.click removed;deeperStore.getArtistDetails(r, 'trackartist')">
             <audio preload="auto" v-bind:src="r.preview_url"></audio>
           </div>
           <div v-else class="img-xs half-opacity"
-               v-on:click="store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id, parent:'art' + d[0].id})">
+               v-on:click="deeperStore.getArtistDetails(r, 'trackartist')">
             <audio></audio>
           </div>
         </div>

@@ -1,11 +1,17 @@
 <script setup>
 import {Lists} from "../../common/lists";
-import {useDMStore} from "../../stores/dm-store";
+import {useSpotifyStore} from "../../stores/spotify-store";
+import {useAudioStore} from "../../stores/audio-store";
+import {useQueueStore} from "../../stores/queue-store";
+import {useDeeperStore} from "../../stores/deeper-store";
 import {computed, ref} from "vue";
 import SortTracks from "../SortTracks.vue";
 
 const props = defineProps(['d', 'num', 'item'])
-const store = useDMStore()
+const spotifyStore = useSpotifyStore()
+const audioStore = useAudioStore()
+const queueStore = useQueueStore()
+const deeperStore = useDeeperStore()
 const selected = ref()
 const sortedDeeperPlaylistItems = computed(() => {
   const itemsCopy = [...props.d['tracks']['items']];
@@ -64,7 +70,7 @@ function lists(artists) {
         <div v-if="plitem.track && plitem.track.preview_url && plitem.track.album.images[0]" v-bind:id="plitem.track.id"
              tabindex="0" class="con3"
              :class="selected===plitem.track.id ? 'selected' : ''"
-             v-on:click="store.deeperTracksM({item:plitem.track,num:num,flag:false,sib:'playlist',parent:'p' + d.id});store.click($event)"
+             v-on:click="deeperStore.getTrackDetails(plitem.track, 'playlist');"
              v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }">
           <div class="track-overlay">
             <div class="track-info">
@@ -75,10 +81,10 @@ function lists(artists) {
           <audio preload="auto" v-bind:src="plitem.track.preview_url"></audio>
         </div>
         <div
-            v-else-if="plitem.track && !plitem.track.preview_url && plitem.track.album.images[0] && store.unplayable_tracks"
+            v-else-if="plitem.track && !plitem.track.preview_url && plitem.track.album.images[0] && audioStore.unplayableTracks"
             :class="selected===plitem.track.id ? 'selected' : ''"
             v-bind:id="plitem.track.id" tabindex="0" class="con3 half-opacity"
-            v-on:click="store.deeperTracksM({item:plitem.track,num:num,flag:false,sib:'playlist',parent:'p' + d.id});"
+            v-on:click="deeperStore.getTrackDetails(plitem.track, 'playlist');"
             v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }">
           <div class="track-overlay">
             <div class="track-info">
@@ -91,7 +97,7 @@ function lists(artists) {
         <div v-else-if="plitem.track && plitem.track.preview_url && !plitem.track.album.images[0]"
              :class="selected===plitem.track.id ? 'selected' : ''"
              v-bind:id="plitem.track.id" tabindex="0" class="con3"
-             v-on:click="store.deeperTracksM({item:plitem.track,num:num,flag:false,sib:'playlist',parent:'p' + d.id});store.click($event)">
+             v-on:click="deeperStore.getTrackDetails(plitem.track, 'playlist');">
           <div class="track-overlay">
             <div class="track-info">
               <div class="track-artists">{{ lists(plitem['track']['artists']) }}</div>
@@ -101,10 +107,10 @@ function lists(artists) {
           <audio preload="auto" v-bind:src="plitem.track.preview_url"></audio>
         </div>
         <div
-            v-else-if="plitem.track && plitem.track && !plitem.track.preview_url && !plitem.track.album.images[0] && store.unplayable_tracks"
+            v-else-if="plitem.track && plitem.track && !plitem.track.preview_url && !plitem.track.album.images[0] && audioStore.unplayableTracks"
             tabindex="0" class="con3 half-opacity" v-bind:id="plitem.track.id"
             :class="selected===plitem.track.id ? 'selected' : ''"
-            v-on:click="store.deeperTracksM({item:plitem.track,num:num,flag:false,sib:'playlist',parent:'p' + d.id});"
+            v-on:click="deeperStore.getTrackDetails(plitem.track, 'playlist');"
         >
           <div class="track-overlay">
             <div class="track-info">

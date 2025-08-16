@@ -1,11 +1,17 @@
 <script setup>
-import {useDMStore} from "../stores/dm-store";
+import {useSpotifyStore} from "../stores/spotify-store";
+import {useAudioStore} from "../stores/audio-store";
+import {useQueueStore} from "../stores/queue-store";
+import {useDeeperStore} from "../stores/deeper-store";
 import {ref, computed, onMounted, nextTick, watch} from "vue";
 import {useMediaDisplay} from "../composables/useMediaDisplay";
 import { useVisibilityManager } from "../composables/useVisibilityManager";
 
 const props = defineProps(['d', 'num'])
-const store = useDMStore()
+const spotifyStore = useSpotifyStore()
+const audioStore = useAudioStore()
+const queueStore = useQueueStore()
+const deeperStore = useDeeperStore()
 const selected = ref()
 const componentRef = ref(null)
 
@@ -17,6 +23,26 @@ function getMediaDisplay(item) {
   return useMediaDisplay(computed(() => item))
 }
 
+// Helper function to get section name from num
+function getSectionName(num) {
+  switch (num) {
+    case 1: return 'yourPlaylists'
+    case 2: return 'topArtists'
+    case 3: return 'topTracks'
+    case 4: return 'savedAlbums'
+    case 5: return 'savedTracks'
+    case 6: return 'followedArtists'
+    case 7: return 'newReleases'
+    case 8: return 'spotifyPlaylists'
+    case 10: return 'search'
+    case 22: return 'topArtists6'
+    case 23: return 'topArtistsAll'
+    case 32: return 'topTracks6'
+    case 33: return 'topTracksAll'
+    default: return 'search'
+  }
+}
+
 function setActive(id) {
   selected.value = id
 }
@@ -25,44 +51,52 @@ onMounted(async () => {
   // Wait for the next tick to ensure the ref is available
   await nextTick()
 
+  console.log('TrackArtist component mounted with props:', props.d)
+  console.log('Artist ID:', props.d?.id)
+  console.log('Artist type:', props.d?.type)
+  console.log('Num prop:', props.num)
+  console.log('Full artist data:', JSON.stringify(props.d, null, 2))
+
   // Register this component with the visibility manager
-  const artistKey = `trackartist_${props.d[0]?.id || 'default'}`
+  // Use a generic key that works with the current section
+  const artistKey = `trackartist_${props.d?.id || 'default'}`
+  console.log('Registering TrackArtist component with key:', artistKey)
   visibilityManager.registerComponent(artistKey, componentRef)
 })
 </script>
 
 <template>
   <div class="modern-track-artist" ref="componentRef">
-    <template v-for="(ta, index) in d" :key="index">
+    <template v-for="(item, index) in d" :key="index">
       <!-- Artist Section -->
-      <div v-if="ta.type==='artist'" class="artist-section">
+      <div v-if="item.type==='trackartist'" class="artist-section">
         <div class="artist-header">
           <!-- Artist Cover -->
-          <div :class="['artist-cover', getMediaDisplay(ta).displayClass.value]"
-               :style="getMediaDisplay(ta).backgroundStyle.value"
-               @mouseover="getMediaDisplay(ta).hasPreview.value && store.mouseOver($event)"
-               @mouseleave="getMediaDisplay(ta).hasPreview.value && store.mouseLeave($event)">
+          <div :class="['artist-cover', getMediaDisplay(item).displayClass.value]"
+               :style="getMediaDisplay(item).backgroundStyle.value"
+               @mouseover="getMediaDisplay(item).hasPreview.value && audioStore.handleAudioHover($event)"
+               @mouseleave="getMediaDisplay(item).hasPreview.value && audioStore.handleAudioLeave($event)">
             <div class="cover-overlay">
-              <div class="artist-name">{{ ta.name }}</div>
+              <div class="artist-name">{{ item.name }}</div>
             </div>
-            <audio :preload="getMediaDisplay(ta).audioPreload.value" :src="getMediaDisplay(ta).audioSrc.value"></audio>
+            <audio :preload="getMediaDisplay(item).audioPreload.value" :src="getMediaDisplay(item).audioSrc.value"></audio>
           </div>
 
           <!-- Artist Info -->
           <div class="artist-info">
-            <h2 class="artist-title">{{ ta.name }}</h2>
+            <h2 class="artist-title">{{ item.name }}</h2>
             <div class="artist-stats">
-              <span class="followers-count">{{ ta['followers']['total'].toLocaleString() }} followers</span>
+              <span class="followers-count">{{ item['followers']['total'].toLocaleString() }} followers</span>
             </div>
 
             <!-- Genres -->
             <div class="genres-section">
               <div class="genres-list">
-                <template v-for="(g, gIndex) in ta['genres']" :key="'genre-'+gIndex">
-                  <span v-if="ta['genres'].length > 1 && ta['genres'].length - 1 === gIndex" class="separator">&</span>
-                  <span v-if="ta['genres'].length >= 2 && ta['genres'].length - 1 !== gIndex && gIndex !== 0" class="separator">,</span>
+                <template v-for="(g, gIndex) in item['genres']" :key="'genre-'+gIndex">
+                  <span v-if="item['genres'].length > 1 && item['genres'].length - 1 === gIndex" class="separator">&</span>
+                  <span v-if="item['genres'].length >= 2 && item['genres'].length - 1 !== gIndex && gIndex !== 0" class="separator">,</span>
                   <button class="genre-tag"
-                          @click="store.thesoundof({name:g,num:num,sib:'trackartist',child:false})">
+                          @click="spotifyStore.getTheSoundOf({name:g,num:num,sib:'trackartist',child:false})">
                     {{ g }}
                   </button>
                 </template>
@@ -72,13 +106,13 @@ onMounted(async () => {
             <!-- Actions -->
             <div class="artist-actions">
               <button class="recommend-btn"
-                      @click="store.seedArtist({item:ta,num:num,sib:'trackartist'})">
+                      @click="deeperStore.getSeedArtistRecommendations(item, getSectionName(num))">
                 <span class="btn-icon">🎵</span>
                 Recommended artists songs based on this
               </button>
 
               <a class="spotify-link"
-                 :href="ta['external_urls']['spotify']"
+                 :href="item['external_urls']['spotify']"
                  target="_blank"
                  rel="noopener">
                 <span class="link-icon">🎧</span>
@@ -89,14 +123,14 @@ onMounted(async () => {
                 <span class="follow-label">Follow</span>
                 <label class="follow-checkbox">
                   <input type="checkbox"
-                         v-if="ta.followed"
-                         @click.once="store.followArtist({artist:ta,event:$event})"
+                         v-if="item.followed"
+                         @click.once="spotifyStore.followArtist(item)"
                          checked
-                         v-model="ta.followed">
+                         v-model="item.followed">
                   <input type="checkbox"
                          v-else
-                         @click.once="store.followArtist({artist:ta,event:$event})"
-                         v-model="ta.followed">
+                         @click.once="spotifyStore.followArtist(item)"
+                         v-model="item.followed">
                   <span class="checkmark"></span>
                 </label>
               </div>
@@ -106,17 +140,17 @@ onMounted(async () => {
       </div>
 
       <!-- Top Tracks Section -->
-      <div v-if="ta.type==='top_tracks'" class="section-header">
+      <div v-if="item.type==='top_tracks'" class="section-header">
         <h3 class="section-title">Top tracks</h3>
       </div>
 
-      <div v-if="ta.type==='top_tracks'" class="tracks-grid">
-        <div v-for="(tt, ttIndex) in ta['tracks']" :key="ttIndex">
+      <div v-if="item.type==='top_tracks'" class="tracks-grid">
+        <div v-for="(tt, ttIndex) in item.tracks" :key="ttIndex">
           <div :class="['track-card', getMediaDisplay(tt).displayClass.value, selected === tt.id ? 'selected' : '']"
                :style="getMediaDisplay(tt).backgroundStyle.value"
-               @mouseover="getMediaDisplay(tt).hasPreview.value && store.mouseOver($event)"
-               @mouseleave="getMediaDisplay(tt).hasPreview.value && store.mouseLeave($event)"
-               @click="setActive(tt.id);store.deeperTracks({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id}); store.queuein(tt)">
+               @mouseover="getMediaDisplay(tt).hasPreview.value && audioStore.handleAudioHover($event)"
+               @mouseleave="getMediaDisplay(tt).hasPreview.value && audioStore.handleAudioLeave($event)"
+               @click="setActive(tt.id);deeperStore.getTrackDetails(tt, getSectionName(num)); queueStore.addToQueue(tt)">
             <div class="track-overlay">
               <div class="track-name">{{ tt.name }}</div>
             </div>
@@ -126,26 +160,26 @@ onMounted(async () => {
       </div>
 
       <!-- Albums Section -->
-      <div v-if="ta.type==='albums' && ta.length > 0" class="section-header">
+      <div v-if="item.type==='albums' && item.items && item.items.length > 0" class="section-header">
         <h3 class="section-title">Albums</h3>
       </div>
 
-      <div v-if="ta.type==='single' && ta.length > 0" class="section-header">
-        <h3 class="section-title">Single</h3>
+      <div v-if="item.type==='single' && item.items && item.items.length > 0" class="section-header">
+        <h3 class="section-title">Singles</h3>
       </div>
 
-      <div v-if="ta.type==='appears_on' && ta.length > 0" class="section-header">
+      <div v-if="item.type==='appears_on' && item.items && item.items.length > 0" class="section-header">
         <h3 class="section-title">Appears on</h3>
       </div>
 
-      <div v-if="ta.type==='albums' && ta.length > 0 || ta.type==='single' && ta.length > 0 || ta.type==='appears_on' && ta.length > 0"
+      <div v-if="(item.type==='albums' || item.type==='single' || item.type==='appears_on') && item.items && item.items.length > 0"
            class="albums-grid">
-        <div v-for="(a, aIndex) in ta" :key="aIndex">
+        <div v-for="(a, aIndex) in item.items" :key="aIndex">
           <div :class="['album-card', getMediaDisplay(a).displayClass.value, selected === a.id ? 'selected' : '']"
                :style="getMediaDisplay(a).backgroundStyle.value"
-               @click="setActive(a.id);store.deeperAlbum({item:a,num:num,child:'art' + d[0].id,search:false})"
-               @mouseover="getMediaDisplay(a).hasPreview.value && store.mouseOver($event)"
-               @mouseleave="getMediaDisplay(a).hasPreview.value && store.mouseLeave($event)">
+               @click="setActive(a.id);deeperStore.getAlbumDetails(a, getSectionName(num))"
+               @mouseover="getMediaDisplay(a).hasPreview.value && audioStore.handleAudioHover($event)"
+               @mouseleave="getMediaDisplay(a).hasPreview.value && audioStore.handleAudioLeave($event)">
             <div class="album-overlay">
               <div class="album-name">{{ a.name }}</div>
             </div>
@@ -155,17 +189,17 @@ onMounted(async () => {
       </div>
 
       <!-- Related Artists Section -->
-      <div v-if="ta.type==='related-artists' && ta.length > 0" class="section-header">
+      <div v-if="item.type==='related-artists' && item.artists && item.artists.length > 0" class="section-header">
         <h3 class="section-title">Related Artists</h3>
       </div>
 
-      <div v-if="ta.type==='related-artists' && ta.length > 0" class="related-artists-grid">
-        <div v-for="(r, rIndex) in ta" :key="rIndex">
+      <div v-if="item.type==='related-artists' && item.artists && item.artists.length > 0" class="related-artists-grid">
+        <div v-for="(r, rIndex) in item.artists" :key="rIndex">
           <div :class="['related-artist-card', getMediaDisplay(r).displayClass.value, selected === r.id ? 'selected' : '']"
                :style="getMediaDisplay(r).backgroundStyle.value"
-               @mouseover="getMediaDisplay(r).hasPreview.value && store.mouseOver($event)"
-               @mouseleave="getMediaDisplay(r).hasPreview.value && store.mouseLeave($event)"
-               @click="setActive(r.id);store.deeperartist({item:r,track:ta[rIndex],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
+               @mouseover="getMediaDisplay(r).hasPreview.value && audioStore.handleAudioHover($event)"
+               @mouseleave="getMediaDisplay(r).hasPreview.value && audioStore.handleAudioLeave($event)"
+               @click="setActive(r.id);deeperStore.getArtistDetails(r, getSectionName(num))">
             <div class="artist-overlay">
               <div class="artist-name">{{ r.name }}</div>
             </div>

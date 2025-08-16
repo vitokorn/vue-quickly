@@ -2,14 +2,20 @@
 import RecTrack from "./RecTrack.vue";
 import RecTrackM from "./Mob/RecTrackM.vue";
 import {Lists} from "../common/lists";
-import {useDMStore} from "../stores/dm-store";
+import {useSpotifyStore} from "../stores/spotify-store";
+import {useAudioStore} from "../stores/audio-store";
+import {useQueueStore} from "../stores/queue-store";
+import {useDeeperStore} from "../stores/deeper-store";
 import {computed, ref} from "vue";
 import Loader from "./Loader.vue";
 import SortTracks from "./SortTracks.vue";
 import SortArtists from "./SortArtists.vue";
 import SortAlbums from "./SortAlbums.vue";
 
-const store = useDMStore()
+const spotifyStore = useSpotifyStore()
+const audioStore = useAudioStore()
+const queueStore = useQueueStore()
+const deeperStore = useDeeperStore()
 
 const selectedTopMenu = ref(null)
 const accordionActive = ref(true)
@@ -53,7 +59,7 @@ function setSelectedTopMenu(value) {
 }
 
 const sortedPlaylistItems = computed(() => {
-  const itemsCopy = [...store.currentpl.tracks.items];
+  const itemsCopy = [...spotifyStore.getCurrentPlaylist.tracks.items];
   switch (selectedPlaylistSortOption.value) {
     case 'track':
       return itemsCopy.sort((a, b) => a.track.name.localeCompare(b.track.name));
@@ -73,7 +79,7 @@ const sortedPlaylistItems = computed(() => {
 })
 
 const sortedTAItems = computed(() => {
-  const itemsCopy = [...store.topartist];
+  const itemsCopy = [...spotifyStore.getTopArtistsShort];
   switch (selectedTASortOption.value) {
     case 'artist':
       return itemsCopy.sort((a, b) => a.name.localeCompare(b.name));
@@ -87,7 +93,7 @@ const sortedTAItems = computed(() => {
 })
 
 const sortedTA6Items = computed(() => {
-  const itemsCopy = [...store.topartist6];
+  const itemsCopy = [...spotifyStore.getTopArtistsShort6];
   switch (selectedTA6SortOption.value) {
     case 'artist':
       return itemsCopy.sort((a, b) => a.name.localeCompare(b.name));
@@ -101,7 +107,7 @@ const sortedTA6Items = computed(() => {
 })
 
 const sortedTALLItems = computed(() => {
-  const itemsCopy = [...store.topartista];
+  const itemsCopy = [...spotifyStore.getTopArtistsShorta];
   switch (selectedTALLSortOption.value) {
     case 'artist':
       return itemsCopy.sort((a, b) => a.name.localeCompare(b.name));
@@ -115,7 +121,7 @@ const sortedTALLItems = computed(() => {
 })
 
 const sortedTTItems = computed(() => {
-  const itemsCopy = [...store.items];
+  const itemsCopy = [...spotifyStore.getTopTracksShort];
   switch (selectedTTSortOption.value) {
     case 'track':
       return itemsCopy.sort((a, b) => a.name.localeCompare(b.name));
@@ -135,7 +141,7 @@ const sortedTTItems = computed(() => {
 })
 
 const sortedTTMItems = computed(() => {
-  const itemsCopy = [...store.itemsm];
+  const itemsCopy = [...spotifyStore.getTopTracksShortm];
   switch (selectedTTMSortOption.value) {
     case 'track':
       return itemsCopy.sort((a, b) => a.name.localeCompare(b.name));
@@ -155,7 +161,7 @@ const sortedTTMItems = computed(() => {
 })
 
 const sortedTTLItems = computed(() => {
-  const itemsCopy = [...store.itemsl];
+  const itemsCopy = [...spotifyStore.getTopTracksShortl];
   switch (selectedTTLSortOption.value) {
     case 'track':
       return itemsCopy.sort((a, b) => a.name.localeCompare(b.name));
@@ -175,7 +181,7 @@ const sortedTTLItems = computed(() => {
 })
 
 const sortedSAItems = computed(() => {
-  const itemsCopy = [...store.savedalbums];
+  const itemsCopy = [...spotifyStore.getSavedAlbums];
   switch (selectedSASortOption.value) {
     case 'name':
       return itemsCopy.sort((a, b) => a.album.name.localeCompare(b.album.name));
@@ -195,7 +201,7 @@ const sortedSAItems = computed(() => {
 })
 
 const sortedSTItems = computed(() => {
-  const itemsCopy = [...store.savedtracks];
+  const itemsCopy = [...spotifyStore.getSavedTracks];
   switch (selectedSTSortOption.value) {
     case 'track':
       return itemsCopy.sort((a, b) => a.track.name.localeCompare(b.track.name));
@@ -215,7 +221,7 @@ const sortedSTItems = computed(() => {
 })
 
 const sortedFAItems = computed(() => {
-  const itemsCopy = [...store.followedartists];
+  const itemsCopy = [...spotifyStore.getFollowedArtists];
   switch (selectedFASortOption.value) {
     case 'artist':
       return itemsCopy.sort((a, b) => a.name.localeCompare(b.name));
@@ -229,7 +235,7 @@ const sortedFAItems = computed(() => {
 })
 
 const sortedNRItems = computed(() => {
-  const itemsCopy = [...store.newreleases];
+  const itemsCopy = [...spotifyStore.getNewReleases];
   switch (selectedNRSortOption.value) {
     case 'track':
       return itemsCopy.sort((a, b) => a.name.localeCompare(b.name));
@@ -249,7 +255,7 @@ const sortedNRItems = computed(() => {
 })
 
 const sortedSpotPlaylistItems = computed(() => {
-  const itemsCopy = [...store.currentspl.tracks.items];
+  const itemsCopy = [...spotifyStore.getCurrentSpotifyPlaylist.tracks.items];
   switch (selectedSpotPlaylistSortOption.value) {
     case 'track':
       return itemsCopy.sort((a, b) => a.track.name.localeCompare(b.track.name));
@@ -278,7 +284,7 @@ window.addEventListener('resize', () => {
   <ul class="tabs">
     <li id="option1">
       <a id="playlistlist" v-on:click="store.switchTabs({event:$event,mobile:true});setSelectedTopMenu(1)"
-         v-on:click.self.once="store.fetchPlaylists({event:$event,offset:0})">Playlists</a>
+         v-on:click.self.once="spotifyStore.fetchPlaylists({event:$event,offset:0})">Playlists</a>
     </li>
     <li id="option2">
       <a id="ta"
@@ -315,12 +321,12 @@ window.addEventListener('resize', () => {
 
     </li>
     <li id="srch" class="srch"><a id="sear" style="padding: 15px;"><input class="inp" v-model="search"
-                                                                          v-on:keyup="selectedTopMenu=10;store.search($event)"></a>
+                                                                          v-on:keyup="selectedTopMenu=10;spotifyStore.search($event)"></a>
 
     </li>
   </ul>
   <div v-if="selectedTopMenu===1">
-    <Loader v-if="store.loader"/>
+    <Loader v-if="spotifyStore.isLoading"/>
     <teleport to="#option1" :disabled="!accordionActive">
       <div id="yourplaylists" class="con2" v-show="selectedTopMenu===1">
         <div class="rel">
@@ -329,7 +335,7 @@ window.addEventListener('resize', () => {
           </button>
         </div>
         <div class="pl justify-content-center">
-          <template v-for="(item,index) of store.listplaylists" v-bind:key="index">
+          <template v-for="(item,index) of spotifyStore.getPlaylists" v-bind:key="index">
             <div v-bind:id="item.id" v-on:click="setSelectedPersonalPlaylist(item.id);store.fetchInit({event:$event})"
                  class="hr-line-dashed" :class="selectedPersonalPlaylist===item.id ? 'activetab':''">{{
                 item.name
@@ -337,25 +343,25 @@ window.addEventListener('resize', () => {
             </div>
           </template>
         </div>
-        <div class="play" v-if="store.currentpl" v-bind:id="'p' + store.currentpl.id" v-bind:key="index">
+        <div class="play" v-if="spotifyStore.getCurrentPlaylist" v-bind:id="'p' + spotifyStore.getCurrentPlaylist.id" v-bind:key="index">
           <div class="row align-items-center text-center w-100">
             <div class="col-3 text-dark" style="font-weight: bold;color: black">
               <div class="d-flex justify-content-center align-items-center">
-                <div>{{ store.currentpl.name }}</div>
+                <div>{{ spotifyStore.getCurrentPlaylist.name }}</div>
                 <button class="btn" v-on:click="store.reloader({num:1,event:$event})"><img
                     class="refresh-end" src="../assets/refresh-icon.png" alt=""></button>
               </div>
 
             </div>
             <div class="col-4 aresset display-flex align-items-center flex-wrap pointer"
-                 v-html="store.currentpl.description">
+                 v-html="spotifyStore.getCurrentPlaylist.description">
 
             </div>
-            <div v-if="store.currentpl.images[0]" class="col-3">
-              <img style="max-height: 165px" :src="store.currentpl.images[0].url">
+            <div v-if="spotifyStore.getCurrentPlaylist.images[0]" class="col-3">
+              <img style="max-height: 165px" :src="spotifyStore.getCurrentPlaylist.images[0].url">
             </div>
             <div class="col-2">
-              <button class="button"><a class="linkresset" v-bind:href="store.currentpl['external_urls']['spotify']"
+              <button class="button"><a class="linkresset" v-bind:href="spotifyStore.getCurrentPlaylist['external_urls']['spotify']"
                                         target="_blank">Open in Spotify</a></button>
               <sort-tracks v-model="selectedPlaylistSortOption"/>
             </div>
@@ -368,30 +374,30 @@ window.addEventListener('resize', () => {
                        tabindex="0"
                        class="con3"
                        :class="selectedItem==='1' + pl.track.id ? 'selected' : ''"
-                       v-on:click.self="setSelectedItem('1' + pl.track.id);store.deepermobile({item:pl,num:1,event:$event, parent: pl.track.id});store.click($event)"
+                       v-on:click.self="setSelectedItem('1' + pl.track.id);deeperStore.getTrackDetails(pl, 'yourPlaylists');// store.click removed"
                        v-bind:style="{ 'background-image': 'url(' + pl.track.album.images[0].url + ')' }">
                     {{ lists(pl['track']['artists']) }} - {{ pl.track.name }}
                     <audio preload="auto" v-bind:src="pl.track.preview_url"></audio>
                   </div>
                   <div v-bind:id="'1' + pl.track.id"
-                       v-else-if="pl.track.album.images[0] && !pl.track.preview_url && store.unplayable_tracks"
+                       v-else-if="pl.track.album.images[0] && !pl.track.preview_url && audioStore.unplayableTracks"
                        tabindex="0" class="con3 half-opacity"
                        :class="selectedItem==='1' + pl.track.id ? 'selected' : ''"
                        v-bind:style="{ 'background-image': 'url(' + pl.track.album.images[0].url + ')' }"
-                       v-on:click.self="setSelectedItem('1' + pl.track.id);store.deepermobile({item:pl,num:1,event:$event, parent: pl.track.id})">
+                       v-on:click.self="setSelectedItem('1' + pl.track.id);deeperStore.getTrackDetails(pl, 'yourPlaylists')">
                     {{ lists(pl['track']['artists']) }} - {{ pl.track.name }}
                     <audio preload="auto"></audio>
                   </div>
                   <div v-bind:id="'1' + pl.track.id" v-else-if="!pl.track.album.images[0] && pl.track.preview_url"
                        class="con3"
                        :class="selectedItem==='1' + pl.track.id ? 'selected' : ''"
-                       v-on:click.self="setSelectedItem('1' + pl.track.id);store.deepermobile({item:pl,num:1,event:$event, parent: pl.track.id});store.click($event)">
+                       v-on:click.self="setSelectedItem('1' + pl.track.id);deeperStore.getTrackDetails(pl, 'yourPlaylists');// store.click removed">
                     {{ lists(pl['track']['artists']) }} - {{ pl.track.name }}>
                     <audio preload="auto" v-bind:src="pl.track.preview_url"></audio>
                   </div>
-                  <div v-bind:id="'1' + pl.track.id" v-else-if="store.unplayable_tracks" class="con3 half-opacity"
+                  <div v-bind:id="'1' + pl.track.id" v-else-if="audioStore.unplayableTracks" class="con3 half-opacity"
                        :class="selectedItem==='1' + pl.track.id ? 'selected' : ''"
-                       v-on:click.self="setSelectedItem('1' + pl.track.id);store.deepermobile({item:pl,num:1,event:$event, parent: pl.track.id})">
+                       v-on:click.self="setSelectedItem('1' + pl.track.id);deeperStore.getTrackDetails(pl, 'yourPlaylists')">
                     {{ lists(pl['track']['artists']) }} - {{ pl.track.name }}>
                     <audio preload="none"></audio>
                   </div>
@@ -405,7 +411,7 @@ window.addEventListener('resize', () => {
     </teleport>
   </div>
   <div v-if="selectedTopMenu===2">
-    <Loader v-if="store.loader"/>
+    <Loader v-if="spotifyStore.isLoading"/>
     <teleport to="#option2" :disabled="!accordionActive">
       <div v-show="selectedTopMenu===2">
         <div class="display-flex align-items-center">
@@ -432,28 +438,28 @@ window.addEventListener('resize', () => {
               <div v-if="item.preview_url && item.images[1]" tabindex="0" class="con3"
                    :class="selectedItem==='2' + item.id ? 'selected' : ''"
                    v-bind:id="'2' + item.id"
-                   v-on:click="setSelectedItem('2' + item.id);store.prepare({num:2});store.deeperartistmob({item:item,track:item.tracks,num:2,flag:true,sib:false,related:false,parent:'2' + item.id});store.click($event)"
+                   v-on:click="setSelectedItem('2' + item.id);deeperStore.clearSection('topArtists');deeperStore.getArtistDetails(item, 'topArtists');// store.click removed"
                    v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">{{ item.name }}
                 <audio v-bind:key="index" v-if="item.preview_url" preload="none" v-bind:src="item.preview_url"></audio>
               </div>
               <div v-else-if="!item.preview_url && item.images[1]" tabindex="0" class="con3 half-opacity"
                    :class="selectedItem==='2' + item.id ? 'selected' : ''"
                    v-bind:id="'2' + item.id"
-                   v-on:click="setSelectedItem('2' + item.id);store.prepare({num:2});store.deeperartistmob({item:item,track:item.tracks,num:2,flag:true,sib:false,related:false,parent:'2' + item.id})"
+                   v-on:click="setSelectedItem('2' + item.id);deeperStore.clearSection('topArtists');deeperStore.getArtistDetails(item, 'topArtists')"
                    v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">
                 {{ item.name }}
               </div>
               <div v-else-if="item.preview_url && !item.images[1]" tabindex="0" class="con3"
                    :class="selectedItem==='2' + item.id ? 'selected' : ''"
                    v-bind:id="'2' + item.id"
-                   v-on:click="setSelectedItem('2' + item.id);store.prepare({num:2});store.deeperartistmob({item:item,track:item.tracks,num:2,flag:true,sib:false,related:false,parent:'2' + item.id});store.click($event)">
+                   v-on:click="setSelectedItem('2' + item.id);deeperStore.clearSection('topArtists');deeperStore.getArtistDetails(item, 'topArtists');// store.click removed">
                 <audio v-bind:key="index" v-if="item.preview_url" preload="none" v-bind:src="item.preview_url"></audio>
                 {{ item.name }}
               </div>
               <div v-else tabindex="0" class="con3 half-opacity"
                    :class="selectedItem==='2' + item.id ? 'selected' : ''"
                    v-bind:id="'2' + item.id"
-                   v-on:click="setSelectedItem('2' + item.id);store.prepare({num:2});store.deeperartistmob({item:item,track:item.tracks,num:2,flag:true,sib:false,related:false,parent:'2' + item.id})"
+                   v-on:click="setSelectedItem('2' + item.id);deeperStore.clearSection('topArtists');deeperStore.getArtistDetails(item, 'topArtists')"
                    v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">
                 {{ item.name }}
               </div>
@@ -469,28 +475,28 @@ window.addEventListener('resize', () => {
               <div v-if="item.preview_url && item.images[1]" tabindex="0" class="con3"
                    :class="selectedItem==='22' + item.id ? 'selected' : ''"
                    v-bind:id="'22' + item.id"
-                   v-on:click="setSelectedItem('22' + item.id);store.prepare({num:22});store.deeperartistmob({item:item,track:item.tracks,num:22,flag:true,sib:false,related:false,parent:'22' + item.id});store.click($event)"
+                   v-on:click="setSelectedItem('22' + item.id);deeperStore.clearSection('topArtists6');deeperStore.getArtistDetails(item, 'topArtists6');// store.click removed"
                    v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">{{ item.name }}
                 <audio v-bind:key="index" v-if="item.preview_url" preload="none" v-bind:src="item.preview_url"></audio>
               </div>
               <div v-else-if="!item.preview_url && item.images[1]" tabindex="0" class="con3 half-opacity"
                    :class="selectedItem==='22' + item.id ? 'selected' : ''"
                    v-bind:id="'22' + item.id"
-                   v-on:click="setSelectedItem('22' + item.id);store.prepare({num:22});store.deeperartistmob({item:item,track:item.tracks,num:22,flag:true,sib:false,related:false,parent:'22' + item.id})"
+                   v-on:click="setSelectedItem('22' + item.id);deeperStore.clearSection('topArtists6');deeperStore.getArtistDetails(item, 'topArtists6')"
                    v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">
                 {{ item.name }}
               </div>
               <div v-else-if="item.preview_url && !item.images[1]" tabindex="0" class="con3"
                    :class="selectedItem==='22' + item.id ? 'selected' : ''"
                    v-bind:id="'22' + item.id"
-                   v-on:click="setSelectedItem('22' + item.id);store.prepare({num:22});store.deeperartistmob({item:item,track:item.tracks,num:22,flag:true,sib:false,related:false,parent:'22' + item.id});store.click($event)">
+                   v-on:click="setSelectedItem('22' + item.id);deeperStore.clearSection('topArtists6');deeperStore.getArtistDetails(item, 'topArtists6');// store.click removed">
                 <audio v-bind:key="index" v-if="item.preview_url" preload="none" v-bind:src="item.preview_url"></audio>
                 {{ item.name }}
               </div>
               <div v-else tabindex="0" class="con3 half-opacity"
                    :class="selectedItem==='22' + item.id ? 'selected' : ''"
                    v-bind:id="'22' + item.id"
-                   v-on:click="setSelectedItem('22' + item.id);store.prepare({num:22});store.deeperartistmob({item:item,track:item.tracks,num:22,flag:true,sib:false,related:false,parent:'22' + item.id})"
+                   v-on:click="setSelectedItem('22' + item.id);deeperStore.clearSection('topArtists6');deeperStore.getArtistDetails(item, 'topArtists6')"
                    v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">
                 {{ item.name }}
               </div>
@@ -506,28 +512,28 @@ window.addEventListener('resize', () => {
               <div v-if="item.preview_url && item.images[1]" tabindex="0" class="con3"
                    :class="selectedItem==='23' + item.id ? 'selected' : ''"
                    v-bind:id="'23' + item.id"
-                   v-on:click="setSelectedItem('23' + item.id);store.prepare({num:23});store.deeperartistmob({item:item,track:item.tracks,num:23,flag:true,sib:false,related:false,parent:'23' + item.id});store.click($event)"
+                   v-on:click="setSelectedItem('23' + item.id);deeperStore.clearSection('topArtistsAll');deeperStore.getArtistDetails(item, 'topArtistsAll');// store.click removed"
                    v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">{{ item.name }}
                 <audio v-bind:key="index" v-if="item.preview_url" preload="none" v-bind:src="item.preview_url"></audio>
               </div>
               <div v-else-if="!item.preview_url && item.images[1]" tabindex="0" class="con3 half-opacity"
                    :class="selectedItem==='23' + item.id ? 'selected' : ''"
                    v-bind:id="'23' + item.id"
-                   v-on:click="setSelectedItem('23' + item.id);store.prepare({num:23});store.deeperartistmob({item:item,track:item.tracks,num:23,flag:true,sib:false,related:false,parent:'23' + item.id})"
+                   v-on:click="setSelectedItem('23' + item.id);deeperStore.clearSection('topArtistsAll');deeperStore.getArtistDetails(item, 'topArtistsAll')"
                    v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">
                 {{ item.name }}
               </div>
               <div v-else-if="item.preview_url && !item.images[1]" tabindex="0" class="con3"
                    :class="selectedItem==='23' + item.id ? 'selected' : ''"
                    v-bind:id="'23' + item.id"
-                   v-on:click="setSelectedItem('23' + item.id);store.prepare({num:23});store.deeperartistmob({item:item,track:item.tracks,num:23,flag:true,sib:false,related:false,parent:'23' + item.id});store.click($event)">
+                   v-on:click="setSelectedItem('23' + item.id);deeperStore.clearSection('topArtistsAll');deeperStore.getArtistDetails(item, 'topArtistsAll');// store.click removed">
                 <audio v-bind:key="index" v-if="item.preview_url" preload="none" v-bind:src="item.preview_url"></audio>
                 {{ item.name }}
               </div>
               <div v-else tabindex="0" class="con3 half-opacity"
                    :class="selectedItem==='23' + item.id ? 'selected' : ''"
                    v-bind:id="'23' + item.id"
-                   v-on:click="setSelectedItem('23' + item.id);store.prepare({num:23});store.deeperartistmob({item:item,track:item.tracks,num:23,flag:true,sib:false,related:false,parent:'23' + item.id})"
+                   v-on:click="setSelectedItem('23' + item.id);deeperStore.clearSection('topArtistsAll');deeperStore.getArtistDetails(item, 'topArtistsAll')"
                    v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">
                 {{ item.name }}
               </div>
@@ -539,7 +545,7 @@ window.addEventListener('resize', () => {
     </teleport>
   </div>
   <div v-if="selectedTopMenu===3">
-    <Loader v-if="store.loader"/>
+    <Loader v-if="spotifyStore.isLoading"/>
     <teleport to="#option3" :disabled="!accordionActive">
       <div class="display-flex align-items-center" v-show="selectedTopMenu===3">
           <span id="toptracks" v-on:click="store.switchTracks({num:1})"
@@ -567,17 +573,17 @@ window.addEventListener('resize', () => {
             <div v-if="item.preview_url && item.album.images[0]" tabindex="0" class="con3"
                  :class="selectedItem==='3' + item.id ? 'selected' : ''"
                  :id="'3' + item.id"
-                 v-on:click="setSelectedItem(item.id);store.deepermobile({item:item,num:3,event:$event,parent:'3' + item.id});store.click($event)"
+                 v-on:click="setSelectedItem(item.id);deeperStore.getTrackDetails({item:item,num:3,event:$event,parent:'3' + item.id});// store.click removed"
                  v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }">
               {{ lists(item.artists) }} - {{ item.name }}
               <audio preload="none" v-bind:src="item.preview_url"></audio>
             </div>
-            <div v-else-if="!item.preview_url && item.album.images[0] && store.unplayable_tracks" tabindex="0"
+            <div v-else-if="!item.preview_url && item.album.images[0] && audioStore.unplayableTracks" tabindex="0"
                  class="con3 half-opacity"
                  :class="selectedItem==='3' + item.id ? 'selected' : ''"
                  :id="'3' + item.id"
                  v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }"
-                 v-on:click="setSelectedItem(item.id);store.deepermobile({item:item,num:3,event:$event,parent:'3' + item.id});">
+                 v-on:click="setSelectedItem(item.id);deeperStore.getTrackDetails({item:item,num:3,event:$event,parent:'3' + item.id});">
               {{ lists(item.artists) }}
               -
               {{ item.name }}
@@ -585,16 +591,16 @@ window.addEventListener('resize', () => {
             <div v-else-if="item.preview_url && !item.album.images[0]" tabindex="0" class="con3"
                  :class="selectedItem==='3' + item.id ? 'selected' : ''"
                  :id="'3' + item.id"
-                 v-on:click="setSelectedItem(item.id);store.deepermobile({item:item,num:3,event:$event,parent:'3' + item.id});">
+                 v-on:click="setSelectedItem(item.id);deeperStore.getTrackDetails({item:item,num:3,event:$event,parent:'3' + item.id});">
               {{ lists(item.artists) }}
               -
               {{ item.name }}
               <audio preload="none" v-bind:src="item.preview_url"></audio>
             </div>
-            <div v-else-if="store.unplayable_tracks" tabindex="0" class="con3 half-opacity"
+            <div v-else-if="audioStore.unplayableTracks" tabindex="0" class="con3 half-opacity"
                  :class="selectedItem==='3' + item.id ? 'selected' : ''"
                  :id="'3' + item.id"
-                 v-on:click="setSelectedItem(item.id);store.deepermobile({item:item,num:3,event:$event,parent:'3' + item.id});">
+                 v-on:click="setSelectedItem(item.id);deeperStore.getTrackDetails({item:item,num:3,event:$event,parent:'3' + item.id});">
               {{ lists(item.artists) }}
               -
               {{ item.name }}
@@ -611,17 +617,17 @@ window.addEventListener('resize', () => {
             <div v-if="item.preview_url && item.album.images[0]" tabindex="0" class="con3"
                  :class="selectedItem==='32' + item.id ? 'selected' : ''"
                  :id="'32' + item.id"
-                 v-on:click="setSelectedItem('32' + item.id);store.deepermobile({item:item,num:32,event:$event,parent:item.id});store.click($event)"
+                 v-on:click="setSelectedItem('32' + item.id);deeperStore.getTrackDetails({item:item,num:32,event:$event,parent:item.id});// store.click removed"
                  v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }">
               {{ lists(item.artists) }} - {{ item.name }}
               <audio preload="none" v-bind:src="item.preview_url"></audio>
             </div>
-            <div v-else-if="!item.preview_url && item.album.images[0] && store.unplayable_tracks" tabindex="0"
+            <div v-else-if="!item.preview_url && item.album.images[0] && audioStore.unplayableTracks" tabindex="0"
                  class="con3 half-opacity"
                  :class="selectedItem==='32' + item.id ? 'selected' : ''"
                  :id="'32' + item.id"
                  v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }"
-                 v-on:click="setSelectedItem('32' + item.id);store.deepermobile({item:item,num:32,event:$event,parent:item.id});">
+                 v-on:click="setSelectedItem('32' + item.id);deeperStore.getTrackDetails({item:item,num:32,event:$event,parent:item.id});">
               {{
                 lists(item.artists)
               }} -
@@ -630,17 +636,17 @@ window.addEventListener('resize', () => {
             <div v-else-if="item.preview_url && !item.album.images[0]" tabindex="0" class="con3"
                  :class="selectedItem==='32' + item.id ? 'selected' : ''"
                  :id="'32' + item.id"
-                 v-on:click="setSelectedItem('32' + item.id);store.deepermobile({item:item,num:32,event:$event,parent:item.id});">
+                 v-on:click="setSelectedItem('32' + item.id);deeperStore.getTrackDetails({item:item,num:32,event:$event,parent:item.id});">
               {{
                 lists(item.artists)
               }} -
               {{ item.name }}
               <audio preload="none" v-bind:src="item.preview_url"></audio>
             </div>
-            <div v-else-if="store.unplayable_tracks" tabindex="0" class="con3 half-opacity"
+            <div v-else-if="audioStore.unplayableTracks" tabindex="0" class="con3 half-opacity"
                  :class="selectedItem==='32' + item.id ? 'selected' : ''"
                  :id="'32' + item.id"
-                 v-on:click="setSelectedItem('32' + item.id);store.deepermobile({item:item,num:32,event:$event,parent:item.id});">
+                 v-on:click="setSelectedItem('32' + item.id);deeperStore.getTrackDetails({item:item,num:32,event:$event,parent:item.id});">
               {{
                 lists(item.artists)
               }} -
@@ -658,17 +664,17 @@ window.addEventListener('resize', () => {
             <div v-if="item.preview_url && item.album.images[0]" tabindex="0" class="con3"
                  :class="selectedItem==='33' + item.id ? 'selected' : ''"
                  :id="'33' + item.id"
-                 v-on:click="setSelectedItem('33' + item.id);store.deepermobile({item:item,num:33,event:$event,parent:'33' + item.id});store.click($event)"
+                 v-on:click="setSelectedItem('33' + item.id);deeperStore.getTrackDetails({item:item,num:33,event:$event,parent:'33' + item.id});// store.click removed"
                  v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }">
               {{ lists(item.artists) }} - {{ item.name }}
               <audio preload="none" v-bind:src="item.preview_url"></audio>
             </div>
-            <div v-else-if="!item.preview_url && item.album.images[0] && store.unplayable_tracks" tabindex="0"
+            <div v-else-if="!item.preview_url && item.album.images[0] && audioStore.unplayableTracks" tabindex="0"
                  class="con3 half-opacity"
                  :class="selectedItem==='33' + item.id ? 'selected' : ''"
                  :id="'33' + item.id"
                  v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }"
-                 v-on:click="setSelectedItem('33' + item.id);store.deepermobile({item:item,num:33,event:$event,parent:'33' + item.id});">
+                 v-on:click="setSelectedItem('33' + item.id);deeperStore.getTrackDetails({item:item,num:33,event:$event,parent:'33' + item.id});">
               {{
                 lists(item.artists)
               }} -
@@ -677,17 +683,17 @@ window.addEventListener('resize', () => {
             <div v-else-if="item.preview_url && !item.album.images[0]" tabindex="0" class="con3"
                  :class="selectedItem==='33' + item.id ? 'selected' : ''"
                  :id="'33' + item.id"
-                 v-on:click="setSelectedItem('33' + item.id);store.deepermobile({item:item,num:33,event:$event,parent:'33' + item.id});">
+                 v-on:click="setSelectedItem('33' + item.id);deeperStore.getTrackDetails({item:item,num:33,event:$event,parent:'33' + item.id});">
               {{
                 lists(item.artists)
               }} -
               {{ item.name }}
               <audio preload="none" v-bind:src="item.preview_url"></audio>
             </div>
-            <div v-else-if="store.unplayable_tracks" tabindex="0" class="con3 half-opacity"
+            <div v-else-if="audioStore.unplayableTracks" tabindex="0" class="con3 half-opacity"
                  :class="selectedItem==='33' + item.id ? 'selected' : ''"
                  :id="'33' + item.id"
-                 v-on:click="setSelectedItem('33' + item.id);store.deepermobile({item:item,num:33,event:$event,parent:'33' + item.id});">
+                 v-on:click="setSelectedItem('33' + item.id);deeperStore.getTrackDetails({item:item,num:33,event:$event,parent:'33' + item.id});">
               {{
                 lists(item.artists)
               }} -
@@ -700,7 +706,7 @@ window.addEventListener('resize', () => {
     </teleport>
   </div>
   <div v-if="selectedTopMenu===4">
-    <Loader v-if="store.loader"/>
+    <Loader v-if="spotifyStore.isLoading"/>
     <teleport to="#option4" :disabled="!accordionActive">
       <div id="savedalbum" class="conm" v-show="selectedTopMenu===4">
         <sort-albums v-model="selectedSASortOption"/>
@@ -709,18 +715,18 @@ window.addEventListener('resize', () => {
             <div v-if="item.album.tracks.items[0].preview_url && item.album.images[0]" tabindex="0" class="con3"
                  v-bind:id="'4' + item.album.id"
                  :class="selectedItem===item.album.id ? 'selected' : ''"
-                 v-on:click="setSelectedItem('4' + item.album.id);store.deeperAlbumMob({item:item,num:4,parent:'4' + item.album.id});store.click($event)"
+                 v-on:click="setSelectedItem('4' + item.album.id);deeperStore.getTrackDetailsAlbumMob({item:item,num:4,parent:'4' + item.album.id});// store.click removed"
                  v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }">
               {{ lists(item.album.artists) }}
               <audio preload="auto" v-bind:src="item.album.tracks.items[0].preview_url"></audio>
             </div>
-            <div v-else-if="item.album.images[0] && !item.album.tracks.items[0].preview_url && store.unplayable_tracks "
+            <div v-else-if="item.album.images[0] && !item.album.tracks.items[0].preview_url && audioStore.unplayableTracks "
                  tabindex="0"
                  v-bind:id="'4' + item.album.id"
                  class="con3 half-opacity"
                  :class="selectedItem==='4' + item.album.id ? 'selected' : ''"
                  v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }"
-                 v-on:click="setSelectedItem('4' + item.album.id);store.deeperAlbumMob({item:item,num:4,parent:'4' + item.album.id})">
+                 v-on:click="setSelectedItem('4' + item.album.id);deeperStore.getTrackDetailsAlbumMob({item:item,num:4,parent:'4' + item.album.id})">
               {{ lists(item.album.artists) }}
             </div>
             <div v-else-if="!item.album.images[0] && item.album.tracks.items[0].preview_url " tabindex="0"
@@ -728,13 +734,13 @@ window.addEventListener('resize', () => {
                  class="con3 half-opacity"
                  :class="selectedItem==='4' + item.album.id ? 'selected' : ''"
                  v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }"
-                 v-on:click="setSelectedItem('4' + item.album.id);store.deeperAlbumMob({item:item,num:4,parent:'4' + item.album.id})">
+                 v-on:click="setSelectedItem('4' + item.album.id);deeperStore.getTrackDetailsAlbumMob({item:item,num:4,parent:'4' + item.album.id})">
               {{ lists(item.album.artists) }}
             </div>
-            <div v-else-if="store.unplayable_tracks" tabindex="0" class="con3 half-opacity"
+            <div v-else-if="audioStore.unplayableTracks" tabindex="0" class="con3 half-opacity"
                  v-bind:id="'4' + item.album.id"
                  :class="selectedItem==='4' + item.album.id ? 'selected' : ''"
-                 v-on:click="setSelectedItem('4' + item.album.id);store.deeperAlbumMob({item:item,num:4,parent:'4' + item.album.id})">
+                 v-on:click="setSelectedItem('4' + item.album.id);deeperStore.getTrackDetailsAlbumMob({item:item,num:4,parent:'4' + item.album.id})">
               {{ lists(item.album.artists) }}
             </div>
           </template>
@@ -744,7 +750,7 @@ window.addEventListener('resize', () => {
     </teleport>
   </div>
   <div v-if="selectedTopMenu===5">
-    <Loader v-if="store.loader"/>
+    <Loader v-if="spotifyStore.isLoading"/>
     <teleport to="#option5" :disabled="!accordionActive">
       <div id="savedtrack" class="con2" v-show="selectedTopMenu===5">
         <sort-tracks v-model="selectedSTSortOption"/>
@@ -753,32 +759,32 @@ window.addEventListener('resize', () => {
             <div v-if="item.track.preview_url && item.track.album.images[0]" tabindex="0" class="con3"
                  :class="selectedItem==='5' + item.track.id ? 'selected' : ''"
                  v-bind:id="'5' + item.track.id"
-                 v-on:click="setSelectedItem('5' + item.track.id);store.deepermobile({item:item,num:5,event:$event,parent: '5' + item.track.id});store.click($event)"
+                 v-on:click="setSelectedItem('5' + item.track.id);deeperStore.getTrackDetails({item:item,num:5,event:$event,parent: '5' + item.track.id});// store.click removed"
                  v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }">
               {{ lists(item.track.artists) }} - {{ item.track.name }}
               <audio preload="auto" v-bind:src="item.track.preview_url"></audio>
             </div>
-            <div v-else-if="!item.track.preview_url && item.track.album.images[0] && store.unplayable_tracks"
+            <div v-else-if="!item.track.preview_url && item.track.album.images[0] && audioStore.unplayableTracks"
                  tabindex="0"
                  class="con3 half-opacity"
                  :class="selectedItem==='5' + item.track.id ? 'selected' : ''"
                  v-bind:id="'5' + item.track.id"
                  v-bind:style="{ 'background-image': 'url(' + item.track.album.images[0].url + ')' }"
-                 v-on:click="setSelectedItem('5' + item.track.id);store.deepermobile({item:item,num:5,event:$event,parent: '5' + item.track.id})">
+                 v-on:click="setSelectedItem('5' + item.track.id);deeperStore.getTrackDetails({item:item,num:5,event:$event,parent: '5' + item.track.id})">
               {{ lists(item.track.artists) }} - {{ item.track.name }}
             </div>
             <div v-else-if="item.track.preview_url && !item.track.album.images[0]" class="con3"
                  :class="selectedItem==='5' + item.track.id ? 'selected' : ''"
                  v-bind:id="'5' + item.track.id"
-                 v-on:click="setSelectedItem('5' + item.track.id);store.deepermobile({item:item,num:5,event:$event,parent: '5' + item.track.id})">
+                 v-on:click="setSelectedItem('5' + item.track.id);deeperStore.getTrackDetails({item:item,num:5,event:$event,parent: '5' + item.track.id})">
               {{ lists(item.track.artists) }} -
               {{ item.track.name }}
               <audio preload="auto" v-bind:src="item.track.preview_url"></audio>
             </div>
-            <div v-else-if="store.unplayable_tracks" class="con3 half-opacity"
+            <div v-else-if="audioStore.unplayableTracks" class="con3 half-opacity"
                  :class="selectedItem==='5' + item.track.id ? 'selected' : ''"
                  v-bind:id="'5' + item.track.id"
-                 v-on:click="setSelectedItem('5' + item.track.id);store.deepermobile({item:item,num:5,event:$event,parent: '5' + item.track.id})"
+                 v-on:click="setSelectedItem('5' + item.track.id);deeperStore.getTrackDetails({item:item,num:5,event:$event,parent: '5' + item.track.id})"
             >{{ lists(item.track.artists) }} - {{ item.track.name }}
             </div>
           </template>
@@ -788,7 +794,7 @@ window.addEventListener('resize', () => {
     </teleport>
   </div>
   <div v-if="selectedTopMenu===6">
-    <Loader v-if="store.loader"/>
+    <Loader v-if="spotifyStore.isLoading"/>
     <teleport to="#option6" :disabled="!accordionActive">
       <div class="display-flex">
         <button class="btn" v-on:click="store.reloadartists(4,$event)"><img class="refresh-end"
@@ -803,14 +809,14 @@ window.addEventListener('resize', () => {
             <div v-if="item.preview_url" tabindex="0" class="con3"
                  v-bind:id="'6' + item.id"
                  :class="selectedItem==='6' + item.id ? 'selected' : ''"
-                 v-on:click="setSelectedItem('6' + item.id);store.deeperartistmob({item:item,track:item.tracks,num:6,flag:true,sib:false,related:false,parent:'6' + item.id});store.click($event)"
+                 v-on:click="setSelectedItem('6' + item.id);deeperStore.getArtistDetails(item, 'followedArtists');// store.click removed"
                  v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">{{ item.name }}
               <audio preload="none" v-bind:src="item.preview_url"></audio>
             </div>
             <div v-else tabindex="0" class="con3 half-opacity"
                  v-bind:id="'6' + item.id"
                  :class="selectedItem==='6' + item.id ? 'selected' : ''"
-                 v-on:click="setSelectedItem('6' + item.id);store.deeperartistmob({item:item,track:item.tracks,num:6,flag:true,sib:false,related:false,parent:'6' + item.id})"
+                 v-on:click="setSelectedItem('6' + item.id);deeperStore.getArtistDetails(item, 'followedArtists')"
                  v-bind:style="{ 'background-image': 'url(' + item.images[1].url + ')' }">
               {{ item.name }}
             </div>
@@ -821,7 +827,7 @@ window.addEventListener('resize', () => {
     </teleport>
   </div>
   <div v-if="selectedTopMenu===7">
-    <Loader v-if="store.loader"/>
+    <Loader v-if="spotifyStore.isLoading"/>
     <teleport to="#option7" :disabled="!accordionActive">
       <div id="newrelease" class="conm" v-show="selectedTopMenu===7">
         <sort-tracks v-model="selectedNRSortOption"/>
@@ -830,33 +836,33 @@ window.addEventListener('resize', () => {
             <div v-if="item.tracks.items[0].preview_url && item.images[0].url" tabindex="0" class="con3"
                  :class="selectedItem==='7' + item.id ? 'selected' : ''"
                  v-bind:id="'7' + item.id"
-                 v-on:click="setSelectedItem('7' + item.id);store.deepermobile({item:item,num:7,event:$event,parent:'7' + item.id});store.click($event)"
+                 v-on:click="setSelectedItem('7' + item.id);deeperStore.getTrackDetails({item:item,num:7,event:$event,parent:'7' + item.id});// store.click removed"
                  v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }">{{ lists(item.artists) }} -
               {{ item.name }}
               <audio preload="auto" v-bind:src="item.tracks.items[0].preview_url"></audio>
             </div>
-            <div v-else-if="!item.tracks.items[0].preview_url && item.images[0].url && store.unplayable_tracks"
+            <div v-else-if="!item.tracks.items[0].preview_url && item.images[0].url && audioStore.unplayableTracks"
                  tabindex="0"
                  class="con3 half-opacity"
                  :class="selectedItem==='7' + item.id ? 'selected' : ''"
                  v-bind:id="'7' + item.id"
                  v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }"
-                 v-on:click="setSelectedItem('7' + item.id);store.deepermobile({item:item,num:7,event:$event,parent:'7' + item.id})">
+                 v-on:click="setSelectedItem('7' + item.id);deeperStore.getTrackDetails({item:item,num:7,event:$event,parent:'7' + item.id})">
               {{ lists(item.artists) }} -
               {{ item.name }}
             </div>
             <div v-else-if="item.tracks.items[0].preview_url && !item.images[0].url" tabindex="0" class="con3"
                  :class="selectedItem==='7' + item.id ? 'selected' : ''"
                  v-bind:id="'7' + item.id"
-                 v-on:click="setSelectedItem('7' + item.id);store.deepermobile({item:item,num:7,event:$event,parent:'7' + item.id})">
+                 v-on:click="setSelectedItem('7' + item.id);deeperStore.getTrackDetails({item:item,num:7,event:$event,parent:'7' + item.id})">
               {{ lists(item.artists) }} -
               {{ item.name }}
               <audio preload="auto" v-bind:src="item.tracks.items[0].preview_url"></audio>
             </div>
-            <div v-else-if="store.unplayable_tracks" tabindex="0" class="con3 half-opacity"
+            <div v-else-if="audioStore.unplayableTracks" tabindex="0" class="con3 half-opacity"
                  :class="selectedItem==='7' + item.id ? 'selected' : ''"
                  v-bind:id="'7' + item.id"
-                 v-on:click="setSelectedItem('7' + item.id);store.deepermobile({item:item,num:7,event:$event,parent:'7' + item.id})">
+                 v-on:click="setSelectedItem('7' + item.id);deeperStore.getTrackDetails({item:item,num:7,event:$event,parent:'7' + item.id})">
               {{ lists(item.artists) }} -
               {{ item.name }}
             </div>
@@ -867,7 +873,7 @@ window.addEventListener('resize', () => {
     </teleport>
   </div>
   <div v-if="selectedTopMenu===8">
-    <Loader v-if="store.loader"/>
+    <Loader v-if="spotifyStore.isLoading"/>
     <teleport to="#option8" :disabled="!accordionActive">
       <div id="sptplaylists" class="con2" v-show="selectedTopMenu===8">
         <div class="head">
@@ -876,7 +882,7 @@ window.addEventListener('resize', () => {
         </div>
         <div class="sp">
           <div class="pl justify-content-center">
-            <template v-for="item of store.spotplaylists" v-bind:key="item.id">
+            <template v-for="item of spotifyStore.getSpotifyPlaylists" v-bind:key="item.id">
               <div v-bind:id="item.id" v-on:click="setSelectedSpotifyPlaylist(item.id);store.SpotInit({event:$event})"
                    class="hr-line-dashed">{{
                   item.name
@@ -889,25 +895,25 @@ window.addEventListener('resize', () => {
           <div class="row align-items-center text-center w-100">
             <div class="col-3 text-dark" style="font-weight: bold;color: black">
               <div class="d-flex justify-content-center align-items-center">
-                <div>{{ store.currentspl.name }}</div>
+                <div>{{ spotifyStore.getCurrentSpotifyPlaylist.name }}</div>
                 <button class="btn" v-on:click="store.reloader({num:1,event:$event})"><img
                     class="refresh-end" src="../assets/refresh-icon.png" alt=""></button>
               </div>
 
             </div>
             <div class="col-4 aresset display-flex align-items-center flex-wrap pointer"
-                 v-html="store.currentspl.description">
+                 v-html="spotifyStore.getCurrentSpotifyPlaylist.description">
 
             </div>
-            <div v-if="store.currentspl.images[0]" class="col-3">
-              <img style="max-height: 165px" :src="store.currentspl.images[0].url">
+            <div v-if="spotifyStore.getCurrentSpotifyPlaylist.images[0]" class="col-3">
+              <img style="max-height: 165px" :src="spotifyStore.getCurrentSpotifyPlaylist.images[0].url">
             </div>
             <div class="col-2">
               <div style="color: black;">Follow</div>
-              <input type="checkbox" v-if="store.currentspl.followed"
+              <input type="checkbox" v-if="spotifyStore.getCurrentSpotifyPlaylist.followed"
                      @click.once="store.followPlaylist($event)" checked
-                     v-model="store.currentspl.followed">
-              <button class="button"><a class="linkresset" v-bind:href="store.currentspl['external_urls']['spotify']"
+                     v-model="spotifyStore.getCurrentSpotifyPlaylist.followed">
+              <button class="button"><a class="linkresset" v-bind:href="spotifyStore.getCurrentSpotifyPlaylist['external_urls']['spotify']"
                                         target="_blank">Open in Spotify</a></button>
               <sort-tracks v-model="selectedSpotPlaylistSortOption"/>
             </div>
@@ -919,29 +925,29 @@ window.addEventListener('resize', () => {
                      tabindex="0"
                      class="con3"
                      :class="selectedItem==='8' + spl.track.id ? 'selected' : ''"
-                     v-on:click.self="setSelectedItem('8' + spl.track.id);store.prepare({num:8});store.deepermobile({item:spl,num:8,event:$event,parent:'8' + spl.track.id});store.click($event)"
+                     v-on:click.self="setSelectedItem('8' + spl.track.id);deeperStore.clearSection({num:8});deeperStore.getTrackDetails({item:spl,num:8,event:$event,parent:'8' + spl.track.id});// store.click removed"
                      v-bind:style="{ 'background-image': 'url(' + spl.track.album.images[0].url + ')' }">
                   {{ lists(spl['track']['artists']) }} - {{ spl.track.name }}
                   <audio preload="auto" v-bind:src="spl.track.preview_url"></audio>
                 </div>
                 <div v-bind:id="'8' + spl.track.id"
-                     v-else-if="spl.track.album.images[0] && !spl.track.preview_url && store.unplayable_tracks"
+                     v-else-if="spl.track.album.images[0] && !spl.track.preview_url && audioStore.unplayableTracks"
                      tabindex="0" class="con3 half-opacity"
                      :class="selectedItem==='8' + spl.track.id ? 'selected' : ''"
                      v-bind:style="{ 'background-image': 'url(' + spl.track.album.images[0].url + ')' }"
-                     v-on:click.self="setSelectedItem('8' + spl.track.id);store.prepare({num:8});store.deepermobile({item:spl,num:8,event:$event,parent:'8' + spl.track.id})">
+                     v-on:click.self="setSelectedItem('8' + spl.track.id);deeperStore.clearSection({num:8});deeperStore.getTrackDetails({item:spl,num:8,event:$event,parent:'8' + spl.track.id})">
                   {{ lists(spl['track']['artists']) }} - {{ spl.track.name }}
                 </div>
                 <div v-bind:id="'8' + spl.track.id" v-else-if="!spl.track.album.images[0] && spl.track.preview_url"
                      class="con3"
                      :class="selectedItem==='8' + spl.track.id ? 'selected' : ''"
-                     v-on:click.self="setSelectedItem('8' + spl.track.id);store.prepare({num:8});store.deepermobile({item:spl,num:8,event:$event,parent:'8' + spl.track.id});store.click($event)">
+                     v-on:click.self="setSelectedItem('8' + spl.track.id);deeperStore.clearSection({num:8});deeperStore.getTrackDetails({item:spl,num:8,event:$event,parent:'8' + spl.track.id});// store.click removed">
                   {{ lists(spl['track']['artists']) }} - {{ spl.track.name }}
                   <audio preload="auto" v-bind:src="spl.track.preview_url"></audio>
                 </div>
-                <div v-bind:id="'8' + spl.track.id" v-else-if="store.unplayable_tracks" class="con3 half-opacity"
+                <div v-bind:id="'8' + spl.track.id" v-else-if="audioStore.unplayableTracks" class="con3 half-opacity"
                      :class="selectedItem==='8' + spl.track.id ? 'selected' : ''"
-                     v-on:click.self="setSelectedItem('8' + spl.track.id);store.prepare({num:8});store.deepermobile({item:spl,num:8,event:$event,parent:'8' + spl.track.id})">
+                     v-on:click.self="setSelectedItem('8' + spl.track.id);deeperStore.clearSection({num:8});deeperStore.getTrackDetails({item:spl,num:8,event:$event,parent:'8' + spl.track.id})">
                   {{ lists(spl['track']['artists']) }} - {{ spl.track.name }}
                 </div>
               </template>
@@ -953,102 +959,102 @@ window.addEventListener('resize', () => {
     </teleport>
   </div>
   <div v-if="selectedTopMenu===10">
-    <Loader v-if="store.loader"/>
+    <Loader v-if="spotifyStore.isLoading"/>
     <teleport to="#srch" :disabled="!accordionActive">
       <div id="search">
         <div class="display-flex flex-wrap">
           <div class="col-12" style="color:var(--search-color);font-size: 1.5em;">{{ search }}</div>
           <div class="col-6">
             <div class="stitle">Songs</div>
-            <div v-for="(item,index) in store.tracks" class="playable-search"
+            <div v-for="(item,index) in spotifyStore.getSearchTracks" class="playable-search"
                  v-bind:key="index">
               <div v-if="item.preview_url" tabindex="0" class="itemImg itemImg-xs  itemImg-search"
                    :class="selectedItem==='song' + item.id ? 'selected' : ''"
                    v-bind:id="'song' + item.id"
-                   v-on:click="setSelectedItem('song' + item.id);store.prepare({num:10});store.deeperTracksM({item:item,num:10,flag:true,parent:'song' + item.id});store.click($event)"
+                   v-on:click="setSelectedItem('song' + item.id);deeperStore.clearSection('search');deeperStore.getTrackDetails(item, 'search');// store.click removed"
                    v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }">
                 <audio preload="auto" v-bind:src="item.preview_url"></audio>
               </div>
-              <div v-else-if="store.unplayable_tracks" tabindex="0"
+              <div v-else-if="audioStore.unplayableTracks" tabindex="0"
                    class="itemImg itemImg-xs itemImg-search half-opacity"
                    :class="selectedItem==='song' + item.id ? 'selected' : ''"
                    v-bind:id="'song' + item.id"
-                   v-on:click="setSelectedItem('song' + item.id);store.prepare({num:10});store.deeperTracksM({item:item,num:10,flag:true,parent:'song' + item.id})"
+                   v-on:click="setSelectedItem('song' + item.id);deeperStore.clearSection('search');deeperStore.getTrackDetails(item, 'search')"
                    v-bind:style="{ 'background-image': 'url(' + item.album.images[0].url + ')' }">
                 <audio preload="none"></audio>
               </div>
               <div class="title"
-                   v-on:click="setSelectedItem('song' + item.id);store.deeperTracksM({item:item,num:10,flag:true,parent:'song' + item.id});store.specialClick($event)">
+                   v-on:click="setSelectedItem('song' + item.id);deeperStore.getTrackDetails(item, 'search');// store.specialClick removed">
                 <div>{{ item.name }}</div>
               </div>
             </div>
           </div>
           <div class="col-6">
             <div class="stitle">Artists</div>
-            <div v-for="(item,index) in store.artists" class="playable-search"
+            <div v-for="(item,index) in spotifyStore.getSearchArtists" class="playable-search"
                  v-bind:key="index">
               <div v-if="item.tracks[0].preview_url" tabindex="0" class="itemImg itemImg-xs  itemImg-search"
                    :class="selectedItem==='artist' + item.id ? 'selected' : ''"
                    v-bind:id="'artist' + item.id"
-                   v-on:click="setSelectedItem('artist' + item.id);store.prepare({num:10});store.deeperartistmob({item:item,track:item.tracks,num:10,flag:true,parent:'artist' + item.id});store.click($event)"
+                   v-on:click="setSelectedItem('artist' + item.id);deeperStore.clearSection('search');deeperStore.getArtistDetails(item, 'search');// store.click removed"
                    v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }">
                 <audio preload="auto" v-bind:src="item.tracks[0].preview_url"></audio>
               </div>
-              <div v-else-if="store.unplayable_tracks" tabindex="0"
+              <div v-else-if="audioStore.unplayableTracks" tabindex="0"
                    class="itemImg itemImg-xs itemImg-search half-opacity"
                    :class="selectedItem==='artist' + item.id ? 'selected' : ''"
                    v-bind:id="'artist' + item.id"
-                   v-on:click="setSelectedItem('artist' + item.id);store.prepare({num:10});store.deeperartistmob({item:item,track:item.tracks,num:10,flag:true,parent:'artist' + item.id})"
+                   v-on:click="setSelectedItem('artist' + item.id);deeperStore.clearSection('search');deeperStore.getArtistDetails(item, 'search')"
                    v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }">
                 <audio preload="none"></audio>
               </div>
               <div class="title"
-                   v-on:click="setSelectedItem('artist' + item.id);store.prepare({num:10});store.deeperartistmob({item:item,track:item.tracks,num:10,flag:true,parent:'artist' + item.id});store.specialClick($event)">
+                   v-on:click="setSelectedItem('artist' + item.id);deeperStore.clearSection('search');deeperStore.getArtistDetails(item, 'search');// store.specialClick removed">
                 {{ item.name }}
               </div>
             </div>
           </div>
           <div class="col-6">
             <div class="stitle">Albums</div>
-            <div v-for="(item,index) in store.albums" class="playable-search"
+            <div v-for="(item,index) in spotifyStore.getSearchAlbums" class="playable-search"
                  v-on:click="setSelectedItem('album' + item.id);" v-bind:key="index">
               <div v-if="item.preview_url" tabindex="0" class="itemImg itemImg-xs  itemImg-search"
                    :class="selectedItem==='album' + item.id ? 'selected' : ''"
                    v-bind:id="'album' + item.id"
-                   v-on:click="store.prepare({num:10});store.deeperAlbumMob({item:item,num:10,search:true,parent:'album' + item.id});store.click($event)"
+                   v-on:click="deeperStore.clearSection('search');deeperStore.getTrackDetailsAlbumMob({item:item,num:10,search:true,parent:'album' + item.id});// store.click removed"
                    v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }">
                 <audio preload="auto" v-bind:src="item.preview_url"></audio>
               </div>
-              <div v-else-if="store.unplayable_tracks" tabindex="0"
+              <div v-else-if="audioStore.unplayableTracks" tabindex="0"
                    class="itemImg itemImg-xs itemImg-search half-opacity"
                    :class="selectedItem===item.id ? 'selected' : ''"
                    v-bind:id="'album' + item.id"
-                   v-on:click="store.prepare({num:10});store.deeperAlbumMob({item:item,num:10,search:true,parent:'album' + item.id})"
+                   v-on:click="deeperStore.clearSection('search');deeperStore.getTrackDetailsAlbumMob({item:item,num:10,search:true,parent:'album' + item.id})"
                    v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }">
                 <audio preload="none"></audio>
               </div>
               <div class="title"
-                   v-on:click="setSelectedItem('album' + item.id);store.deeperAlbumMob({item:item,num:10,search:true,parent:'album' + item.id});store.specialClick($event)">
+                   v-on:click="setSelectedItem('album' + item.id);deeperStore.getTrackDetailsAlbumMob({item:item,num:10,search:true,parent:'album' + item.id});// store.specialClick removed">
                 {{ item.name }}
               </div>
             </div>
           </div>
           <div class="col-6">
             <div class="stitle">Playlists</div>
-            <div v-for="(item,index) in store.splaylists" class="playable-search" v-on:click="store.playlM({item:item})"
+            <div v-for="(item,index) in spotifyStore.getSearchPlaylists" class="playable-search" v-on:click="store.playlM({item:item})"
                  v-bind:key="index">
               <div v-if="item.preview_url && item.images[0]" tabindex="0" class="itemImg itemImg-xs  itemImg-search"
                    :class="selectedItem==='playlist' + item.id ? 'selected' : ''"
                    v-bind:id="'playlist' + item.id"
-                   v-on:click="setSelectedItem('playlist' + item.id);store.prepare({num:10});store.playlM({item:item,parent:'playlist' + item.id});store.click($event)"
+                   v-on:click="setSelectedItem('playlist' + item.id);deeperStore.clearSection('search');store.playlM({item:item,parent:'playlist' + item.id});// store.click removed"
                    v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }">
                 <audio preload="auto" v-bind:src="item.preview_url"></audio>
               </div>
-              <div v-else-if="!item.preview_url && item.images[0] && store.unplayable_tracks" tabindex="0"
+              <div v-else-if="!item.preview_url && item.images[0] && audioStore.unplayableTracks" tabindex="0"
                    class="itemImg itemImg-xs  itemImg-search"
                    :class="selectedItem==='playlist' + item.id ? 'selected' : ''"
                    v-bind:id="'playlist' + item.id"
-                   v-on:click="setSelectedItem('playlist' + item.id);store.prepare({num:10});store.playlM({item:item,parent:'playlist' + item.id})"
+                   v-on:click="setSelectedItem('playlist' + item.id);deeperStore.clearSection('search');store.playlM({item:item,parent:'playlist' + item.id})"
                    v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }">
                 <audio preload="none"></audio>
               </div>
@@ -1056,19 +1062,19 @@ window.addEventListener('resize', () => {
                    class="itemImg itemImg-xs  itemImg-search"
                    :class="selectedItem==='playlist' + item.id ? 'selected' : ''"
                    v-bind:id="'playlist' + item.id"
-                   v-on:click="setSelectedItem('playlist' + item.id);store.prepare({num:10});store.playlM({item:item,parent:'playlist' + item.id});store.click($event)">
+                   v-on:click="setSelectedItem('playlist' + item.id);deeperStore.clearSection('search');store.playlM({item:item,parent:'playlist' + item.id});// store.click removed">
                 <audio preload="auto" v-bind:src="item.preview_url"></audio>
               </div>
-              <div v-else-if="store.unplayable_tracks" tabindex="0"
+              <div v-else-if="audioStore.unplayableTracks" tabindex="0"
                    class="itemImg itemImg-xs itemImg-search half-opacity"
                    :class="selectedItem==='playlist' + item.id ? 'selected' : ''"
                    v-bind:id="'playlist' + item.id"
                    v-bind:style="{ 'background-image': 'url(' + item.images[0].url + ')' }"
-                   v-on:click="setSelectedItem('playlist' + item.id);store.prepare({num:10});store.playlM({item:item,parent:'playlist' + item.id})">
+                   v-on:click="setSelectedItem('playlist' + item.id);deeperStore.clearSection('search');store.playlM({item:item,parent:'playlist' + item.id})">
                 <audio preload="none"></audio>
               </div>
               <div class="title"
-                   v-on:click="store.playlM({item:item,parent:'playlist' + item.id});store.specialClick($event)">
+                   v-on:click="store.playlM({item:item,parent:'playlist' + item.id});// store.specialClick removed">
                 {{ item.name }}
               </div>
             </div>

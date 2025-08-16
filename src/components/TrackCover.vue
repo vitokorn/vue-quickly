@@ -1,10 +1,10 @@
 <script setup>
-import {useDMStore} from "../stores/dm-store";
+import {useAudioStore} from "../stores/audio-store";
 import {useMediaDisplay} from "../composables/useMediaDisplay";
 import {computed} from "vue";
 
 const props = defineProps(['d', 'cover'])
-const store = useDMStore()
+const audioStore = useAudioStore()
 
 const { displayClass, backgroundStyle, audioPreload, audioSrc, hasPreview } = useMediaDisplay(computed(() => props.d), props.cover)
 </script>
@@ -13,8 +13,8 @@ const { displayClass, backgroundStyle, audioPreload, audioSrc, hasPreview } = us
   <div class="con3" 
        :class="displayClass" 
        :style="backgroundStyle" 
-       @mouseover="hasPreview && store.mouseOver($event)" 
-       @mouseleave="hasPreview && store.mouseLeave($event)">
+       @mouseover="hasPreview && audioStore.handleAudioHover($event)" 
+       @mouseleave="hasPreview && audioStore.handleAudioLeave($event)">
     {{d.name}}
     <audio :preload="audioPreload" :src="audioSrc"></audio>
   </div>

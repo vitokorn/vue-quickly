@@ -1,11 +1,17 @@
 <script setup>
-import {useDMStore} from "../../stores/dm-store";
+import {useSpotifyStore} from "../../stores/spotify-store";
+import {useAudioStore} from "../../stores/audio-store";
+import {useQueueStore} from "../../stores/queue-store";
+import {useDeeperStore} from "../../stores/deeper-store";
 import {Lists} from "../../common/lists";
 import {computed, ref} from "vue";
 import SortTracks from "../SortTracks.vue";
 
 const props = defineProps(['d', 'num', 'item'])
-const store = useDMStore()
+const spotifyStore = useSpotifyStore()
+const audioStore = useAudioStore()
+const queueStore = useQueueStore()
+const deeperStore = useDeeperStore()
 const selected = ref()
 const selectedSTSortOption = ref("")
 
@@ -29,6 +35,26 @@ const sortedSTItems = computed(() => {
   }
 })
 
+// Helper function to get section name from num
+function getSectionName(num) {
+  switch (num) {
+    case 1: return 'yourPlaylists'
+    case 2: return 'topArtists'
+    case 3: return 'topTracks'
+    case 4: return 'savedAlbums'
+    case 5: return 'savedTracks'
+    case 6: return 'followedArtists'
+    case 7: return 'newReleases'
+    case 8: return 'spotifyPlaylists'
+    case 10: return 'search'
+    case 22: return 'topArtists6'
+    case 23: return 'topArtistsAll'
+    case 32: return 'topTracks6'
+    case 33: return 'topTracksAll'
+    default: return 'search'
+  }
+}
+
 function setActive(id) {
   selected.value = id
 }
@@ -46,7 +72,7 @@ function setActive(id) {
       <template v-for="(s,index) in sortedSTItems">
         <div v-if="s.preview_url && s.album.images[0]" class="con3" v-bind:key="index"
              v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }"
-             v-on:click="setActive(s.id);store.click($event);store.deeperTracksM({item:s,num:num,flag:false,sib:'seed_tracks',child:false,parent:d.id}); store.queuein(s)">
+             v-on:click="setActive(s.id);;deeperStore.getTrackDetails(s, getSectionName(num)); queueStore.addToQueue(s)">
           <div class="track-overlay">
             <div class="track-info">
               <div class="track-artists">{{Lists.Ls(d.artists)}}</div>
@@ -55,9 +81,9 @@ function setActive(id) {
           </div>
           <audio preload="auto" v-bind:src="s.preview_url"></audio>
         </div>
-        <div v-else-if="!s.preview_url && s.album.images[0] && store.unplayable_tracks" tabindex="0" class="con3 half-opacity" v-bind:key="'2'+index"
+        <div v-else-if="!s.preview_url && s.album.images[0] && audioStore.unplayableTracks" tabindex="0" class="con3 half-opacity" v-bind:key="'2'+index"
              v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }"
-             v-on:click="setActive(s.id);store.deeperTracksM({item:s,num:num,flag:false,sib:'seed_tracks',child:false,parent:d.id}); store.queuein(s)">
+             v-on:click="setActive(s.id);deeperStore.getTrackDetails(s, getSectionName(num)); queueStore.addToQueue(s)">
           <div class="track-overlay">
             <div class="track-info">
               <div class="track-artists">{{Lists.Ls(d.artists)}}</div>
@@ -67,7 +93,7 @@ function setActive(id) {
           <audio preload="none"></audio>
         </div>
         <div v-else-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="'3'+index"
-             v-on:click="setActive(s.id);store.click($event);store.deeperTracksM({item:s,num:num,flag:false,sib:'seed_tracks',child:false,parent:d.id}); store.queuein(s)">
+             v-on:click="setActive(s.id);;deeperStore.getTrackDetails(s, getSectionName(num)); queueStore.addToQueue(s)">
           <div class="track-overlay">
             <div class="track-info">
               <div class="track-artists">{{Lists.Ls(d.artists)}}</div>
@@ -76,8 +102,8 @@ function setActive(id) {
           </div>
           <audio preload="auto" v-bind:src="s.preview_url"></audio>
         </div>
-        <div v-else-if="store.unplayable_tracks" tabindex="0" class="con3 half-opacity" v-bind:key="'4'+index"
-             v-on:click="setActive(s.id);store.deeperTracksM({item:s,num:num,flag:false,sib:'seed_tracks',parent:d.id}); store.queuein(s)">
+        <div v-else-if="audioStore.unplayableTracks" tabindex="0" class="con3 half-opacity" v-bind:key="'4'+index"
+             v-on:click="setActive(s.id);deeperStore.getTrackDetails(s, getSectionName(num)); queueStore.addToQueue(s)">
           <div class="track-overlay">
             <div class="track-info">
               <div class="track-artists">{{Lists.Ls(d.artists)}}</div>

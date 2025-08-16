@@ -1,6 +1,9 @@
 <script setup>
 import {computed, ref} from 'vue'
-import {useDMStore} from '../../stores/dm-store.js'
+import {useSpotifyStore} from '../../stores/spotify-store'
+import {useAudioStore} from '../../stores/audio-store'
+import {useQueueStore} from '../../stores/queue-store'
+import {useDeeperStore} from '../../stores/deeper-store'
 import {useSorting} from '../../composables/useSorting.js'
 import {useSelection} from '../../composables/useSelection.js'
 import {useFiltering} from '../../composables/useFiltering.js'
@@ -23,8 +26,11 @@ import NewReleaseItem from '../NewReleaseItem.vue'
 import SearchCategory from '../SearchCategory.vue'
 import RefreshButton from '../RefreshButton.vue'
 
-// Store
-const store = useDMStore()
+// Stores
+const spotifyStore = useSpotifyStore()
+const audioStore = useAudioStore()
+const queueStore = useQueueStore()
+const deeperStore = useDeeperStore()
 
 // Composables
 const {createTrackSorter, createArtistSorter, createAlbumSorter} = useSorting()
@@ -58,109 +64,115 @@ const selectedSpotPlaylistSortOption = ref("")
 
 // Computed sorted data using composables
 const sortedPlaylistItems = createTrackSorter(
-    computed(() => store.currentpl?.tracks?.items || []),
+    computed(() => spotifyStore.getCurrentPlaylist?.tracks?.items || []),
     selectedPlaylistSortOption
 )
 
 const sortedTAItems = createArtistSorter(
-    computed(() => store.topartist || []),
+    computed(() => spotifyStore.getTopArtistsShort || []),
     selectedTASortOption
 )
 
 const sortedTA6Items = createArtistSorter(
-    computed(() => store.topartist6 || []),
+    computed(() => spotifyStore.getTopArtistsMedium || []),
     selectedTA6SortOption
 )
 
 const sortedTALLItems = createArtistSorter(
-    computed(() => store.topartista || []),
+    computed(() => spotifyStore.getTopArtistsLong || []),
     selectedTALLSortOption
 )
 
 const sortedTTItems = createTrackSorter(
-    computed(() => store.items || []),
+    computed(() => spotifyStore.getTopTracksShort || []),
     selectedTTSortOption
 )
 
 const sortedTTMItems = createTrackSorter(
-    computed(() => store.itemsm || []),
+    computed(() => spotifyStore.getTopTracksMedium || []),
     selectedTTMSortOption
 )
 
 const sortedTTLItems = createTrackSorter(
-    computed(() => store.itemsl || []),
+    computed(() => spotifyStore.getTopTracksLong || []),
     selectedTTLSortOption
 )
 
 const sortedSAItems = createAlbumSorter(
-    computed(() => store.savedalbums || []),
+    computed(() => spotifyStore.getSavedAlbums || []),
     selectedSASortOption
 )
 
 const sortedSTItems = createTrackSorter(
-    computed(() => store.savedtracks || []),
+    computed(() => spotifyStore.getSavedTracks || []),
     selectedSTSortOption
 )
 
 const sortedFAItems = createArtistSorter(
-    computed(() => store.followedartists || []),
+    computed(() => spotifyStore.getFollowedArtists || []),
     selectedFASortOption
 )
 
 const sortedNRItems = createAlbumSorter(
-    computed(() => store.newreleases || []),
+    computed(() => spotifyStore.getNewReleases || []),
     selectedNRSortOption
 )
 
 const sortedSpotPlaylistItems = createTrackSorter(
-    computed(() => store.currentspl?.tracks?.items || []),
+    computed(() => spotifyStore.getCurrentSpotifyPlaylist?.tracks?.items || []),
     selectedSpotPlaylistSortOption
 )
 
 // Event handlers
-const handleTrackClick = (track, event) => {
+const handleTrackClick = async (track, event) => {
   setSelectedItem(track.id)
-  store.prepare({num: selectedTopMenu.value})
-  store.deeper({item: track, num: selectedTopMenu.value, event})
-  store.queuein(track)
+  const sectionName = getSectionName(selectedTopMenu.value)
+  await deeperStore.getTrackDetails(track, sectionName)
+  queueStore.addToQueue(track)
 }
 
 const handleTrackHover = (event) => {
-  store.mouseOver(event)
+  audioStore.handleAudioHover(event)
 }
 
 const handleTrackLeave = (event) => {
-  store.mouseLeave(event)
+  audioStore.handleAudioLeave(event)
 }
 
-const handleArtistClick = (artist, event) => {
+const handleArtistClick = async (artist, event) => {
   setSelectedItem(artist.id)
-  store.prepare({num: selectedTopMenu.value})
-  store.deeper({item: artist, num: selectedTopMenu.value, event})
+  const sectionName = getSectionName(selectedTopMenu.value)
+  await deeperStore.getArtistDetails(artist, sectionName)
 }
 
 const handleArtistHover = (event) => {
-  store.mouseOver(event)
+  audioStore.handleAudioHover(event)
 }
 
 const handleArtistLeave = (event) => {
-  store.mouseLeave(event)
+  audioStore.handleAudioLeave(event)
 }
 
 const handleGenreClick = (genre, event) => {
-  store.thesoundof({name: genre, num: selectedTopMenu.value, sib: 'trackartist', child: false})
+  // TODO: Implement genre functionality
+  console.log('Genre click:', genre)
 }
 
-const handleSeedArtist = (artist, event) => {
-  store.seedArtist({item: artist, num: selectedTopMenu.value, sib: 'trackartist'})
+const handleSeedArtist = async (artist, event) => {
+  const sectionName = getSectionName(selectedTopMenu.value)
+  await deeperStore.getSeedArtistRecommendations(artist, sectionName)
 }
 
-const handleFollowArtist = (artist, event) => {
-  store.followArtist({artist, event})
+const handleFollowArtist = async (artist, event) => {
+  try {
+    await spotifyStore.followArtist(artist)
+  } catch (error) {
+    console.error('Failed to follow artist:', error)
+  }
 }
 
 const handleQueueTrack = (track) => {
-  store.queuein(track)
+  queueStore.addToQueue(track)
 }
 
 // Utility functions
@@ -168,12 +180,27 @@ const formatArtistNames = (artists) => {
   return artistUtils.formatArtistNames(artists)
 }
 
+const getSectionName = (num) => {
+  switch (num) {
+    case 1: return 'yourPlaylists'
+    case 2: return 'topArtists'
+    case 3: return 'topTracks'
+    case 4: return 'savedAlbums'
+    case 5: return 'savedTracks'
+    case 6: return 'followedArtists'
+    case 7: return 'newReleases'
+    case 8: return 'spotifyPlaylists'
+    case 10: return 'search'
+    default: return 'search'
+  }
+}
+
 const polygon = (item, d, num) => {
-  item.deeper1 = []
-  let tt = []
-  tt = item
+  const sectionName = getSectionName(num)
+  deeperStore.clearSection(sectionName)
+  let tt = item
   tt.type = 'deepertracks'
-  store.setDeeper1(tt)
+  deeperStore.addToSection(sectionName, tt)
   console.log(item)
   console.log(d)
   console.log(num)
@@ -194,7 +221,7 @@ const findPos = (obj) => {
 }
 
 // Tab click handler
-const handleTabClick = (tabNumber, event) => {
+const handleTabClick = async (tabNumber, event) => {
   // Prevent event bubbling
   event.stopPropagation()
 
@@ -213,72 +240,68 @@ const handleTabClick = (tabNumber, event) => {
   setSelectedTopMenu(tabNumber)
 
   // Handle specific tab logic
-  switch (tabNumber) {
-    case 1:
-      store.prepare({num: 1})
-      store.switchTabs({event})
-      if (!store.listplaylists || store.listplaylists.length === 0) {
-        store.fetchPlaylists({event, offset: 0})
-      }
-      break
-    case 2:
-      store.prepare({num: 2})
-      store.switchTabs({event})
-      store.switchArtist({num: 1})
-      if (!store.topartist || store.topartist.length === 0) {
-        store.fetchArtist({event})
-      }
-      break
-    case 3:
-      store.prepare({num: 3})
-      store.switchTabs({event})
-      store.switchTracks({num: 1})
-      if (!store.items || store.items.length === 0) {
-        store.fetchApi({event})
-      }
-      break
-    case 4:
-      store.prepare({num: 4})
-      store.switchTabs({event})
-      if (!store.savedalbums || store.savedalbums.length === 0) {
-        store.fetchAlbums({offset: 0, event})
-      }
-      break
-    case 5:
-      store.prepare({num: 5})
-      store.switchTabs({event})
-      if (!store.savedtracks || store.savedtracks.length === 0) {
-        store.fetchTracks({offset: 0})
-      }
-      break
-    case 6:
-      store.prepare({num: 6})
-      store.switchTabs({event})
-      if (!store.followedartists || store.followedartists.length === 0) {
-        store.fetchFA()
-      }
-      break
-    case 7:
-      store.prepare({num: 7})
-      store.switchTabs({event})
-      if (!store.newreleases || store.newreleases.length === 0) {
-        store.fetchNR({offset: 0})
-      }
-      break
-    case 8:
-      store.prepare({num: 8})
-      store.switchTabs({event})
-      if (!store.spotplaylists || store.spotplaylists.length === 0) {
-        store.fetchSpotPlaylists({offset: 0})
-      }
-      break
+  try {
+    switch (tabNumber) {
+      case 1:
+        deeperStore.clearSection('yourPlaylists')
+        if (!spotifyStore.getPlaylists || spotifyStore.getPlaylists.length === 0) {
+          await spotifyStore.fetchPlaylists(0)
+        }
+        break
+      case 2:
+        deeperStore.clearSection('topArtists')
+        spotifyStore.setSelectedArtistsRange(1)
+        if (!spotifyStore.getTopArtistsShort || spotifyStore.getTopArtistsShort.length === 0) {
+          await spotifyStore.fetchTopArtists('short_term')
+        }
+        break
+      case 3:
+        deeperStore.clearSection('topTracks')
+        spotifyStore.setSelectedTracksRange(1)
+        if (!spotifyStore.getTopTracksShort || spotifyStore.getTopTracksShort.length === 0) {
+          await spotifyStore.fetchTopTracks('short_term')
+        }
+        break
+      case 4:
+        deeperStore.clearSection('savedAlbums')
+        if (!spotifyStore.getSavedAlbums || spotifyStore.getSavedAlbums.length === 0) {
+          await spotifyStore.fetchSavedAlbums(0)
+        }
+        break
+      case 5:
+        deeperStore.clearSection('savedTracks')
+        if (!spotifyStore.getSavedTracks || spotifyStore.getSavedTracks.length === 0) {
+          await spotifyStore.fetchSavedTracks(0)
+        }
+        break
+      case 6:
+        deeperStore.clearSection('followedArtists')
+        if (!spotifyStore.getFollowedArtists || spotifyStore.getFollowedArtists.length === 0) {
+          await spotifyStore.fetchFollowedArtists()
+        }
+        break
+      case 7:
+        deeperStore.clearSection('newReleases')
+        if (!spotifyStore.getNewReleases || spotifyStore.getNewReleases.length === 0) {
+          await spotifyStore.fetchNewReleases(0)
+        }
+        break
+      case 8:
+        deeperStore.clearSection('spotifyPlaylists')
+        if (!spotifyStore.getSpotifyPlaylists || spotifyStore.getSpotifyPlaylists.length === 0) {
+          await spotifyStore.fetchSpotifyPlaylists(0)
+        }
+        break
+    }
+  } catch (error) {
+    console.error('Failed to fetch data for tab:', tabNumber, error)
   }
 }
 
 // Search handler
 const handleSearch = (event) => {
   selectedTopMenu.value = 10
-  store.search(event)
+  spotifyStore.search(event.target.value)
 }
 
 // Resize event listener for accordion functionality
@@ -303,7 +326,7 @@ handleResize()
 <template>
   <div class="main-layout">
     <!-- Loader -->
-    <Loader v-if="store.loader"/>
+    <Loader v-if="spotifyStore.isLoading"/>
 
     <!-- Main content -->
     <div class="content-wrapper">
@@ -320,15 +343,15 @@ handleResize()
            :class="{ expanded: expandedTabs.has(selectedTopMenu) }">
         <!-- Personal Playlists Section -->
         <div v-if="selectedTopMenu === 1">
-          <Loader v-if="store.loader"/>
+          <Loader v-if="spotifyStore.isLoading"/>
           <div id="yourplaylists" class="con2">
             <div class="rel">
-              <RefreshButton :on-click="(event) => store.reloadpl({event})"/>
+              <RefreshButton :on-click="() => spotifyStore.fetchPlaylists(0)"/>
             </div>
             <div class="pl justify-content-center">
-              <template v-for="(item,index) of store.listplaylists" :key="index">
+              <template v-for="(item,index) of spotifyStore.getPlaylists" :key="index">
                 <div :id="item.id"
-                     @click="setSelectedPersonalPlaylist(item.id);store.fetchInit({event:$event})"
+                     @click="setSelectedPersonalPlaylist(item.id); spotifyStore.fetchPlaylist(item.id)"
                      class="hr-line-dashed"
                      :class="selectedPersonalPlaylist===item.id ? 'activetab':''">
                   {{ item.name }}
@@ -336,16 +359,16 @@ handleResize()
               </template>
             </div>
             <Playlist
-                v-if="store.currentpl"
-                :playlist="store.currentpl"
+                v-if="spotifyStore.getCurrentPlaylist"
+                :playlist="spotifyStore.getCurrentPlaylist"
                 :sorted-tracks="sortedPlaylistItems"
                 :selected-item="selectedItem"
                 :selected-sort-option="selectedPlaylistSortOption"
-                :unplayable-tracks="store.unplayable_tracks"
-                @refresh="store.reloader({num:1,event:$event})"
-                @track-click="(trackItem, event) => { setSelectedItem('1' + trackItem.track.id); store.prepare({num:1}); store.deeper({item:trackItem,num:1,event:event}); store.queuein(trackItem.track) }"
-                @track-hover="store.mouseOver"
-                @track-leave="store.mouseLeave"
+                :unplayable-tracks="audioStore.unplayableTracks"
+                @refresh="spotifyStore.fetchPlaylists(0)"
+                @track-click="handleTrackClick"
+                @track-hover="handleTrackHover"
+                @track-leave="handleTrackLeave"
                 @sort-change="selectedPlaylistSortOption = $event"
             />
           </div>
@@ -357,28 +380,28 @@ handleResize()
         <div class="content-container">
           <!-- Personal Playlists Section -->
           <div v-if="selectedTopMenu === 1 && !accordionActive">
-            <Loader v-if="store.loader"/>
+            <Loader v-if="spotifyStore.isLoading"/>
             <div id="yourplaylists" class="con2">
               <div class="rel">
-                <RefreshButton :on-click="(event) => store.reloadpl({event})"/>
+                <RefreshButton :on-click="() => spotifyStore.fetchPlaylists(0)"/>
               </div>
               <PlaylistSelector
-                :playlists="store.listplaylists"
+                :playlists="spotifyStore.getPlaylists"
                 :selected-playlist="selectedPersonalPlaylist"
                 placeholder="Search personal playlists..."
-                @playlist-select="(playlistId, event) => { setSelectedPersonalPlaylist(playlistId); store.fetchInit({event: event}) }"
+                @playlist-select="(playlistId, event) => { setSelectedPersonalPlaylist(playlistId); spotifyStore.fetchPlaylist(playlistId) }"
               />
               <Playlist
-                  v-if="store.currentpl"
-                  :playlist="store.currentpl"
+                  v-if="spotifyStore.getCurrentPlaylist"
+                  :playlist="spotifyStore.getCurrentPlaylist"
                   :sorted-tracks="sortedPlaylistItems"
                   :selected-item="selectedItem"
                   :selected-sort-option="selectedPlaylistSortOption"
-                  :unplayable-tracks="store.unplayable_tracks"
-                  @refresh="store.reloader({num:1,event:$event})"
-                  @track-click="(trackItem, event) => { setSelectedItem('1' + trackItem.track.id); store.prepare({num:1}); store.deeper({item:trackItem,num:1,event:event}); store.queuein(trackItem.track) }"
-                  @track-hover="store.mouseOver"
-                  @track-leave="store.mouseLeave"
+                  :unplayable-tracks="audioStore.unplayableTracks"
+                  @refresh="spotifyStore.fetchPlaylists(0)"
+                  @track-click="handleTrackClick"
+                  @track-hover="handleTrackHover"
+                  @track-leave="handleTrackLeave"
                   @sort-change="selectedPlaylistSortOption = $event"
               />
             </div>
@@ -386,39 +409,42 @@ handleResize()
 
           <!-- Top Artists Section -->
           <div v-if="selectedTopMenu === 2">
-            <Loader v-if="store.loader"/>
+            <Loader v-if="spotifyStore.isLoading"/>
             <teleport to="#option2" :disabled="!accordionActive">
               <TimeRangeSelector
                   v-show="selectedTopMenu===2"
-                  :selected-range="store.selectedArtistsRange"
+                  :selected-range="spotifyStore.selectedArtistsRange"
                   :section-type="'artists'"
                   :ranges="[
-                  { id: 1, label: 'Last month', fetchMethod: 'fetchArtist', reloadMethod: 'reloadartists' },
-                  { id: 2, label: 'Last 6 month', fetchMethod: 'fetchArtist2', reloadMethod: 'reloadartists' },
-                  { id: 3, label: 'All time', fetchMethod: 'fetchArtist3', reloadMethod: 'reloadartists' }
+                  { id: 1, label: 'Last month', fetchMethod: 'fetchTopArtists', reloadMethod: 'fetchTopArtists' },
+                  { id: 2, label: 'Last 6 month', fetchMethod: 'fetchTopArtists', reloadMethod: 'fetchTopArtists' },
+                  { id: 3, label: 'All time', fetchMethod: 'fetchTopArtists', reloadMethod: 'fetchTopArtists' }
                 ]"
-                  @range-change="(rangeId, event) => {
-                  store.switchArtist({num: rangeId});
-                  if (rangeId === 2 && !store.topartist6.length) store.fetchArtist2({event});
-                  if (rangeId === 3 && !store.topartista.length) store.fetchArtist3({event});
+                  @range-change="async (rangeId, event) => {
+                  spotifyStore.setSelectedArtistsRange(rangeId);
+                  const timeRange = rangeId === 1 ? 'short_term' : rangeId === 2 ? 'medium_term' : 'long_term';
+                  await spotifyStore.fetchTopArtists(timeRange);
                 }"
-                  @refresh="(rangeId, event) => store.reloadartists({num: rangeId, event})"
+                  @refresh="async (rangeId, event) => {
+                  const timeRange = rangeId === 1 ? 'short_term' : rangeId === 2 ? 'medium_term' : 'long_term';
+                  await spotifyStore.fetchTopArtists(timeRange);
+                }"
               />
               <div id="topartist"
                    class="display-flex flex-wrap"
                    style="color: black;width: auto;"
-                   :class="store.selectedArtistsRange===1 ? '': 'd-none'">
+                   :class="spotifyStore.selectedArtistsRange===1 ? '': 'd-none'">
                 <SortArtists v-model="selectedTASortOption"/>
                 <div class="display-flex flex-wrap py-2 gap-8">
                   <template v-for="(item,index) of sortedTAItems" :key="index">
                     <ArtistItem
                         :artist="item"
                         :selected="selectedItem === '2' + item.id"
-                        :unplayable-tracks="store.unplayable_tracks"
+                        :unplayable-tracks="audioStore.unplayableTracks"
                         :artist-prefix="'2'"
-                        @click="(artist, event) => { setSelectedItem('2' + artist.id); store.prepare({num:2}); store.deeperartist({item:artist,track:artist.tracks,num:2,flag:true}) }"
-                        @hover="store.mouseOver"
-                        @leave="store.mouseLeave"
+                        @click="handleArtistClick"
+                        @hover="handleArtistHover"
+                        @leave="handleArtistLeave"
                     />
                   </template>
                 </div>
@@ -426,18 +452,18 @@ handleResize()
               <div id="topartist6"
                    class="display-flex flex-wrap"
                    style="color: black;width: auto;"
-                   :class="store.selectedArtistsRange===2 ? '': 'd-none'">
+                   :class="spotifyStore.selectedArtistsRange===2 ? '': 'd-none'">
                 <SortArtists v-model="selectedTA6SortOption"/>
                 <div class="display-flex flex-wrap py-2 gap-8">
                   <template v-for="(item,index) of sortedTA6Items" :key="index">
                     <ArtistItem
                         :artist="item"
                         :selected="selectedItem === '2' + item.id"
-                        :unplayable-tracks="store.unplayable_tracks"
+                        :unplayable-tracks="audioStore.unplayableTracks"
                         :artist-prefix="'2'"
-                        @click="(artist, event) => { setSelectedItem('2' + artist.id); store.prepare({num:2}); store.deeperartist({item:artist,track:artist.tracks,num:2,flag:true}) }"
-                        @hover="store.mouseOver"
-                        @leave="store.mouseLeave"
+                        @click="handleArtistClick"
+                        @hover="handleArtistHover"
+                        @leave="handleArtistLeave"
                     />
                   </template>
                 </div>
@@ -445,18 +471,18 @@ handleResize()
               <div id="topartista"
                    class="display-flex flex-wrap"
                    style="color: black;width: auto;"
-                   :class="store.selectedArtistsRange===3 ? '': 'd-none'">
+                   :class="spotifyStore.selectedArtistsRange===3 ? '': 'd-none'">
                 <SortArtists v-model="selectedTALLSortOption"/>
                 <div class="display-flex flex-wrap py-2 gap-8">
                   <template v-for="(item,index) of sortedTALLItems" :key="index">
                     <ArtistItem
                         :artist="item"
                         :selected="selectedItem === '2' + item.id"
-                        :unplayable-tracks="store.unplayable_tracks"
+                        :unplayable-tracks="audioStore.unplayableTracks"
                         :artist-prefix="'2'"
-                        @click="(artist, event) => { setSelectedItem('2' + artist.id); store.prepare({num:2}); store.deeperartist({item:artist,track:artist.tracks,num:2,flag:true}) }"
-                        @hover="store.mouseOver"
-                        @leave="store.mouseLeave"
+                        @click="handleArtistClick"
+                        @hover="handleArtistHover"
+                        @leave="handleArtistLeave"
                     />
                   </template>
                 </div>
@@ -466,39 +492,42 @@ handleResize()
 
           <!-- Top Tracks Section -->
           <div v-if="selectedTopMenu === 3">
-            <Loader v-if="store.loader"/>
+            <Loader v-if="spotifyStore.isLoading"/>
             <teleport to="#option3" :disabled="!accordionActive">
               <TimeRangeSelector
                   v-show="selectedTopMenu===3"
-                  :selected-range="store.selectedTracksRange"
+                  :selected-range="spotifyStore.selectedTracksRange"
                   :section-type="'tracks'"
                   :ranges="[
-                  { id: 1, label: 'Last month', fetchMethod: 'fetchApi', reloadMethod: 'reloadtracks' },
-                  { id: 2, label: 'Last 6 month', fetchMethod: 'fetchApi2', reloadMethod: 'reloadtracks' },
-                  { id: 3, label: 'All time', fetchMethod: 'fetchApi3', reloadMethod: 'reloadtracks' }
+                  { id: 1, label: 'Last month', fetchMethod: 'fetchTopTracks', reloadMethod: 'fetchTopTracks' },
+                  { id: 2, label: 'Last 6 month', fetchMethod: 'fetchTopTracks', reloadMethod: 'fetchTopTracks' },
+                  { id: 3, label: 'All time', fetchMethod: 'fetchTopTracks', reloadMethod: 'fetchTopTracks' }
                 ]"
-                  @range-change="(rangeId, event) => {
-                  store.switchTracks({num: rangeId});
-                  if (rangeId === 2 && !store.itemsm.length) store.fetchApi2({event});
-                  if (rangeId === 3 && !store.itemsl.length) store.fetchApi3({event});
+                  @range-change="async (rangeId, event) => {
+                  spotifyStore.setSelectedTracksRange(rangeId);
+                  const timeRange = rangeId === 1 ? 'short_term' : rangeId === 2 ? 'medium_term' : 'long_term';
+                  await spotifyStore.fetchTopTracks(timeRange);
                 }"
-                  @refresh="(rangeId, event) => store.reloadtracks({num: rangeId, event})"
+                  @refresh="async (rangeId, event) => {
+                  const timeRange = rangeId === 1 ? 'short_term' : rangeId === 2 ? 'medium_term' : 'long_term';
+                  await spotifyStore.fetchTopTracks(timeRange);
+                }"
               />
               <div id="toptracks"
                    class=""
                    style="color: black;width: auto;"
-                   :class="store.selectedTracksRange===1 ? '': 'd-none'">
+                   :class="spotifyStore.selectedTracksRange===1 ? '': 'd-none'">
                 <SortTracks v-model="selectedTTSortOption"/>
                 <div class="display-flex flex-wrap py-2 gap-8">
                   <template v-for="(item,index) of sortedTTItems" :key="index">
                     <TrackItem
                         :track="item"
                         :selected="selectedItem === '3' + item.id"
-                        :unplayable-tracks="store.unplayable_tracks"
+                        :unplayable-tracks="audioStore.unplayableTracks"
                         :track-prefix="'3'"
-                        @click="(track, event) => { setSelectedItem('3' + track.id); store.prepare({num:3}); store.deeperTracks({item:track,num:3,flag:true}); store.queuein(track) }"
-                        @hover="store.mouseOver"
-                        @leave="store.mouseLeave"
+                        @click="handleTrackClick"
+                        @hover="handleTrackHover"
+                        @leave="handleTrackLeave"
                     />
                   </template>
                 </div>
@@ -506,18 +535,18 @@ handleResize()
               <div id="toptracks6"
                    class="display-flex flex-wrap"
                    style="color: black;width: auto;"
-                   :class="store.selectedTracksRange===2 ? '': 'd-none'">
+                   :class="spotifyStore.selectedTracksRange===2 ? '': 'd-none'">
                 <SortTracks v-model="selectedTTMSortOption"/>
                 <div class="display-flex flex-wrap py-2 gap-8">
                   <template v-for="(item,index) of sortedTTMItems" :key="index">
                     <TrackItem
                         :track="item"
                         :selected="selectedItem === '3' + item.id"
-                        :unplayable-tracks="store.unplayable_tracks"
+                        :unplayable-tracks="audioStore.unplayableTracks"
                         :track-prefix="'3'"
-                        @click="(track, event) => { setSelectedItem('3' + track.id); store.prepare({num:3}); store.deeperTracks({item:track,num:3,flag:true}); store.queuein(track) }"
-                        @hover="store.mouseOver"
-                        @leave="store.mouseLeave"
+                        @click="handleTrackClick"
+                        @hover="handleTrackHover"
+                        @leave="handleTrackLeave"
                     />
                   </template>
                 </div>
@@ -525,18 +554,18 @@ handleResize()
               <div id="toptracksall"
                    class="display-flex flex-wrap"
                    style="color: black;width: auto;"
-                   :class="store.selectedTracksRange===3 ? '': 'd-none'">
+                   :class="spotifyStore.selectedTracksRange===3 ? '': 'd-none'">
                 <SortTracks v-model="selectedTTLSortOption"/>
                 <div class="display-flex flex-wrap py-2 gap-8">
                   <template v-for="(item,index) of sortedTTLItems" :key="index">
                     <TrackItem
                         :track="item"
                         :selected="selectedItem === '3' + item.id"
-                        :unplayable-tracks="store.unplayable_tracks"
+                        :unplayable-tracks="audioStore.unplayableTracks"
                         :track-prefix="'3'"
-                        @click="(track, event) => { setSelectedItem('3' + track.id); store.prepare({num:3}); store.deeperTracks({item:track,num:3,flag:true}); store.queuein(track) }"
-                        @hover="store.mouseOver"
-                        @leave="store.mouseLeave"
+                        @click="handleTrackClick"
+                        @hover="handleTrackHover"
+                        @leave="handleTrackLeave"
                     />
                   </template>
                 </div>
@@ -546,11 +575,11 @@ handleResize()
 
           <!-- Saved Albums Section -->
           <div v-if="selectedTopMenu === 4">
-            <Loader v-if="store.loader"/>
+            <Loader v-if="spotifyStore.isLoading"/>
             <teleport to="#option4" :disabled="!accordionActive">
               <div id="savedalbum" class="display-flex flex-wrap" v-show="selectedTopMenu===4">
                 <div class="section-header">
-                  <button class="refresh-button" @click="store.reloadpl({event:$event})">
+                  <button class="refresh-button" @click="spotifyStore.fetchSavedAlbums(0)">
                     <img class="refresh-icon" src="../../assets/refresh-icon.png" alt="Refresh">
                   </button>
                 </div>
@@ -561,7 +590,7 @@ handleResize()
                         :album="item.album"
                         :selected="selectedItem === '4' + item.album.id"
                         :album-prefix="'4'"
-                        @click="(album, event) => { setSelectedItem('4' + album.id); store.prepare({num:4}); store.deeperAlbum({item:item,num:4,event:event}) }"
+                        @click="async (album, event) => { setSelectedItem('4' + album.id); await deeperStore.getAlbumDetails(item, 'savedAlbums') }"
                     />
                   </template>
                 </div>
@@ -571,11 +600,11 @@ handleResize()
 
           <!-- Saved Tracks Section -->
           <div v-if="selectedTopMenu === 5">
-            <Loader v-if="store.loader"/>
+            <Loader v-if="spotifyStore.isLoading"/>
             <teleport to="#option5" :disabled="!accordionActive">
               <div id="savedtrack" class="display-flex flex-wrap" v-show="selectedTopMenu===5">
                 <div class="section-header">
-                  <button class="refresh-button" @click="store.reloadpl({event:$event})">
+                  <button class="refresh-button" @click="spotifyStore.fetchSavedTracks(0)">
                     <img class="refresh-icon" src="../../assets/refresh-icon.png" alt="Refresh">
                   </button>
                 </div>
@@ -585,11 +614,11 @@ handleResize()
                     <TrackItem
                         :track="item.track"
                         :selected="selectedItem === '5' + item.track.id"
-                        :unplayable-tracks="store.unplayable_tracks"
+                        :unplayable-tracks="audioStore.unplayableTracks"
                         :track-prefix="'5'"
-                        @click="(track, event) => { setSelectedItem('5' + track.id); store.prepare({num:5}); store.deeperTracks({item:track,num:5,flag:true}); store.queuein(track) }"
-                        @hover="store.mouseOver"
-                        @leave="store.mouseLeave"
+                        @click="async (track, event) => { setSelectedItem('5' + track.id); await deeperStore.getTrackDetails(track, 'savedTracks'); queueStore.addToQueue(track) }"
+                        @hover="handleTrackHover"
+                        @leave="handleTrackLeave"
                     />
                   </template>
                 </div>
@@ -599,11 +628,11 @@ handleResize()
 
           <!-- Followed Artists Section -->
           <div v-if="selectedTopMenu === 6">
-            <Loader v-if="store.loader"/>
+            <Loader v-if="spotifyStore.isLoading"/>
             <teleport to="#option6" :disabled="!accordionActive">
               <div id="followedartist" class="display-flex flex-wrap" v-show="selectedTopMenu===6">
                 <div class="section-header">
-                  <button class="refresh-button" @click="store.reloadartists({num:4,event:$event})">
+                  <button class="refresh-button" @click="spotifyStore.fetchFollowedArtists()">
                     <img class="refresh-icon" src="../../assets/refresh-icon.png" alt="Refresh">
                   </button>
                 </div>
@@ -613,11 +642,11 @@ handleResize()
                     <ArtistItem
                         :artist="item"
                         :selected="selectedItem === '6' + item.id"
-                        :unplayable-tracks="store.unplayable_tracks"
+                        :unplayable-tracks="audioStore.unplayableTracks"
                         :artist-prefix="'6'"
-                        @click="(artist, event) => { setSelectedItem('6' + artist.id); store.prepare({num:6}); store.deeperartist({item:artist,track:artist.tracks,num:6,flag:true}) }"
-                        @hover="store.mouseOver"
-                        @leave="store.mouseLeave"
+                        @click="handleArtistClick"
+                        @hover="handleArtistHover"
+                        @leave="handleArtistLeave"
                     />
                   </template>
                 </div>
@@ -627,11 +656,11 @@ handleResize()
 
           <!-- New Releases Section -->
           <div v-if="selectedTopMenu === 7">
-            <Loader v-if="store.loader"/>
+            <Loader v-if="spotifyStore.isLoading"/>
             <teleport to="#option7" :disabled="!accordionActive">
               <div id="newrelease" class="display-flex flex-wrap" v-show="selectedTopMenu===7">
                 <div class="section-header">
-                  <button class="refresh-button" @click="store.reloadpl({event:$event})">
+                  <button class="refresh-button" @click="spotifyStore.fetchNewReleases(0)">
                     <img class="refresh-icon" src="../../assets/refresh-icon.png" alt="Refresh">
                   </button>
                 </div>
@@ -642,9 +671,9 @@ handleResize()
                         :album="item"
                         :selected="selectedItem === '7' + item.id"
                         :album-prefix="'7'"
-                        @click="(album, event) => { setSelectedItem('7' + album.id); store.prepare({num:7}); store.deeperAlbum({item:album,num:7,event:event}) }"
-                        @hover="store.mouseOver"
-                        @leave="store.mouseLeave"
+                        @click="async (album, event) => { setSelectedItem('7' + album.id); await deeperStore.getAlbumDetails(album, 'newReleases') }"
+                        @hover="handleTrackHover"
+                        @leave="handleTrackLeave"
                     />
                   </template>
                 </div>
@@ -654,27 +683,27 @@ handleResize()
 
           <!-- Spotify Playlists Section -->
           <div v-if="selectedTopMenu === 8">
-            <Loader v-if="store.loader"/>
+            <Loader v-if="spotifyStore.isLoading"/>
             <teleport to="#option8" :disabled="!accordionActive">
               <div id="sptplaylists" class="con2" v-show="selectedTopMenu===8">
                 <PlaylistSelector
-                  :playlists="store.spotplaylists"
+                  :playlists="spotifyStore.getSpotifyPlaylists"
                   :selected-playlist="selectedSpotifyPlaylist"
                   placeholder="Search Spotify playlists..."
-                  @playlist-select="(playlistId, event) => { setSelectedSpotifyPlaylist(playlistId); store.SpotInit({event: event}) }"
+                  @playlist-select="(playlistId, event) => { setSelectedSpotifyPlaylist(playlistId); spotifyStore.fetchSpotifyPlaylist(playlistId) }"
                 />
                 <Playlist
-                    v-if="store.currentspl"
-                    :playlist="store.currentspl"
+                    v-if="spotifyStore.getCurrentSpotifyPlaylist"
+                    :playlist="spotifyStore.getCurrentSpotifyPlaylist"
                     :sorted-tracks="sortedSpotPlaylistItems"
                     :selected-item="selectedItem"
                     :selected-sort-option="selectedSpotPlaylistSortOption"
-                    :unplayable-tracks="store.unplayable_tracks"
+                    :unplayable-tracks="audioStore.unplayableTracks"
                     :track-prefix="'8'"
-                    @refresh="store.reloader({num:8,event:$event})"
-                    @track-click="(trackItem, event) => { setSelectedItem('8' + trackItem.track.id); store.prepare({num:8}); store.deeper({item:trackItem,num:8,event:event}); store.queuein(trackItem.track) }"
-                    @track-hover="store.mouseOver"
-                    @track-leave="store.mouseLeave"
+                    @refresh="spotifyStore.fetchSpotifyPlaylists(0)"
+                    @track-click="handleTrackClick"
+                    @track-hover="handleTrackHover"
+                    @track-leave="handleTrackLeave"
                     @sort-change="selectedSpotPlaylistSortOption = $event"
                 />
               </div>
@@ -683,48 +712,48 @@ handleResize()
 
           <!-- Search Section -->
           <div v-if="selectedTopMenu === 10" id="search">
-            <Loader v-if="store.loader"/>
+            <Loader v-if="spotifyStore.isLoading"/>
             <div class="display-flex flex-wrap" style="height: auto;">
               <div class="col-12" style="color:var(--search-color);font-size: 1.5em;">{{ search }}</div>
               <SearchCategory
                   title="Songs"
-                  :items="store.tracks"
+                  :items="spotifyStore.getSearchTracks"
                   type="song"
                   :selected-item="selectedItem"
-                  :unplayable-tracks="store.unplayable_tracks"
-                  @item-click="(item, event) => { setSelectedItem('song' + item.id); store.prepare({num:10}); store.deeperTracks({item:item,num:10,flag:true}) }"
-                  @item-hover="store.parentmouseOver"
-                  @item-leave="store.parentmouseLeave"
+                  :unplayable-tracks="audioStore.unplayableTracks"
+                  @item-click="async (item, event) => { setSelectedItem('song' + item.id); await deeperStore.getTrackDetails(item, 'search') }"
+                  @item-hover="audioStore.handleParentAudioHover"
+                  @item-leave="audioStore.handleParentAudioLeave"
               />
               <SearchCategory
                   title="Artists"
-                  :items="store.artists"
+                  :items="spotifyStore.getSearchArtists"
                   type="artist"
                   :selected-item="selectedItem"
-                  :unplayable-tracks="store.unplayable_tracks"
-                  @item-click="(item, event) => { setSelectedItem('artist' + item.id); store.prepare({num:10}); store.deeperartist({item:item,track:item.tracks,num:10,flag:true}) }"
-                  @item-hover="store.parentmouseOver"
-                  @item-leave="store.parentmouseLeave"
+                  :unplayable-tracks="audioStore.unplayableTracks"
+                  @item-click="async (item, event) => { setSelectedItem('artist' + item.id); await deeperStore.getArtistDetails(item, 'search') }"
+                  @item-hover="audioStore.handleParentAudioHover"
+                  @item-leave="audioStore.handleParentAudioLeave"
               />
               <SearchCategory
                   title="Albums"
-                  :items="store.albums"
+                  :items="spotifyStore.getSearchAlbums"
                   type="album"
                   :selected-item="selectedItem"
-                  :unplayable-tracks="store.unplayable_tracks"
-                  @item-click="(item, event) => { setSelectedItem('album' + item.id); store.prepare({num:10}); store.deeperAlbum({item:item,num:10,event:event}) }"
-                  @item-hover="store.parentmouseOver"
-                  @item-leave="store.parentmouseLeave"
+                  :unplayable-tracks="audioStore.unplayableTracks"
+                  @item-click="async (item, event) => { setSelectedItem('album' + item.id); await deeperStore.getAlbumDetails(item, 'search') }"
+                  @item-hover="audioStore.handleParentAudioHover"
+                  @item-leave="audioStore.handleParentAudioLeave"
               />
               <SearchCategory
                   title="Playlists"
-                  :items="store.splaylists"
+                  :items="spotifyStore.getSearchPlaylists"
                   type="playlist"
                   :selected-item="selectedItem"
-                  :unplayable-tracks="store.unplayable_tracks"
-                  @item-click="(item, event) => { setSelectedItem('playlist' + item.id); store.prepare({num:10}); store.deeperPlaylist({item:item,num:10,event:event}) }"
-                  @item-hover="store.parentmouseOver"
-                  @item-leave="store.parentmouseLeave"
+                  :unplayable-tracks="audioStore.unplayableTracks"
+                  @item-click="async (item, event) => { setSelectedItem('playlist' + item.id); await deeperStore.getAlbumDetails(item, 'search') }"
+                  @item-hover="audioStore.handleParentAudioHover"
+                  @item-leave="audioStore.handleParentAudioLeave"
               />
             </div>
           </div>

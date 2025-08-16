@@ -1,12 +1,18 @@
 <script setup>
-import {useDMStore} from "../stores/dm-store";
+import {useSpotifyStore} from "../stores/spotify-store";
+import {useAudioStore} from "../stores/audio-store";
+import {useQueueStore} from "../stores/queue-store";
+import {useDeeperStore} from "../stores/deeper-store";
 import {ref, computed, onMounted, nextTick} from "vue";
 import SortTracks from "./SortTracks.vue";
 import {useMediaDisplay} from "../composables/useMediaDisplay";
 import { useVisibilityManager } from "../composables/useVisibilityManager";
 
 const props = defineProps(['d', 'num'])
-const store = useDMStore()
+const spotifyStore = useSpotifyStore()
+const audioStore = useAudioStore()
+const queueStore = useQueueStore()
+const deeperStore = useDeeperStore()
 const selected = ref()
 const selectedSTSortOption = ref("")
 const componentRef = ref(null)
@@ -43,6 +49,26 @@ function getTrackMediaDisplay(track) {
   return useMediaDisplay(computed(() => track))
 }
 
+// Helper function to get section name from num
+function getSectionName(num) {
+  switch (num) {
+    case 1: return 'yourPlaylists'
+    case 2: return 'topArtists'
+    case 3: return 'topTracks'
+    case 4: return 'savedAlbums'
+    case 5: return 'savedTracks'
+    case 6: return 'followedArtists'
+    case 7: return 'newReleases'
+    case 8: return 'spotifyPlaylists'
+    case 10: return 'search'
+    case 22: return 'topArtists6'
+    case 23: return 'topArtistsAll'
+    case 32: return 'topTracks6'
+    case 33: return 'topTracksAll'
+    default: return 'search'
+  }
+}
+
 function setActive(id) {
   selected.value = id
 }
@@ -65,7 +91,7 @@ onMounted(async () => {
         <span class="title-text">Recommended songs based on {{ d.name }}</span>
       </div>
       <div class="seed-actions">
-        <button class="refresh-button" @click="store.reloadST({num:num,id:d.id,name:d.name })">
+        <button class="refresh-button" @click="spotifyStore.reloadST({num:num,id:d.id,name:d.name })">
           <img class="refresh-icon" src="../assets/refresh-icon.png" alt="Refresh">
         </button>
         <sort-tracks v-model="selectedSTSortOption"/>
@@ -76,9 +102,9 @@ onMounted(async () => {
       <div v-for="(track, index) in sortedSTItems" :key="index" class="track-card">
         <div :class="['track-item', getTrackMediaDisplay(track).displayClass.value, selected === track.id ? 'selected' : '']"
              :style="getTrackMediaDisplay(track).backgroundStyle.value"
-             @mouseover="getTrackMediaDisplay(track).hasPreview.value && store.mouseOver($event)"
-             @mouseleave="getTrackMediaDisplay(track).hasPreview.value && store.mouseLeave($event)"
-             @click="setActive(track.id);store.deeperTracks({item:track,num:num,flag:false,sib:'seed_tracks',child:'st'+ d.id}); store.queuein(track)">
+             @mouseover="getTrackMediaDisplay(track).hasPreview.value && audioStore.handleAudioHover($event)"
+             @mouseleave="getTrackMediaDisplay(track).hasPreview.value && audioStore.handleAudioLeave($event)"
+             @click="setActive(track.id);console.log('SeedTracks: Clicking track', track.id, 'section:', getSectionName(num));deeperStore.getTrackDetails(track, getSectionName(num)); queueStore.addToQueue(track)">
           <div class="track-overlay">
             <div class="track-info">
               <div class="track-artists">{{ track.artists.map(a => a.name).join(', ') }}</div>

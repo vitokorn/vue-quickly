@@ -1,31 +1,37 @@
 <script setup>
-import {useDMStore} from "../../stores/dm-store";
+import {useSpotifyStore} from "../../stores/spotify-store";
+import {useAudioStore} from "../../stores/audio-store";
+import {useQueueStore} from "../../stores/queue-store";
+import {useDeeperStore} from "../../stores/deeper-store";
 
 const props = defineProps(['d', 'track', 'num', 'item'])
-const store = useDMStore()
+const spotifyStore = useSpotifyStore()
+const audioStore = useAudioStore()
+const queueStore = useQueueStore()
+const deeperStore = useDeeperStore()
 </script>
 <template>
   <div v-if="track.preview_url && d.images[0]" tabindex="0" class="itemImg itemImg-xs  itemImg-search"
-       v-on:click="store.click($event);store.deeperTracks2M({item:track,d:d,num:num,sib:'deep_albums',parent:'alb' + d.id}); store.queuein(track)"
+       v-on:click=";deeperStore.getTrackDetails(track, 'deep_albums'); queueStore.addToQueue(track)"
        v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
     <audio preload="auto" v-bind:src="track.preview_url"></audio>
   </div>
-  <div v-else-if="!track.preview_url && d.images[0] && store.unplayable_tracks" tabindex="0" class="itemImg itemImg-xs itemImg-search half-opacity"
-       v-on:click="store.deeperTracks2M({item:track,d:d,num:num,sib:'deep_albums',parent:'alb' + d.id}); store.queuein(track)"
+  <div v-else-if="!track.preview_url && d.images[0] && audioStore.unplayableTracks" tabindex="0" class="itemImg itemImg-xs itemImg-search half-opacity"
+       v-on:click="deeperStore.getTrackDetails(track, 'deep_albums'); queueStore.addToQueue(track)"
        v-bind:style="{ 'background-image': 'url(' + d.images[0].url + ')' }">
     <audio preload="none"></audio>
   </div>
   <div v-else-if="track.preview_url && !d.images[0]" tabindex="0" class="itemImg itemImg-xs  itemImg-search"
-       v-on:click="store.click($event);store.deeperTracks2M({item:track,d:d,num:num,sib:'deep_albums',parent:'alb' + d.id}); store.queuein(track)">
+       v-on:click=";deeperStore.getTrackDetails(track, 'deep_albums'); queueStore.addToQueue(track)">
     <audio preload="auto" v-bind:src="track.preview_url"></audio>
   </div>
-  <div v-else-if="store.unplayable_tracks" tabindex="0" class="itemImg itemImg-xs itemImg-search half-opacity"
-       v-on:click="store.deeperTracks2M({item:track,d:d,num:num,sib:'deep_albums',parent:'alb' + d.id}); store.queuein(track)"
+  <div v-else-if="audioStore.unplayableTracks" tabindex="0" class="itemImg itemImg-xs itemImg-search half-opacity"
+       v-on:click="deeperStore.getTrackDetails(track, 'deep_albums'); queueStore.addToQueue(track)"
        >
     <audio preload="none"></audio>
   </div>
   <div class="title"
-       v-on:click="store.deeperTracks2M({item:track,d:d,num:num,sib:'deep_albums',parent:'alb' + d.id}); store.queuein(track)">
+       v-on:click="deeperStore.getTrackDetails(track, 'deep_albums'); queueStore.addToQueue(track)">
     <div>{{ track.name }}</div>
   </div>
 

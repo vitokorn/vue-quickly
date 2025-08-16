@@ -1,12 +1,18 @@
 <script setup>
-import {useDMStore} from "../stores/dm-store";
+import {useSpotifyStore} from "../stores/spotify-store";
+import {useAudioStore} from "../stores/audio-store";
+import {useQueueStore} from "../stores/queue-store";
+import {useDeeperStore} from "../stores/deeper-store";
 import {onMounted, ref, computed, nextTick, watch} from "vue";
 import TrackCover from "./TrackCover.vue";
 import {useMediaDisplay} from "../composables/useMediaDisplay";
 import { useVisibilityManager } from "../composables/useVisibilityManager";
 
 const props = defineProps(['d', 'num'])
-const store = useDMStore()
+const spotifyStore = useSpotifyStore()
+const audioStore = useAudioStore()
+const queueStore = useQueueStore()
+const deeperStore = useDeeperStore()
 const selected = ref()
 const cover = ref(null)
 const componentRef = ref(null)
@@ -17,6 +23,26 @@ const visibilityManager = useVisibilityManager()
 // Helper function to get media display for an artist
 function getArtistMediaDisplay(artist) {
   return useMediaDisplay(computed(() => artist))
+}
+
+// Helper function to get section name from num
+function getSectionName(num) {
+  switch (num) {
+    case 1: return 'yourPlaylists'
+    case 2: return 'topArtists'
+    case 3: return 'topTracks'
+    case 4: return 'savedAlbums'
+    case 5: return 'savedTracks'
+    case 6: return 'followedArtists'
+    case 7: return 'newReleases'
+    case 8: return 'spotifyPlaylists'
+    case 10: return 'search'
+    case 22: return 'topArtists6'
+    case 23: return 'topArtistsAll'
+    case 32: return 'topTracks6'
+    case 33: return 'topTracksAll'
+    default: return 'search'
+  }
 }
 
 function setActive(id) {
@@ -64,7 +90,7 @@ function resolveCover() {
             <div v-for="(art, index) in d.artists" :key="index" class="artist-item">
               <span v-if="d.artists.length > 1 && d.artists.length - 1 === index" class="separator">&</span>
               <span v-if="d.artists.length >= 2 && d.artists.length - 1 !== index && index !== 0" class="separator">,</span>
-              <button class="artist-link" @click="store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})">
+              <button class="artist-link" @click="deeperStore.getArtistDetails(art, getSectionName(num))">
                 {{ art.name }}
               </button>
             </div>
@@ -72,7 +98,7 @@ function resolveCover() {
         </div>
 
         <div class="track-actions">
-          <button class="recommend-btn" @click="store.seedTracks({item:d,num:num,sib:'playlisttrack',child:'d'+ d.id})">
+          <button class="recommend-btn" @click="deeperStore.seedTracks({item:d,num:num,sib:getSectionName(num),child:'d'+ d.id})">
             <span class="btn-icon">🎵</span>
             Recommended songs based on this
           </button>
@@ -88,9 +114,9 @@ function resolveCover() {
 <!--      <div v-for="(art, index) in d.artists" :key="index">-->
 <!--        <div :class="['artist-card', getArtistMediaDisplay(art).displayClass.value, selected === art.id ? 'selected' : '']"-->
 <!--             :style="getArtistMediaDisplay(art).backgroundStyle.value"-->
-<!--             @mouseover="getArtistMediaDisplay(art).hasPreview.value && store.mouseOver($event)"-->
-<!--             @mouseleave="getArtistMediaDisplay(art).hasPreview.value && store.mouseLeave($event)"-->
-<!--             @click="setActive(art.id);store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})">-->
+<!--             @mouseover="getArtistMediaDisplay(art).hasPreview.value && audioStore.handleAudioHover($event)"-->
+<!--             @mouseleave="getArtistMediaDisplay(art).hasPreview.value && audioStore.handleAudioLeave($event)"-->
+<!--             @click="setActive(art.id);deeperStore.getArtistDetails(art, 'playlisttrack')">-->
 <!--          <div class="artist-overlay">-->
 <!--            <div class="artist-name">{{ art.name }}</div>-->
 <!--          </div>-->

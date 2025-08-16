@@ -1,12 +1,18 @@
 <script setup>
-import {useDMStore} from "../stores/dm-store";
+import {useSpotifyStore} from "../stores/spotify-store";
+import {useAudioStore} from "../stores/audio-store";
+import {useQueueStore} from "../stores/queue-store";
+import {useDeeperStore} from "../stores/deeper-store";
 import {ref, computed, onMounted} from "vue";
 import SortTracks from "./SortTracks.vue";
 import {useMediaDisplay} from "../composables/useMediaDisplay";
 import { useVisibilityManager } from "../composables/useVisibilityManager";
 
 const props = defineProps(['d', 'num'])
-const store = useDMStore()
+const spotifyStore = useSpotifyStore()
+const audioStore = useAudioStore()
+const queueStore = useQueueStore()
+const deeperStore = useDeeperStore()
 const selected = ref()
 const selectedDeeperPlaylistSortOption = ref("")
 const componentRef = ref(null)
@@ -46,6 +52,26 @@ function getTrackMediaDisplay(track) {
   return useMediaDisplay(computed(() => track))
 }
 
+// Helper function to get section name from num
+function getSectionName(num) {
+  switch (num) {
+    case 1: return 'yourPlaylists'
+    case 2: return 'topArtists'
+    case 3: return 'topTracks'
+    case 4: return 'savedAlbums'
+    case 5: return 'savedTracks'
+    case 6: return 'followedArtists'
+    case 7: return 'newReleases'
+    case 8: return 'spotifyPlaylists'
+    case 10: return 'search'
+    case 22: return 'topArtists6'
+    case 23: return 'topArtistsAll'
+    case 32: return 'topTracks6'
+    case 33: return 'topTracksAll'
+    default: return 'search'
+  }
+}
+
 function setActive(id) {
   selected.value = id
 }
@@ -68,9 +94,7 @@ onMounted(() => {
       <div class="playlist-info">
         <div class="playlist-title-section">
           <h2 class="playlist-title">{{ d.name }}</h2>
-          <button class="refresh-button" @click="store.reloader({num:1,event:$event})">
-            <img class="refresh-icon" src="../assets/refresh-icon.png" alt="Refresh">
-          </button>
+          <!-- Refresh functionality will be implemented later -->
         </div>
         <div class="playlist-description" v-html="d.description"></div>
       </div>
@@ -83,8 +107,8 @@ onMounted(() => {
         <div class="follow-section">
           <span class="follow-label">Follow</span>
           <label class="follow-checkbox">
-            <input type="checkbox" v-if="d.followed" @click.once="store.followPlaylist($event)" checked v-model="d.followed">
-            <input type="checkbox" v-else @click.once="store.followPlaylist($event)" v-model="d.followed">
+            <!-- Follow functionality will be implemented later -->
+            <input type="checkbox" v-model="d.followed" disabled>
             <span class="checkmark"></span>
           </label>
         </div>
@@ -102,9 +126,9 @@ onMounted(() => {
       <div v-for="(item, index) in sortedDeeperPlaylistItems" :key="index" class="track-card">
         <div :class="['track-item', getTrackMediaDisplay(item.track).displayClass.value, selected === item.track.id ? 'selected' : '']"
              :style="getTrackMediaDisplay(item.track).backgroundStyle.value"
-             @mouseover="getTrackMediaDisplay(item.track).hasPreview.value && store.mouseOver($event)"
-             @mouseleave="getTrackMediaDisplay(item.track).hasPreview.value && store.mouseLeave($event)"
-             @click="setActive(item.track.id);store.deeperTracks({item:item.track,num:num,flag:false,sib:'deeperplaylist',child:'p'+ d.id}); store.queuein(item.track)">
+             @mouseover="getTrackMediaDisplay(item.track).hasPreview.value && audioStore.handleAudioHover($event)"
+             @mouseleave="getTrackMediaDisplay(item.track).hasPreview.value && audioStore.handleAudioLeave($event)"
+             @click="setActive(item.track.id);deeperStore.getTrackDetails(item.track, getSectionName(num)); queueStore.addToQueue(item.track)">
           <div class="track-overlay">
             <div class="track-info">
               <div class="track-artists">{{ item.track.artists.map(a => a.name).join(', ') }}</div>
