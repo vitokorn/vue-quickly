@@ -66,7 +66,12 @@ function lists(artists) {
              :class="selected===plitem.track.id ? 'selected' : ''"
              v-on:click="store.deeperTracksM({item:plitem.track,num:num,flag:false,sib:'playlist',parent:'p' + d.id});store.click($event)"
              v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }">
-          {{ lists(plitem['track']['artists']) }} - {{ plitem.track.name }}
+          <div class="track-overlay">
+            <div class="track-info">
+              <div class="track-artists">{{ lists(plitem['track']['artists']) }}</div>
+              <div class="track-name">{{ plitem.track.name }}</div>
+            </div>
+          </div>
           <audio preload="auto" v-bind:src="plitem.track.preview_url"></audio>
         </div>
         <div
@@ -75,14 +80,24 @@ function lists(artists) {
             v-bind:id="plitem.track.id" tabindex="0" class="con3 half-opacity"
             v-on:click="store.deeperTracksM({item:plitem.track,num:num,flag:false,sib:'playlist',parent:'p' + d.id});"
             v-bind:style="{ 'background-image': 'url(' + plitem.track.album.images[0].url + ')' }">
-          {{ lists(plitem['track']['artists']) }} - {{ plitem.track.name }}
+          <div class="track-overlay">
+            <div class="track-info">
+              <div class="track-artists">{{ lists(plitem['track']['artists']) }}</div>
+              <div class="track-name">{{ plitem.track.name }}</div>
+            </div>
+          </div>
           <audio preload="none"></audio>
         </div>
         <div v-else-if="plitem.track && plitem.track.preview_url && !plitem.track.album.images[0]"
              :class="selected===plitem.track.id ? 'selected' : ''"
              v-bind:id="plitem.track.id" tabindex="0" class="con3"
              v-on:click="store.deeperTracksM({item:plitem.track,num:num,flag:false,sib:'playlist',parent:'p' + d.id});store.click($event)">
-          {{ lists(plitem['track']['artists']) }} - {{ plitem.track.name }}
+          <div class="track-overlay">
+            <div class="track-info">
+              <div class="track-artists">{{ lists(plitem['track']['artists']) }}</div>
+              <div class="track-name">{{ plitem.track.name }}</div>
+            </div>
+          </div>
           <audio preload="auto" v-bind:src="plitem.track.preview_url"></audio>
         </div>
         <div
@@ -90,7 +105,13 @@ function lists(artists) {
             tabindex="0" class="con3 half-opacity" v-bind:id="plitem.track.id"
             :class="selected===plitem.track.id ? 'selected' : ''"
             v-on:click="store.deeperTracksM({item:plitem.track,num:num,flag:false,sib:'playlist',parent:'p' + d.id});"
-        >{{ lists(plitem['track']['artists']) }} - {{ plitem.track.name }}
+        >
+          <div class="track-overlay">
+            <div class="track-info">
+              <div class="track-artists">{{ lists(plitem['track']['artists']) }}</div>
+              <div class="track-name">{{ plitem.track.name }}</div>
+            </div>
+          </div>
           <audio preload="none"></audio>
         </div>
       </div>

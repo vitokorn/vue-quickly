@@ -59,7 +59,7 @@ function setActive(id) {
         <h3 class="tracks-title">Tracks</h3>
       </div>
       <div class="tracks-list">
-        <div v-for="(track, index) in d.tracks.items" :key="index" class="">
+        <template v-for="(track, index) in d.tracks.items" :key="index" class="">
           <div :class="['con3', getTrackMediaDisplay(track).displayClass.value, selected === track.id ? 'selected' : '']"
                :style="getTrackMediaDisplay(track).backgroundStyle.value"
                @mouseover="getTrackMediaDisplay(track).hasPreview.value && store.mouseOver($event)"
@@ -68,7 +68,7 @@ function setActive(id) {
             {{ track.name }}
             <audio :preload="getTrackMediaDisplay(track).audioPreload.value" :src="getTrackMediaDisplay(track).audioSrc.value"></audio>
           </div>
-        </div>
+        </template>
       </div>
     </div>
   </div>

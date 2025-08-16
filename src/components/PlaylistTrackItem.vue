@@ -89,7 +89,12 @@ const trackClass = computed(() => {
        @click.stop="handleClick"
        @mouseover="handleHover"
        @mouseleave="handleLeave">
-    {{ formatArtistNames(track.artists) }} - {{ track.name }}
+    <div class="track-overlay">
+      <div class="track-info">
+        <div class="track-artists">{{ formatArtistNames(track.artists) }}</div>
+        <div class="track-name">{{ track.name }}</div>
+      </div>
+    </div>
     <audio :preload="audioPreload" :src="audioSrc"></audio>
   </div>
 </template>

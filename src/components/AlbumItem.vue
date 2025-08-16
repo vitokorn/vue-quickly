@@ -50,6 +50,11 @@ const albumClass = computed(() => {
        :class="albumClass"
        :style="backgroundStyle"
        @click.stop="handleClick">
-    {{ formatArtistNames(album.artists) }} - {{ album.name }}
+    <div class="track-overlay">
+      <div class="track-info">
+        <div class="track-artists">{{ formatArtistNames(album.artists) }}</div>
+        <div class="track-name">{{ album.name }}</div>
+      </div>
+    </div>
   </div>
 </template>

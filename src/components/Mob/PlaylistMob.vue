@@ -7,17 +7,41 @@ const store = useDMStore()
 <template>
   <div v-if="d.type==='pl'" v-bind:key="index" v-bind:id="'d'+d.id" class="card2 plls display-flex my-3">
     <div class="con3" v-if="d.preview_url && cover" v-bind:style="{ 'background-image': 'url(' + cover.url + ')' }"
-         v-on:click="store.click($event)">{{ d.name }}
+         v-on:click="store.click($event)">
+      <div class="track-overlay">
+        <div class="track-info">
+          <div class="track-artists">{{ d.artists.map(a => a.name).join(', ') }}</div>
+          <div class="track-name">{{ d.name }}</div>
+        </div>
+      </div>
       <audio preload="auto" v-bind:src="d.preview_url"></audio>
     </div>
     <div class="con3 half-opacity" v-else-if="!d.preview_url && cover && store.unplayable_tracks"
-         v-bind:style="{ 'background-image': 'url(' + cover.url + ')' }">{{ d.name }}
+         v-bind:style="{ 'background-image': 'url(' + cover.url + ')' }">
+      <div class="track-overlay">
+        <div class="track-info">
+          <div class="track-artists">{{ d.artists.map(a => a.name).join(', ') }}</div>
+          <div class="track-name">{{ d.name }}</div>
+        </div>
+      </div>
       <audio preload="none"></audio>
     </div>
-    <div class="con3" v-else-if="d.preview_url && !cover" v-on:click="store.click($event)">{{ d.name }}
+    <div class="con3" v-else-if="d.preview_url && !cover" v-on:click="store.click($event)">
+      <div class="track-overlay">
+        <div class="track-info">
+          <div class="track-artists">{{ d.artists.map(a => a.name).join(', ') }}</div>
+          <div class="track-name">{{ d.name }}</div>
+        </div>
+      </div>
       <audio preload="auto" v-bind:src="d.preview_url"></audio>
     </div>
-    <div class="con3 half-opacity" v-else-if="store.unplayable_tracks">{{ d.name }}
+    <div class="con3 half-opacity" v-else-if="store.unplayable_tracks">
+      <div class="track-overlay">
+        <div class="track-info">
+          <div class="track-artists">{{ d.artists.map(a => a.name).join(', ') }}</div>
+          <div class="track-name">{{ d.name }}</div>
+        </div>
+      </div>
       <audio preload="none"></audio>
     </div>
     <div class="text-left ms-2" style="width: 50%;">
