@@ -348,7 +348,6 @@ handleResize()
               @track-leave="store.mouseLeave"
               @sort-change="selectedPlaylistSortOption = $event"
             />
-            <RecTrack :num="1"/>
           </div>
         </div>
       </div>
@@ -388,7 +387,6 @@ handleResize()
                 @track-leave="store.mouseLeave"
                 @sort-change="selectedPlaylistSortOption = $event"
               />
-              <RecTrack :num="1"/>
             </div>
           </div>
 
@@ -430,7 +428,6 @@ handleResize()
                     />
                   </template>
                 </div>
-                <RecTrack :num="2"/>
               </div>
               <div id="topartist6"
                    class="display-flex flex-wrap"
@@ -450,7 +447,6 @@ handleResize()
                     />
                   </template>
                 </div>
-                <RecTrack :num="2"/>
               </div>
               <div id="topartista"
                    class="display-flex flex-wrap"
@@ -470,7 +466,6 @@ handleResize()
                     />
                   </template>
                 </div>
-                <RecTrack :num="2"/>
               </div>
             </teleport>
           </div>
@@ -513,7 +508,6 @@ handleResize()
                     />
                   </template>
                 </div>
-                <RecTrack :num="3"/>
               </div>
               <div id="toptracks6"
                    class="display-flex flex-wrap"
@@ -533,7 +527,6 @@ handleResize()
                     />
                   </template>
                 </div>
-                <RecTrack :num="3"/>
               </div>
               <div id="toptracksall"
                    class="display-flex flex-wrap"
@@ -553,7 +546,6 @@ handleResize()
                     />
                   </template>
                 </div>
-                <RecTrack :num="3"/>
               </div>
             </teleport>
           </div>
@@ -579,7 +571,6 @@ handleResize()
                     />
                   </template>
                 </div>
-                <RecTrack :num="4"/>
               </div>
             </teleport>
           </div>
@@ -608,7 +599,6 @@ handleResize()
                     />
                   </template>
                 </div>
-                <RecTrack :num="5"/>
               </div>
             </teleport>
           </div>
@@ -637,7 +627,6 @@ handleResize()
                     />
                   </template>
                 </div>
-                <RecTrack :num="6"/>
               </div>
             </teleport>
           </div>
@@ -665,7 +654,6 @@ handleResize()
                     />
                   </template>
                 </div>
-                <RecTrack :num="7"/>
               </div>
             </teleport>
           </div>
@@ -708,7 +696,6 @@ handleResize()
                   @track-leave="store.mouseLeave"
                   @sort-change="selectedSpotPlaylistSortOption = $event"
                 />
-                <RecTrack :num="8"/>
               </div>
             </teleport>
           </div>
