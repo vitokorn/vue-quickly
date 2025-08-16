@@ -26,6 +26,10 @@ const props = defineProps({
   unplayableTracks: {
     type: Boolean,
     default: false
+  },
+  trackPrefix: {
+    type: String,
+    default: '1'
   }
 })
 
@@ -107,7 +111,7 @@ const handleSortChange = (value) => {
           <PlaylistTrackItem
             :track="trackItem.track"
             :track-item="trackItem"
-            :selected="selectedItem === '1' + trackItem.track.id"
+            :selected="selectedItem === trackPrefix + trackItem.track.id"
             :unplayable-tracks="unplayableTracks"
             @click="handleTrackClick"
             @hover="handleTrackHover"

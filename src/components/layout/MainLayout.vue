@@ -900,77 +900,20 @@ handleResize()
                     </template>
                   </div>
                 </div>
-                <div class="play" v-if="store.currentspl" :id="'s' + store.currentspl.id">
-                  <div class="modern-playlist-header">
-                    <track-cover :d="store.currentspl" :cover="store.currentspl.images[0]"></track-cover>
-                    <div class="playlist-info">
-                      <div class="playlist-title-section">
-                        <h2 class="playlist-title">{{ store.currentspl.name }}</h2>
-                        <button class="refresh-button" @click="store.reloader({num:8,event:$event})">
-                          <img class="refresh-icon" src="../../assets/refresh-icon.png" alt="Refresh">
-                        </button>
-                      </div>
-                      <div class="playlist-description" v-html="store.currentspl.description"></div>
-                      <a class="spotify-link"
-                         :href="store.currentspl['external_urls']['spotify']"
-                         target="_blank"
-                         rel="noopener">
-                        <span class="link-icon">🎧</span>
-                        Open in Spotify
-                      </a>
-                    </div>
-                    <div class="playlist-actions">
-                      <SortTracks v-model="selectedSpotPlaylistSortOption"/>
-                    </div>
-                  </div>
-                  <div class="con2 display-flex" style="color: black">
-                    <template v-if="store.currentspl.tracks">
-                      <template v-for="(spl,index) of sortedSpotPlaylistItems" :key="index">
-                        <template v-if="spl">
-                          <div v-if="spl.track && spl.track.preview_url && spl.track.album.images[0]"
-                               :id="spl.track.id"
-                               tabindex="0"
-                               class="con3"
-                               :class="selectedItem==='8' + spl.track.id ? 'selected' : ''"
-                               @mouseover="store.mouseOver($event)"
-                               @mouseleave="store.mouseLeave($event)"
-                               @click="setSelectedItem('8' + spl.track.id);store.prepare({num:8});store.deeper({item:spl,num:8,event:$event}); store.queuein(spl['track'])"
-                               :style="{ 'background-image': 'url(' + spl.track.album.images[0].url + ')' }">
-                            {{ formatArtistNames(spl['track']['artists']) }} - {{ spl.track.name }}
-                            <audio preload="auto" :src="spl.track.preview_url"></audio>
-                          </div>
-                          <div
-                              v-else-if="spl.track && !spl.track.preview_url && spl.track.album.images[0] && store.unplayable_tracks"
-                              :id="spl.track.id"
-                              tabindex="0"
-                              class="con3 half-opacity"
-                              :class="selectedItem==='8' + spl.track.id ? 'selected' : ''"
-                              @click="setSelectedItem('8' + spl.track.id);store.prepare({num:8});store.deeper({item:spl,num:8,event:$event}); store.queuein(spl['track'])"
-                              :style="{ 'background-image': 'url(' + spl.track.album.images[0].url + ')' }">
-                            {{ formatArtistNames(spl['track']['artists']) }} - {{ spl.track.name }}
-                            <audio preload="auto"></audio>
-                          </div>
-                          <div v-else-if="spl.track && spl.track.preview_url && !spl.track.album.images[0]"
-                               :id="spl.track.id"
-                               tabindex="0"
-                               class="con3"
-                               :class="selectedItem==='8' + spl.track.id ? 'selected' : ''"
-                               @click="setSelectedItem('8' + spl.track.id);store.prepare({num:8});store.deeper({item:spl,num:8,event:$event}); store.queuein(spl['track'])">
-                            {{ formatArtistNames(spl['track']['artists']) }} - {{ spl.track.name }}
-                            <audio preload="auto" :src="spl.track.preview_url"></audio>
-                          </div>
-                          <div v-else-if="spl.track"
-                               :id="spl.track.id"
-                               class="con3 half-opacity"
-                               :class="selectedItem==='8' + item.id ? 'selected' : ''"
-                               @click="setSelectedItem('8' + spl.track.id);store.prepare({num:8});store.deeper({item:spl,num:8,event:$event}); store.queuein(spl['track'])">
-                            {{ formatArtistNames(spl['track']['artists']) }} - {{ spl.track.name }}
-                          </div>
-                        </template>
-                      </template>
-                    </template>
-                  </div>
-                </div>
+                <Playlist
+                  v-if="store.currentspl"
+                  :playlist="store.currentspl"
+                  :sorted-tracks="sortedSpotPlaylistItems"
+                  :selected-item="selectedItem"
+                  :selected-sort-option="selectedSpotPlaylistSortOption"
+                  :unplayable-tracks="store.unplayable_tracks"
+                  :track-prefix="'8'"
+                  @refresh="store.reloader({num:8,event:$event})"
+                  @track-click="(trackItem, event) => { setSelectedItem('8' + trackItem.track.id); store.prepare({num:8}); store.deeper({item:trackItem,num:8,event:event}); store.queuein(trackItem.track) }"
+                  @track-hover="store.mouseOver"
+                  @track-leave="store.mouseLeave"
+                  @sort-change="selectedSpotPlaylistSortOption = $event"
+                />
                 <RecTrack :num="8"/>
               </div>
             </teleport>
