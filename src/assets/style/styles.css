@@ -1357,7 +1357,7 @@ input[type=checkbox] {
 }
 
 .track-card {
-    position: relative;
+  position: relative;
 }
 
 .track-card:hover {
@@ -1413,11 +1413,13 @@ input[type=checkbox] {
     pointer-events: none;
 }
 
-.track-card:hover .track-overlay {
+.track-card:hover .track-overlay,
+.con3:hover .track-overlay {
     color: white !important;
 }
 
-.track-card.selected .track-overlay {
+.track-card.selected .track-overlay,
+.con3.selected .track-overlay {
     color: white !important;
 }
 

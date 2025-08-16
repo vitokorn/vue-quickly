@@ -47,23 +47,43 @@ function setActive(id) {
         <div v-if="s.preview_url && s.album.images[0]" class="con3" v-bind:key="index"
              v-bind:style="{ 'background-image': 'url(' + s.album.images[0].url + ')' }"
              v-on:click="setActive(s.id);store.click($event);store.deeperTracksM({item:s,num:num,flag:false,sib:'seed_tracks',child:false,parent:d.id}); store.queuein(s)">
-          {{Lists.Ls(d.artists)}} - {{ s.name }}
+          <div class="track-overlay">
+            <div class="track-info">
+              <div class="track-artists">{{Lists.Ls(d.artists)}}</div>
+              <div class="track-name">{{ s.name }}</div>
+            </div>
+          </div>
           <audio preload="auto" v-bind:src="s.preview_url"></audio>
         </div>
         <div v-else-if="!s.preview_url && s.album.images[0] && store.unplayable_tracks" tabindex="0" class="con3 half-opacity" v-bind:key="'2'+index"
              v-bind:style="{ 'background-image': 'url(' + s.album.images[1].url + ')' }"
              v-on:click="setActive(s.id);store.deeperTracksM({item:s,num:num,flag:false,sib:'seed_tracks',child:false,parent:d.id}); store.queuein(s)">
-          {{Lists.Ls(d.artists)}} - {{ s.name }}
+          <div class="track-overlay">
+            <div class="track-info">
+              <div class="track-artists">{{Lists.Ls(d.artists)}}</div>
+              <div class="track-name">{{ s.name }}</div>
+            </div>
+          </div>
           <audio preload="none"></audio>
         </div>
         <div v-else-if="s.preview_url && !s.album.images[0]" class="con3" v-bind:key="'3'+index"
              v-on:click="setActive(s.id);store.click($event);store.deeperTracksM({item:s,num:num,flag:false,sib:'seed_tracks',child:false,parent:d.id}); store.queuein(s)">
-          {{Lists.Ls(d.artists)}} - {{ s.name }}
+          <div class="track-overlay">
+            <div class="track-info">
+              <div class="track-artists">{{Lists.Ls(d.artists)}}</div>
+              <div class="track-name">{{ s.name }}</div>
+            </div>
+          </div>
           <audio preload="auto" v-bind:src="s.preview_url"></audio>
         </div>
         <div v-else-if="store.unplayable_tracks" tabindex="0" class="con3 half-opacity" v-bind:key="'4'+index"
              v-on:click="setActive(s.id);store.deeperTracksM({item:s,num:num,flag:false,sib:'seed_tracks',parent:d.id}); store.queuein(s)">
-          {{Lists.Ls(d.artists)}} - {{ s.name }}
+          <div class="track-overlay">
+            <div class="track-info">
+              <div class="track-artists">{{Lists.Ls(d.artists)}}</div>
+              <div class="track-name">{{ s.name }}</div>
+            </div>
+          </div>
           <audio preload="none"></audio>
         </div>
       </template>
