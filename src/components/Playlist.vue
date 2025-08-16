@@ -78,8 +78,8 @@ const handleSortChange = (value) => {
   <div class="playlist" :id="'p' + playlist.id">
     <!-- Playlist Header -->
     <div class="modern-playlist-header">
-      <TrackCover 
-        :d="playlist" 
+      <TrackCover
+        :d="playlist"
         :cover="coverImage"
         v-if="hasCover"
       />
@@ -225,7 +225,7 @@ const handleSortChange = (value) => {
 .tracks-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 8px;
   color: black;
 }
 

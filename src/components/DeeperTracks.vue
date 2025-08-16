@@ -68,21 +68,21 @@ onMounted(()=> {
         </div>
       </div>
     </div>
-
-    <div class="artists-grid">
-      <div v-for="(art, index) in d.artists" :key="index">
-        <div :class="['artist-card', getArtistMediaDisplay(art).displayClass.value, selected === art.id ? 'selected' : '']"
-             :style="getArtistMediaDisplay(art).backgroundStyle.value"
-             @mouseover="getArtistMediaDisplay(art).hasPreview.value && store.mouseOver($event)"
-             @mouseleave="getArtistMediaDisplay(art).hasPreview.value && store.mouseLeave($event)"
-             @click="setActive(art.id);store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})">
-          <div class="artist-overlay">
-            <div class="artist-name">{{ art.name }}</div>
-          </div>
-          <audio :preload="getArtistMediaDisplay(art).audioPreload.value" :src="getArtistMediaDisplay(art).audioSrc.value"></audio>
-        </div>
-      </div>
-    </div>
+<!--It requires an additional request to show this block, so I commented it out for now-->
+<!--    <div class="artists-grid">-->
+<!--      <div v-for="(art, index) in d.artists" :key="index">-->
+<!--        <div :class="['artist-card', getArtistMediaDisplay(art).displayClass.value, selected === art.id ? 'selected' : '']"-->
+<!--             :style="getArtistMediaDisplay(art).backgroundStyle.value"-->
+<!--             @mouseover="getArtistMediaDisplay(art).hasPreview.value && store.mouseOver($event)"-->
+<!--             @mouseleave="getArtistMediaDisplay(art).hasPreview.value && store.mouseLeave($event)"-->
+<!--             @click="setActive(art.id);store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})">-->
+<!--          <div class="artist-overlay">-->
+<!--            <div class="artist-name">{{ art.name }}</div>-->
+<!--          </div>-->
+<!--          <audio :preload="getArtistMediaDisplay(art).audioPreload.value" :src="getArtistMediaDisplay(art).audioSrc.value"></audio>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
   </div>
 </template>
 
