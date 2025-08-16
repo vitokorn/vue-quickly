@@ -146,36 +146,46 @@ export const useDeeperStore = defineStore('deeper', {
         this.cache.tracks.set(trackData.id, trackData)
       }
       
-      // Derive and attach parent context (root vs child)
-      const derivedParentKey = this.deriveParentKey('deepertracks', sectionName, parentKey, trackData.id)
-      trackData.parentKey = derivedParentKey
+      // Use explicit parentKey only; no auto-derivation.
+      const effectiveParentKey = parentKey || null
+      trackData.parentKey = effectiveParentKey
 
-      // Only remove parent if it's a root of the SAME type in this section
-      if (derivedParentKey) {
+      // Initialize visibility manager before any usage
+      const visibilityManager = useVisibilityManager()
+
+      // If this is a new ROOT track, replace root and purge children of previous root
+      if (!effectiveParentKey) {
         const sectionItems = this.sections[sectionName] || []
-        const rootSameTypeExists = sectionItems.some(it => it.id === derivedParentKey && it.type === 'deepertracks' && (!it.parentKey || it.parentKey === null))
-        if (rootSameTypeExists) {
-          this.removeFromSection(sectionName, derivedParentKey)
+        const prevRoot = sectionItems.find(it => it.type === 'deepertracks' && (!it.parentKey || it.parentKey === null))
+        if (prevRoot && prevRoot.id !== trackData.id) {
+          // Remove children of previous root from section (any type with parentKey = prevRoot.id)
+          this.sections[sectionName] = sectionItems.filter(it => !(it.parentKey === prevRoot.id))
+          // Hide their components
+          const parentTag = `__p:${prevRoot.id}__`
+          for (const key of visibilityManager.getRegisteredComponents()) {
+            if (key.includes(parentTag)) {
+              visibilityManager.hideComponent(key)
+            }
+          }
+          // Hide previous root component as well
+          this.hideRootComponentForParent('deepertracks', visibilityManager, prevRoot.id)
         }
       }
 
       // Add to section
-      console.log('Adding track to section:', sectionName, 'Track ID:', trackData.id, 'parentKey:', derivedParentKey)
+      console.log('Adding track to section:', sectionName, 'Track ID:', trackData.id, 'parentKey:', effectiveParentKey)
       this.addToSection(sectionName, trackData)
       
-      // Use visibility manager to hide other components of the same type
-      const visibilityManager = useVisibilityManager()
-      
       // Hide the currently visible deepertracks component within same parent context
-      this.hideVisibleComponentOfType('deepertracks', visibilityManager, derivedParentKey)
+      this.hideVisibleComponentOfType('deepertracks', visibilityManager, effectiveParentKey)
 
       // If this is a child track under a track root, hide the parent root (replace root)
-      if (derivedParentKey) {
-        this.hideRootComponentForParent('deepertracks', visibilityManager, derivedParentKey)
+      if (effectiveParentKey) {
+        this.hideRootComponentForParent('deepertracks', visibilityManager, effectiveParentKey)
       }
 
       // Ensure the target component is visible now (re-clicks or replacements)
-      const targetKey = `deepertracks_${trackData.id}${derivedParentKey ? `__p:${derivedParentKey}__` : ''}`
+      const targetKey = `deepertracks_${trackData.id}${effectiveParentKey ? `__p:${effectiveParentKey}__` : ''}`
       visibilityManager.showComponent(targetKey)
       
       // Don't call showComponent here - let the component show itself when it's registered
