@@ -1,6 +1,5 @@
 <script setup>
 import {useDMStore} from "../stores/dm-store";
-import Playlist from "./Playlist.vue";
 import SeedTracks from "./SeedTracks.vue";
 import TrackArtist from "./TrackArtist.vue";
 import DeeperTracks from "./DeeperTracks.vue";

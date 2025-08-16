@@ -321,7 +321,7 @@ export const useDMStore = defineStore('dm', {
                 if (item.track) {
                     tracktrack = item.track
                 }
-                tracktrack.type = 'pl'
+                tracktrack.type = 'deepertracks'
                 tracktrack = toRaw(tracktrack)
 
                 let allTracks = document.querySelectorAll(".rectrack > div");
@@ -339,7 +339,7 @@ export const useDMStore = defineStore('dm', {
                 }
 
                 if (exists) {
-                    tracktrack = structuredClone(exists)
+                    tracktrack = exists
                 } else {
                     let clone = structuredClone(tracktrack);
                     this.tracks_data.push(clone)
@@ -497,7 +497,7 @@ export const useDMStore = defineStore('dm', {
                 if (item.track) {
                     tracktrack = item.track
                 }
-                tracktrack.type = 'pl'
+                tracktrack.type = 'deepertracks'
                 tracktrack.parentId = parent
                 tracktrack = toRaw(tracktrack)
 
@@ -2382,7 +2382,7 @@ export const useDMStore = defineStore('dm', {
                     pointer = 'search'
                 }
                 if (exists) {
-                    item = structuredClone(exists)
+                    item = exists
                 } else {
                     let clone = structuredClone(toRaw(item));
                     this.tracks_data.push(clone)
@@ -2612,7 +2612,7 @@ export const useDMStore = defineStore('dm', {
                 }
 
                 if (exists) {
-                    item = structuredClone(exists)
+                    item = exists
                 } else {
                     let clone = structuredClone(toRaw(item));
                     this.tracks_data.push(clone)
@@ -2739,7 +2739,7 @@ export const useDMStore = defineStore('dm', {
                     pointer = 'search'
                 }
                 if (exists) {
-                    item = structuredClone(exists)
+                    item = exists
                 } else {
                     let clone = structuredClone(toRaw(item));
                     this.tracks_data.push(clone)
@@ -2967,7 +2967,7 @@ export const useDMStore = defineStore('dm', {
                 }
 
                 if (exists) {
-                    item = structuredClone(exists)
+                    item = exists
                 } else {
                     let clone = structuredClone(toRaw(item));
                     this.tracks_data.push(clone)
@@ -3509,7 +3509,7 @@ export const useDMStore = defineStore('dm', {
                 let exists = this.artists_data.find(dt => dt.id === item.id)
                 if (exists) {
                     console.log(4203)
-                    trackartist = structuredClone(exists)
+                    trackartist = exists
                     trackartist.type = 'trackartist'
                 } else {
                     await this.deeperArtistself({
@@ -3659,7 +3659,7 @@ export const useDMStore = defineStore('dm', {
                 let exists = this.artists_data.find(dt => dt.id === item.id)
                 if (exists) {
                     console.log(4203)
-                    trackartist = structuredClone(exists)
+                    trackartist = exists
                     trackartist.type = 'trackartist'
                     trackartist.parentId = parent
                 } else {
@@ -3998,7 +3998,7 @@ export const useDMStore = defineStore('dm', {
                 }
 
                 if (exists) {
-                    item = structuredClone(exists)
+                    item = exists
                 } else {
                     let clone = structuredClone(toRaw(item));
                     this.albums_data.push(clone)
@@ -4162,7 +4162,7 @@ export const useDMStore = defineStore('dm', {
                 }
 
                 if (exists) {
-                    item = structuredClone(exists)
+                    item = exists
                 } else {
                     let clone = structuredClone(toRaw(item));
                     this.albums_data.push(clone)

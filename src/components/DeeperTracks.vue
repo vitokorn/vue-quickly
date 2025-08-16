@@ -24,6 +24,8 @@ function resolveCover() {
     cover.value = props.d.album.images[0]
   } else if (props.d.images) {
     cover.value = props.d.images[0]
+  } else if (props.d.track && props.d.track.album && props.d.track.album.images && props.d.track.album.images[0]) {
+    cover.value = props.d.track.album.images[0]
   }
   console.log(cover.value)
 }
