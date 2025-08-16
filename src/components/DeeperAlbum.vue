@@ -1,12 +1,13 @@
 <script setup>
 import {useDMStore} from "../stores/dm-store";
-import {ref, computed} from "vue";
+import {ref, computed, onMounted} from "vue";
 import TrackCover from "./TrackCover.vue";
 import {useMediaDisplay} from "../composables/useMediaDisplay";
 
 const props = defineProps(['d', 'num'])
 const store = useDMStore()
 const selected = ref()
+const tracks = ref([])
 
 // Helper function to get media display for a track with album cover
 function getTrackMediaDisplay(track) {
@@ -16,6 +17,18 @@ function getTrackMediaDisplay(track) {
 function setActive(id) {
   selected.value = id
 }
+function resolveTracks() {
+  if (props.d.tracks && props.d.tracks.items) {
+    tracks.value = props.d.tracks.items
+  } else if (props.d.tracks) {
+    tracks.value = props.d.tracks;
+  } else if (props.d.items) {
+    tracks.value = props.d.items;
+  }
+}
+onMounted(()=> {
+  resolveTracks()
+})
 </script>
 
 <template>
@@ -59,7 +72,7 @@ function setActive(id) {
         <h3 class="tracks-title">Tracks</h3>
       </div>
       <div class="tracks-list">
-        <template v-for="(track, index) in d.tracks.items" :key="index" class="">
+        <template v-for="(track, index) in tracks" :key="index" class="">
           <div :class="['con3', getTrackMediaDisplay(track).displayClass.value, selected === track.id ? 'selected' : '']"
                :style="getTrackMediaDisplay(track).backgroundStyle.value"
                @mouseover="getTrackMediaDisplay(track).hasPreview.value && store.mouseOver($event)"

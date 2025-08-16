@@ -48,24 +48,9 @@ function dab() {
   <div class="modern-recommendations">
     <div class="recommendations-container">
       <template v-for="(d, index) in dab()" :key="index">
-        <!-- Playlist recommendations -->
-        <template v-if="d.type==='pl'">
-          <template v-if="num===7">
-            <Playlist v-if="d.type==='pl'" :d=d :index="index" :num="num" :cover="d.images[0]">
-            </Playlist>
-          </template>
-          <template v-else-if="num===8">
-            <Playlist v-if="d.type==='pl'" :d=d.track :index="index" :num="num" :cover="d.track.album.images[0]">
-            </Playlist>
-          </template>
-          <template v-else>
-            <Playlist v-if="d.type==='pl'" :d=d :index="index" :num="num" :cover="d.album.images[0]">
-            </Playlist>
-          </template>
-        </template>
 
         <!-- Seed tracks recommendations -->
-        <SeedTracks v-else-if="d.type==='seed_tracks'" :id="d.id" :d="d" :num="num"></SeedTracks>
+        <SeedTracks v-if="d.type==='seed_tracks'" :id="d.id" :d="d" :num="num"></SeedTracks>
 
         <!-- Track artist recommendations -->
         <TrackArtist v-else-if="d.type==='trackartist'" :d="d" :num="num"></TrackArtist>
