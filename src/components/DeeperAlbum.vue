@@ -66,7 +66,7 @@ onMounted(async ()=> {
   await nextTick()
 
   // Register this component with the visibility manager
-  const albumKey = `deeperalbum_${props.d.id}`
+  const albumKey = `deeperalbum_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
   visibilityManager.registerComponent(albumKey, componentRef)
   
   // Show this component after registration
@@ -92,7 +92,7 @@ onMounted(async ()=> {
               <span v-if="d.artists.length >= 2 && d.artists.length - 1 !== index && index !== 0"
                     class="separator">,</span>
               <button class="artist-link"
-                      @click="deeperStore.getArtistDetails(art, getSectionName(num))">
+                      @click="deeperStore.getArtistDetails(art, getSectionName(num), d.parentKey || d.id)">
                 {{ art.name }}
               </button>
             </div>
@@ -119,7 +119,7 @@ onMounted(async ()=> {
                :style="getTrackMediaDisplay(track).backgroundStyle.value"
                @mouseover="getTrackMediaDisplay(track).hasPreview.value && audioStore.handleAudioHover($event)"
                @mouseleave="getTrackMediaDisplay(track).hasPreview.value && audioStore.handleAudioLeave($event)"
-               @click="setActive(track.id);deeperStore.getTrackDetails(track, getSectionName(num)); queueStore.addToQueue(track)">
+               @click="setActive(track.id);deeperStore.getTrackDetails(track, getSectionName(num), d.parentKey || d.id); queueStore.addToQueue(track)">
             {{ track.name }}
             <audio :preload="getTrackMediaDisplay(track).audioPreload.value" :src="getTrackMediaDisplay(track).audioSrc.value"></audio>
           </div>

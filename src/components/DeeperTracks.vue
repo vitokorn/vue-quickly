@@ -68,7 +68,7 @@ function resolveCover() {
           await nextTick()
 
           // Register this component with the visibility manager
-          const trackKey = `${props.d.type}_${props.d.id}`
+          const trackKey = `${props.d.type}_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
           console.log('Registering component with ref:', componentRef.value)
           console.log('Ref element:', componentRef.value?.tagName, componentRef.value?.className)
           console.log('Registering with key:', trackKey)
@@ -94,7 +94,7 @@ function resolveCover() {
             <div v-for="(art, index) in d.artists" :key="index" class="artist-item">
               <span v-if="d.artists.length > 1 && d.artists.length - 1 === index" class="separator">&</span>
               <span v-if="d.artists.length >= 2 && d.artists.length - 1 !== index && index !== 0" class="separator">,</span>
-              <button class="artist-link" @click="deeperStore.getArtistDetails(art, getSectionName(num))">
+              <button class="artist-link" @click="deeperStore.getArtistDetails(art, getSectionName(num), d.parentKey || d.id)">
                 {{ art.name }}
               </button>
             </div>

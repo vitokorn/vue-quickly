@@ -48,7 +48,7 @@ function getSectionName(num) {
 <template>
   <div class="modern-recommendations">
     <div class="rectrack">
-      <template v-for="(item, index) in dab()" :key="index">
+      <template v-for="(item, index) in dab()" :key="`${item.type}_${item.id}${item.parentKey ? `__p:${item.parentKey}__` : ''}`">
         <!-- Seed Tracks -->
         <SeedTracks 
           v-if="item.type === 'seed_tracks'" 

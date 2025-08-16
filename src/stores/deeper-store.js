@@ -55,9 +55,19 @@ export const useDeeperStore = defineStore('deeper', {
     
     // Add item to section
     addToSection(sectionName, item) {
-      console.log('addToSection called with sectionName:', sectionName, 'item:', item.id, 'type:', item.type)
+      console.log('addToSection called with sectionName:', sectionName, 'item:', item.id, 'type:', item.type, 'parentKey:', item.parentKey)
       if (!this.sections[sectionName]) {
         this.sections[sectionName] = []
+      }
+
+      // Replace if an item with the same type and parentKey already exists
+      if (item.parentKey !== undefined) {
+        const sameParentIndex = this.sections[sectionName].findIndex(i => i.type === item.type && (i.parentKey || null) === (item.parentKey || null))
+        if (sameParentIndex !== -1) {
+          this.sections[sectionName].splice(sameParentIndex, 1, item)
+          console.log('Replaced existing item with same type/parentKey at index', sameParentIndex)
+          return
+        }
       }
       
       const existingIndex = this.sections[sectionName].findIndex(i => i.id === item.id)
@@ -86,8 +96,27 @@ export const useDeeperStore = defineStore('deeper', {
       }
     },
 
+    // Decide parentKey when not explicitly provided. If a root of the same type
+    // already exists in the section, new items become its child.
+    deriveParentKey(type, sectionName, explicitParentKey, currentItemId) {
+      if (explicitParentKey) return explicitParentKey
+      const section = this.sections[sectionName] || []
+      const existingRoot = section.find(it => it.type === type && (!it.parentKey || it.parentKey === null))
+      if (existingRoot && existingRoot.id !== currentItemId) return existingRoot.id
+      return null
+    },
+
+    // Hide the parent root component (key without parent tag) when adding a same-type child
+    hideRootComponentForParent(type, visibilityManager, parentId) {
+      if (!parentId) return
+      const rootKey = `${type}_${parentId}`
+      if (visibilityManager.isComponentRegistered(rootKey)) {
+        visibilityManager.hideComponent(rootKey)
+      }
+    },
+
     // Track details
-    async getTrackDetails(item, sectionName) {
+    async getTrackDetails(item, sectionName, parentKey = null) {
       console.log('getTrackDetails called with item:', item.id, 'sectionName:', sectionName)
       let trackData = item
       
@@ -117,15 +146,37 @@ export const useDeeperStore = defineStore('deeper', {
         this.cache.tracks.set(trackData.id, trackData)
       }
       
+      // Derive and attach parent context (root vs child)
+      const derivedParentKey = this.deriveParentKey('deepertracks', sectionName, parentKey, trackData.id)
+      trackData.parentKey = derivedParentKey
+
+      // Only remove parent if it's a root of the SAME type in this section
+      if (derivedParentKey) {
+        const sectionItems = this.sections[sectionName] || []
+        const rootSameTypeExists = sectionItems.some(it => it.id === derivedParentKey && it.type === 'deepertracks' && (!it.parentKey || it.parentKey === null))
+        if (rootSameTypeExists) {
+          this.removeFromSection(sectionName, derivedParentKey)
+        }
+      }
+
       // Add to section
-      console.log('Adding track to section:', sectionName, 'Track ID:', trackData.id)
+      console.log('Adding track to section:', sectionName, 'Track ID:', trackData.id, 'parentKey:', derivedParentKey)
       this.addToSection(sectionName, trackData)
       
       // Use visibility manager to hide other components of the same type
       const visibilityManager = useVisibilityManager()
       
-      // Hide the currently visible deepertracks component before showing the new one
-      this.hideVisibleComponentOfType('deepertracks', visibilityManager)
+      // Hide the currently visible deepertracks component within same parent context
+      this.hideVisibleComponentOfType('deepertracks', visibilityManager, derivedParentKey)
+
+      // If this is a child track under a track root, hide the parent root (replace root)
+      if (derivedParentKey) {
+        this.hideRootComponentForParent('deepertracks', visibilityManager, derivedParentKey)
+      }
+
+      // Ensure the target component is visible now (re-clicks or replacements)
+      const targetKey = `deepertracks_${trackData.id}${derivedParentKey ? `__p:${derivedParentKey}__` : ''}`
+      visibilityManager.showComponent(targetKey)
       
       // Don't call showComponent here - let the component show itself when it's registered
       console.log('Track added to section, component will show when registered')
@@ -152,29 +203,40 @@ export const useDeeperStore = defineStore('deeper', {
     },
 
     // Helper method to hide the currently visible component of a specific type
-    hideVisibleComponentOfType(type, visibilityManager) {
-      console.log('hideVisibleComponentOfType called for type:', type)
+    // Optionally scoped by parentKey (null = root-level only)
+    hideVisibleComponentOfType(type, visibilityManager, parentKey = null) {
+      console.log('hideVisibleComponentOfType called for type:', type, 'parentKey:', parentKey)
       // Get all registered components and hide only the currently visible one of the specified type
       const registeredComponents = visibilityManager.getRegisteredComponents()
       console.log('All registered components:', registeredComponents)
       
       let hiddenCount = 0
       for (const key of registeredComponents) {
-        if (key.startsWith(type + '_')) {
-          const isVisible = visibilityManager.isComponentVisible(key)
-          console.log(`Component ${key} - type: ${type}, visible: ${isVisible}`)
-          if (isVisible) {
-            console.log('Hiding currently visible component:', key, 'because it matches type:', type)
-            visibilityManager.hideComponent(key)
-            hiddenCount++
-          }
+        if (!key.startsWith(type + '_')) continue
+
+        // Parent-aware filtering using optional suffix "__p:<parentKey>__"
+        const hasParentTag = key.includes('__p:')
+        if (parentKey) {
+          const parentTag = `__p:${parentKey}__`
+          if (!key.includes(parentTag)) continue
+        } else {
+          // Root-level: ignore keys that have a parent tag
+          if (hasParentTag) continue
+        }
+
+        const isVisible = visibilityManager.isComponentVisible(key)
+        console.log(`Component ${key} - type: ${type}, visible: ${isVisible}`)
+        if (isVisible) {
+          console.log('Hiding currently visible component:', key, 'because it matches type/parent:', type, parentKey)
+          visibilityManager.hideComponent(key)
+          hiddenCount++
         }
       }
       console.log(`Hidden ${hiddenCount} currently visible components of type: ${type}`)
     },
 
     // Artist details
-    async getArtistDetails(item, sectionName) {
+    async getArtistDetails(item, sectionName, parentKey = null) {
       console.log('getArtistDetails called with item:', item.id, 'sectionName:', sectionName)
       let artistData = this.getCachedArtist(item.id)
       
@@ -209,7 +271,7 @@ export const useDeeperStore = defineStore('deeper', {
         }
         
         // Create array structure like the old system
-        const trackartist = []
+        const trackartistArray = []
         
         // Add artist info
         const artistDataItem = {
@@ -217,14 +279,14 @@ export const useDeeperStore = defineStore('deeper', {
           followed,
           type: 'trackartist'
         }
-        trackartist.push(artistDataItem)
+        trackartistArray.push(artistDataItem)
         
         // Add top tracks
         const topTracksItem = {
           ...topTracks.data,
           type: 'top_tracks'
         }
-        trackartist.push(topTracksItem)
+        trackartistArray.push(topTracksItem)
         
         // Add albums
         const enrichedAlbums = await this.enrichAlbums(albums.data.items)
@@ -232,7 +294,7 @@ export const useDeeperStore = defineStore('deeper', {
           items: enrichedAlbums,
           type: 'albums'
         }
-        trackartist.push(albumsItem)
+        trackartistArray.push(albumsItem)
         
         // Add singles
         const enrichedSingles = await this.enrichAlbums(singles.data.items)
@@ -240,7 +302,7 @@ export const useDeeperStore = defineStore('deeper', {
           items: enrichedSingles,
           type: 'single'
         }
-        trackartist.push(singlesItem)
+        trackartistArray.push(singlesItem)
         
         // Add appearances
         const enrichedAppearances = await this.enrichAlbums(appearances.data.items)
@@ -248,7 +310,7 @@ export const useDeeperStore = defineStore('deeper', {
           items: enrichedAppearances,
           type: 'appears_on'
         }
-        trackartist.push(appearancesItem)
+        trackartistArray.push(appearancesItem)
         
         // Add related artists
         const enrichedRelated = await this.enrichArtists(related.data.artists)
@@ -256,30 +318,36 @@ export const useDeeperStore = defineStore('deeper', {
           artists: enrichedRelated,
           type: 'related-artists'
         }
-        trackartist.push(relatedItem)
+        trackartistArray.push(relatedItem)
         
-        // Set the array as the artist data
-        artistData = trackartist
-        artistData.id = item.id
-        artistData.type = 'trackartist'
-        
-        console.log('Final artist data structure:', artistData)
-        
-        // Cache the artist data
+        // Wrap in an object payload
+        artistData = {
+          id: item.id,
+          type: 'trackartist',
+          data: trackartistArray
+        }
         this.cache.artists.set(item.id, artistData)
       } else {
         console.log('Using cached artist data for:', item.id)
       }
       
+      // Attach explicit parent context (no derivation for artists)
+      const derivedParentKey = parentKey || null
+      artistData.parentKey = derivedParentKey
+
       // Add to section
-      console.log('Adding artist data to section:', sectionName)
+      console.log('Adding artist data to section:', sectionName, 'parentKey:', derivedParentKey)
       this.addToSection(sectionName, artistData)
       
       // Use visibility manager to hide other components of the same type
       const visibilityManager = useVisibilityManager()
       
-      // Hide the currently visible trackartist component before showing the new one
-      this.hideVisibleComponentOfType('trackartist', visibilityManager)
+      // Hide the currently visible trackartist component within same parent context
+      this.hideVisibleComponentOfType('trackartist', visibilityManager, derivedParentKey)
+
+      // Ensure target is visible
+      const targetKey = `trackartist_${item.id}${derivedParentKey ? `__p:${derivedParentKey}__` : ''}`
+      visibilityManager.showComponent(targetKey)
       
       // Don't call showComponent here - let the component show itself when it's registered
       console.log('Artist added to section, component will show when registered')
@@ -288,7 +356,7 @@ export const useDeeperStore = defineStore('deeper', {
     },
 
     // Album details
-    async getAlbumDetails(item, sectionName) {
+    async getAlbumDetails(item, sectionName, parentKey = null) {
       let albumData = item
       
       // Check if we have cached data
@@ -314,14 +382,22 @@ export const useDeeperStore = defineStore('deeper', {
         this.cache.albums.set(albumData.id, albumData)
       }
       
+      // Attach explicit parent context (no derivation for albums)
+      const derivedParentKey = parentKey || null
+      albumData.parentKey = derivedParentKey
+
       // Add to section
       this.addToSection(sectionName, albumData)
       
       // Use visibility manager to hide other components of the same type
       const visibilityManager = useVisibilityManager()
       
-      // Hide the currently visible deeperalbum component before showing the new one
-      this.hideVisibleComponentOfType('deeperalbum', visibilityManager)
+      // Hide the currently visible deeperalbum component within same parent context
+      this.hideVisibleComponentOfType('deeperalbum', visibilityManager, derivedParentKey)
+
+      // Ensure target is visible
+      const targetKey = `deeperalbum_${item.id}${derivedParentKey ? `__p:${derivedParentKey}__` : ''}`
+      visibilityManager.showComponent(targetKey)
       
       // Don't call showComponent here - let the component show itself when it's registered
       console.log('Album added to section, component will show when registered')
@@ -412,7 +488,7 @@ export const useDeeperStore = defineStore('deeper', {
     // Legacy method for compatibility with existing components
     async seedTracks(payload) {
       console.log('seedTracks called with:', payload)
-      const { item, num, sib, child } = payload
+      const { item, num } = payload
       
       // Get section name based on num
       let sectionName
@@ -440,7 +516,7 @@ export const useDeeperStore = defineStore('deeper', {
     // Legacy method for mobile components compatibility
     async seedTracksM(payload) {
       console.log('seedTracksM called with:', payload)
-      const { item, num, sib, child, parent } = payload
+      const { item, num } = payload
       
       // Get section name based on num
       let sectionName

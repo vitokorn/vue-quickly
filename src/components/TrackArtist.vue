@@ -48,22 +48,11 @@ function setActive(id) {
 }
 
 onMounted(async () => {
-  // Wait for the next tick to ensure the ref is available
   await nextTick()
-
   console.log('TrackArtist component mounted with props:', props.d)
-  console.log('Artist ID:', props.d?.id)
-  console.log('Artist type:', props.d?.type)
-  console.log('Num prop:', props.num)
-  console.log('Full artist data:', JSON.stringify(props.d, null, 2))
-
-  // Register this component with the visibility manager
-  // Use a generic key that works with the current section
-  const artistKey = `trackartist_${props.d?.id || 'default'}`
+  const artistKey = `trackartist_${props.d?.id || 'default'}${props.d?.parentKey ? `__p:${props.d.parentKey}__` : ''}`
   console.log('Registering TrackArtist component with key:', artistKey)
   visibilityManager.registerComponent(artistKey, componentRef)
-  
-  // Show this component after registration
   console.log('Showing TrackArtist component after registration:', artistKey)
   visibilityManager.showComponent(artistKey)
 })
@@ -71,7 +60,7 @@ onMounted(async () => {
 
 <template>
   <div class="modern-track-artist" ref="componentRef">
-    <template v-for="(item, index) in d" :key="index">
+    <template v-for="(item, index) in d.data || d" :key="index">
       <!-- Artist Section -->
       <div v-if="item.type==='trackartist'" class="artist-section">
         <div class="artist-header">
@@ -154,7 +143,7 @@ onMounted(async () => {
                :style="getMediaDisplay(tt).backgroundStyle.value"
                @mouseover="getMediaDisplay(tt).hasPreview.value && audioStore.handleAudioHover($event)"
                @mouseleave="getMediaDisplay(tt).hasPreview.value && audioStore.handleAudioLeave($event)"
-               @click="setActive(tt.id);deeperStore.getTrackDetails(tt, getSectionName(num)); queueStore.addToQueue(tt)">
+               @click="setActive(tt.id);deeperStore.getTrackDetails(tt, getSectionName(num), d.id); queueStore.addToQueue(tt)">
             <div class="track-overlay">
               <div class="track-name">{{ tt.name }}</div>
             </div>
@@ -181,7 +170,7 @@ onMounted(async () => {
         <div v-for="(a, aIndex) in item.items" :key="aIndex">
           <div :class="['album-card', getMediaDisplay(a).displayClass.value, selected === a.id ? 'selected' : '']"
                :style="getMediaDisplay(a).backgroundStyle.value"
-               @click="setActive(a.id);deeperStore.getAlbumDetails(a, getSectionName(num))"
+               @click="setActive(a.id);deeperStore.getAlbumDetails(a, getSectionName(num), d.id)"
                @mouseover="getMediaDisplay(a).hasPreview.value && audioStore.handleAudioHover($event)"
                @mouseleave="getMediaDisplay(a).hasPreview.value && audioStore.handleAudioLeave($event)">
             <div class="album-overlay">
@@ -203,7 +192,7 @@ onMounted(async () => {
                :style="getMediaDisplay(r).backgroundStyle.value"
                @mouseover="getMediaDisplay(r).hasPreview.value && audioStore.handleAudioHover($event)"
                @mouseleave="getMediaDisplay(r).hasPreview.value && audioStore.handleAudioLeave($event)"
-               @click="setActive(r.id);deeperStore.getArtistDetails(r, getSectionName(num))">
+               @click="setActive(r.id);deeperStore.getArtistDetails(r, getSectionName(num), d.id)">
             <div class="artist-overlay">
               <div class="artist-name">{{ r.name }}</div>
             </div>
