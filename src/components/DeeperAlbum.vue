@@ -68,6 +68,10 @@ onMounted(async ()=> {
   // Register this component with the visibility manager
   const albumKey = `deeperalbum_${props.d.id}`
   visibilityManager.registerComponent(albumKey, componentRef)
+  
+  // Show this component after registration
+  console.log('Showing DeeperAlbum component after registration:', albumKey)
+  visibilityManager.showComponent(albumKey)
 })
 </script>
 

@@ -73,6 +73,10 @@ function resolveCover() {
           console.log('Ref element:', componentRef.value?.tagName, componentRef.value?.className)
           console.log('Registering with key:', trackKey)
           visibilityManager.registerComponent(trackKey, componentRef)
+          
+          // Show this component after registration
+          console.log('Showing component after registration:', trackKey)
+          visibilityManager.showComponent(trackKey)
         })
 </script>
 

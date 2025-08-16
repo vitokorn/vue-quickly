@@ -62,6 +62,10 @@ onMounted(async () => {
   const artistKey = `trackartist_${props.d?.id || 'default'}`
   console.log('Registering TrackArtist component with key:', artistKey)
   visibilityManager.registerComponent(artistKey, componentRef)
+  
+  // Show this component after registration
+  console.log('Showing TrackArtist component after registration:', artistKey)
+  visibilityManager.showComponent(artistKey)
 })
 </script>
 

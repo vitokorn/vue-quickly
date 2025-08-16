@@ -60,6 +60,10 @@ onMounted(async () => {
   // Register this component with the visibility manager
   const seedKey = `seed_artists_${props.d.id}`
   visibilityManager.registerComponent(seedKey, componentRef)
+  
+  // Show this component after registration
+  console.log('Showing SeedArtists component after registration:', seedKey)
+  visibilityManager.showComponent(seedKey)
 })
 </script>
 

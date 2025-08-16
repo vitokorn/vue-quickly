@@ -121,13 +121,56 @@ export const useDeeperStore = defineStore('deeper', {
       console.log('Adding track to section:', sectionName, 'Track ID:', trackData.id)
       this.addToSection(sectionName, trackData)
       
-      // Use visibility manager to show the component
+      // Use visibility manager to hide other components of the same type
       const visibilityManager = useVisibilityManager()
-      const trackKey = `deepertracks_${trackData.id}`
-      console.log('Showing component with key:', trackKey)
-      visibilityManager.showComponent(trackKey)
+      
+      // Hide the currently visible deepertracks component before showing the new one
+      this.hideVisibleComponentOfType('deepertracks', visibilityManager)
+      
+      // Don't call showComponent here - let the component show itself when it's registered
+      console.log('Track added to section, component will show when registered')
       
       return trackData
+    },
+
+    // Helper method to hide all components of a specific type
+    hideAllComponentsOfType(type, visibilityManager) {
+      console.log('hideAllComponentsOfType called for type:', type)
+      // Get all registered components and hide those of the specified type
+      const registeredComponents = visibilityManager.getRegisteredComponents()
+      console.log('All registered components:', registeredComponents)
+      
+      let hiddenCount = 0
+      for (const key of registeredComponents) {
+        if (key.startsWith(type + '_')) {
+          console.log('Hiding component:', key, 'because it matches type:', type)
+          visibilityManager.hideComponent(key)
+          hiddenCount++
+        }
+      }
+      console.log(`Hidden ${hiddenCount} components of type: ${type}`)
+    },
+
+    // Helper method to hide the currently visible component of a specific type
+    hideVisibleComponentOfType(type, visibilityManager) {
+      console.log('hideVisibleComponentOfType called for type:', type)
+      // Get all registered components and hide only the currently visible one of the specified type
+      const registeredComponents = visibilityManager.getRegisteredComponents()
+      console.log('All registered components:', registeredComponents)
+      
+      let hiddenCount = 0
+      for (const key of registeredComponents) {
+        if (key.startsWith(type + '_')) {
+          const isVisible = visibilityManager.isComponentVisible(key)
+          console.log(`Component ${key} - type: ${type}, visible: ${isVisible}`)
+          if (isVisible) {
+            console.log('Hiding currently visible component:', key, 'because it matches type:', type)
+            visibilityManager.hideComponent(key)
+            hiddenCount++
+          }
+        }
+      }
+      console.log(`Hidden ${hiddenCount} currently visible components of type: ${type}`)
     },
 
     // Artist details
@@ -232,10 +275,14 @@ export const useDeeperStore = defineStore('deeper', {
       console.log('Adding artist data to section:', sectionName)
       this.addToSection(sectionName, artistData)
       
-      // Use visibility manager to show the component
+      // Use visibility manager to hide other components of the same type
       const visibilityManager = useVisibilityManager()
-      const artistKey = `trackartist_${item.id}`
-      visibilityManager.showComponent(artistKey)
+      
+      // Hide the currently visible trackartist component before showing the new one
+      this.hideVisibleComponentOfType('trackartist', visibilityManager)
+      
+      // Don't call showComponent here - let the component show itself when it's registered
+      console.log('Artist added to section, component will show when registered')
       
       return artistData
     },
@@ -270,10 +317,14 @@ export const useDeeperStore = defineStore('deeper', {
       // Add to section
       this.addToSection(sectionName, albumData)
       
-      // Use visibility manager to show the component
+      // Use visibility manager to hide other components of the same type
       const visibilityManager = useVisibilityManager()
-      const albumKey = `deeperalbum_${albumData.id}`
-      visibilityManager.showComponent(albumKey)
+      
+      // Hide the currently visible deeperalbum component before showing the new one
+      this.hideVisibleComponentOfType('deeperalbum', visibilityManager)
+      
+      // Don't call showComponent here - let the component show itself when it's registered
+      console.log('Album added to section, component will show when registered')
       
       return albumData
     },
@@ -306,10 +357,14 @@ export const useDeeperStore = defineStore('deeper', {
       // Add to section
       this.addToSection(sectionName, seedData)
       
-      // Use visibility manager to show the component
+      // Use visibility manager to hide other components of the same type
       const visibilityManager = useVisibilityManager()
-      const seedKey = `seed_artists_${seedId}`
-      visibilityManager.showComponent(seedKey)
+      
+      // Hide the currently visible seed_artists component before showing the new one
+      this.hideVisibleComponentOfType('seed_artists', visibilityManager)
+      
+      // Don't call showComponent here - let the component show itself when it's registered
+      console.log('Seed artists added to section, component will show when registered')
       
       return seedData
     },
@@ -342,10 +397,14 @@ export const useDeeperStore = defineStore('deeper', {
       // Add to section
       this.addToSection(sectionName, seedData)
       
-      // Use visibility manager to show the component
+      // Use visibility manager to hide other components of the same type
       const visibilityManager = useVisibilityManager()
-      const seedKey = `seed_tracks_${seedId}`
-      visibilityManager.showComponent(seedKey)
+      
+      // Hide the currently visible seed_tracks component before showing the new one
+      this.hideVisibleComponentOfType('seed_tracks', visibilityManager)
+      
+      // Don't call showComponent here - let the component show itself when it's registered
+      console.log('Seed tracks added to section, component will show when registered')
       
       return seedData
     },

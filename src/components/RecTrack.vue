@@ -18,11 +18,9 @@ function dab() {
   // Set the current section so other components know what section is being displayed
   deeperStore.setCurrentSection(sectionName)
   
-  // Debug: Log any deepertracks items
-  const deepertracksItems = data.filter(item => item.type === 'deepertracks')
-  if (deepertracksItems.length > 0) {
-    console.log('RecTrack: Found deepertracks items:', deepertracksItems)
-  }
+  // Debug: Log what components will be rendered
+  const componentTypes = data.map(item => item.type)
+  console.log('RecTrack: Will render components of types:', componentTypes)
   
   return data
 }
