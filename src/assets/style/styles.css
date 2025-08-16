@@ -1164,7 +1164,7 @@ input[type=checkbox] {
 .tracks-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
-    gap: 10px;
+    gap: 8px;
 }
 
 .track-item {
@@ -2234,4 +2234,8 @@ input[type=checkbox] {
 :root.dq .artist-card.no-image,
 :root.dq .playlist-cover.no-image {
     background: linear-gradient(135deg, rgba(240, 55, 165, 0.25), rgba(233, 30, 99, 0.25));
+}
+
+.gap-8 {
+    gap: 8px;
 }
