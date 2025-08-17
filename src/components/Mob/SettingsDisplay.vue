@@ -10,56 +10,85 @@
       <h1 class="header-title">Audio Settings</h1>
     </div>
 
-    <!-- Audio Settings Card -->
-    <div class="settings-card">
-      <div class="setting-item">
-        <label class="setting-label">
-          <input
-              type="checkbox"
-              v-model="audioStore.audioPreview"
-              @change="audioStore.setAudioPreview($event.target.checked)"
-              class="setting-checkbox"
-          >
-          <span class="setting-text">Audio Preview</span>
-        </label>
-      </div>
+    <!-- Audio Settings Section -->
+    <div class="actions-section">
+      <button class="action-button" @click="toggleAudioPreview">
+        <span class="action-icon">🔊</span>
+        <span class="action-text">Audio Preview</span>
+        <span class="action-status" :class="{ active: audioStore.audioPreview }">
+          {{ audioStore.audioPreview ? 'ON' : 'OFF' }}
+        </span>
+      </button>
 
-      <div class="setting-item">
-        <label class="setting-label">
-          <input
-              type="checkbox"
-              v-model="audioStore.restartSongOnHover"
-              @change="audioStore.setRestartSongOnHover($event.target.checked)"
-              class="setting-checkbox"
-          >
-          <span class="setting-text">Restart song on hover</span>
-        </label>
-      </div>
+      <button class="action-button" @click="toggleRestartSongOnHover">
+        <span class="action-icon">🔄</span>
+        <span class="action-text">Restart song on hover</span>
+        <span class="action-status" :class="{ active: audioStore.restartSongOnHover }">
+          {{ audioStore.restartSongOnHover ? 'ON' : 'OFF' }}
+        </span>
+      </button>
 
-      <div class="setting-item">
-        <label class="setting-label">
-          <input
-              type="checkbox"
-              v-model="audioStore.unplayableTracks"
-              @change="audioStore.setUnplayableTracks($event.target.checked)"
-              class="setting-checkbox"
-          >
-          <span class="setting-text">Show unplayable tracks</span>
-        </label>
-      </div>
+      <button class="action-button" @click="toggleUnplayableTracks">
+        <span class="action-icon">🎵</span>
+        <span class="action-text">Show unplayable tracks</span>
+        <span class="action-status" :class="{ active: audioStore.unplayableTracks }">
+          {{ audioStore.unplayableTracks ? 'ON' : 'OFF' }}
+        </span>
+      </button>
 
-      <div class="setting-item">
-        <label class="setting-label">
-          <input
-              type="checkbox"
-              v-model="audioStore.openLinks"
-              @change="audioStore.setOpenLinks($event.target.checked)"
-              class="setting-checkbox"
-          >
-          <span class="setting-text">Open links in new tab</span>
-        </label>
-      </div>
+      <button class="action-button" @click="toggleOpenLinks">
+        <span class="action-icon">🔗</span>
+        <span class="action-text">Open links in new tab</span>
+        <span class="action-status" :class="{ active: audioStore.openLinks }">
+          {{ audioStore.openLinks ? 'ON' : 'OFF' }}
+        </span>
+      </button>
     </div>
+
+    <!-- Theme Section -->
+    <div class="settings-header">
+      <div class="header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"/>
+        </svg>
+      </div>
+      <h1 class="header-title">Theme</h1>
+    </div>
+    <div class="actions-section">
+      <button class="action-button" @click="changeTheme('light')">
+        <span class="action-icon">☀️</span>
+        <span class="action-text">Light Theme</span>
+        <span class="action-status" :class="{ active: currentTheme === 'light' }">
+          {{ currentTheme === 'light' ? 'ACTIVE' : '' }}
+        </span>
+      </button>
+
+      <button class="action-button" @click="changeTheme('dark')">
+        <span class="action-icon">🌙</span>
+        <span class="action-text">Dark Theme</span>
+        <span class="action-status" :class="{ active: currentTheme === 'dark' }">
+          {{ currentTheme === 'dark' ? 'ACTIVE' : '' }}
+        </span>
+      </button>
+
+      <button class="action-button" @click="changeTheme('dark-blue')">
+        <span class="action-icon">🌊</span>
+        <span class="action-text">Dark Blue Theme</span>
+        <span class="action-status" :class="{ active: currentTheme === 'dark-blue' }">
+          {{ currentTheme === 'dark-blue' ? 'ACTIVE' : '' }}
+        </span>
+      </button>
+
+      <button class="action-button" @click="changeTheme('dq')">
+        <span class="action-icon">🎨</span>
+        <span class="action-text">DQ Theme</span>
+        <span class="action-status" :class="{ active: currentTheme === 'dq' }">
+          {{ currentTheme === 'dq' ? 'ACTIVE' : '' }}
+        </span>
+      </button>
+    </div>
+
+    <!-- Actions Section -->
     <div class="settings-header">
       <div class="header-icon">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -92,8 +121,33 @@
 <script setup>
 import Logout from "../Logout.vue";
 import { useAudioStore } from "../../stores/audio-store.js";
+import { ref, onMounted } from 'vue';
 
 const audioStore = useAudioStore()
+const currentTheme = ref('light')
+
+const changeTheme = (theme) => {
+  const root = document.documentElement
+  root.className = theme === 'light' ? '' : theme
+  localStorage.setItem('theme', theme)
+  currentTheme.value = theme
+}
+
+const toggleAudioPreview = () => {
+  audioStore.setAudioPreview(!audioStore.audioPreview)
+}
+
+const toggleRestartSongOnHover = () => {
+  audioStore.setRestartSongOnHover(!audioStore.restartSongOnHover)
+}
+
+const toggleUnplayableTracks = () => {
+  audioStore.setUnplayableTracks(!audioStore.unplayableTracks)
+}
+
+const toggleOpenLinks = () => {
+  audioStore.setOpenLinks(!audioStore.openLinks)
+}
 
 const clearCache = () => {
   localStorage.clear()
@@ -104,192 +158,12 @@ const showWelcomeModal = () => {
   localStorage.removeItem('welcome-modal-seen')
   window.location.reload()
 }
+
+onMounted(() => {
+  const savedTheme = localStorage.getItem('theme') || 'light'
+  currentTheme.value = savedTheme
+  changeTheme(savedTheme)
+})
 </script>
 
-<style scoped>
-.settings-display {
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 0;
-  overflow: hidden;
-}
 
-/* Header Styles */
-.settings-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 24px;
-  padding: 20px 0;
-  width: 100%;
-}
-
-.header-icon {
-  width: 28px;
-  height: 28px;
-  margin-right: 16px;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.header-icon svg {
-  width: 100%;
-  height: 100%;
-}
-
-.header-title {
-  font-size: 24px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0;
-}
-
-/* Settings Card */
-.settings-card {
-  background: linear-gradient(135deg, rgba(88, 101, 242, 0.8), rgba(103, 58, 183, 0.8));
-  border-radius: 16px;
-  padding: 0;
-  margin-bottom: 32px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
-  width: 100%;
-}
-
-.setting-item {
-  padding: 20px 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  transition: background-color 0.2s ease;
-}
-
-.setting-item:last-child {
-  border-bottom: none;
-}
-
-.setting-item:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.setting-label {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  width: 100%;
-}
-
-.setting-checkbox {
-  margin-right: 16px;
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-}
-
-.setting-text {
-  font-size: 16px;
-  color: rgba(255, 255, 255, 0.95);
-  font-weight: 400;
-  flex: 1;
-  line-height: 1.4;
-}
-
-/* Actions Section */
-.actions-section {
-  margin-bottom: 40px;
-  width: 100%;
-}
-
-.actions-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: #f037a5;
-  margin: 0 0 24px 0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.action-button {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  padding: 20px 24px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-bottom: 16px;
-  backdrop-filter: blur(10px);
-}
-
-.action-button:last-child {
-  margin-bottom: 0;
-}
-
-.action-button:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-}
-
-.action-button:active {
-  transform: translateY(0);
-}
-
-.action-icon {
-  margin-right: 16px;
-  font-size: 22px;
-}
-
-.action-text {
-  flex: 1;
-  text-align: left;
-}
-
-.logout-section {
-  margin-bottom: 40px;
-  width: 100%;
-}
-
-/* Responsive design */
-@media (max-width: 480px) {
-  .settings-header {
-    margin-bottom: 20px;
-    padding: 16px 0;
-  }
-
-  .header-title {
-    font-size: 22px;
-  }
-
-  .settings-card {
-    margin-bottom: 24px;
-  }
-
-  .setting-item {
-    padding: 18px 20px;
-  }
-
-  .setting-text {
-    font-size: 15px;
-  }
-
-  .actions-title {
-    font-size: 18px;
-    margin-bottom: 20px;
-  }
-
-  .action-button {
-    padding: 18px 20px;
-    font-size: 15px;
-    margin-bottom: 12px;
-  }
-
-  .action-icon {
-    font-size: 20px;
-  }
-}
-</style>

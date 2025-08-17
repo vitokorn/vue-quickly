@@ -4,7 +4,12 @@
     <header class="mobile-header">
       <div class="header-content">
         <div class="header-text">
-          <h1 class="app-title">Discover Mobily</h1>
+          <h1 class="app-title">
+            <img class="logo" src="../../assets/logo-small.png" alt="Discover Mobily">
+            <span class="ps-2">
+            Discover Mobily
+            </span>
+          </h1>
           <p class="app-subtitle">Your music discovery companion</p>
         </div>
         <button class="profile-button" @click="showProfile">
@@ -142,7 +147,7 @@ const emit = defineEmits(['search'])
 <style scoped>
 .mobile-layout {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--tabs-background) 0%, #fff 100%);
   display: flex;
   flex-direction: column;
   position: relative;
@@ -174,6 +179,8 @@ const emit = defineEmits(['search'])
 }
 
 .app-title {
+  display: flex;
+  align-items: center;
   font-size: 28px;
   font-weight: 700;
   color: #ffffff;
@@ -210,51 +217,6 @@ const emit = defineEmits(['search'])
   width: 20px;
   height: 20px;
   color: #ffffff;
-}
-
-/* Search Bar Styles */
-.search-container {
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.search-bar {
-  position: relative;
-  width: 100%;
-}
-
-.search-icon {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
-  color: #a0a0a0;
-  z-index: 1;
-}
-
-.search-input {
-  width: 100%;
-  height: 48px;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 24px;
-  padding: 0 16px 0 48px;
-  color: #ffffff;
-  font-size: 16px;
-  outline: none;
-  transition: all 0.3s ease;
-  box-sizing: border-box;
-}
-
-.search-input::placeholder {
-  color: #a0a0a0;
-}
-
-.search-input:focus {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.4);
 }
 
 /* Main Content Styles */
@@ -304,7 +266,7 @@ const emit = defineEmits(['search'])
 .profile-title {
   font-size: 24px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--title-color);
   margin: 0 0 8px 0;
 }
 
@@ -345,7 +307,6 @@ const emit = defineEmits(['search'])
 /* Bottom Navigation Styles */
 .bottom-navigation {
   display: flex;
-  background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding: 8px 0;
@@ -368,7 +329,7 @@ const emit = defineEmits(['search'])
 }
 
 .nav-item:hover {
-  color: #ffffff;
+  color: var(--title-color);
 }
 
 .nav-item.active {
@@ -444,4 +405,12 @@ const emit = defineEmits(['search'])
 :root.dark-blue .mobile-layout {
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
 }
+
+:root.dark-blue .mobile-layout {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+:root.dq .mobile-layout {
+  background: linear-gradient(135deg, #1C1A2D 0%, var(--main-color) 100%);
+}
+
 </style>
