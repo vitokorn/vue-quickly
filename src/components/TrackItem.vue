@@ -26,7 +26,7 @@ const emit = defineEmits(['click', 'hover', 'leave'])
 
 // Utility function for formatting artist names
 const formatArtistNames = (artists) => {
-  return artistUtils.formatArtistNames(artists)
+  return artistUtils.formatArtistNamesSimple(artists)
 }
 
 // Media display composable for track

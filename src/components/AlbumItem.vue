@@ -22,7 +22,7 @@ const emit = defineEmits(['click'])
 
 // Utility function for formatting artist names
 const formatArtistNames = (artists) => {
-  return artistUtils.formatArtistNames(artists)
+  return artistUtils.formatArtistNamesSimple(artists)
 }
 
 // Media display composable for album

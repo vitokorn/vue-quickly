@@ -48,19 +48,13 @@
 
       <div v-else-if="currentTab === 'discover'" class="discover-section">
         <slot name="discover">
-          <div class="placeholder-content">
-            <h2>Discover</h2>
-            <p>Find new music and artists</p>
-          </div>
+          <DiscoverPage />
         </slot>
       </div>
 
       <div v-else-if="currentTab === 'library'" class="library-section">
         <slot name="library">
-          <div class="placeholder-content">
-            <h2>Library</h2>
-            <p>Your saved music and playlists</p>
-          </div>
+          <LibraryPage />
         </slot>
       </div>
     </main>
@@ -119,7 +113,9 @@
 <script setup>
 import { ref } from 'vue'
 import SettingsDisplay from '../Mob/SettingsDisplay.vue'
-import HomePage from "../Mob/HomePage.vue";
+import HomePage from "../Mob/HomePage.vue"
+import DiscoverPage from "../Mob/DiscoverPage.vue"
+import LibraryPage from "../Mob/LibraryPage.vue"
 
 // Reactive state
 const currentTab = ref('profile')

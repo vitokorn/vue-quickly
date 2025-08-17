@@ -5,6 +5,7 @@ export const useAudioStore = defineStore('audio', {
     currentTrack: null,
     audioPreview: true,
     restartSongOnHover: false,
+    restartSongOnClick: false,
     unplayableTracks: true,
     openLinks: true,
     // Mobile-specific audio state
@@ -15,7 +16,8 @@ export const useAudioStore = defineStore('audio', {
 
   getters: {
     isAudioEnabled: (state) => state.audioPreview,
-    shouldRestartOnHover: (state) => state.restartSongOnHover
+    shouldRestartOnHover: (state) => state.restartSongOnHover,
+    shouldRestartSongOnClick: (state) => state.restartSongOnClick,
   },
 
   actions: {
@@ -31,6 +33,10 @@ export const useAudioStore = defineStore('audio', {
       this.restartSongOnHover = enabled
     },
 
+    setRestartSongOnClick(enabled) {
+      this.restartSongOnClick = enabled
+    },
+
     setUnplayableTracks(enabled) {
       this.unplayableTracks = enabled
     },
@@ -42,18 +48,18 @@ export const useAudioStore = defineStore('audio', {
     // Audio control methods
     playAudio(audioElement) {
       if (!this.audioPreview || !audioElement) return
-      
+
       if (this.currentTrack && this.currentTrack !== audioElement) {
         this.pauseAudio(this.currentTrack)
       }
-      
+
       audioElement.play()
       this.currentTrack = audioElement
     },
 
     pauseAudio(audioElement) {
       if (!audioElement) return
-      
+
       audioElement.pause()
       if (this.restartSongOnHover) {
         audioElement.currentTime = 0
@@ -63,13 +69,13 @@ export const useAudioStore = defineStore('audio', {
     handleAudioClick(event) {
       const target = event.target
       const audio = target.lastChild || target
-      
+
       if (!audio || typeof audio.play !== 'function') return
-      
+
       if (this.currentTrack && this.currentTrack !== audio) {
         this.pauseAudio(this.currentTrack)
       }
-      
+
       if (audio.paused === false) {
         this.pauseAudio(audio)
       } else {
@@ -80,18 +86,18 @@ export const useAudioStore = defineStore('audio', {
     handleAudioHover(event) {
       const target = event.target
       const audio = target.lastChild || target
-      
+
       if (!this.audioPreview || !audio || typeof audio.play !== 'function') return
-      
+
       audio.play()
     },
 
     handleAudioLeave(event) {
       const target = event.target
       const audio = target.lastChild || target
-      
+
       if (!this.audioPreview || !audio || typeof audio.pause !== 'function') return
-      
+
       this.pauseAudio(audio)
     },
 
@@ -99,13 +105,13 @@ export const useAudioStore = defineStore('audio', {
     handleParentAudioClick(event) {
       const target = event.target
       const audio = target.firstChild?.lastChild
-      
+
       if (!this.audioPreview || !audio) return
-      
+
       if (this.currentTrack && this.currentTrack !== audio) {
         this.pauseAudio(this.currentTrack)
       }
-      
+
       if (audio.paused === false) {
         this.pauseAudio(audio)
       } else {
@@ -116,18 +122,18 @@ export const useAudioStore = defineStore('audio', {
     handleParentAudioHover(event) {
       const target = event.target
       const audio = target.firstChild?.lastChild
-      
+
       if (!this.audioPreview || !audio) return
-      
+
       audio.play()
     },
 
     handleParentAudioLeave(event) {
       const target = event.target
       const audio = target.firstChild?.lastChild
-      
+
       if (!this.audioPreview || !audio) return
-      
+
       this.pauseAudio(audio)
     },
 
@@ -135,13 +141,13 @@ export const useAudioStore = defineStore('audio', {
     handleSpecialClick(event) {
       const target = event.target
       const audio = target.parentElement?.parentElement?.firstElementChild?.lastChild
-      
+
       if (!this.audioPreview || !audio) return
-      
+
       if (this.currentTrack && this.currentTrack !== audio) {
         this.pauseAudio(this.currentTrack)
       }
-      
+
       if (audio.paused === false) {
         this.pauseAudio(audio)
       } else {
@@ -153,13 +159,13 @@ export const useAudioStore = defineStore('audio', {
     handleSearchClick(event) {
       const target = event.target
       const audio = target.parentElement?.firstChild?.lastChild
-      
+
       if (!this.audioPreview || !audio) return
-      
+
       if (this.currentTrack && this.currentTrack !== audio) {
         this.pauseAudio(this.currentTrack)
       }
-      
+
       if (audio.paused === false) {
         this.pauseAudio(audio)
       } else {
@@ -177,22 +183,26 @@ export const useAudioStore = defineStore('audio', {
 
     // Mobile-specific audio methods
     mobilePlayTrack(trackId, previewUrl) {
-      // Stop current mobile audio if playing
-      this.mobileStopCurrentAudio()
-      
       if (!previewUrl) {
         console.log('No preview URL available for this track')
         return
       }
 
-      // Create new audio instance
-      this.mobileCurrentAudio = new Audio(previewUrl)
-      this.mobileCurrentTrackId = trackId
-      
-      this.mobileCurrentAudio.addEventListener('ended', () => {
-        this.mobileIsPlaying = false
-        this.mobileCurrentTrackId = null
-      })
+      // Stop current mobile audio if playing (but don't restart when switching tracks)
+      if (this.mobileCurrentAudio) {
+        this.mobilePauseCurrentAudio()
+      }
+
+      // Only create new audio instance if it's a different track or no audio exists
+      if (!this.mobileCurrentAudio || this.mobileCurrentTrackId !== trackId) {
+        this.mobileCurrentAudio = new Audio(previewUrl)
+        this.mobileCurrentTrackId = trackId
+
+        this.mobileCurrentAudio.addEventListener('ended', () => {
+          this.mobileIsPlaying = false
+          this.mobileCurrentTrackId = null
+        })
+      }
 
       this.mobileCurrentAudio.play()
       this.mobileIsPlaying = true
@@ -208,12 +218,23 @@ export const useAudioStore = defineStore('audio', {
       this.mobileCurrentTrackId = null
     },
 
+    mobilePauseCurrentAudio() {
+      if (this.mobileCurrentAudio) {
+        this.mobileCurrentAudio.pause()
+      }
+      this.mobileIsPlaying = false
+    },
+
     mobileToggleTrack(trackId, previewUrl) {
       if (this.mobileCurrentTrackId === trackId && this.mobileIsPlaying) {
-        // Stop current track
-        this.mobileStopCurrentAudio()
+        if (this.restartSongOnClick) {
+          if (this.mobileCurrentAudio) {
+            this.mobileStopCurrentAudio()
+          }
+        } else {
+          this.mobilePauseCurrentAudio()
+        }
       } else {
-        // Play new track
         this.mobilePlayTrack(trackId, previewUrl)
       }
     },

@@ -43,7 +43,7 @@ const emit = defineEmits([
 
 // Utility function for formatting artist names
 const formatArtistNames = (artists) => {
-  return artistUtils.formatArtistNames(artists)
+  return artistUtils.formatArtistNamesSimple(artists)
 }
 
 // Media display composable for playlist cover

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { spotifyApi } from '../services/spotifyApi'
-import { Lists } from '../common/lists'
+import {artistUtils} from "../utils/artistUtils.js";
 
 export const useQueueStore = defineStore('queue', {
   state: () => ({
@@ -34,13 +34,14 @@ export const useQueueStore = defineStore('queue', {
       const newQue = {
         id: track.id,
         name: track.name,
-        artists: track.artists, // Store the original artists array
+        artists: track.artists || track.album?.artists, // Store the original artists array
         image: track.album?.images?.[0] || track.images?.[0],
-        preview_url: track.preview_url || track.previewUrl
+        preview_url: track.preview_url || track.previewUrl || track?.track?.preview_url || track?.items?.[0].preview_url
       }
+      newQue.artists = this.formatArtistNames(newQue.artists)
 
       let arr = current ? JSON.parse(current) : []
-      
+
       const existingIndex = arr.findIndex(item => item.id === track.id)
       if (existingIndex === -1) {
         arr.push(newQue)
@@ -54,7 +55,7 @@ export const useQueueStore = defineStore('queue', {
     removeFromQueue(id) {
       const que = JSON.parse(localStorage.getItem('queue')) || []
       const index = que.findIndex(item => item.id === id)
-      
+
       if (index > -1) {
         que.splice(index, 1)
         if (que.length === 0) {
@@ -137,6 +138,9 @@ export const useQueueStore = defineStore('queue', {
     // Get queue count
     getQueueCount() {
       return this.queue || 0
+    },
+    formatArtistNames(artists) {
+      return artistUtils.formatArtistNamesSimple(artists)
     }
-  }
+  },
 })

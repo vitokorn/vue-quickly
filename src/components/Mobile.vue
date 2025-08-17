@@ -1,6 +1,5 @@
 <script setup>
 import RecTrackM from "./Mob/RecTrackM.vue";
-import {Lists} from "../common/lists";
 import {useSpotifyStore} from "../stores/spotify-store";
 import {useAudioStore} from "../stores/audio-store";
 import {useQueueStore} from "../stores/queue-store";
@@ -38,7 +37,7 @@ function filterres(event) {
 }
 
 function lists(artists) {
-  return Lists.Ls(artists)
+  return null
 }
 
 function setSelectedItem(value) {

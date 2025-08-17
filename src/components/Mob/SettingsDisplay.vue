@@ -20,11 +20,11 @@
         </span>
       </button>
 
-      <button class="action-button" @click="toggleRestartSongOnHover">
+      <button class="action-button" @click="toggleRestartSongOnClick">
         <span class="action-icon">🔄</span>
-        <span class="action-text">Restart song on hover</span>
-        <span class="action-status" :class="{ active: audioStore.restartSongOnHover }">
-          {{ audioStore.restartSongOnHover ? 'ON' : 'OFF' }}
+        <span class="action-text">Restart song on click</span>
+        <span class="action-status" :class="{ active: audioStore.restartSongOnClick }">
+          {{ audioStore.restartSongOnClick ? 'ON' : 'OFF' }}
         </span>
       </button>
 
@@ -137,8 +137,8 @@ const toggleAudioPreview = () => {
   audioStore.setAudioPreview(!audioStore.audioPreview)
 }
 
-const toggleRestartSongOnHover = () => {
-  audioStore.setRestartSongOnHover(!audioStore.restartSongOnHover)
+const toggleRestartSongOnClick = () => {
+  audioStore.setRestartSongOnClick(!audioStore.restartSongOnClick)
 }
 
 const toggleUnplayableTracks = () => {

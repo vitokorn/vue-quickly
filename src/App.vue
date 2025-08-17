@@ -6,6 +6,7 @@ import MainLayout from "./components/layout/MainLayout.vue";
 </script>
 
 <template>
+<!--  <MainLayout/>-->
   <MobileLayout/>
 </template>
 

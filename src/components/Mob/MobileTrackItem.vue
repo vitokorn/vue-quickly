@@ -39,7 +39,7 @@ const formatArtistNames = (artists) => {
   if (typeof artists === 'string') {
     return artists
   }
-  return artistUtils.formatArtistNames(artists)
+  return artistUtils.formatArtistNamesSimple(artists)
 }
 
 const handleTrackClick = () => {
@@ -56,9 +56,10 @@ const handleTrackClick = () => {
 const handleAudioPlayback = () => {
   // Get preview URL from track
   const previewUrl = props.track.preview_url || props.track.previewUrl
-  
+  console.log(59)
   // Use global audio store to toggle track
-  audioStore.mobileToggleTrack(props.track.id, previewUrl)
+  console.log(props.track)
+  audioStore.mobileToggleTrack(props.track?.id, previewUrl)
 }
 
 const handleAddToQueue = (event) => {
@@ -100,9 +101,9 @@ const isInQueue = () => {
       <div class="track-artists">{{ formatArtistNames(track.artists) }}</div>
     </div>
 
-    <button 
+    <button
       v-if="!showRemove"
-      class="queue-btn" 
+      class="queue-btn"
       :class="{ 'in-queue': isInQueue() }"
       @click="handleAddToQueue"
       :title="isInQueue() ? 'Remove from queue' : 'Add to queue'"
@@ -115,9 +116,9 @@ const isInQueue = () => {
       </svg>
     </button>
 
-    <button 
+    <button
       v-else
-      class="remove-btn" 
+      class="remove-btn"
       @click="handleRemove"
       title="Remove from queue"
     >

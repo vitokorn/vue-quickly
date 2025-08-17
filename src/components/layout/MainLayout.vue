@@ -181,7 +181,7 @@ const handleQueueTrack = (track) => {
 
 // Utility functions
 const formatArtistNames = (artists) => {
-  return artistUtils.formatArtistNames(artists)
+  return artistUtils.formatArtistNamesSimple(artists)
 }
 
 const getSectionName = (num) => {
