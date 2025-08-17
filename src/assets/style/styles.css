@@ -1131,7 +1131,6 @@ input[type=checkbox] {
     gap: 8px;
     font-size: 14px;
     color: var(--search-color);
-    opacity: 0.8;
 }
 
 .meta-icon {
@@ -1976,9 +1975,98 @@ input[type=checkbox] {
 }
 
 .album-name {
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 1.2;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* TrackArtist Responsive Design */
+@media (max-width: 768px) {
+  .artist-header {
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .artist-cover {
+    width: 160px;
+    height: 160px;
+    align-self: center;
+  }
+
+  .artist-title {
+    font-size: 24px;
+  }
+
+  .artist-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .recommend-btn,
+  .spotify-link {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .tracks-grid,
+  .albums-grid,
+  .related-artists-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 0px;
+    padding: 0 20px;
+  }
+
+  .track-card,
+  .album-card,
+  .related-artist-card {
+    height: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modern-track-artist {
+    gap: 12px;
+  }
+
+  .artist-header {
+    padding: 16px;
+  }
+
+  .artist-cover {
+    width: 120px;
+    height: 120px;
+  }
+
+  .artist-title {
+    font-size: 20px;
+  }
+
+  .tracks-grid,
+  .albums-grid,
+  .related-artists-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0px;
+    padding: 0 16px;
+  }
+
+  .track-card,
+  .album-card,
+  .related-artist-card {
+    height: 80px;
+  }
+
+  .track-overlay,
+  .album-overlay,
+  .artist-overlay {
+    padding: 12px;
+  }
+
+  .track-name,
+  .album-name {
+    font-size: 12px;
+  }
 }
 
 /* Modern Playlist Item */
@@ -2245,6 +2333,32 @@ input[type=checkbox] {
 :root.dark .artist-card.no-image,
 :root.dark .playlist-cover.no-image {
     background: linear-gradient(135deg, rgba(240, 55, 165, 0.2), rgba(233, 30, 99, 0.2));
+}
+
+/* TrackArtist Theme Support */
+:root.dark .artist-section {
+  background: rgba(42, 46, 47, 0.9);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+:root.dark .section-title {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+:root.dark .checkmark {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+:root.dark .genre-tag {
+  background: rgba(240, 55, 165, 0.2);
+  border-color: rgba(240, 55, 165, 0.3);
+}
+
+:root.dark .track-card.no-image,
+:root.dark .album-card.no-image,
+:root.dark .related-artist-card.no-image {
+  background: linear-gradient(135deg, rgba(240, 55, 165, 0.2), rgba(233, 30, 99, 0.2));
 }
 
 /* DQ Theme Support */
@@ -4599,4 +4713,284 @@ audio {
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.tracks-list .con3 .track-overlay .track-artists,
+.tracks-list .con3 .track-overlay .track-name {
+    color: white;
+}
+
+/* TrackArtist Component */
+.modern-track-artist {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.artist-section {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.artist-section:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.artist-header {
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+}
+
+.artist-cover {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.artist-cover:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.artist-cover.unplayable {
+  opacity: 0.6;
+}
+
+.artist-cover.no-image {
+  background: linear-gradient(135deg, rgba(240, 55, 165, 0.1), rgba(233, 30, 99, 0.1));
+}
+
+.cover-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  padding: 20px;
+  color: transparent;
+}
+
+.artist-name {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.artist-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.artist-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--title-color);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.artist-stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.followers-count {
+  font-size: 16px;
+  color: var(--search-color);
+  opacity: 0.8;
+  font-weight: 500;
+}
+
+.genres-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.genres-list {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.separator {
+  font-size: 14px;
+  color: var(--search-color);
+  opacity: 0.6;
+}
+
+.genre-tag {
+  background: rgba(240, 55, 165, 0.1);
+  border: 1px solid rgba(240, 55, 165, 0.2);
+  border-radius: 20px;
+  padding: 6px 12px;
+  color: var(--active-tab);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.genre-tag:hover {
+  background: rgba(240, 55, 165, 0.2);
+  transform: translateY(-1px);
+}
+
+.artist-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.follow-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.follow-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--title-color);
+}
+
+.follow-checkbox {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.follow-checkbox input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.checkmark {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background: rgba(0, 0, 0, 0.05);
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.follow-checkbox input[type="checkbox"]:checked + .checkmark {
+  background: var(--active-tab);
+  border-color: var(--active-tab);
+}
+
+.follow-checkbox input[type="checkbox"]:checked + .checkmark::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.section-header {
+  padding: 0 24px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--title-color);
+  margin: 0;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.tracks-grid,
+.albums-grid,
+.related-artists-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0px;
+  padding: 0 24px;
+}
+
+.track-card,
+.album-card,
+.related-artist-card {
+  position: relative;
+  height: 120px;
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 120px;
+}
+
+.track-card:hover,
+.album-card:hover,
+.related-artist-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.track-card.selected,
+.album-card.selected,
+.related-artist-card.selected {
+  border: 3px solid var(--active-tab);
+  box-shadow: 0 0 20px rgba(240, 55, 165, 0.4);
+}
+
+.track-card.unplayable,
+.album-card.unplayable,
+.related-artist-card.unplayable {
+  opacity: 0.6;
+}
+
+.track-card.no-image,
+.album-card.no-image,
+.related-artist-card.no-image {
+  background: linear-gradient(135deg, rgba(240, 55, 165, 0.1), rgba(233, 30, 99, 0.1));
+}
+
+.album-overlay,
+.artist-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  padding: 16px;
+  color: white;
+}
+
+.album-name {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
 }
