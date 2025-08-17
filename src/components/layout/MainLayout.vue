@@ -27,7 +27,7 @@ import SearchCategory from '../SearchCategory.vue'
 import RefreshButton from '../RefreshButton.vue'
 import WelcomeModal from '../WelcomeModal.vue'
 import Header from "../Header.vue";
-import QueueModal from "../../App.vue";
+import QueueModal from "../QueueModal.vue";
 
 // Stores
 const spotifyStore = useSpotifyStore()
