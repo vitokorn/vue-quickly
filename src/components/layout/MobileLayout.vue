@@ -12,11 +12,18 @@
           </h1>
           <p class="app-subtitle">Your music discovery companion</p>
         </div>
-        <button class="profile-button" @click="showProfile">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="profile-icon">
-            <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" clip-rule="evenodd" />
-          </svg>
-        </button>
+        <div class="header-actions">
+          <button class="queue-button" @click="showQueue">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="queue-icon">
+              <path d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 6.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z" />
+            </svg>
+          </button>
+          <button class="profile-button" @click="showProfile">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="profile-icon">
+              <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
       </div>
     </header>
 
@@ -55,6 +62,12 @@
       <div v-else-if="currentTab === 'library'" class="library-section">
         <slot name="library">
           <LibraryPage />
+        </slot>
+      </div>
+
+      <div v-else-if="currentTab === 'queue'" class="queue-section">
+        <slot name="queue">
+          <QueueDisplay />
         </slot>
       </div>
     </main>
@@ -116,6 +129,7 @@ import SettingsDisplay from '../Mob/SettingsDisplay.vue'
 import HomePage from "../Mob/HomePage.vue"
 import DiscoverPage from "../Mob/DiscoverPage.vue"
 import LibraryPage from "../Mob/LibraryPage.vue"
+import QueueDisplay from "../Mob/QueueDisplay.vue"
 
 // Reactive state
 const currentTab = ref('profile')
@@ -128,6 +142,10 @@ const setCurrentTab = (tab) => {
 
 const showProfile = () => {
   setCurrentTab('profile')
+}
+
+const showQueue = () => {
+  setCurrentTab('queue')
 }
 
 const handleSearch = () => {
@@ -190,6 +208,13 @@ const emit = defineEmits(['search'])
   font-weight: 400;
 }
 
+.header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.queue-button,
 .profile-button {
   width: 40px;
   height: 40px;
@@ -203,11 +228,13 @@ const emit = defineEmits(['search'])
   transition: all 0.3s ease;
 }
 
+.queue-button:hover,
 .profile-button:hover {
   background: rgba(255, 255, 255, 0.3);
   transform: scale(1.05);
 }
 
+.queue-icon,
 .profile-icon {
   width: 20px;
   height: 20px;
@@ -351,6 +378,22 @@ const emit = defineEmits(['search'])
 
   .app-subtitle {
     font-size: 13px;
+  }
+
+  .header-actions {
+    gap: 6px;
+  }
+
+  .queue-button,
+  .profile-button {
+    width: 36px;
+    height: 36px;
+  }
+
+  .queue-icon,
+  .profile-icon {
+    width: 18px;
+    height: 18px;
   }
 
   .profile-avatar {

@@ -3,6 +3,7 @@ import { onMounted } from 'vue'
 import { useQueueStore } from "../../stores/queue-store"
 import { useSpotifyStore } from "../../stores/spotify-store"
 import MobileTrackItem from './MobileTrackItem.vue'
+import MobileTracksList from "./MobileTracksList.vue";
 
 const queueStore = useQueueStore()
 const spotifyStore = useSpotifyStore()
@@ -10,7 +11,7 @@ const spotifyStore = useSpotifyStore()
 onMounted(() => {
   // Load queue from localStorage when component mounts
   queueStore.loadQueue()
-  
+
   // Load playlists if not already loaded
   if (spotifyStore.getPlaylists.length === 0) {
     spotifyStore.fetchPlaylists(0)
@@ -119,6 +120,9 @@ const handleSaveToPlaylist = async (playlistId) => {
       <span>Spotify Premium required to play full songs. Save tracks to listen in the main Spotify app.</span>
     </div>
   </div>
+
+  <!-- Sample Tracks List -->
+  <MobileTracksList />
 </template>
 
 <style scoped>

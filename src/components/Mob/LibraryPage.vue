@@ -8,51 +8,12 @@
 
     <!-- Library Sections -->
     <div class="library-sections">
-      <!-- Playlists Section -->
-      <div class="library-section">
-        <div class="section-header">
-          <div class="section-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M11.584 2.376a.75.75 0 01.832 0l9 6a.75.75 0 11-.832 1.248L12 3.901 3.416 9.624a.75.75 0 01-.832-1.248l9-6z" />
-              <path d="M20.25 11.25v5.533c0 1.036-.84 1.875-1.875 1.875H5.625A1.875 1.875 0 013.75 16.783V11.25H2.25a.75.75 0 010-1.5h1.5V6.75c0-1.036.84-1.875 1.875-1.875h.75a.75.75 0 010 1.5h-.75a.375.375 0 00-.375.375v3.375h1.5a.75.75 0 010 1.5H3.75v5.533a.375.375 0 00.375.375h12.75a.375.375 0 00.375-.375V11.25h1.5a.75.75 0 010-1.5h-1.5V6.75a.375.375 0 00-.375-.375h-.75a.75.75 0 010-1.5h.75c1.036 0 1.875.84 1.875 1.875v3.375h1.5a.75.75 0 010 1.5z" />
-            </svg>
-          </div>
-          <h3 class="section-title">Playlists</h3>
-          <span class="section-count">{{ userPlaylists.length }}</span>
-        </div>
-
-        <div class="playlists-list">
-          <div
-            v-for="playlist in userPlaylists.slice(0, 3)"
-            :key="playlist.id"
-            class="playlist-item"
-            @click="handlePlaylistClick(playlist)"
-          >
-            <div class="playlist-image">
-              <img
-                v-if="playlist.images && playlist.images[0]"
-                :src="playlist.images[0].url"
-                :alt="playlist.name"
-              >
-              <div v-else class="playlist-placeholder">
-                <span>🎵</span>
-              </div>
-            </div>
-            <div class="playlist-info">
-              <h4 class="playlist-name">{{ playlist.name }}</h4>
-              <p class="playlist-tracks">{{ playlist.tracks?.total || 0 }} tracks</p>
-            </div>
-          </div>
-          <div v-if="userPlaylists.length > 3" class="view-more-item" @click="handleViewMore('playlists')">
-            <div class="view-more-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm.75 12a.75.75 0 000-1.5h-3.75V6a.75.75 0 000-1.5h3.75v6.75z" clip-rule="evenodd" />
-              </svg>
-            </div>
-            <span class="view-more-text">View all {{ userPlaylists.length }} playlists</span>
-          </div>
-        </div>
-      </div>
+      <PlaylistSelector
+          :playlists="spotifyStore.getPlaylists"
+          :selected-playlist="selectedPersonalPlaylist"
+          placeholder="Search personal playlists..."
+          @playlist-select="(playlistId, event) => { setSelectedPersonalPlaylist(playlistId); spotifyStore.fetchPlaylist(playlistId) }"
+      />
 
       <!-- Saved Tracks Section -->
       <div class="library-section">
@@ -206,18 +167,30 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useSpotifyStore } from '../../stores/spotify-store'
+import PlaylistSelector from "../Mob/PlaylistSelector.vue";
+import {useSelection} from "../../composables/useSelection.js";
 
 const spotifyStore = useSpotifyStore()
 
 // Reactive state
 const loading = ref(false)
 const error = ref(null)
-const userPlaylists = ref([])
 const topTracks = ref([])
 const topArtists = ref([])
 const savedTracks = ref([])
 const savedAlbums = ref([])
 const followedArtists = ref([])
+
+const {
+  selectedItem,
+  selectedTopMenu,
+  selectedPersonalPlaylist,
+  selectedSpotifyPlaylist,
+  setSelectedItem,
+  setSelectedPersonalPlaylist,
+  setSelectedSpotifyPlaylist,
+  setSelectedTopMenu
+} = useSelection()
 
 // Methods
 const loadLibraryContent = async () => {
@@ -227,7 +200,6 @@ const loadLibraryContent = async () => {
   try {
     // Load user playlists
     await spotifyStore.fetchPlaylists(0)
-    userPlaylists.value = spotifyStore.getPlaylists
 
     // Load other library content (you'll need to implement these in your spotify store)
     // For now, using placeholder data

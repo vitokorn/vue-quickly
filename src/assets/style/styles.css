@@ -2447,7 +2447,7 @@ input[type=checkbox] {
 }
 
 :root.dark .queue-button {
-  background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.2);
 }
 
 :root.dark .queue-button:hover {
@@ -2464,7 +2464,7 @@ input[type=checkbox] {
 }
 
 :root.dark-blue .queue-button {
-  background: rgba(43, 108, 176, 0.1);
+    background: rgba(255, 255, 255, 0.2);
 }
 
 :root.dark-blue .queue-button:hover {
@@ -2481,7 +2481,7 @@ input[type=checkbox] {
 }
 
 :root.dq .queue-button {
-  background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.2);
 }
 
 :root.dq .queue-button:hover {

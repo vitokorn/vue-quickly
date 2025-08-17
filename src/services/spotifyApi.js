@@ -74,7 +74,7 @@ export class SpotifyApiService {
   }
 
   async getPlaylists(offset = 0, limit = 50) {
-    return this.request(`/me/playlists?fields=items(name,id)&limit=${limit}&offset=${offset}`)
+    return this.request(`/me/playlists?fields=items(name,id,images,owner,public)&limit=${limit}&offset=${offset}`)
   }
 
   // Playlists
