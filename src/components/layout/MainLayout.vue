@@ -25,6 +25,7 @@ import AlbumItem from '../AlbumItem.vue'
 import NewReleaseItem from '../NewReleaseItem.vue'
 import SearchCategory from '../SearchCategory.vue'
 import RefreshButton from '../RefreshButton.vue'
+import WelcomeModal from '../WelcomeModal.vue'
 
 // Stores
 const spotifyStore = useSpotifyStore()
@@ -48,6 +49,7 @@ const {search} = useFiltering()
 
 // Local state
 const accordionActive = ref(false)
+const showWelcomeModal = ref(localStorage.getItem('welcome-modal-seen') !== 'true')
 const expandedTabs = ref(new Set())
 const selectedPlaylistSortOption = ref("")
 const selectedTASortOption = ref("")
@@ -321,10 +323,22 @@ window.addEventListener('resize', handleResize)
 
 // Initialize on mount
 handleResize()
+
+// Welcome modal handlers
+const handleCloseWelcomeModal = () => {
+  showWelcomeModal.value = false
+  localStorage.setItem('welcome-modal-seen', 'true')
+}
 </script>
 
 <template>
   <div class="main-layout">
+    <!-- Welcome Modal -->
+    <WelcomeModal 
+      :is-visible="showWelcomeModal"
+      @close="handleCloseWelcomeModal"
+    />
+    
     <!-- Loader -->
     <Loader v-if="spotifyStore.isLoading"/>
 

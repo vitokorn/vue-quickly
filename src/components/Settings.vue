@@ -14,6 +14,11 @@ const clearCache = () => {
   localStorage.clear()
   window.location.reload()
 }
+
+const showWelcomeModal = () => {
+  localStorage.removeItem('welcome-modal-seen')
+  window.location.reload()
+}
 </script>
 
 <template>
@@ -80,6 +85,11 @@ const clearCache = () => {
         <button class="action-button" @click="clearCache">
           <span class="action-icon">🗑️</span>
           <span class="action-text">Clear Cache</span>
+        </button>
+        
+        <button class="action-button" @click="showWelcomeModal">
+          <span class="action-icon">👋</span>
+          <span class="action-text">Show Welcome Modal</span>
         </button>
       </div>
 

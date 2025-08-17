@@ -497,12 +497,6 @@ a {
     text-decoration: none;
 }
 
-footer {
-    position: relative;
-    top: 30px;
-    left: 30px;
-}
-
 .refresh-start {
     animation-name: rotate;
     animation-duration: 1s;
@@ -2549,17 +2543,17 @@ input[type=checkbox] {
   .footer-container {
     padding: 16px;
   }
-  
+
   .footer-content {
     flex-direction: column;
     gap: 16px;
     text-align: center;
   }
-  
+
   .footer-section {
     justify-content: center;
   }
-  
+
   .footer-links {
     flex-direction: column;
     gap: 4px;
@@ -2570,18 +2564,18 @@ input[type=checkbox] {
   .footer-container {
     padding: 12px;
   }
-  
+
   .copyright,
   .inspired-text,
   .inspiration-link {
     font-size: 13px;
   }
-  
+
   .github-link {
     width: 36px;
     height: 36px;
   }
-  
+
   .github-link svg {
     width: 18px;
     height: 18px;
