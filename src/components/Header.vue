@@ -134,7 +134,6 @@ window.addEventListener('resize', () => {
   height: 50px;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
 }
 
@@ -153,7 +152,7 @@ window.addEventListener('resize', () => {
   font-weight: 700;
   color: var(--title-color);
   margin: 0;
-  background: linear-gradient(135deg, var(--active-tab), #e91e63);
+  background: linear-gradient(135deg, var(--logo-color), #e91e63);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

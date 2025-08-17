@@ -99,7 +99,7 @@ onMounted(async () => {
             <!-- Actions -->
             <div class="artist-actions">
               <button class="recommend-btn"
-                      @click="deeperStore.getSeedArtistRecommendations(item, getSectionName(num))">
+                      @click="deeperStore.getSeedArtistRecommendations(item, getSectionName(num), d.id)">
                 <span class="btn-icon">🎵</span>
                 Recommended artists songs based on this
               </button>

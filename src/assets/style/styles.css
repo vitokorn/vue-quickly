@@ -21,8 +21,8 @@
     --search-color: black;
     --modal-background: white;
     --modal-color: black;
-    --link-color: black,
-
+    --link-color: black;
+    --logo-color: #f3bd1c
 }
 
 :root.dark {
@@ -49,7 +49,8 @@
     --checkbox-color: grayscale(100%) brightness(75%);
     --modal-background: #2a2e2f;
     --modal-color: grey;
-    --link-color: white,
+    --link-color: white;
+    --logo-color: #f3bd1c
 
 }
 
@@ -78,7 +79,8 @@
     --selected-color: #f037a5;
     --modal-background: #001331;
     --modal-color: grey;
-    --link-color: white,
+    --link-color: white;
+    --logo-color: #f3bd1c
     /*--con2-color:#42566D;*/
     /*#1F2D40*/
 }
@@ -108,6 +110,7 @@
     --modal-background: #0a0a0a;
     --modal-color: #ffffff;
     --link-color: #f037a5;
+    --logo-color: #f3bd1c;
 }
 
 body {

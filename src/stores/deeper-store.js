@@ -96,22 +96,128 @@ export const useDeeperStore = defineStore('deeper', {
       }
     },
 
-    // Decide parentKey when not explicitly provided. If a root of the same type
-    // already exists in the section, new items become its child.
-    deriveParentKey(type, sectionName, explicitParentKey, currentItemId) {
-      if (explicitParentKey) return explicitParentKey
-      const section = this.sections[sectionName] || []
-      const existingRoot = section.find(it => it.type === type && (!it.parentKey || it.parentKey === null))
-      if (existingRoot && existingRoot.id !== currentItemId) return existingRoot.id
-      return null
-    },
-
     // Hide the parent root component (key without parent tag) when adding a same-type child
     hideRootComponentForParent(type, visibilityManager, parentId) {
       if (!parentId) return
       const rootKey = `${type}_${parentId}`
       if (visibilityManager.isComponentRegistered(rootKey)) {
         visibilityManager.hideComponent(rootKey)
+      }
+    },
+
+    // Remove an entire subtree rooted at rootId (root + all descendants) in given section
+    removeSubtree(sectionName, rootId, visibilityManager, rootTypePrefix = null) {
+      const sectionItems = this.sections[sectionName] || []
+      const toRemove = new Set([rootId])
+      let added = true
+      while (added) {
+        added = false
+        for (const it of sectionItems) {
+          if (it.parentKey && toRemove.has(it.parentKey) && !toRemove.has(it.id)) {
+            toRemove.add(it.id)
+            added = true
+          }
+        }
+      }
+      // Remove from section
+      this.sections[sectionName] = sectionItems.filter(it => !toRemove.has(it.id))
+      // Hide root if prefix provided
+      if (rootTypePrefix) {
+        const rootKey = `${rootTypePrefix}_${rootId}`
+        if (visibilityManager.isComponentRegistered(rootKey)) {
+          visibilityManager.hideComponent(rootKey)
+        }
+      }
+      // Hide all with parent tag of any removed id
+      for (const key of visibilityManager.getRegisteredComponents()) {
+        for (const remId of toRemove) {
+          const tag = `__p:${remId}__`
+          if (key.includes(tag)) {
+            visibilityManager.hideComponent(key)
+            break
+          }
+        }
+      }
+      // Clear pending visibility for any subtree keys
+      const pendingEntries = visibilityManager.getPendingRequests()
+      for (const [pKey] of pendingEntries) {
+        for (const remId of toRemove) {
+          const tag = `__p:${remId}__`
+          if (pKey.includes(tag)) {
+            visibilityManager.visibilityState.pendingVisibility.delete(pKey)
+          }
+        }
+      }
+    },
+
+    // Remove all descendants whose ancestry includes the given parentKey (but do not remove the parent itself)
+    removeDescendantsOfParent(sectionName, parentKey, visibilityManager) {
+      const sectionItems = this.sections[sectionName] || []
+      const toRemove = new Set()
+      let added = true
+      // Start with direct children of parentKey
+      for (const it of sectionItems) {
+        if (it.parentKey === parentKey) {
+          toRemove.add(it.id)
+        }
+      }
+      // Expand to deeper descendants
+      while (added) {
+        added = false
+        for (const it of sectionItems) {
+          if (it.parentKey && toRemove.has(it.parentKey) && !toRemove.has(it.id)) {
+            toRemove.add(it.id)
+            added = true
+          }
+        }
+      }
+      // Remove from section and hide components
+      if (toRemove.size > 0) {
+        this.sections[sectionName] = sectionItems.filter(it => !toRemove.has(it.id))
+        for (const key of visibilityManager.getRegisteredComponents()) {
+          for (const remId of toRemove) {
+            if (key === `deepertracks_${remId}` || key === `deeperalbum_${remId}` || key === `trackartist_${remId}` || key === `seed_tracks_st${remId}` || key === `seed_artists_sa${remId}`) {
+              visibilityManager.hideComponent(key)
+            }
+            const tag = `__p:${remId}__`
+            if (key.includes(tag)) {
+              visibilityManager.hideComponent(key)
+            }
+          }
+        }
+        // Clear pending for those descendants
+        const pendingEntries = visibilityManager.getPendingRequests()
+        for (const [pKey] of pendingEntries) {
+          for (const remId of toRemove) {
+            const tag = `__p:${remId}__`
+            if (pKey.includes(tag)) {
+              visibilityManager.visibilityState.pendingVisibility.delete(pKey)
+            }
+          }
+        }
+      }
+    },
+
+    // Hide all components of given types within the same parent branch
+    hideTypesInParent(types, visibilityManager, parentKey) {
+      if (!parentKey) return
+      const parentTag = `__p:${parentKey}__`
+      // Hide registered
+      for (const key of visibilityManager.getRegisteredComponents()) {
+        for (const t of types) {
+          if (key.startsWith(`${t}_`) && key.includes(parentTag)) {
+            visibilityManager.hideComponent(key)
+          }
+        }
+      }
+      // Clear pending for these types under the parent
+      const pendingEntries = visibilityManager.getPendingRequests()
+      for (const [pKey] of pendingEntries) {
+        for (const t of types) {
+          if (pKey.startsWith(`${t}_`) && pKey.includes(parentTag)) {
+            visibilityManager.visibilityState.pendingVisibility.delete(pKey)
+          }
+        }
       }
     },
 
@@ -158,37 +264,15 @@ export const useDeeperStore = defineStore('deeper', {
         const sectionItems = this.sections[sectionName] || []
         const prevRoot = sectionItems.find(it => it.type === 'deepertracks' && (!it.parentKey || it.parentKey === null))
         if (prevRoot && prevRoot.id !== trackData.id) {
-          // Build full subtree (prevRoot and all descendants)
-          const toRemove = new Set([prevRoot.id])
-          let added = true
-          while (added) {
-            added = false
-            for (const it of sectionItems) {
-              if (it.parentKey && toRemove.has(it.parentKey) && !toRemove.has(it.id)) {
-                toRemove.add(it.id)
-                added = true
-              }
-            }
-          }
-          // Remove all subtree items from section
-          this.sections[sectionName] = sectionItems.filter(it => !toRemove.has(it.id))
-          // Hide all subtree components
-          for (const key of visibilityManager.getRegisteredComponents()) {
-            // Hide root key
-            if (key === `deepertracks_${prevRoot.id}`) {
-              visibilityManager.hideComponent(key)
-              continue
-            }
-            // Hide any key whose parent tag matches any toRemove id
-            for (const remId of toRemove) {
-              const tag = `__p:${remId}__`
-              if (key.includes(tag)) {
-                visibilityManager.hideComponent(key)
-                break
-              }
-            }
-          }
+          this.removeSubtree(sectionName, prevRoot.id, visibilityManager, 'deepertracks')
         }
+      } else {
+        // We are opening a child deeper track under a parent branch (e.g., artist/album/track)
+        // Purge the entire descendant branch under this parent so we don't keep related artist (and its kids)
+        this.removeDescendantsOfParent(sectionName, effectiveParentKey, visibilityManager)
+        // Hide and remove sibling types within this parent branch
+        this.hideTypesInParent(['trackartist','deeperalbum','seed_tracks','seed_artists'], visibilityManager, effectiveParentKey)
+        this.sections[sectionName] = (this.sections[sectionName] || []).filter(it => !(['trackartist','deeperalbum','seed_tracks','seed_artists'].includes(it.type) && it.parentKey === effectiveParentKey))
       }
 
       // Add to section
@@ -413,11 +497,23 @@ export const useDeeperStore = defineStore('deeper', {
       const derivedParentKey = parentKey || null
       albumData.parentKey = derivedParentKey
 
+      const visibilityManager = useVisibilityManager()
+
+      // Replace previous album under the same parent and purge its subtree
+      if (derivedParentKey) {
+        const sectionItems = this.sections[sectionName] || []
+        const prevAlbum = sectionItems.find(it => it.type === 'deeperalbum' && it.parentKey === derivedParentKey && it.id !== albumData.id)
+        if (prevAlbum) {
+          this.removeSubtree(sectionName, prevAlbum.id, visibilityManager, 'deeperalbum')
+        }
+        // Hide sibling types under the same parent branch when showing album
+        this.hideTypesInParent(['seed_artists','deepertracks','seed_tracks'], visibilityManager, derivedParentKey)
+        // Remove those types from section as well
+        this.sections[sectionName] = (this.sections[sectionName] || []).filter(it => !(['seed_artists','deepertracks','seed_tracks'].includes(it.type) && it.parentKey === derivedParentKey))
+      }
+
       // Add to section
       this.addToSection(sectionName, albumData)
-      
-      // Use visibility manager to hide other components of the same type
-      const visibilityManager = useVisibilityManager()
       
       // Hide the currently visible deeperalbum component within same parent context
       this.hideVisibleComponentOfType('deeperalbum', visibilityManager, derivedParentKey)
@@ -433,7 +529,7 @@ export const useDeeperStore = defineStore('deeper', {
     },
 
     // Seed artist recommendations
-    async getSeedArtistRecommendations(item, sectionName) {
+    async getSeedArtistRecommendations(item, sectionName, parentKey = null) {
       const seedId = `sa${item.id}`
       let seedData = this.getCachedSeedArtist(seedId)
       
@@ -458,22 +554,34 @@ export const useDeeperStore = defineStore('deeper', {
       }
       
       // Add to section
-      this.addToSection(sectionName, seedData)
-      
-      // Use visibility manager to hide other components of the same type
+      seedData.parentKey = parentKey || null
       const visibilityManager = useVisibilityManager()
       
+      // Hide conflicting siblings under same parent before showing SeedArtist
+      if (seedData.parentKey) {
+        // Remove the entire descendant branch under this parent (e.g., TrackArtist and its children)
+        this.removeDescendantsOfParent(sectionName, seedData.parentKey, visibilityManager)
+        // Also hide conflicting sibling types (in case any registered leftovers)
+        this.hideTypesInParent(['deepertracks','deeperalbum'], visibilityManager, seedData.parentKey)
+        this.sections[sectionName] = (this.sections[sectionName] || []).filter(it => !(['deepertracks','deeperalbum'].includes(it.type) && it.parentKey === seedData.parentKey))
+      }
+      this.addToSection(sectionName, seedData)
+      
       // Hide the currently visible seed_artists component before showing the new one
-      this.hideVisibleComponentOfType('seed_artists', visibilityManager)
+      this.hideVisibleComponentOfType('seed_artists', visibilityManager, seedData.parentKey)
       
       // Don't call showComponent here - let the component show itself when it's registered
       console.log('Seed artists added to section, component will show when registered')
+      
+      // Ensure target is visible
+      const targetKey = `seed_artists_${seedId}${seedData.parentKey ? `__p:${seedData.parentKey}__` : ''}`
+      visibilityManager.showComponent(targetKey)
       
       return seedData
     },
 
     // Seed track recommendations
-    async getSeedTrackRecommendations(item, sectionName) {
+    async getSeedTrackRecommendations(item, sectionName, parentKey = null) {
       const seedId = `st${item.id}`
       let seedData = this.getCachedSeedTrack(seedId)
       
@@ -497,16 +605,30 @@ export const useDeeperStore = defineStore('deeper', {
         this.cache.seedTracks.set(seedId, seedData)
       }
       
-      // Add to section
-      this.addToSection(sectionName, seedData)
+      // Attach parent context so seed tracks are purged with their ancestor
+      seedData.parentKey = parentKey || null
       
-      // Use visibility manager to hide other components of the same type
+      // Use visibility manager
       const visibilityManager = useVisibilityManager()
       
-      // Hide the currently visible seed_tracks component before showing the new one
-      this.hideVisibleComponentOfType('seed_tracks', visibilityManager)
+      // If we are in a branch (artist/album/track parent), first purge descendants under this parent
+      if (seedData.parentKey) {
+        this.removeDescendantsOfParent(sectionName, seedData.parentKey, visibilityManager)
+        this.hideTypesInParent(['trackartist','deeperalbum'], visibilityManager, seedData.parentKey)
+        this.sections[sectionName] = (this.sections[sectionName] || []).filter(it => !(['trackartist','deeperalbum'].includes(it.type) && it.parentKey === seedData.parentKey))
+      }
       
-      // Don't call showComponent here - let the component show itself when it's registered
+      // Now add the seed item to the section
+      this.addToSection(sectionName, seedData)
+      
+      // Hide any currently visible seed_tracks in the same parent branch
+      this.hideVisibleComponentOfType('seed_tracks', visibilityManager, seedData.parentKey)
+      
+      // Ensure target is visible
+      const targetKey = `seed_tracks_${seedId}${seedData.parentKey ? `__p:${seedData.parentKey}__` : ''}`
+      visibilityManager.showComponent(targetKey)
+      
+      // Don't call showComponent here - component also shows itself on mount
       console.log('Seed tracks added to section, component will show when registered')
       
       return seedData
@@ -515,7 +637,7 @@ export const useDeeperStore = defineStore('deeper', {
     // Legacy method for compatibility with existing components
     async seedTracks(payload) {
       console.log('seedTracks called with:', payload)
-      const { item, num } = payload
+      const { item, num, parent } = payload
       
       // Get section name based on num
       let sectionName
@@ -537,13 +659,13 @@ export const useDeeperStore = defineStore('deeper', {
       }
       
       // Call the new method
-      return await this.getSeedTrackRecommendations(item, sectionName)
+      return await this.getSeedTrackRecommendations(item, sectionName, parent || null)
     },
 
     // Legacy method for mobile components compatibility
     async seedTracksM(payload) {
       console.log('seedTracksM called with:', payload)
-      const { item, num } = payload
+      const { item, num, parent } = payload
       
       // Get section name based on num
       let sectionName
@@ -565,7 +687,7 @@ export const useDeeperStore = defineStore('deeper', {
       }
       
       // Call the new method (same as seedTracks for now)
-      return await this.getSeedTrackRecommendations(item, sectionName)
+      return await this.getSeedTrackRecommendations(item, sectionName, parent || null)
     },
 
     // Helper methods

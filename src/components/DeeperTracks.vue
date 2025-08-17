@@ -102,7 +102,7 @@ function resolveCover() {
         </div>
 
         <div class="track-actions">
-          <button class="recommend-btn" @click="deeperStore.seedTracks({item:d,num:num,sib:getSectionName(num),child:'d'+ d.id})">
+          <button class="recommend-btn" @click="deeperStore.seedTracks({item:d,num:num,sib:getSectionName(num),child:'d'+ d.id,parent: d.parentKey || d.id})">
             <span class="btn-icon">🎵</span>
             Recommended songs based on this
           </button>
