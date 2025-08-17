@@ -6,7 +6,11 @@ export const useAudioStore = defineStore('audio', {
     audioPreview: true,
     restartSongOnHover: false,
     unplayableTracks: true,
-    openLinks: true
+    openLinks: true,
+    // Mobile-specific audio state
+    mobileCurrentAudio: null,
+    mobileCurrentTrackId: null,
+    mobileIsPlaying: false
   }),
 
   getters: {
@@ -169,6 +173,53 @@ export const useAudioStore = defineStore('audio', {
         this.pauseAudio(this.currentTrack)
         this.currentTrack = null
       }
+    },
+
+    // Mobile-specific audio methods
+    mobilePlayTrack(trackId, previewUrl) {
+      // Stop current mobile audio if playing
+      this.mobileStopCurrentAudio()
+      
+      if (!previewUrl) {
+        console.log('No preview URL available for this track')
+        return
+      }
+
+      // Create new audio instance
+      this.mobileCurrentAudio = new Audio(previewUrl)
+      this.mobileCurrentTrackId = trackId
+      
+      this.mobileCurrentAudio.addEventListener('ended', () => {
+        this.mobileIsPlaying = false
+        this.mobileCurrentTrackId = null
+      })
+
+      this.mobileCurrentAudio.play()
+      this.mobileIsPlaying = true
+    },
+
+    mobileStopCurrentAudio() {
+      if (this.mobileCurrentAudio) {
+        this.mobileCurrentAudio.pause()
+        this.mobileCurrentAudio.currentTime = 0
+        this.mobileCurrentAudio = null
+      }
+      this.mobileIsPlaying = false
+      this.mobileCurrentTrackId = null
+    },
+
+    mobileToggleTrack(trackId, previewUrl) {
+      if (this.mobileCurrentTrackId === trackId && this.mobileIsPlaying) {
+        // Stop current track
+        this.mobileStopCurrentAudio()
+      } else {
+        // Play new track
+        this.mobilePlayTrack(trackId, previewUrl)
+      }
+    },
+
+    mobileIsTrackPlaying(trackId) {
+      return this.mobileCurrentTrackId === trackId && this.mobileIsPlaying
     }
   }
 })

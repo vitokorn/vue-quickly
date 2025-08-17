@@ -1,5 +1,14 @@
 <script setup>
+import { ref } from 'vue'
+import QueueDisplay from './QueueDisplay.vue'
+import MobileTracksList from './MobileTracksList.vue'
 
+const searchQuery = ref('')
+
+const handleSearch = () => {
+  // Handle search functionality
+  console.log('Search query:', searchQuery.value)
+}
 </script>
 
 <template>
@@ -18,6 +27,12 @@
       >
     </div>
   </div>
+
+  <!-- Queue Display -->
+  <QueueDisplay />
+
+  <!-- Sample Tracks List -->
+  <MobileTracksList />
 </template>
 
 <style scoped>

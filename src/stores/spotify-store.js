@@ -249,6 +249,21 @@ export const useSpotifyStore = defineStore('spotify', {
       }
     },
 
+    async createPlaylist(name) {
+      try {
+        const response = await spotifyApi.createPlaylist(name)
+        const playlist = response.data
+        
+        // Add the new playlist to the playlists array
+        this.playlists.unshift(playlist)
+        
+        return playlist
+      } catch (error) {
+        console.error('Failed to create playlist:', error)
+        throw error
+      }
+    },
+
     // Spotify playlists actions
     async fetchSpotifyPlaylists(offset = 0) {
       this.setLoading(true)

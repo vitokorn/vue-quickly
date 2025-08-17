@@ -40,11 +40,9 @@
       </div>
 
       <div v-else-if="currentTab === 'home'" class="home-section">
+
         <slot name="home">
-          <div class="placeholder-content">
-            <h2>Home</h2>
-            <p>Welcome to Discover Mobily</p>
-          </div>
+          <HomePage/>
         </slot>
       </div>
 
@@ -121,6 +119,7 @@
 <script setup>
 import { ref } from 'vue'
 import SettingsDisplay from '../Mob/SettingsDisplay.vue'
+import HomePage from "../Mob/HomePage.vue";
 
 // Reactive state
 const currentTab = ref('profile')

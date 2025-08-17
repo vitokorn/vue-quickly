@@ -4,8 +4,8 @@ import { Lists } from '../common/lists'
 
 export const useQueueStore = defineStore('queue', {
   state: () => ({
-    queue: localStorage.getItem('queue') && JSON.parse(localStorage.getItem('queue')).length || null,
-    queueArr: localStorage.getItem('queue') && JSON.parse(localStorage.getItem('queue')) || null,
+    queue: localStorage.getItem('queue') ? JSON.parse(localStorage.getItem('queue')).length : 0,
+    queueArr: localStorage.getItem('queue') ? JSON.parse(localStorage.getItem('queue')) : [],
     queueModal: false
   }),
 
@@ -34,39 +34,38 @@ export const useQueueStore = defineStore('queue', {
       const newQue = {
         id: track.id,
         name: track.name,
-        artists: Lists.Ls(track.artists),
-        image: track.album?.images?.[0] || track.images?.[0]
+        artists: track.artists, // Store the original artists array
+        image: track.album?.images?.[0] || track.images?.[0],
+        preview_url: track.preview_url || track.previewUrl
       }
 
       let arr = current ? JSON.parse(current) : []
       
-      if (arr !== null) {
-        const existingIndex = arr.findIndex(item => item.id === track.id)
-        if (existingIndex === -1) {
-          arr.push(newQue)
-          localStorage.setItem('queue', JSON.stringify(arr))
-          this.setQueue(arr.length)
-          this.setQueueArr(arr)
-        }
-      } else {
-        const newArr = [newQue]
-        localStorage.setItem('queue', JSON.stringify(newArr))
-        this.setQueue(newArr.length)
-        this.setQueueArr(newArr)
+      const existingIndex = arr.findIndex(item => item.id === track.id)
+      if (existingIndex === -1) {
+        arr.push(newQue)
+        localStorage.setItem('queue', JSON.stringify(arr))
+        this.setQueue(arr.length)
+        this.setQueueArr(arr)
       }
     },
 
     // Remove track from queue
     removeFromQueue(id) {
-      const que = JSON.parse(localStorage.getItem('queue'))
+      const que = JSON.parse(localStorage.getItem('queue')) || []
       const index = que.findIndex(item => item.id === id)
       
       if (index > -1) {
         que.splice(index, 1)
-        const newQue = JSON.stringify(que)
-        localStorage.setItem('queue', newQue)
-        this.setQueueArr(que)
-        this.setQueue(que.length)
+        if (que.length === 0) {
+          localStorage.removeItem('queue')
+          this.setQueueArr([])
+          this.setQueue(0)
+        } else {
+          localStorage.setItem('queue', JSON.stringify(que))
+          this.setQueueArr(que)
+          this.setQueue(que.length)
+        }
       }
     },
 
@@ -113,7 +112,7 @@ export const useQueueStore = defineStore('queue', {
     clearQueue() {
       localStorage.removeItem('queue')
       this.setQueue(0)
-      this.setQueueArr(null)
+      this.setQueueArr([])
     },
 
     // Get queue from localStorage
@@ -123,12 +122,15 @@ export const useQueueStore = defineStore('queue', {
         const queueArr = JSON.parse(queue)
         this.setQueue(queueArr.length)
         this.setQueueArr(queueArr)
+      } else {
+        this.setQueue(0)
+        this.setQueueArr([])
       }
     },
 
     // Check if track is in queue
     isInQueue(trackId) {
-      if (!this.queueArr) return false
+      if (!this.queueArr || this.queueArr.length === 0) return false
       return this.queueArr.some(track => track.id === trackId)
     },
 
