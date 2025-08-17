@@ -26,6 +26,8 @@ import NewReleaseItem from '../NewReleaseItem.vue'
 import SearchCategory from '../SearchCategory.vue'
 import RefreshButton from '../RefreshButton.vue'
 import WelcomeModal from '../WelcomeModal.vue'
+import Header from "../Header.vue";
+import QueueModal from "../../App.vue";
 
 // Stores
 const spotifyStore = useSpotifyStore()
@@ -332,13 +334,15 @@ const handleCloseWelcomeModal = () => {
 </script>
 
 <template>
+  <Header/>
+  <QueueModal/>
   <div class="main-layout">
     <!-- Welcome Modal -->
-    <WelcomeModal 
+    <WelcomeModal
       :is-visible="showWelcomeModal"
       @close="handleCloseWelcomeModal"
     />
-    
+
     <!-- Loader -->
     <Loader v-if="spotifyStore.isLoading"/>
 

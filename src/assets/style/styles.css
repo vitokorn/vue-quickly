@@ -4081,15 +4081,15 @@ input[type=checkbox] {
     min-width: 260px;
     right: -10px;
   }
-  
+
   .settings-section {
     padding: 12px;
   }
-  
+
   .setting-item {
     padding: 6px;
   }
-  
+
   .action-button {
     padding: 8px 10px;
     font-size: 13px;
@@ -4101,19 +4101,19 @@ input[type=checkbox] {
     min-width: 240px;
     right: -20px;
   }
-  
+
   .settings-section {
     padding: 10px;
   }
-  
+
   .settings-section h3 {
     font-size: 13px;
   }
-  
+
   .setting-label {
     font-size: 13px;
   }
-  
+
   .action-button {
     padding: 6px 8px;
     font-size: 12px;
@@ -4228,7 +4228,7 @@ input[type=checkbox] {
 }
 
 .setting-item {
-  margin-bottom: 12px;
+  /*margin-bottom: 12px;*/
   padding: 8px;
   border-radius: 6px;
   transition: background-color 0.3s ease;

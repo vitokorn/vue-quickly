@@ -1,5 +1,4 @@
 <script setup>
-import RecTrack from "./RecTrack.vue";
 import RecTrackM from "./Mob/RecTrackM.vue";
 import {Lists} from "../common/lists";
 import {useSpotifyStore} from "../stores/spotify-store";

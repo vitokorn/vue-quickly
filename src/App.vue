@@ -1,16 +1,13 @@
 <script setup>
 /* eslint-disable no-useless-escape */
-import MainLayout from './components/layout/MainLayout.vue'
+import MobileLayout from './components/layout/MobileLayout.vue'
 import Header from "./components/Header.vue";
 import QueueModal from "./components/QueueModal.vue";
 
 </script>
 
 <template>
-  <Header/>
-  <br>
-  <MainLayout />
-  <QueueModal/>
+  <MobileLayout/>
 </template>
 
 <style>
