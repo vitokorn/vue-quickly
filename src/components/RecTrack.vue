@@ -96,13 +96,4 @@ function getSectionName(num) {
 </template>
 
 <style scoped>
-.modern-recommendations {
-  margin-top: 24px;
-}
-
-.rectrack {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
 </style>

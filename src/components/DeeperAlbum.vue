@@ -68,7 +68,7 @@ onMounted(async ()=> {
   // Register this component with the visibility manager
   const albumKey = `deeperalbum_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
   visibilityManager.registerComponent(albumKey, componentRef)
-  
+
   // Show this component after registration
   console.log('Showing DeeperAlbum component after registration:', albumKey)
   visibilityManager.showComponent(albumKey)
@@ -120,7 +120,9 @@ onMounted(async ()=> {
                @mouseover="getTrackMediaDisplay(track).hasPreview.value && audioStore.handleAudioHover($event)"
                @mouseleave="getTrackMediaDisplay(track).hasPreview.value && audioStore.handleAudioLeave($event)"
                @click="setActive(track.id);deeperStore.getTrackDetails(track, getSectionName(num), d.id); queueStore.addToQueue(track)">
-            {{ track.name }}
+            <div class="album-overlay">
+              <div class="album-name">{{ track.name }}</div>
+            </div>
             <audio :preload="getTrackMediaDisplay(track).audioPreload.value" :src="getTrackMediaDisplay(track).audioSrc.value"></audio>
           </div>
         </template>

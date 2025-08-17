@@ -63,26 +63,4 @@ const handleItemLeave = (event) => {
 </template>
 
 <style scoped>
-.col-6 {
-  flex: 0 0 50%;
-  padding: 0 8px;
-}
-
-.stitle {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--title-color);
-  margin-bottom: 16px;
-  padding-bottom: 8px;
-  border-bottom: 2px solid var(--active-tab);
-}
-
-.playable-search {
-  margin-bottom: 8px;
-}
-
-/* Dark mode support */
-:root.dark .stitle {
-  color: var(--search-color);
-}
 </style>
