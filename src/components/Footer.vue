@@ -178,4 +178,23 @@ const currentYear = new Date().getFullYear()
 :root.dark .inspiration-link:hover {
   background: rgba(240, 55, 165, 0.2);
 }
+
+/* Blue theme support */
+:root.dark-blue .modern-footer {
+  background: rgba(18, 33, 58, 0.95);
+  border-top-color: rgba(120, 160, 220, 0.12);
+}
+
+:root.dark-blue .github-link {
+  background: rgba(43, 108, 176, 0.10);
+}
+
+:root.dark-blue .inspiration-link:hover {
+  background: rgba(43, 108, 176, 0.18);
+}
+
+:root.dark-blue .github-link:hover {
+  background: var(--active-tab);
+  box-shadow: 0 4px 12px rgba(43, 108, 176, 0.3);
+}
 </style>

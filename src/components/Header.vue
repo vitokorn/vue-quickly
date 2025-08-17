@@ -395,4 +395,21 @@ window.addEventListener('resize', () => {
   border-bottom-color: rgba(255, 255, 255, 0.1);
 }
 
+/* Blue theme support */
+:root.dark-blue .modern-header {
+  background: rgba(18, 33, 58, 0.95);
+  border-bottom-color: rgba(120, 160, 220, 0.12);
+}
+
+:root.dark-blue .theme-switcher {
+  background: rgba(43, 108, 176, 0.10);
+}
+
+:root.dark-blue .theme-label:hover {
+  background: rgba(43, 108, 176, 0.18);
+}
+
+:root.dark-blue .theme-preview {
+  border-color: rgba(120, 160, 220, 0.3);
+}
 </style>

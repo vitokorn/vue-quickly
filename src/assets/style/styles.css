@@ -27,59 +27,59 @@
 
 :root.dark {
     --main-color: #181a1b;
-    --tabs-background: #222426;
-    --tabs-color: #b5afa5;
-    --tabs-target: #35393b;
-    --recomended-color: rgb(240, 55, 165);
-    --active-tab: #222426;
+    --tabs-background: #202325;
+    --tabs-color: #e0e3e7;
+    --tabs-target: #2a2f34;
+    --recomended-color: #f037a5;
+    --active-tab: #f037a5;
     --button-background-color: transparent;
-    --button-background-border: 2px solid #736b5e;
-    --reset-color: white;
-    --title-color: white;
-    --card2-background-color: #2a2e2f;
-    --pl-color: grey;
+    --button-background-border: 2px solid #5e6a7d;
+    --reset-color: #ffffff;
+    --title-color: #ffffff;
+    --card2-background-color: #232628;
+    --pl-color: #e0e3e7;
     --pl-background-color: #2a2e2f;
-    --h1-color: grey;
-    --root-color: grey;
-    --border-color: black;
-    --input-color: grey;
-    --border-top: rgb(54, 59, 61);
-    --box-shadow: 0 2px 4px 1px #35393b;
-    --search-color: grey;
-    --checkbox-color: grayscale(100%) brightness(75%);
-    --modal-background: #2a2e2f;
-    --modal-color: grey;
-    --link-color: white;
+    --h1-color: #e5e7eb;
+    --root-color: #e5e7eb;
+    --border-color: #2c3136;
+    --input-color: #222426;
+    --border-top: #3a3f44;
+    --box-shadow: 0 2px 4px 1px rgba(0, 0, 0, .35);
+    --search-color: #c9ced4;
+    --checkbox-color: grayscale(100%) brightness(85%);
+    --modal-background: #1f2325;
+    --modal-color: #e5e7eb;
+    --link-color: #f037a5;
     --logo-color: #f3bd1c
 
 }
 
 :root.dark-blue {
-    --main-color: #001331;
-    --tabs-background: #2F4460;
-    --tabs-color: #05AFF2;
-    --tabs-target: #42566D;
-    --recomended-color: #0D8C44;
-    --active-tab: #0D8C44;
+    --main-color: #0b1222;
+    --tabs-background: #121e33;
+    --tabs-color: #d1dcf0;
+    --tabs-target: #182843;
+    --recomended-color: #2b6cb0;
+    --active-tab: #2b6cb0;
     --button-background-color: transparent;
-    --button-background-border: 2px solid #4caf50;
-    --reset-color: white;
-    --title-color: white;
-    --card2-background-color: #1F2D40;
-    --pl-color: #05AFF2;
-    --pl-background-color: #1F2D40;
-    --h1-color: grey;
-    --root-color: grey;
-    --border-color: #366CD9;
-    --input-color: grey;
-    --border-top: rgb(54, 59, 61);
-    --box-shadow: 0 2px 4px 1px #05AFF2;
-    --search-color: #05AFF2;
-    --checkbox-color: invert(0%) hue-rotate(220.1deg) brightness(150.1%);
-    --selected-color: #f037a5;
-    --modal-background: #001331;
-    --modal-color: grey;
-    --link-color: white;
+    --button-background-border: 2px solid #2b6cb0;
+    --reset-color: #e2ecff;
+    --title-color: #e2ecff;
+    --card2-background-color: #12213a;
+    --pl-color: #c3d1ea;
+    --pl-background-color: #142541;
+    --h1-color: #dfe9ff;
+    --root-color: #dfe9ff;
+    --border-color: #162845;
+    --input-color: #0a162a;
+    --border-top: #1b2e4e;
+    --box-shadow: 0 2px 4px 1px rgba(6, 22, 44, .5);
+    --search-color: #b7c9e6;
+    --checkbox-color: invert(0%) hue-rotate(220deg) brightness(115%);
+    --selected-color: #2b6cb0;
+    --modal-background: #0a1628;
+    --modal-color: #dbe7ff;
+    --link-color: #a7c8ff;
     --logo-color: #f3bd1c
     /*--con2-color:#42566D;*/
     /*#1F2D40*/
@@ -2241,4 +2241,55 @@ input[type=checkbox] {
 
 .gap-8 {
     gap: 8px;
+}
+
+/* Blue Theme Support */
+:root.dark-blue .modern-album-card,
+:root.dark-blue .modern-playlist-card,
+:root.dark-blue .modern-track-card,
+:root.dark-blue .modern-seed-artists,
+:root.dark-blue .modern-seed-tracks,
+:root.dark-blue .artist-section {
+    background: rgba(18, 33, 58, 0.9);
+    border-color: rgba(120, 160, 220, 0.15);
+}
+
+:root.dark-blue .album-header,
+:root.dark-blue .playlist-header,
+:root.dark-blue .track-main,
+:root.dark-blue .tracks-header,
+:root.dark-blue .section-title,
+:root.dark-blue .seed-header {
+    border-color: rgba(120, 160, 220, 0.12);
+}
+
+:root.dark-blue .refresh-button {
+    background: rgba(43, 108, 176, 0.12);
+}
+
+:root.dark-blue .checkmark {
+    background: rgba(43, 108, 176, 0.1);
+    border-color: rgba(43, 108, 176, 0.25);
+}
+
+:root.dark-blue .artist-link {
+    color: var(--selected-color);
+}
+
+:root.dark-blue .artist-link:hover {
+    background: rgba(43, 108, 176, 0.18);
+}
+
+:root.dark-blue .genre-tag {
+    background: rgba(43, 108, 176, 0.14);
+    border-color: rgba(43, 108, 176, 0.28);
+    color: var(--selected-color);
+}
+
+:root.dark-blue .track-item.no-image,
+:root.dark-blue .album-card.no-image,
+:root.dark-blue .related-artist-card.no-image,
+:root.dark-blue .artist-card.no-image,
+:root.dark-blue .playlist-cover.no-image {
+    background: linear-gradient(135deg, rgba(43, 108, 176, 0.18), rgba(19, 40, 67, 0.18));
 }

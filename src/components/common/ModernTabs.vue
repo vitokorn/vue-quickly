@@ -416,6 +416,37 @@ const handleSearch = (event) => {
   }
 }
 
+:root.dark-blue .modern-tabs {
+  background: rgba(18, 33, 58, 0.95);
+  border-bottom-color: rgba(120, 160, 220, 0.12);
+}
+
+:root.dark-blue .modern-search {
+  background: rgba(43, 108, 176, 0.10);
+  border-color: rgba(43, 108, 176, 0.25);
+  color: var(--search-color);
+}
+
+:root.dark-blue .modern-search:focus {
+  background: rgba(43, 108, 176, 0.16);
+  border-color: var(--active-tab);
+}
+
+/* Blue theme mobile grid support */
+@media (max-width: 768px) {
+  :root.dark-blue .tab-item {
+    background: rgba(18, 33, 58, 0.95);
+  }
+
+  :root.dark-blue .search-tab {
+    background: rgba(18, 33, 58, 0.98);
+  }
+
+  :root.dark-blue .tabs-list {
+    background: rgba(120, 160, 220, 0.10);
+  }
+}
+
 :root.dq .modern-tabs {
   background: #2c2a3d;
   border-bottom-color: rgba(255, 255, 255, 0.1);

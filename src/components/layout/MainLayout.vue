@@ -775,7 +775,6 @@ handleResize()
   flex-direction: column;
   min-height: 100vh;
   background: linear-gradient(135deg, var(--main-color) 0%, rgba(240, 55, 165, 0.05) 100%);
-  overflow-x: hidden;
 }
 
 .content-wrapper {
@@ -1140,6 +1139,11 @@ handleResize()
 
 :root.dark .content-container {
   background: rgba(42, 46, 47, 0.8);
+}
+
+:root.dark-blue .content-container {
+  background: rgba(18, 33, 58, 0.85);
+  border: 1px solid rgba(120,160,220,0.12);
 }
 
 :root.dark .modern-search {
