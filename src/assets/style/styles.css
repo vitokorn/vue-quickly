@@ -2081,7 +2081,6 @@ input[type=checkbox] {
 
   .recommend-btn,
   .spotify-link {
-    width: 100%;
     justify-content: center;
   }
 
@@ -2219,7 +2218,6 @@ input[type=checkbox] {
 
     .recommend-btn,
     .spotify-link {
-        width: 100%;
         justify-content: center;
     }
 
@@ -4878,7 +4876,6 @@ input[type=checkbox] {
   }
 
   .spotify-link {
-    width: 100%;
     justify-content: center;
   }
 }
