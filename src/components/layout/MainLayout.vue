@@ -11,23 +11,23 @@ import {artistUtils} from '../../utils/artistUtils.js'
 import RecTrack from '../RecTrack.vue'
 import Loader from '../Loader.vue'
 import Footer from '../Footer.vue'
-import SortTracks from '../SortTracks.vue'
-import SortArtists from '../SortArtists.vue'
-import SortAlbums from '../SortAlbums.vue'
 import ModernTabs from '../common/ModernTabs.vue'
 import TrackCover from "../TrackCover.vue"
 import Playlist from '../Playlist.vue'
 import PlaylistSelector from '../PlaylistSelector.vue'
 import TrackItem from '../TrackItem.vue'
 import ArtistItem from '../ArtistItem.vue'
-import TimeRangeSelector from '../TimeRangeSelector.vue'
-import AlbumItem from '../AlbumItem.vue'
-import NewReleaseItem from '../NewReleaseItem.vue'
 import SearchCategory from '../SearchCategory.vue'
 import RefreshButton from '../RefreshButton.vue'
 import WelcomeModal from '../WelcomeModal.vue'
 import Header from "../Header.vue";
 import QueueModal from "../QueueModal.vue";
+import TopTracks from '../TopTracks.vue'
+import TopArtists from '../TopArtists.vue'
+import SavedAlbums from '../SavedAlbums.vue'
+import SavedTracks from '../SavedTracks.vue'
+import FollowedArtists from '../FollowedArtists.vue'
+import NewReleases from '../NewReleases.vue'
 
 // Stores
 const spotifyStore = useSpotifyStore()
@@ -54,16 +54,8 @@ const accordionActive = ref(false)
 const showWelcomeModal = ref(localStorage.getItem('welcome-modal-seen') !== 'true')
 const expandedTabs = ref(new Set())
 const selectedPlaylistSortOption = ref("")
-const selectedTASortOption = ref("")
-const selectedTA6SortOption = ref("")
-const selectedTALLSortOption = ref("")
-const selectedTTSortOption = ref("")
-const selectedTTMSortOption = ref("")
-const selectedTTLSortOption = ref("")
-const selectedSASortOption = ref("")
-const selectedSTSortOption = ref("")
-const selectedFASortOption = ref("")
-const selectedNRSortOption = ref("")
+// Removed - now handled by TopTracks and TopArtists components
+// Removed - now handled by individual components
 const selectedSpotPlaylistSortOption = ref("")
 
 // Computed sorted data using composables
@@ -72,55 +64,9 @@ const sortedPlaylistItems = createTrackSorter(
     selectedPlaylistSortOption
 )
 
-const sortedTAItems = createArtistSorter(
-    computed(() => spotifyStore.getTopArtistsShort || []),
-    selectedTASortOption
-)
+// Removed - now handled by TopTracks and TopArtists components
 
-const sortedTA6Items = createArtistSorter(
-    computed(() => spotifyStore.getTopArtistsMedium || []),
-    selectedTA6SortOption
-)
-
-const sortedTALLItems = createArtistSorter(
-    computed(() => spotifyStore.getTopArtistsLong || []),
-    selectedTALLSortOption
-)
-
-const sortedTTItems = createTrackSorter(
-    computed(() => spotifyStore.getTopTracksShort || []),
-    selectedTTSortOption
-)
-
-const sortedTTMItems = createTrackSorter(
-    computed(() => spotifyStore.getTopTracksMedium || []),
-    selectedTTMSortOption
-)
-
-const sortedTTLItems = createTrackSorter(
-    computed(() => spotifyStore.getTopTracksLong || []),
-    selectedTTLSortOption
-)
-
-const sortedSAItems = createAlbumSorter(
-    computed(() => spotifyStore.getSavedAlbums || []),
-    selectedSASortOption
-)
-
-const sortedSTItems = createTrackSorter(
-    computed(() => spotifyStore.getSavedTracks || []),
-    selectedSTSortOption
-)
-
-const sortedFAItems = createArtistSorter(
-    computed(() => spotifyStore.getFollowedArtists || []),
-    selectedFASortOption
-)
-
-const sortedNRItems = createAlbumSorter(
-    computed(() => spotifyStore.getNewReleases || []),
-    selectedNRSortOption
-)
+// Removed - now handled by individual components
 
 const sortedSpotPlaylistItems = createTrackSorter(
     computed(() => spotifyStore.getCurrentSpotifyPlaylist?.tracks?.items || []),
@@ -427,276 +373,66 @@ const handleCloseWelcomeModal = () => {
 
           <!-- Top Artists Section -->
           <div v-if="selectedTopMenu === 2">
-            <Loader v-if="spotifyStore.isLoading"/>
-            <teleport to="#option2" :disabled="!accordionActive">
-              <TimeRangeSelector
-                  v-show="selectedTopMenu===2"
-                  :selected-range="spotifyStore.selectedArtistsRange"
-                  :section-type="'artists'"
-                  :ranges="[
-                  { id: 1, label: 'Last month', fetchMethod: 'fetchTopArtists', reloadMethod: 'fetchTopArtists' },
-                  { id: 2, label: 'Last 6 month', fetchMethod: 'fetchTopArtists', reloadMethod: 'fetchTopArtists' },
-                  { id: 3, label: 'All time', fetchMethod: 'fetchTopArtists', reloadMethod: 'fetchTopArtists' }
-                ]"
-                  @range-change="async (rangeId, event) => {
-                  spotifyStore.setSelectedArtistsRange(rangeId);
-                  const timeRange = rangeId === 1 ? 'short_term' : rangeId === 2 ? 'medium_term' : 'long_term';
-                  await spotifyStore.fetchTopArtists(timeRange);
-                }"
-                  @refresh="async (rangeId, event) => {
-                  const timeRange = rangeId === 1 ? 'short_term' : rangeId === 2 ? 'medium_term' : 'long_term';
-                  await spotifyStore.fetchTopArtists(timeRange);
-                }"
-              />
-              <div id="topartist"
-                   class="display-flex flex-wrap"
-                   style="color: black;width: auto;"
-                   :class="spotifyStore.selectedArtistsRange===1 ? '': 'd-none'">
-                <SortArtists v-model="selectedTASortOption"/>
-                <div class="display-flex flex-wrap py-2 gap-8">
-                  <template v-for="(item,index) of sortedTAItems" :key="index">
-                    <ArtistItem
-                        :artist="item"
-                        :selected="selectedItem === '2' + item.id"
-                        :unplayable-tracks="audioStore.unplayableTracks"
-                        :artist-prefix="'2'"
-                        @click="handleArtistClick"
-                        @hover="handleArtistHover"
-                        @leave="handleArtistLeave"
-                    />
-                  </template>
-                </div>
-              </div>
-              <div id="topartist6"
-                   class="display-flex flex-wrap"
-                   style="color: black;width: auto;"
-                   :class="spotifyStore.selectedArtistsRange===2 ? '': 'd-none'">
-                <SortArtists v-model="selectedTA6SortOption"/>
-                <div class="display-flex flex-wrap py-2 gap-8">
-                  <template v-for="(item,index) of sortedTA6Items" :key="index">
-                    <ArtistItem
-                        :artist="item"
-                        :selected="selectedItem === '2' + item.id"
-                        :unplayable-tracks="audioStore.unplayableTracks"
-                        :artist-prefix="'2'"
-                        @click="handleArtistClick"
-                        @hover="handleArtistHover"
-                        @leave="handleArtistLeave"
-                    />
-                  </template>
-                </div>
-              </div>
-              <div id="topartista"
-                   class="display-flex flex-wrap"
-                   style="color: black;width: auto;"
-                   :class="spotifyStore.selectedArtistsRange===3 ? '': 'd-none'">
-                <SortArtists v-model="selectedTALLSortOption"/>
-                <div class="display-flex flex-wrap py-2 gap-8">
-                  <template v-for="(item,index) of sortedTALLItems" :key="index">
-                    <ArtistItem
-                        :artist="item"
-                        :selected="selectedItem === '2' + item.id"
-                        :unplayable-tracks="audioStore.unplayableTracks"
-                        :artist-prefix="'2'"
-                        @click="handleArtistClick"
-                        @hover="handleArtistHover"
-                        @leave="handleArtistLeave"
-                    />
-                  </template>
-                </div>
-              </div>
-            </teleport>
+            <TopArtists 
+              :selected-top-menu="selectedTopMenu"
+              :accordion-active="accordionActive"
+              @artist-click="handleArtistClick"
+              @artist-hover="handleArtistHover"
+              @artist-leave="handleArtistLeave"
+            />
           </div>
 
           <!-- Top Tracks Section -->
           <div v-if="selectedTopMenu === 3">
-            <Loader v-if="spotifyStore.isLoading"/>
-            <teleport to="#option3" :disabled="!accordionActive">
-              <TimeRangeSelector
-                  v-show="selectedTopMenu===3"
-                  :selected-range="spotifyStore.selectedTracksRange"
-                  :section-type="'tracks'"
-                  :ranges="[
-                  { id: 1, label: 'Last month', fetchMethod: 'fetchTopTracks', reloadMethod: 'fetchTopTracks' },
-                  { id: 2, label: 'Last 6 month', fetchMethod: 'fetchTopTracks', reloadMethod: 'fetchTopTracks' },
-                  { id: 3, label: 'All time', fetchMethod: 'fetchTopTracks', reloadMethod: 'fetchTopTracks' }
-                ]"
-                  @range-change="async (rangeId, event) => {
-                  spotifyStore.setSelectedTracksRange(rangeId);
-                  const timeRange = rangeId === 1 ? 'short_term' : rangeId === 2 ? 'medium_term' : 'long_term';
-                  await spotifyStore.fetchTopTracks(timeRange);
-                }"
-                  @refresh="async (rangeId, event) => {
-                  const timeRange = rangeId === 1 ? 'short_term' : rangeId === 2 ? 'medium_term' : 'long_term';
-                  await spotifyStore.fetchTopTracks(timeRange);
-                }"
-              />
-              <div id="toptracks"
-                   class=""
-                   style="color: black;width: auto;"
-                   :class="spotifyStore.selectedTracksRange===1 ? '': 'd-none'">
-                <SortTracks v-model="selectedTTSortOption"/>
-                <div class="display-flex flex-wrap py-2 gap-8">
-                  <template v-for="(item,index) of sortedTTItems" :key="index">
-                    <TrackItem
-                        :track="item"
-                        :selected="selectedItem === '3' + item.id"
-                        :unplayable-tracks="audioStore.unplayableTracks"
-                        :track-prefix="'3'"
-                        @click="handleTrackClick"
-                        @hover="handleTrackHover"
-                        @leave="handleTrackLeave"
-                    />
-                  </template>
-                </div>
-              </div>
-              <div id="toptracks6"
-                   class="display-flex flex-wrap"
-                   style="color: black;width: auto;"
-                   :class="spotifyStore.selectedTracksRange===2 ? '': 'd-none'">
-                <SortTracks v-model="selectedTTMSortOption"/>
-                <div class="display-flex flex-wrap py-2 gap-8">
-                  <template v-for="(item,index) of sortedTTMItems" :key="index">
-                    <TrackItem
-                        :track="item"
-                        :selected="selectedItem === '3' + item.id"
-                        :unplayable-tracks="audioStore.unplayableTracks"
-                        :track-prefix="'3'"
-                        @click="handleTrackClick"
-                        @hover="handleTrackHover"
-                        @leave="handleTrackLeave"
-                    />
-                  </template>
-                </div>
-              </div>
-              <div id="toptracksall"
-                   class="display-flex flex-wrap"
-                   style="color: black;width: auto;"
-                   :class="spotifyStore.selectedTracksRange===3 ? '': 'd-none'">
-                <SortTracks v-model="selectedTTLSortOption"/>
-                <div class="display-flex flex-wrap py-2 gap-8">
-                  <template v-for="(item,index) of sortedTTLItems" :key="index">
-                    <TrackItem
-                        :track="item"
-                        :selected="selectedItem === '3' + item.id"
-                        :unplayable-tracks="audioStore.unplayableTracks"
-                        :track-prefix="'3'"
-                        @click="handleTrackClick"
-                        @hover="handleTrackHover"
-                        @leave="handleTrackLeave"
-                    />
-                  </template>
-                </div>
-              </div>
-            </teleport>
+            <TopTracks 
+              :selected-top-menu="selectedTopMenu"
+              :accordion-active="accordionActive"
+              @track-click="handleTrackClick"
+              @track-hover="handleTrackHover"
+              @track-leave="handleTrackLeave"
+            />
           </div>
 
           <!-- Saved Albums Section -->
           <div v-if="selectedTopMenu === 4">
-            <Loader v-if="spotifyStore.isLoading"/>
-            <teleport to="#option4" :disabled="!accordionActive">
-              <div id="savedalbum" class="display-flex flex-wrap" v-show="selectedTopMenu===4">
-                <div class="section-header">
-                  <button class="refresh-button" @click="spotifyStore.fetchSavedAlbums(0)">
-                    <img class="refresh-icon" src="../../assets/refresh-icon.png" alt="Refresh">
-                  </button>
-                </div>
-                <SortAlbums v-model="selectedSASortOption"/>
-                <div class="display-flex flex-wrap py-2 gap-8">
-                  <template v-for="(item,index) of sortedSAItems" :key="index">
-                    <AlbumItem
-                        :album="item.album"
-                        :selected="selectedItem === '4' + item.album.id"
-                        :album-prefix="'4'"
-                        @click="async (album, event) => { setSelectedItem('4' + album.id); await deeperStore.getAlbumDetails(item, 'savedAlbums') }"
-                    />
-                  </template>
-                </div>
-              </div>
-            </teleport>
+            <SavedAlbums 
+              :selected-top-menu="selectedTopMenu"
+              :accordion-active="accordionActive"
+              @album-click="async (album, event) => { setSelectedItem('4' + album.id); await deeperStore.getAlbumDetails(album, 'savedAlbums') }"
+            />
           </div>
 
           <!-- Saved Tracks Section -->
           <div v-if="selectedTopMenu === 5">
-            <Loader v-if="spotifyStore.isLoading"/>
-            <teleport to="#option5" :disabled="!accordionActive">
-              <div id="savedtrack" class="display-flex flex-wrap" v-show="selectedTopMenu===5">
-                <div class="section-header">
-                  <button class="refresh-button" @click="spotifyStore.fetchSavedTracks(0)">
-                    <img class="refresh-icon" src="../../assets/refresh-icon.png" alt="Refresh">
-                  </button>
-                </div>
-                <SortTracks v-model="selectedSTSortOption"/>
-                <div class="display-flex flex-wrap py-2 gap-8">
-                  <template v-for="(item,index) of sortedSTItems" :key="index">
-                    <TrackItem
-                        :track="item.track"
-                        :selected="selectedItem === '5' + item.track.id"
-                        :unplayable-tracks="audioStore.unplayableTracks"
-                        :track-prefix="'5'"
-                        @click="async (track, event) => { setSelectedItem('5' + track.id); await deeperStore.getTrackDetails(track, 'savedTracks'); queueStore.addToQueue(track) }"
-                        @hover="handleTrackHover"
-                        @leave="handleTrackLeave"
-                    />
-                  </template>
-                </div>
-              </div>
-            </teleport>
+            <SavedTracks 
+              :selected-top-menu="selectedTopMenu"
+              :accordion-active="accordionActive"
+              @track-click="async (track, event) => { setSelectedItem('5' + track.id); await deeperStore.getTrackDetails(track, 'savedTracks'); queueStore.addToQueue(track) }"
+              @track-hover="handleTrackHover"
+              @track-leave="handleTrackLeave"
+            />
           </div>
 
           <!-- Followed Artists Section -->
           <div v-if="selectedTopMenu === 6">
-            <Loader v-if="spotifyStore.isLoading"/>
-            <teleport to="#option6" :disabled="!accordionActive">
-              <div id="followedartist" class="display-flex flex-wrap" v-show="selectedTopMenu===6">
-                <div class="section-header">
-                  <button class="refresh-button" @click="spotifyStore.fetchFollowedArtists()">
-                    <img class="refresh-icon" src="../../assets/refresh-icon.png" alt="Refresh">
-                  </button>
-                </div>
-                <SortArtists v-model="selectedFASortOption"/>
-                <div class="display-flex flex-wrap py-2 gap-8">
-                  <template v-for="(item,index) of sortedFAItems" :key="index">
-                    <ArtistItem
-                        :artist="item"
-                        :selected="selectedItem === '6' + item.id"
-                        :unplayable-tracks="audioStore.unplayableTracks"
-                        :artist-prefix="'6'"
-                        @click="handleArtistClick"
-                        @hover="handleArtistHover"
-                        @leave="handleArtistLeave"
-                    />
-                  </template>
-                </div>
-              </div>
-            </teleport>
+            <FollowedArtists 
+              :selected-top-menu="selectedTopMenu"
+              :accordion-active="accordionActive"
+              @artist-click="handleArtistClick"
+              @artist-hover="handleArtistHover"
+              @artist-leave="handleArtistLeave"
+            />
           </div>
 
           <!-- New Releases Section -->
           <div v-if="selectedTopMenu === 7">
-            <Loader v-if="spotifyStore.isLoading"/>
-            <teleport to="#option7" :disabled="!accordionActive">
-              <div id="newrelease" class="display-flex flex-wrap" v-show="selectedTopMenu===7">
-                <div class="section-header">
-                  <button class="refresh-button" @click="spotifyStore.fetchNewReleases(0)">
-                    <img class="refresh-icon" src="../../assets/refresh-icon.png" alt="Refresh">
-                  </button>
-                </div>
-                <SortAlbums v-model="selectedNRSortOption"/>
-                <div class="display-flex flex-wrap py-2 gap-8">
-                  <template v-for="(item,index) of sortedNRItems" :key="index">
-                    <NewReleaseItem
-                        :album="item"
-                        :selected="selectedItem === '7' + item.id"
-                        :album-prefix="'7'"
-                        @click="async (album, event) => { setSelectedItem('7' + album.id); await deeperStore.getAlbumDetails(album, 'newReleases') }"
-                        @hover="handleTrackHover"
-                        @leave="handleTrackLeave"
-                    />
-                  </template>
-                </div>
-              </div>
-            </teleport>
+            <NewReleases 
+              :selected-top-menu="selectedTopMenu"
+              :accordion-active="accordionActive"
+              @album-click="async (album, event) => { setSelectedItem('7' + album.id); await deeperStore.getAlbumDetails(album, 'newReleases') }"
+              @album-hover="handleTrackHover"
+              @album-leave="handleTrackLeave"
+            />
           </div>
 
           <!-- Spotify Playlists Section -->
