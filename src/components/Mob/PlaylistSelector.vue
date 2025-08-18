@@ -17,13 +17,19 @@ const props = defineProps({
   title: {
     type: String,
     default: 'Select a playlist'
+  },
+  itemsPerPage: {
+    type: Number,
+    default: 50
   }
 })
 
-const emit = defineEmits(['playlist-select', 'search'])
+const emit = defineEmits(['playlist-select', 'search', 'load-more'])
 
 const searchTerm = ref('')
 const viewMode = ref('list') // 'list' or 'grid'
+const currentPage = ref(1)
+const showPagination = ref(false)
 
 const filteredPlaylists = computed(() => {
   if (!searchTerm.value) {
@@ -34,22 +40,59 @@ const filteredPlaylists = computed(() => {
   )
 })
 
+const displayedPlaylists = computed(() => {
+  const startIndex = (currentPage.value - 1) * props.itemsPerPage
+  const endIndex = startIndex + props.itemsPerPage
+  return filteredPlaylists.value.slice(startIndex, endIndex)
+})
+
+const hasMorePlaylists = computed(() => {
+  return currentPage.value < totalPages.value
+})
+
+const showLoadMoreItem = computed(() => {
+  return hasMorePlaylists.value && filteredPlaylists.value.length > props.itemsPerPage && !showPagination.value
+})
+
+const totalPages = computed(() => {
+  return Math.ceil(filteredPlaylists.value.length / props.itemsPerPage)
+})
+
 const handlePlaylistSelect = (playlistId, event) => {
   emit('playlist-select', playlistId, event)
 }
 
 const handleSearch = (event) => {
   searchTerm.value = event.target.value
+  resetPagination()
   emit('search', event)
 }
 
 const clearSearch = () => {
   searchTerm.value = ''
+  resetPagination()
   emit('search', { target: { value: '' } })
 }
 
 const toggleViewMode = () => {
   viewMode.value = viewMode.value === 'list' ? 'grid' : 'list'
+}
+
+const handleLoadMoreClick = () => {
+  showPagination.value = true
+}
+
+const handlePageChange = (page) => {
+  currentPage.value = page
+  // Keep pagination visible when changing pages
+  if (currentPage.value === totalPages.value) {
+    emit('load-more')
+  }
+}
+
+const resetPagination = () => {
+  currentPage.value = 1
+  showPagination.value = false
 }
 </script>
 
@@ -75,9 +118,9 @@ const toggleViewMode = () => {
             v-model="searchTerm"
             @input="handleSearch"
           >
-          <button 
-            v-if="searchTerm" 
-            @click="clearSearch" 
+          <button
+            v-if="searchTerm"
+            @click="clearSearch"
             class="clear-button"
             type="button"
           >
@@ -87,11 +130,11 @@ const toggleViewMode = () => {
           </button>
         </div>
       </div>
-      
+
       <!-- View Mode Toggle -->
       <div class="view-toggle">
-        <button 
-          @click="toggleViewMode" 
+        <button
+          @click="toggleViewMode"
           class="view-toggle-button"
           :class="{ 'active': viewMode === 'list' }"
           type="button"
@@ -100,8 +143,8 @@ const toggleViewMode = () => {
             <path fill-rule="evenodd" d="M2.625 6.75a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0A.75.75 0 018.25 6h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75zM2.625 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zM7.5 12a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12A.75.75 0 017.5 12zm-4.875 5.25a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
           </svg>
         </button>
-        <button 
-          @click="toggleViewMode" 
+        <button
+          @click="toggleViewMode"
           class="view-toggle-button"
           :class="{ 'active': viewMode === 'grid' }"
           type="button"
@@ -137,10 +180,10 @@ const toggleViewMode = () => {
       </div>
 
       <div v-else class="playlists-container" :class="viewMode">
-                <!-- List View -->
+                        <!-- List View -->
         <template v-if="viewMode === 'list'">
           <div
-            v-for="playlist in filteredPlaylists"
+            v-for="playlist in displayedPlaylists"
             :key="playlist.id"
             @click="handlePlaylistSelect(playlist.id, $event)"
             class="playlist-item list-item"
@@ -161,7 +204,8 @@ const toggleViewMode = () => {
                 <span v-if="playlist.tracks && playlist.tracks.length > 0">
                   {{ playlist.tracks.length }} tracks
                 </span>
-                <span>{{playlist.owner.display_name}}</span>
+                <span v-if="playlist.owner">{{playlist.owner.display_name}}</span>
+                <span v-else>Spotify</span>
               </p>
               <div class="playlist-status">
                 <svg v-if="playlist.public" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="lock-icon open">
@@ -179,12 +223,55 @@ const toggleViewMode = () => {
               </svg>
             </div>
           </div>
+
+          <!-- Show More Item for List View -->
+          <div
+            v-if="showLoadMoreItem"
+            @click="handleLoadMoreClick"
+            class="playlist-item list-item show-more-item"
+          >
+            <div class="playlist-cover show-more-cover">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="show-more-icon">
+                <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="playlist-info">
+              <div class="playlist-name show-more-text">Show More Playlists</div>
+              <p class="playlist-details show-more-subtext">
+                {{ filteredPlaylists.length - displayedPlaylists.length }} more playlists available
+              </p>
+            </div>
+            <div class="playlist-arrow">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="arrow-icon">
+                <path fill-rule="evenodd" d="M16.28 11.47a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 011.06-1.06l7.5 7.5z" clip-rule="evenodd" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Pagination -->
+          <div v-if="showPagination" class="pagination-container">
+            <button
+              @click="handlePageChange(currentPage - 1)"
+              :disabled="currentPage === 1"
+              class="pagination-button"
+            >
+              Previous
+            </button>
+            <span class="pagination-info">Page {{ currentPage }} of {{ totalPages }}</span>
+            <button
+              @click="handlePageChange(currentPage + 1)"
+              :disabled="currentPage === totalPages"
+              class="pagination-button"
+            >
+              Next
+            </button>
+          </div>
         </template>
 
-        <!-- Grid View -->
+                <!-- Grid View -->
         <template v-else>
           <div
-            v-for="playlist in filteredPlaylists"
+            v-for="playlist in displayedPlaylists"
             :key="playlist.id"
             @click="handlePlaylistSelect(playlist.id, $event)"
             class="playlist-item grid-item"
@@ -218,6 +305,45 @@ const toggleViewMode = () => {
                 <span v-else>Playlist</span>
               </div>
             </div>
+          </div>
+
+          <!-- Show More Item for Grid View -->
+          <div
+            v-if="showLoadMoreItem"
+            @click="handleLoadMoreClick"
+            class="playlist-item grid-item show-more-item"
+          >
+            <div class="grid-cover show-more-grid-cover">
+              <div class="show-more-grid-content">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="show-more-grid-icon">
+                  <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clip-rule="evenodd" />
+                </svg>
+                <div class="show-more-grid-text">Show More</div>
+              </div>
+            </div>
+            <div class="grid-info">
+              <div class="grid-name show-more-text">{{ filteredPlaylists.length - displayedPlaylists.length }} more</div>
+              <div class="grid-details show-more-subtext">playlists</div>
+            </div>
+          </div>
+
+          <!-- Pagination -->
+          <div v-if="showPagination" class="pagination-container">
+            <button
+              @click="handlePageChange(currentPage - 1)"
+              :disabled="currentPage === 1"
+              class="pagination-button"
+            >
+              Previous
+            </button>
+            <span class="pagination-info">Page {{ currentPage }} of {{ totalPages }}</span>
+            <button
+              @click="handlePageChange(currentPage + 1)"
+              :disabled="currentPage === totalPages"
+              class="pagination-button"
+            >
+              Next
+            </button>
           </div>
         </template>
       </div>
@@ -493,6 +619,7 @@ const toggleViewMode = () => {
 .playlist-info {
   flex: 1;
   min-width: 0;
+  gap: 0px;
 }
 
 .playlist-name {
@@ -587,5 +714,186 @@ const toggleViewMode = () => {
   font-size: 14px;
   color: #a0a0a0;
   margin: 0;
+}
+
+/* Load More Button Styles */
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  padding: 0 20px;
+}
+
+.load-more-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  justify-content: center;
+}
+
+.load-more-button:hover {
+  background: rgba(102, 126, 234, 0.2);
+  border-color: rgba(102, 126, 234, 0.5);
+  transform: translateY(-1px);
+}
+
+.load-more-button:active {
+  transform: translateY(0);
+}
+
+.load-more-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Grid Load More Button */
+.grid-load-more {
+  grid-column: 1 / -1;
+  margin-top: 16px;
+}
+
+.grid-load-more-button {
+  max-width: 200px;
+  width: auto;
+}
+
+/* Pagination Styles */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 0 20px;
+}
+
+.pagination-button {
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 12px;
+  padding: 10px 15px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 100px;
+  text-align: center;
+}
+
+.pagination-button:hover {
+  background: rgba(102, 126, 234, 0.2);
+  border-color: rgba(102, 126, 234, 0.5);
+  transform: translateY(-1px);
+}
+
+.pagination-button:disabled {
+  background: rgba(102, 126, 234, 0.05);
+  color: #a0a0a0;
+  cursor: not-allowed;
+  border-color: rgba(102, 126, 234, 0.1);
+}
+
+.pagination-button:disabled:hover {
+  transform: none;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #a0a0a0;
+  font-weight: 500;
+}
+
+/* Grid Pagination Specific Styles */
+.playlists-container.grid .pagination-container {
+  grid-column: 1 / -1;
+  margin-top: 16px;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.playlists-container.grid .pagination-button {
+  min-width: 80px;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
+/* Show More Item Styles */
+.show-more-item {
+  background: rgba(102, 126, 234, 0.1) !important;
+  border-color: rgba(102, 126, 234, 0.3) !important;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.show-more-item:hover {
+  background: rgba(102, 126, 234, 0.15) !important;
+  border-color: rgba(102, 126, 234, 0.5) !important;
+  transform: translateY(-1px);
+}
+
+.show-more-cover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.show-more-icon {
+  width: 24px;
+  height: 24px;
+  color: #ffffff;
+}
+
+.show-more-text {
+  color: #667eea !important;
+  font-weight: 600;
+}
+
+.show-more-subtext {
+  color: #a0a0a0 !important;
+}
+
+/* Grid Show More Styles */
+.show-more-grid-cover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.show-more-grid-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #ffffff;
+  gap: 8px;
+}
+
+.show-more-grid-icon {
+  width: 32px;
+  height: 32px;
+  color: #ffffff;
+}
+
+.show-more-grid-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
 }
 </style>

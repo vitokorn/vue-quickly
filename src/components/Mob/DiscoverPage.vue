@@ -17,30 +17,18 @@
         </div>
         <h3 class="section-title">Spotify Playlists</h3>
       </div>
-      
-      <div class="playlists-grid">
-        <div 
-          v-for="playlist in spotifyPlaylists" 
-          :key="playlist.id"
-          class="playlist-card"
-          @click="handlePlaylistClick(playlist)"
-        >
-          <div class="playlist-image">
-            <img 
-              v-if="playlist.images && playlist.images[0]" 
-              :src="playlist.images[0].url" 
-              :alt="playlist.name"
-            >
-            <div v-else class="playlist-placeholder">
-              <span>🎵</span>
-            </div>
-          </div>
-          <div class="playlist-info">
-            <h4 class="playlist-name">{{ playlist.name }}</h4>
-            <p class="playlist-description">{{ playlist.description || `${playlist.tracks?.total || 0} tracks` }}</p>
-          </div>
-        </div>
-      </div>
+
+      <!-- Using PlaylistSelector component -->
+      <PlaylistSelector
+        :playlists="spotifyStore.getSpotifyPlaylists"
+        :selected-playlist="selectedPlaylist"
+        title="Your Spotify Playlists"
+        placeholder="Search your playlists..."
+        :items-per-page="5"
+        @playlist-select="handlePlaylistSelect"
+        @search="handlePlaylistSearch"
+        @load-more="handleLoadMorePlaylists"
+      />
     </div>
 
     <!-- New Releases Section -->
@@ -53,18 +41,18 @@
         </div>
         <h3 class="section-title">New Releases</h3>
       </div>
-      
+
       <div class="releases-grid">
-        <div 
-          v-for="release in newReleases" 
+        <div
+          v-for="release in newReleases"
           :key="release.id"
           class="release-card"
           @click="handleReleaseClick(release)"
         >
           <div class="release-image">
-            <img 
-              v-if="release.images && release.images[0]" 
-              :src="release.images[0].url" 
+            <img
+              v-if="release.images && release.images[0]"
+              :src="release.images[0].url"
               :alt="release.name"
             >
             <div v-else class="release-placeholder">
@@ -98,28 +86,28 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useSpotifyStore } from '../../stores/spotify-store'
+import PlaylistSelector from './PlaylistSelector.vue'
 
 const spotifyStore = useSpotifyStore()
 
 // Reactive state
 const loading = ref(false)
 const error = ref(null)
-const spotifyPlaylists = ref([])
 const newReleases = ref([])
+const selectedPlaylist = ref(null)
 
 // Methods
 const loadDiscoverContent = async () => {
   loading.value = true
   error.value = null
-  
+
   try {
     // Load Spotify playlists
-    await spotifyStore.fetchPlaylists(0)
-    spotifyPlaylists.value = spotifyStore.getPlaylists.slice(0, 6) // Show first 6 playlists
-    
+    await spotifyStore.fetchSpotifyPlaylists(0)
+
     // Load new releases (you'll need to implement this in your spotify store)
     // newReleases.value = await spotifyStore.fetchNewReleases()
-    
+
     // For now, using placeholder data
     newReleases.value = [
       {
@@ -145,10 +133,34 @@ const loadDiscoverContent = async () => {
   }
 }
 
-const handlePlaylistClick = (playlist) => {
-  // Handle playlist click - you can navigate to playlist details or play it
-  console.log('Playlist clicked:', playlist)
-  // You might want to emit an event or navigate to a playlist view
+const handlePlaylistSelect = (playlistId, event) => {
+  selectedPlaylist.value = playlistId
+  const playlist = spotifyStore.getSpotifyPlaylists.find(p => p.id === playlistId)
+  console.log('Playlist selected:', playlist)
+  // Handle playlist selection - you can navigate to playlist details or play it
+}
+
+const handlePlaylistSearch = (event) => {
+  console.log('Searching for playlists:', event.target.value)
+  // The PlaylistSelector component handles the filtering internally
+}
+
+const handleLoadMorePlaylists = async () => {
+  try {
+    // For pagination, we need to ensure we have enough playlists loaded
+    // If we don't have enough playlists for the current page, load more
+    const currentCount = spotifyStore.getSpotifyPlaylists.length
+    const itemsPerPage = 5
+    const targetCount = currentCount + itemsPerPage
+    console.log(itemsPerPage)
+    console.log(currentCount)
+    // Load more playlists if needed
+    if (currentCount < targetCount) {
+      await spotifyStore.fetchSpotifyPlaylists(currentCount)
+    }
+  } catch (error) {
+    console.error('Failed to load more playlists:', error)
+  }
 }
 
 const handleReleaseClick = (release) => {
@@ -165,10 +177,10 @@ const formatArtistNames = (artists) => {
 const formatReleaseDate = (dateString) => {
   if (!dateString) return ''
   const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', { 
-    year: 'numeric', 
-    month: 'short', 
-    day: 'numeric' 
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
   })
 }
 
@@ -237,77 +249,7 @@ onMounted(() => {
   margin: 0;
 }
 
-/* Playlists Grid */
-.playlists-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 16px;
-}
-
-.playlist-card {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  padding: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.playlist-card:hover {
-  background: rgba(255, 255, 255, 0.08);
-  transform: translateY(-2px);
-}
-
-.playlist-image {
-  width: 100%;
-  aspect-ratio: 1;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 12px;
-}
-
-.playlist-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.playlist-placeholder {
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-}
-
-.playlist-info {
-  text-align: center;
-}
-
-.playlist-name {
-  font-size: 14px;
-  font-weight: 500;
-  color: #ffffff;
-  margin: 0 0 4px 0;
-  line-height: 1.3;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.playlist-description {
-  font-size: 12px;
-  color: #a0a0a0;
-  margin: 0;
-  line-height: 1.3;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
+/* PlaylistSelector is now used for Spotify playlists */
 
 /* Releases Grid */
 .releases-grid {
@@ -458,23 +400,19 @@ onMounted(() => {
     font-size: 18px;
   }
 
-  .playlists-grid,
   .releases-grid {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 12px;
   }
 
-  .playlist-card,
   .release-card {
     padding: 8px;
   }
 
-  .playlist-name,
   .release-name {
     font-size: 13px;
   }
 
-  .playlist-description,
   .release-artist {
     font-size: 11px;
   }

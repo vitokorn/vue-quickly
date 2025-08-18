@@ -11,8 +11,11 @@
       <PlaylistSelector
           :playlists="spotifyStore.getPlaylists"
           :selected-playlist="selectedPersonalPlaylist"
+          title="Your Personal Playlists"
           placeholder="Search personal playlists..."
+          :items-per-page="50"
           @playlist-select="(playlistId, event) => { setSelectedPersonalPlaylist(playlistId); spotifyStore.fetchPlaylist(playlistId) }"
+          @load-more="handleLoadMorePersonalPlaylists"
       />
 
       <!-- Saved Tracks Section -->
@@ -288,6 +291,16 @@ const handleAlbumClick = (album) => {
 const handleViewMore = (section) => {
   console.log('View more clicked for:', section)
   // Handle view more click
+}
+
+const handleLoadMorePersonalPlaylists = async () => {
+  try {
+    // Load the next batch of 50 playlists
+    const currentCount = spotifyStore.getPlaylists.length
+    await spotifyStore.fetchPlaylists(currentCount)
+  } catch (error) {
+    console.error('Failed to load more personal playlists:', error)
+  }
 }
 
 const formatArtistNames = (artists) => {
