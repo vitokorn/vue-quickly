@@ -146,6 +146,11 @@ export const useSpotifyStore = defineStore('spotify', {
     async fetchSavedAlbums(offset = 0) {
       this.setLoading(true)
       try {
+        // Clear array if this is the first fetch
+        if (offset === 0) {
+          this.savedAlbums = []
+        }
+        
         const response = await spotifyApi.getSavedAlbums(offset, 20)
         this.savedAlbums.push(...response.data.items)
         
@@ -165,6 +170,11 @@ export const useSpotifyStore = defineStore('spotify', {
     async fetchSavedTracks(offset = 0) {
       this.setLoading(true)
       try {
+        // Clear array if this is the first fetch
+        if (offset === 0) {
+          this.savedTracks = []
+        }
+        
         const response = await spotifyApi.getSavedTracks(offset, 50)
         this.savedTracks.push(...response.data.items)
       } catch (error) {

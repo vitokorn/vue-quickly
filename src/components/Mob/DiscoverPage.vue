@@ -31,6 +31,8 @@
       />
     </div>
 
+
+
     <!-- New Releases Section -->
     <div class="discover-section">
       <div class="section-header">
@@ -69,7 +71,7 @@
       <button class="retry-button" @click="loadDiscoverContent">Try Again</button>
     </div>
 
-    <!-- Deeper Tracks Modal -->
+    <!-- Deeper Tracks Modal for New Releases -->
     <div v-if="deeperTracks.length > 0" class="deeper-tracks-modal">
       <div class="modal-overlay" @click="deeperStore.clearSection('newReleases')"></div>
       <div class="modal-content">
@@ -93,6 +95,8 @@
         </div>
       </div>
     </div>
+
+
   </div>
 </template>
 
@@ -103,6 +107,7 @@ import { useDeeperStore } from '../../stores/deeper-store'
 import PlaylistSelector from './PlaylistSelector.vue'
 import ReleaseSelector from './ReleaseSelector.vue'
 import DeeperTracks from './DeeperTracks.vue'
+
 
 const spotifyStore = useSpotifyStore()
 const deeperStore = useDeeperStore()
