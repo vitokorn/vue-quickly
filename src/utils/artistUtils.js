@@ -3,7 +3,15 @@ export const artistUtils = {
 
   // Alternative implementation without dependency on Lists
   formatArtistNamesSimple: (artists) => {
-    const names = artists.map(({ name }) => name)
+    if (!artists || !Array.isArray(artists) || artists.length === 0) {
+      return 'Unknown Artist'
+    }
+    
+    const names = artists.map(({ name }) => name).filter(name => name) // Filter out undefined names
+    if (names.length === 0) {
+      return 'Unknown Artist'
+    }
+    
     const finalName = names.pop()
     return names.length ?
       names.join(', ') + ' & ' + finalName :

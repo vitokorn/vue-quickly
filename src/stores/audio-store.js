@@ -182,7 +182,12 @@ export const useAudioStore = defineStore('audio', {
     },
 
     // Mobile-specific audio methods
-    mobilePlayTrack(trackId, previewUrl) {
+    async mobilePlayTrack(trackId, previewUrl) {
+      if (!this.audioPreview) {
+        console.log('Audio preview is disabled')
+        return
+      }
+      
       if (!previewUrl) {
         console.log('No preview URL available for this track')
         return
@@ -202,10 +207,22 @@ export const useAudioStore = defineStore('audio', {
           this.mobileIsPlaying = false
           this.mobileCurrentTrackId = null
         })
+        
+        this.mobileCurrentAudio.addEventListener('error', (error) => {
+          console.error('Audio playback error:', error)
+          this.mobileIsPlaying = false
+          this.mobileCurrentTrackId = null
+        })
       }
 
-      this.mobileCurrentAudio.play()
-      this.mobileIsPlaying = true
+      try {
+        await this.mobileCurrentAudio.play()
+        this.mobileIsPlaying = true
+        console.log('Audio started playing for track:', trackId)
+      } catch (error) {
+        console.error('Failed to play audio:', error)
+        this.mobileIsPlaying = false
+      }
     },
 
     mobileStopCurrentAudio() {
@@ -225,8 +242,10 @@ export const useAudioStore = defineStore('audio', {
       this.mobileIsPlaying = false
     },
 
-    mobileToggleTrack(trackId, previewUrl) {
+    async mobileToggleTrack(trackId, previewUrl) {
+      console.log('mobileToggleTrack called:', trackId, 'previewUrl:', previewUrl)
       if (this.mobileCurrentTrackId === trackId && this.mobileIsPlaying) {
+        console.log('Track is already playing, toggling pause')
         if (this.restartSongOnClick) {
           if (this.mobileCurrentAudio) {
             this.mobileStopCurrentAudio()
@@ -235,7 +254,8 @@ export const useAudioStore = defineStore('audio', {
           this.mobilePauseCurrentAudio()
         }
       } else {
-        this.mobilePlayTrack(trackId, previewUrl)
+        console.log('Starting to play track:', trackId)
+        await this.mobilePlayTrack(trackId, previewUrl)
       }
     },
 

@@ -1,22 +1,26 @@
 <script setup>
 import { ref, computed } from 'vue'
+import { useAudioStore } from '../../stores/audio-store'
+import { useDeeperStore } from '../../stores/deeper-store'
+import { useMediaDisplay } from "../../composables/useMediaDisplay.js"
+import { useVisibilityManager } from "../../composables/useVisibilityManager"
 
 const props = defineProps({
-  playlists: {
+  releases: {
     type: Array,
     default: () => []
   },
-  selectedPlaylist: {
+  selectedRelease: {
     type: String,
     default: ''
   },
   placeholder: {
     type: String,
-    default: 'Search playlists...'
+    default: 'Search releases...'
   },
   title: {
     type: String,
-    default: 'Select a playlist'
+    default: 'New Releases'
   },
   itemsPerPage: {
     type: Number,
@@ -24,57 +28,111 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['playlist-select', 'search', 'load-more', 'playlist-arrow-click'])
+const emit = defineEmits(['release-select', 'search', 'load-more', 'refresh'])
+
+// Stores
+const audioStore = useAudioStore()
+const deeperStore = useDeeperStore()
+const visibilityManager = useVisibilityManager()
 
 const searchTerm = ref('')
-const viewMode = ref('list') // 'list' or 'grid'
+const viewMode = ref('grid') // 'list' or 'grid'
 const currentPage = ref(1)
 const showPagination = ref(false)
 
-const filteredPlaylists = computed(() => {
+const filteredReleases = computed(() => {
   if (!searchTerm.value) {
-    return props.playlists
+    return props.releases
   }
-  return props.playlists.filter(playlist =>
-    playlist.name.toLowerCase().includes(searchTerm.value.toLowerCase())
+  return props.releases.filter(release =>
+    release.name.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
+    release.artists?.some(artist => artist.name.toLowerCase().includes(searchTerm.value.toLowerCase()))
   )
 })
 
-const displayedPlaylists = computed(() => {
+const displayedReleases = computed(() => {
   const startIndex = (currentPage.value - 1) * props.itemsPerPage
   const endIndex = startIndex + props.itemsPerPage
-  return filteredPlaylists.value.slice(startIndex, endIndex)
+  return filteredReleases.value.slice(startIndex, endIndex)
 })
 
-const hasMorePlaylists = computed(() => {
+const hasMoreReleases = computed(() => {
   return currentPage.value < totalPages.value
 })
 
 const showLoadMoreItem = computed(() => {
-  return hasMorePlaylists.value && filteredPlaylists.value.length > props.itemsPerPage && !showPagination.value
+  return hasMoreReleases.value && filteredReleases.value.length > props.itemsPerPage && !showPagination.value
 })
 
 const totalPages = computed(() => {
-  return Math.ceil(filteredPlaylists.value.length / props.itemsPerPage)
+  return Math.ceil(filteredReleases.value.length / props.itemsPerPage)
 })
 
-const handlePlaylistSelect = (playlistId, event) => {
-  emit('playlist-select', playlistId, event)
+// Helper function to check if a release is currently playing
+const isReleasePlaying = (release) => {
+  if (release.tracks && release.tracks.items && release.tracks.items.length > 0) {
+    const firstTrack = release.tracks.items[0]
+    return audioStore.mobileIsTrackPlaying(firstTrack.id)
+  }
+  return false
 }
 
-const handlePlaylistArrowClick = (playlist) => {
-  console.log('PlaylistSelector: Arrow clicked for playlist:', playlist)
-  console.log('Playlist name:', playlist?.name)
-  console.log('Playlist id:', playlist?.id)
-  console.log('Playlist type:', typeof playlist)
-  
-  if (!playlist || !playlist.id) {
-    console.error('Invalid playlist data:', playlist)
-    return
+// Helper function to get preview URL for a release
+const getReleasePreviewUrl = (release) => {
+  if (release.tracks && release.tracks.items && release.tracks.items.length > 0) {
+    return release.tracks.items[0].preview_url
   }
-  
-  // Emit a special event for arrow click to show playlist details
-  emit('playlist-arrow-click', playlist)
+  return null
+}
+
+const getDisplayClass = (release) => {
+  const hasPreview = getReleasePreviewUrl(release)
+  const hasImage = release.images && release.images[0]
+
+  if (hasPreview && hasImage) {
+    return 'playable'
+  } else if (!hasPreview && hasImage) {
+    return 'unplayable half-opacity'
+  } else if (hasPreview && !hasImage) {
+    return 'playable no-image'
+  } else {
+    return 'unplayable no-image half-opacity'
+  }
+}
+
+const handleReleaseSelect = (releaseId, event) => {
+  emit('release-select', releaseId, event)
+}
+
+const handleReleaseClick = (release, event) => {
+  // Check if release has tracks with preview URL
+  if (release.tracks && release.tracks.items && release.tracks.items.length > 0) {
+    const firstTrack = release.tracks.items[0]
+    if (firstTrack.preview_url) {
+      audioStore.mobileToggleTrack(firstTrack.id, firstTrack.preview_url)
+    }
+  }
+}
+
+const handleDeeperAlbumClick = (release, event) => {
+  event.stopPropagation() // Prevent triggering the main click event
+
+  // Add album to deeper store for newReleases section
+  const albumData = {
+    ...release,
+    type: 'album',
+    parentKey: 'releaseSelector'
+  }
+
+  deeperStore.addToSection('newReleases', albumData)
+  deeperStore.setCurrentSection('newReleases')
+
+  // Show the deeper album component using visibility manager
+  const playlistKey = `deeperalbum_${release.id}__p:releaseSelector__`
+  visibilityManager.showComponent(playlistKey)
+
+  // Show the deeper album component
+  console.log('Showing deeper album for:', release.name)
 }
 
 const handleSearch = (event) => {
@@ -109,17 +167,43 @@ const resetPagination = () => {
   currentPage.value = 1
   showPagination.value = false
 }
+
+const handleRefresh = () => {
+  emit('refresh')
+}
+
+const formatArtistNames = (artists) => {
+  if (!artists || !Array.isArray(artists)) return 'Unknown Artist'
+  return artists.map(artist => artist.name).join(', ')
+}
+
+const formatReleaseDate = (dateString) => {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  })
+}
 </script>
 
 <template>
-  <div class="mobile-playlist-selector">
+  <div class="mobile-release-selector">
     <!-- Header -->
     <div class="selector-header">
-      <h3>{{ title }}</h3>
-      <p v-if="playlists.length > 0">{{ playlists.length }} playlists available</p>
+      <div class="header-content">
+        <h3>{{ title }}</h3>
+        <p v-if="releases.length > 0">{{ releases.length }} releases available</p>
+      </div>
+      <button class="refresh-button" @click="handleRefresh" title="Refresh releases">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="refresh-icon">
+          <path fill-rule="evenodd" d="M4.755 10.059a7.5 7.5 0 0112.548-3.364l1.903 1.903h-3.183a.75.75 0 100 1.5h4.992a.75.75 0 00.75-.75V4.356a.75.75 0 00-1.5 0v3.18l-1.9-1.9A9 9 0 003.306 9.67a.75.75 0 101.45.388zm15.408 3.352a.75.75 0 00-.919.53 7.5 7.5 0 01-12.548 3.364l-1.902-1.903h3.183a.75.75 0 000-1.5H2.984a.75.75 0 00-.75.75v4.992a.75.75 0 001.5 0v-3.18l1.9 1.9a9 9 0 0015.059-4.035.75.75 0 00-.53-.918z" clip-rule="evenodd" />
+        </svg>
+      </button>
     </div>
 
-        <!-- Search and View Controls -->
+    <!-- Search and View Controls -->
     <div class="controls-container">
       <div class="search-container">
         <div class="search-bar">
@@ -171,68 +255,84 @@ const resetPagination = () => {
       </div>
     </div>
 
-    <!-- Playlist List -->
-    <div class="playlists-container">
-      <div v-if="filteredPlaylists.length === 0 && searchTerm" class="empty-search">
+    <!-- Releases Container -->
+    <div class="releases-container">
+      <div v-if="filteredReleases.length === 0 && searchTerm" class="empty-search">
         <div class="empty-icon">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
             <path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM2.25 10.5a8.25 8.25 0 1114.59 5.28l4.69 4.69a.75.75 0 11-1.06 1.06l-4.69-4.69A8.25 8.25 0 012.25 10.5z" clip-rule="evenodd" />
           </svg>
         </div>
-        <h4>No playlists found</h4>
+        <h4>No releases found</h4>
         <p>Try adjusting your search terms</p>
       </div>
 
-      <div v-else-if="playlists.length === 0" class="empty-state">
+      <div v-else-if="releases.length === 0" class="empty-state">
         <div class="empty-icon">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M11.584 2.376a.75.75 0 01.832 0l9 6a.75.75 0 11-.832 1.248L12 3.901 3.416 9.624a.75.75 0 01-.832-1.248l9-6z" />
-            <path d="M20.25 11.25v5.533c0 1.036-.84 1.875-1.875 1.875H5.625A1.875 1.875 0 013.75 16.783V11.25H2.25a.75.75 0 010-1.5h1.5V6.75c0-1.036.84-1.875 1.875-1.875h.75a.75.75 0 010 1.5h-.75a.375.375 0 00-.375.375v3.375h1.5a.75.75 0 010 1.5H3.75v5.533a.375.375 0 00.375.375h12.75a.375.375 0 00.375-.375V11.25h1.5a.75.75 0 010-1.5h-1.5V6.75a.375.375 0 00-.375-.375h-.75a.75.75 0 010-1.5h.75c1.036 0 1.875.84 1.875 1.875v3.375h1.5a.75.75 0 010 1.5z" />
+            <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clip-rule="evenodd" />
           </svg>
         </div>
-        <h4>No playlists available</h4>
-        <p>Create or import playlists to get started</p>
+        <h4>No releases available</h4>
+        <p>Check back later for new releases</p>
       </div>
 
-      <div v-else class="playlists-container" :class="viewMode">
-                        <!-- List View -->
+      <div v-else class="releases-container" :class="viewMode">
+        <!-- List View -->
         <template v-if="viewMode === 'list'">
           <div
-            v-for="playlist in displayedPlaylists"
-            :key="playlist.id"
-            @click="handlePlaylistSelect(playlist.id, $event)"
-            class="playlist-item list-item"
-            :class="{ 'selected': selectedPlaylist === playlist.id }"
+            v-for="release in displayedReleases"
+            :key="release.id"
+            @click="handleReleaseClick(release, $event)"
+            class="release-item list-item"
+            :class="{
+              'selected': selectedRelease === release.id,
+              'playing': isReleasePlaying(release),
+              'has-preview': getReleasePreviewUrl(release)
+            }"
           >
-            <div v-if="playlist.images && playlist.images.length > 0">
-              <img style="height: 55px;width: 55px" :src="playlist.images[0].url" alt="playlist image" />
+            <div v-if="release.images && release.images[0]">
+              <img style="height: 55px;width: 55px" :src="release.images[0].url" :alt="release.name" />
             </div>
-            <div class="playlist-cover" v-else>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="playlist-icon">
-                <path d="M11.584 2.376a.75.75 0 01.832 0l9 6a.75.75 0 11-.832 1.248L12 3.901 3.416 9.624a.75.75 0 01-.832-1.248l9-6z" />
-                <path d="M20.25 11.25v5.533c0 1.036-.84 1.875-1.875 1.875H5.625A1.875 1.875 0 013.75 16.783V11.25H2.25a.75.75 0 010-1.5h1.5V6.75c0-1.036.84-1.875 1.875-1.875h.75a.75.75 0 010 1.5h-.75a.375.375 0 00-.375.375v3.375h1.5a.75.75 0 010 1.5H3.75v5.533a.375.375 0 00.375.375h12.75a.375.375 0 00.375-.375V11.25h1.5a.75.75 0 010-1.5h-1.5V6.75a.375.375 0 00-.375-.375h-.75a.75.75 0 010-1.5h.75c1.036 0 1.875.84 1.875 1.875v3.375h1.5a.75.75 0 010 1.5z" />
+            <div class="release-cover" v-else>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="release-icon">
+                <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clip-rule="evenodd" />
               </svg>
             </div>
-            <div class="playlist-info">
-              <div class="playlist-name">{{ playlist.name }}</div>
-              <p class="playlist-details">
-                <span v-if="playlist.tracks && playlist.tracks.length > 0">
-                  {{ playlist.tracks.length }} tracks
-                </span>
-                <span v-if="playlist.owner">{{playlist.owner.display_name}}</span>
-                <span v-else>Spotify</span>
+            <div class="release-info">
+              <div class="release-name">{{ release.name }}</div>
+              <p class="release-details">
+                <span>{{ formatArtistNames(release.artists) }}</span>
+                <span v-if="release.release_date">{{ formatReleaseDate(release.release_date) }}</span>
               </p>
-              <div class="playlist-status">
-                <svg v-if="playlist.public" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="lock-icon open">
-                  <path d="M18 1.5c2.9 0 5.25 2.35 5.25 5.25v3.75a.75.75 0 01-1.5 0V6.75a3.75 3.75 0 10-7.5 0v3a3 3 0 013 3v6.75a3 3 0 01-3 3H3.75a3 3 0 01-3-3v-6.75a3 3 0 013-3h9a.75.75 0 010 1.5h-9a1.5 1.5 0 00-1.5 1.5v6.75a1.5 1.5 0 001.5 1.5h12.75a1.5 1.5 0 001.5-1.5v-6.75a1.5 1.5 0 00-1.5-1.5h-3a.75.75 0 010-1.5h3z" />
+              <div class="release-type">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="type-icon">
+                  <path d="M11.584 2.376a.75.75 0 01.832 0l9 6a.75.75 0 11-.832 1.248L12 3.901 3.416 9.624a.75.75 0 01-.832-1.248l9-6z" />
+                  <path d="M20.25 11.25v5.533c0 1.036-.84 1.875-1.875 1.875H5.625A1.875 1.875 0 013.75 16.783V11.25H2.25a.75.75 0 010-1.5h1.5V6.75c0-1.036.84-1.875 1.875-1.875h.75a.75.75 0 010 1.5h-.75a.375.375 0 00-.375.375v3.375h1.5a.75.75 0 010 1.5H3.75v5.533a.375.375 0 00.375.375h12.75a.375.375 0 00.375-.375V11.25h1.5a.75.75 0 010-1.5h-1.5V6.75a.375.375 0 00-.375-.375h-.75a.75.75 0 010-1.5h.75c1.036 0 1.875.84 1.875 1.875v3.375h1.5a.75.75 0 010 1.5z" />
                 </svg>
-                <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="lock-icon closed">
-                  <path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z" clip-rule="evenodd" />
+                <span class="type-text">{{ release.album_type || 'Album' }}</span>
+              </div>
+              <!-- Preview indicator -->
+              <div v-if="getReleasePreviewUrl(release)" class="preview-indicator">
+                <svg v-if="isReleasePlaying(release)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="playing-icon">
+                  <path fill-rule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clip-rule="evenodd" />
                 </svg>
-                <span class="status-text">{{ playlist.public ? 'Public' : 'Private' }}</span>
+                <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="play-icon">
+                  <path fill-rule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clip-rule="evenodd" />
+                </svg>
               </div>
             </div>
-            <div class="playlist-arrow" @click.stop="handlePlaylistArrowClick(playlist)">
+            <!-- Three dots menu button -->
+            <button
+              class="three-dots-button"
+              @click="handleDeeperAlbumClick(release, $event)"
+              title="More options"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="three-dots-icon">
+                <path fill-rule="evenodd" d="M4.5 12a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm6 0a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm6 0a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" clip-rule="evenodd" />
+              </svg>
+            </button>
+            <div class="release-arrow">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="arrow-icon">
                 <path fill-rule="evenodd" d="M16.28 11.47a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 011.06-1.06l7.5 7.5z" clip-rule="evenodd" />
               </svg>
@@ -243,20 +343,20 @@ const resetPagination = () => {
           <div
             v-if="showLoadMoreItem"
             @click="handleLoadMoreClick"
-            class="playlist-item list-item show-more-item"
+            class="release-item list-item show-more-item"
           >
-            <div class="playlist-cover show-more-cover">
+            <div class="release-cover show-more-cover">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="show-more-icon">
                 <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clip-rule="evenodd" />
               </svg>
             </div>
-            <div class="playlist-info">
-              <div class="playlist-name show-more-text">Show More Playlists</div>
-              <p class="playlist-details show-more-subtext">
-                {{ filteredPlaylists.length - displayedPlaylists.length }} more playlists available
+            <div class="release-info">
+              <div class="release-name show-more-text">Show More Releases</div>
+              <p class="release-details show-more-subtext">
+                {{ filteredReleases.length - displayedReleases.length }} more releases available
               </p>
             </div>
-            <div class="playlist-arrow">
+            <div class="release-arrow">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="arrow-icon">
                 <path fill-rule="evenodd" d="M16.28 11.47a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 011.06-1.06l7.5 7.5z" clip-rule="evenodd" />
               </svg>
@@ -283,50 +383,56 @@ const resetPagination = () => {
           </div>
         </template>
 
-                <!-- Grid View -->
+        <!-- Grid View -->
         <template v-else>
           <div
-            v-for="playlist in displayedPlaylists"
-            :key="playlist.id"
-            @click="handlePlaylistSelect(playlist.id, $event)"
-            class="playlist-item grid-item"
-            :class="{ 'selected': selectedPlaylist === playlist.id }"
+            v-for="release in displayedReleases"
+            :key="release.id"
+            @click="handleReleaseClick(release, $event)"
+            class="release-item grid-item"
+            :class="{
+              'selected': selectedRelease === release.id,
+              'playing': isReleasePlaying(release),
+              'has-preview': getReleasePreviewUrl(release)
+            }"
           >
-            <div class="grid-cover">
-              <div v-if="playlist.images && playlist.images.length > 0">
-                <img :src="playlist.images[0].url" alt="playlist image" />
+            <div class="grid-cover" :class="getDisplayClass(release)">
+              <div v-if="release.images && release.images[0]">
+                <img :src="release.images[0].url" :alt="release.name" />
               </div>
-              <div class="playlist-cover" v-else>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="playlist-icon">
-                  <path d="M11.584 2.376a.75.75 0 01.832 0l9 6a.75.75 0 11-.832 1.248L12 3.901 3.416 9.624a.75.75 0 01-.832-1.248l9-6z" />
-                  <path d="M20.25 11.25v5.533c0 1.036-.84 1.875-1.875 1.875H5.625A1.875 1.875 0 013.75 16.783V11.25H2.25a.75.75 0 010-1.5h1.5V6.75c0-1.036.84-1.875 1.875-1.875h.75a.75.75 0 010 1.5h-.75a.375.375 0 00-.375.375v3.375h1.5a.75.75 0 010 1.5H3.75v5.533a.375.375 0 00.375.375h12.75a.375.375 0 00.375-.375V11.25h1.5a.75.75 0 010-1.5h-1.5V6.75a.375.375 0 00-.375-.375h-.75a.75.75 0 010-1.5h.75c1.036 0 1.875.84 1.875 1.875v3.375h1.5a.75.75 0 010 1.5z" />
+              <div class="release-cover" v-else>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="release-icon">
+                  <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clip-rule="evenodd" />
                 </svg>
               </div>
               <div class="grid-overlay">
-                <svg v-if="playlist.public" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="grid-lock-icon open">
-                  <path d="M18 1.5c2.9 0 5.25 2.35 5.25 5.25v3.75a.75.75 0 01-1.5 0V6.75a3.75 3.75 0 10-7.5 0v3a3 3 0 013 3v6.75a3 3 0 01-3 3H3.75a3 3 0 01-3-3v-6.75a3 3 0 013-3h9a.75.75 0 010 1.5h-9a1.5 1.5 0 00-1.5 1.5v6.75a1.5 1.5 0 001.5 1.5h12.75a1.5 1.5 0 001.5-1.5v-6.75a1.5 1.5 0 00-1.5-1.5h-3a.75.75 0 010-1.5h3z" />
-                </svg>
-                <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="grid-lock-icon closed">
-                  <path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z" clip-rule="evenodd" />
-                </svg>
+                <span class="release-type-badge">{{ release.album_type || 'Album' }}</span>
               </div>
             </div>
             <div class="grid-info">
-              <div class="grid-name">{{ playlist.name }}</div>
+              <div class="grid-name">{{ release.name }}</div>
               <div class="grid-details">
-                <span v-if="playlist.tracks && playlist.tracks.length > 0">
-                  {{ playlist.tracks.length }} tracks
-                </span>
-                <span v-else>Playlist</span>
+                <span>{{ formatArtistNames(release.artists) }}</span>
+                <span v-if="release.release_date">{{ formatReleaseDate(release.release_date) }}</span>
               </div>
             </div>
+            <!-- Three dots menu button for grid view -->
+            <button
+              class="grid-three-dots-button"
+              @click="handleDeeperAlbumClick(release, $event)"
+              title="More options"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="three-dots-icon">
+                <path fill-rule="evenodd" d="M4.5 12a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm6 0a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm6 0a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" clip-rule="evenodd" />
+              </svg>
+            </button>
           </div>
 
           <!-- Show More Item for Grid View -->
           <div
             v-if="showLoadMoreItem"
             @click="handleLoadMoreClick"
-            class="playlist-item grid-item show-more-item"
+            class="release-item grid-item show-more-item"
           >
             <div class="grid-cover show-more-grid-cover">
               <div class="show-more-grid-content">
@@ -337,8 +443,8 @@ const resetPagination = () => {
               </div>
             </div>
             <div class="grid-info">
-              <div class="grid-name show-more-text">{{ filteredPlaylists.length - displayedPlaylists.length }} more</div>
-              <div class="grid-details show-more-subtext">playlists</div>
+              <div class="grid-name show-more-text">{{ filteredReleases.length - displayedReleases.length }} more</div>
+              <div class="grid-details show-more-subtext">releases</div>
             </div>
           </div>
 
@@ -367,7 +473,7 @@ const resetPagination = () => {
 </template>
 
 <style scoped>
-.mobile-playlist-selector {
+.mobile-release-selector {
   width: 100%;
   padding: 20px;
   box-sizing: border-box;
@@ -375,7 +481,15 @@ const resetPagination = () => {
 
 .selector-header {
   margin-bottom: 24px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.header-content {
+  flex: 1;
+  text-align: left;
 }
 
 .selector-header h3 {
@@ -389,6 +503,36 @@ const resetPagination = () => {
   font-size: 14px;
   color: #a0a0a0;
   margin: 0;
+}
+
+.refresh-button {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.refresh-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.refresh-icon {
+  width: 20px;
+  height: 20px;
+  color: #a0a0a0;
+  transition: color 0.3s ease;
+}
+
+.refresh-button:hover .refresh-icon {
+  color: #ffffff;
 }
 
 .controls-container {
@@ -502,24 +646,24 @@ const resetPagination = () => {
   color: #a0a0a0;
 }
 
-.playlists-container {
+.releases-container {
   width: 100%;
 }
 
-.playlists-container.list {
+.releases-container.list {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.playlists-container.grid {
+.releases-container.grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 16px;
   padding: 0 4px;
 }
 
-.playlist-item {
+.release-item {
   display: flex;
   align-items: center;
   padding: 16px;
@@ -531,14 +675,28 @@ const resetPagination = () => {
   gap: 16px;
 }
 
-.playlist-item:hover {
+.release-item:hover {
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-.playlist-item.selected {
+.release-item.selected {
   background: rgba(30, 215, 96, 0.2);
   border-color: rgba(30, 215, 96, 0.4);
+}
+
+.release-item.playing {
+  background: rgba(102, 126, 234, 0.15);
+  border-color: rgba(102, 126, 234, 0.4);
+}
+
+.release-item.has-preview {
+  cursor: pointer;
+}
+
+.release-item.has-preview:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 /* Grid Item Styles */
@@ -547,6 +705,7 @@ const resetPagination = () => {
   padding: 12px;
   text-align: center;
   min-height: 180px;
+  position: relative;
 }
 
 .grid-cover {
@@ -567,26 +726,20 @@ const resetPagination = () => {
 .grid-overlay {
   position: absolute;
   top: 8px;
-  right: 8px;
+  left: 8px;
   background: rgba(0, 0, 0, 0.7);
-  border-radius: 50%;
-  padding: 4px;
+  border-radius: 12px;
+  padding: 4px 8px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.grid-lock-icon {
-  width: 16px;
-  height: 16px;
-}
-
-.grid-lock-icon.open {
-  color: #1db954;
-}
-
-.grid-lock-icon.closed {
-  color: #ff6b6b;
+.release-type-badge {
+  font-size: 10px;
+  color: #ffffff;
+  font-weight: 600;
+  text-transform: uppercase;
 }
 
 .grid-info {
@@ -612,9 +765,12 @@ const resetPagination = () => {
   font-size: 12px;
   color: #a0a0a0;
   line-height: 1.2;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-.playlist-cover {
+.release-cover {
   width: 48px;
   height: 48px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -625,19 +781,20 @@ const resetPagination = () => {
   flex-shrink: 0;
 }
 
-.playlist-icon {
+.release-icon {
   width: 24px;
   height: 24px;
   color: #ffffff;
 }
 
-.playlist-info {
+.release-info {
   flex: 1;
   min-width: 0;
   gap: 0px;
+  margin-right: 8px;
 }
 
-.playlist-name {
+.release-name {
   font-size: 16px;
   font-weight: 600;
   color: #ffffff;
@@ -646,53 +803,154 @@ const resetPagination = () => {
   text-overflow: ellipsis;
 }
 
-.playlist-details {
+.release-details {
   font-size: 14px;
   color: #a0a0a0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-.playlist-status {
+.release-type {
   display: flex;
   align-items: center;
   gap: 6px;
   margin-top: 4px;
 }
 
-.lock-icon {
+.type-icon {
   width: 14px;
   height: 14px;
   flex-shrink: 0;
-}
-
-.lock-icon.open {
   color: #1db954;
 }
 
-.lock-icon.closed {
-  color: #ff6b6b;
-}
-
-.status-text {
+.type-text {
   font-size: 12px;
   color: #a0a0a0;
   font-weight: 500;
+  text-transform: uppercase;
 }
 
-.playlist-arrow {
+/* Preview indicator styles */
+.preview-indicator {
+  position: absolute;
+  top: 14px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.play-icon,
+.playing-icon {
+  width: 16px;
+  height: 16px;
+  color: #ffffff;
+}
+
+.playing-icon {
+  color: #1db954;
+}
+
+.grid-preview-indicator {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.grid-preview-indicator .play-icon,
+.grid-preview-indicator .playing-icon {
+  width: 14px;
+  height: 14px;
+  color: #ffffff;
+}
+
+.grid-preview-indicator .playing-icon {
+  color: #1db954;
+}
+
+/* Three dots button styles */
+.three-dots-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.three-dots-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.three-dots-icon {
+  width: 20px;
+  height: 20px;
+  color: #a0a0a0;
+  transition: color 0.3s ease;
+}
+
+.three-dots-button:hover .three-dots-icon {
+  color: #ffffff;
+}
+
+/* Grid three dots button */
+.grid-three-dots-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 32%;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  backdrop-filter: blur(4px);
+}
+
+.grid-three-dots-button:hover {
+  background: rgba(0, 0, 0, 0.9);
+  transform: scale(1.1);
+}
+
+.grid-three-dots-button .three-dots-icon {
+  width: 12px;
+  height: 12px;
+  color: #ffffff;
+}
+
+.release-arrow {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 24px;
   height: 24px;
   flex-shrink: 0;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: background-color 0.2s ease;
-}
-
-.playlist-arrow:hover {
-  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .arrow-icon {
@@ -702,7 +960,7 @@ const resetPagination = () => {
   transition: color 0.2s ease;
 }
 
-.playlist-item:hover .arrow-icon {
+.release-item:hover .arrow-icon {
   color: #ffffff;
 }
 
@@ -736,57 +994,6 @@ const resetPagination = () => {
   font-size: 14px;
   color: #a0a0a0;
   margin: 0;
-}
-
-/* Load More Button Styles */
-.load-more-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  padding: 0 20px;
-}
-
-.load-more-button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(102, 126, 234, 0.1);
-  color: #667eea;
-  border: 1px solid rgba(102, 126, 234, 0.3);
-  border-radius: 12px;
-  padding: 12px 20px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  width: 100%;
-  justify-content: center;
-}
-
-.load-more-button:hover {
-  background: rgba(102, 126, 234, 0.2);
-  border-color: rgba(102, 126, 234, 0.5);
-  transform: translateY(-1px);
-}
-
-.load-more-button:active {
-  transform: translateY(0);
-}
-
-.load-more-icon {
-  width: 16px;
-  height: 16px;
-}
-
-/* Grid Load More Button */
-.grid-load-more {
-  grid-column: 1 / -1;
-  margin-top: 16px;
-}
-
-.grid-load-more-button {
-  max-width: 200px;
-  width: auto;
 }
 
 /* Pagination Styles */
@@ -837,7 +1044,7 @@ const resetPagination = () => {
 }
 
 /* Grid Pagination Specific Styles */
-.playlists-container.grid .pagination-container {
+.releases-container.grid .pagination-container {
   grid-column: 1 / -1;
   margin-top: 16px;
   padding: 16px 20px;
@@ -846,7 +1053,7 @@ const resetPagination = () => {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.playlists-container.grid .pagination-button {
+.releases-container.grid .pagination-button {
   min-width: 80px;
   padding: 8px 12px;
   font-size: 13px;

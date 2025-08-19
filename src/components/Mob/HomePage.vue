@@ -7,6 +7,8 @@ import { useDeeperStore } from '../../stores/deeper-store'
 import { useSelection } from '../../composables/useSelection.js'
 import MobileTopTracks from './MobileTopTracks.vue'
 import MobileTopArtists from './MobileTopArtists.vue'
+import MobileDeeperTracks from './MobileDeeperTracks.vue'
+import MobileDeeperArtist from './MobileDeeperArtist.vue'
 import QueueDisplay from './QueueDisplay.vue'
 import MobileTracksList from './MobileTracksList.vue'
 
@@ -85,6 +87,22 @@ onMounted(() => {
         <MobileTopArtists />
       </div>
     </div>
+    
+    <!-- Mobile Deeper Tracks Component -->
+    <MobileDeeperTracks
+      v-for="track in deeperStore.getSectionData('topTracks')"
+      :key="track.id"
+      :d="track"
+      :num="3"
+    />
+    
+    <!-- Mobile Deeper Artist Component -->
+    <MobileDeeperArtist
+      v-for="artist in deeperStore.getSectionData('topArtists')"
+      :key="artist.id"
+      :d="artist"
+      :num="2"
+    />
   </div>
 </template>
 

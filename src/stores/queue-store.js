@@ -34,11 +34,17 @@ export const useQueueStore = defineStore('queue', {
       const newQue = {
         id: track.id,
         name: track.name,
-        artists: track.artists || track.album?.artists, // Store the original artists array
+        artists: track.artists || track.album?.artists || [], // Store the original artists array with fallback
         image: track.album?.images?.[0] || track.images?.[0],
         preview_url: track.preview_url || track.previewUrl || track?.track?.preview_url || track?.items?.[0].preview_url
       }
-      newQue.artists = this.formatArtistNames(newQue.artists)
+      
+      // Only format artist names if artists array exists and is not empty
+      if (newQue.artists && newQue.artists.length > 0) {
+        newQue.artists = this.formatArtistNames(newQue.artists)
+      } else {
+        newQue.artists = 'Unknown Artist'
+      }
 
       let arr = current ? JSON.parse(current) : []
 
@@ -140,6 +146,9 @@ export const useQueueStore = defineStore('queue', {
       return this.queue || 0
     },
     formatArtistNames(artists) {
+      if (!artists || !Array.isArray(artists) || artists.length === 0) {
+        return 'Unknown Artist'
+      }
       return artistUtils.formatArtistNamesSimple(artists)
     }
   },

@@ -3,6 +3,8 @@ import { computed } from 'vue'
 import { useQueueStore } from "../../stores/queue-store"
 import { useDeeperStore } from "../../stores/deeper-store"
 import { useAudioStore } from "../../stores/audio-store"
+import { useVisibilityManager } from "../../composables/useVisibilityManager"
+import { useMobileMediaDisplay } from "../../composables/useMobileMediaDisplay.js"
 import { artistUtils } from "../../utils/artistUtils.js"
 
 const props = defineProps({
@@ -27,6 +29,10 @@ const props = defineProps({
 const queueStore = useQueueStore()
 const deeperStore = useDeeperStore()
 const audioStore = useAudioStore()
+const visibilityManager = useVisibilityManager()
+
+// Get mobile media display for track
+const { displayClass, backgroundStyle, hasPreview, previewUrl, trackId } = useMobileMediaDisplay(computed(() => props.track))
 
 const emit = defineEmits(['remove'])
 
@@ -39,10 +45,13 @@ const formatArtistNames = (artists) => {
   if (typeof artists === 'string') {
     return artists
   }
+  if (!artists || !Array.isArray(artists)) {
+    return 'Unknown Artist'
+  }
   return artistUtils.formatArtistNamesSimple(artists)
 }
 
-const handleTrackClick = () => {
+const handleTrackClick = async () => {
   if (props.showRemove) {
     // For queue items, handle audio playback
     handleAudioPlayback()
@@ -50,6 +59,12 @@ const handleTrackClick = () => {
     // For regular tracks, add to queue and get track details
     queueStore.addToQueue(props.track)
     deeperStore.getTrackDetails(props.track, props.sectionName, props.parentId)
+    
+    // Also play audio preview if available
+    const previewUrl = props.track.preview_url || props.track.previewUrl
+    if (previewUrl) {
+      await audioStore.mobileToggleTrack(props.track.id, previewUrl)
+    }
   }
 }
 
@@ -65,6 +80,46 @@ const handleAudioPlayback = () => {
 const handleAddToQueue = (event) => {
   event.stopPropagation()
   queueStore.addToQueue(props.track)
+}
+
+const handleDeeperTrack = async (event) => {
+  event.stopPropagation()
+  
+  // Add track data to deeper store
+  const trackData = {
+    ...props.track,
+    type: 'track',
+    parentKey: props.sectionName
+  }
+  
+  // Add to appropriate section based on context
+  let sectionName = 'topTracks'
+  if (props.sectionName === 'yourPlaylists' || props.sectionName === 'spotifyPlaylists') {
+    sectionName = 'playlistTracks'
+  } else if (props.sectionName === 'savedTracks') {
+    sectionName = 'savedTracks'
+  } else if (props.sectionName === 'newReleases') {
+    sectionName = 'albumTracks'
+  }
+  
+  deeperStore.addToSection(sectionName, trackData)
+  deeperStore.setCurrentSection(sectionName)
+  
+  // Show the MobileDeeperTracks component with a small delay to ensure proper rendering
+  const trackKey = `track_${props.track.id}__p:${props.sectionName}__`
+  
+  // Use setTimeout to ensure the component is shown after the current event cycle
+  setTimeout(() => {
+    visibilityManager.showComponent(trackKey)
+    console.log('Showing deeper track for:', props.track.name, 'with key:', trackKey)
+  }, 100)
+}
+
+const handleAudioPreview = async (event) => {
+  event.stopPropagation()
+  if (hasPreview.value && previewUrl.value) {
+    await audioStore.mobileToggleTrack(trackId.value, previewUrl.value)
+  }
 }
 
 const handleRemove = (event) => {
@@ -84,12 +139,16 @@ const isInQueue = () => {
 <template>
   <div class="mobile-track-item" @click="handleTrackClick">
     <div class="track-image">
-      <div v-if="track.image || track.album?.images?.[0] || track.images?.[0]"
-           class="track-cover"
-           :style="{ 'background-image': 'url(' + (track.image?.url || track.album?.images?.[0]?.url || track.images?.[0]?.url) + ')' }">
-      </div>
-      <div v-else class="track-cover no-image">
-        <span class="no-image-icon">🎵</span>
+      <div class="track-cover"
+           :class="displayClass"
+           :style="backgroundStyle"
+           @click="handleAudioPreview">
+        <div v-if="!hasImage" class="no-image">
+          <span class="no-image-icon">🎵</span>
+        </div>
+        <div v-if="hasPreview && audioStore.mobileIsTrackPlaying(trackId)" class="playing-indicator">
+          <span class="playing-icon">▶️</span>
+        </div>
       </div>
     </div>
 
@@ -100,6 +159,17 @@ const isInQueue = () => {
       </div>
       <div class="track-artists">{{ formatArtistNames(track.artists) }}</div>
     </div>
+
+    <button
+      v-if="!showRemove"
+      class="deeper-btn"
+      @click="handleDeeperTrack"
+      title="View track details"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path fill-rule="evenodd" d="M4.5 12a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm6 0a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm6 0a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" clip-rule="evenodd" />
+      </svg>
+    </button>
 
     <button
       v-if="!showRemove"
@@ -166,6 +236,34 @@ const isInQueue = () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.track-cover:hover {
+  transform: scale(1.05);
+}
+
+/* Display classes for mobile */
+.mobile-playable {
+  cursor: pointer;
+}
+
+.mobile-playable:hover {
+  box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+}
+
+.mobile-unplayable {
+  cursor: default;
+}
+
+.mobile-half-opacity {
+  opacity: 0.6;
+}
+
+.mobile-no-image {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .no-image {
@@ -177,11 +275,36 @@ const isInQueue = () => {
   color: #a0a0a0;
 }
 
+.playing-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.playing-icon {
+  font-size: 12px;
+  color: #ffffff;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
 .track-details {
   flex: 1;
   min-width: 0;
   overflow: hidden;
-  max-width: calc(100% - 120px); /* Account for image and button */
+  max-width: calc(100% - 160px); /* Account for image and two buttons */
 }
 
 .track-name {
@@ -215,6 +338,33 @@ const isInQueue = () => {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
+}
+
+.deeper-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: #a0a0a0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  min-width: 32px;
+}
+
+.deeper-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  transform: scale(1.1);
+}
+
+.deeper-btn svg {
+  width: 16px;
+  height: 16px;
 }
 
 .queue-btn {
@@ -295,7 +445,7 @@ const isInQueue = () => {
   }
 
   .track-details {
-    max-width: calc(100% - 100px); /* Smaller gap on mobile */
+    max-width: calc(100% - 140px); /* Account for image and two buttons on mobile */
   }
 
   .track-name {
@@ -304,6 +454,17 @@ const isInQueue = () => {
 
   .track-artists {
     font-size: 11px;
+  }
+
+  .deeper-btn {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+  }
+
+  .deeper-btn svg {
+    width: 14px;
+    height: 14px;
   }
 
   .queue-btn {

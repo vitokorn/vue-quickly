@@ -233,9 +233,11 @@ export const useDeeperStore = defineStore('deeper', {
         console.log('Using cached track data for:', item.id)
       } else {
         console.log('Creating new track data for:', item.id)
-        // Prepare track data
+        // Prepare track data - create a new object to avoid modifying reactive properties
         if (item.track) {
-          trackData = item.track
+          trackData = { ...item.track }
+        } else {
+          trackData = { ...item }
         }
         trackData.type = 'deepertracks'
         trackData = toRaw(trackData)
@@ -254,7 +256,8 @@ export const useDeeperStore = defineStore('deeper', {
       
       // Use explicit parentKey only; no auto-derivation.
       const effectiveParentKey = parentKey || null
-      trackData.parentKey = effectiveParentKey
+      // Create a new object with parentKey to avoid modifying reactive properties
+      trackData = { ...trackData, parentKey: effectiveParentKey }
 
       // Initialize visibility manager before any usage
       const visibilityManager = useVisibilityManager()
@@ -444,7 +447,8 @@ export const useDeeperStore = defineStore('deeper', {
       
       // Attach explicit parent context (no derivation for artists)
       const derivedParentKey = parentKey || null
-      artistData.parentKey = derivedParentKey
+      // Create a new object with parentKey to avoid modifying reactive properties
+      artistData = { ...artistData, parentKey: derivedParentKey }
 
       // Add to section
       console.log('Adding artist data to section:', sectionName, 'parentKey:', derivedParentKey)
@@ -475,9 +479,11 @@ export const useDeeperStore = defineStore('deeper', {
       if (cached) {
         albumData = cached
       } else {
+        // Create a new object to avoid modifying reactive properties
         if (item.album) {
-          albumData = item.album
-          albumData.album = true
+          albumData = { ...item.album, album: true }
+        } else {
+          albumData = { ...item }
         }
         albumData.type = 'deeperalbum'
         
@@ -495,7 +501,8 @@ export const useDeeperStore = defineStore('deeper', {
       
       // Attach explicit parent context (no derivation for albums)
       const derivedParentKey = parentKey || null
-      albumData.parentKey = derivedParentKey
+      // Create a new object with parentKey to avoid modifying reactive properties
+      albumData = { ...albumData, parentKey: derivedParentKey }
 
       const visibilityManager = useVisibilityManager()
 
@@ -554,7 +561,8 @@ export const useDeeperStore = defineStore('deeper', {
       }
       
       // Add to section
-      seedData.parentKey = parentKey || null
+      // Create a new object with parentKey to avoid modifying reactive properties
+      seedData = { ...seedData, parentKey: parentKey || null }
       const visibilityManager = useVisibilityManager()
       
       // Hide conflicting siblings under same parent before showing SeedArtist
@@ -606,7 +614,8 @@ export const useDeeperStore = defineStore('deeper', {
       }
       
       // Attach parent context so seed tracks are purged with their ancestor
-      seedData.parentKey = parentKey || null
+      // Create a new object with parentKey to avoid modifying reactive properties
+      seedData = { ...seedData, parentKey: parentKey || null }
       
       // Use visibility manager
       const visibilityManager = useVisibilityManager()
