@@ -160,7 +160,7 @@ const emit = defineEmits(['search'])
 <style scoped>
 .mobile-layout {
   min-height: 100vh;
-  background: linear-gradient(135deg, var(--tabs-background) 0%, #fff 100%);
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   display: flex;
   flex-direction: column;
   position: relative;
@@ -169,13 +169,15 @@ const emit = defineEmits(['search'])
   box-sizing: border-box;
 }
 
-/* Header Styles */
+/* Modern Header Styles */
 .mobile-header {
-  padding: 20px 16px 16px;
-  background: rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
+  padding: 24px 20px 20px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
   width: 100%;
   box-sizing: border-box;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
 }
 
 .header-content {
@@ -196,144 +198,135 @@ const emit = defineEmits(['search'])
   align-items: center;
   font-size: 28px;
   font-weight: 700;
-  color: #ffffff;
-  margin: 0 0 4px 0;
-  line-height: 1.2;
+  color: var(--title-color);
+  margin: 0 0 8px 0;
+}
+
+.logo {
+  width: 32px;
+  height: 32px;
+  margin-right: 12px;
+  border-radius: 8px;
 }
 
 .app-subtitle {
   font-size: 14px;
-  color: #a0a0a0;
+  color: var(--search-color);
   margin: 0;
-  font-weight: 400;
+  opacity: 0.8;
 }
 
 .header-actions {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   align-items: center;
 }
 
 .queue-button,
 .profile-button {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.05);
   border: none;
+  color: var(--title-color);
+  padding: 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  width: 44px;
+  height: 44px;
 }
 
 .queue-button:hover,
 .profile-button:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.05);
+  background: rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 .queue-icon,
 .profile-icon {
   width: 20px;
   height: 20px;
-  color: #ffffff;
 }
 
-/* Main Content Styles */
+/* Main Content Area */
 .mobile-main {
   flex: 1;
-  padding: 20px 16px;
+  padding: 20px;
   overflow-y: auto;
-  overflow-x: hidden;
-  width: 100%;
-  box-sizing: border-box;
 }
 
+/* Profile Section */
 .profile-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  min-height: 60vh;
-  text-align: center;
-  padding-top: 20px;
-  width: 100%;
-  overflow: hidden;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .profile-content {
-  max-width: 100%;
-  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
 }
 
 .profile-avatar {
   width: 80px;
   height: 80px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.05);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
 .avatar-icon {
   width: 40px;
   height: 40px;
-  color: #a0a0a0;
+  color: var(--search-color);
+  opacity: 0.6;
 }
 
 .profile-title {
   font-size: 24px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--title-color);
   margin: 0 0 8px 0;
 }
 
 .profile-description {
   font-size: 16px;
-  color: #a0a0a0;
-  margin: 0 0 30px 0;
-  line-height: 1.4;
+  color: var(--search-color);
+  margin: 0 0 24px 0;
+  opacity: 0.8;
 }
 
 .settings-wrapper {
-  width: 100%;
-  max-width: 100%;
-  margin: 20px 0 0;
-  padding: 0;
-  overflow: hidden;
+  margin-top: 24px;
 }
 
-/* Placeholder Content */
-.placeholder-content {
-  text-align: center;
-  padding: 40px 20px;
+/* Section Styles */
+.home-section,
+.discover-section,
+.library-section,
+.queue-section {
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-.placeholder-content h2 {
-  font-size: 24px;
-  font-weight: 600;
-  color: #ffffff;
-  margin: 0 0 12px 0;
-}
-
-.placeholder-content p {
-  font-size: 16px;
-  color: #a0a0a0;
-  margin: 0;
-}
-
-/* Bottom Navigation Styles */
+/* Modern Bottom Navigation */
 .bottom-navigation {
   display: flex;
-  backdrop-filter: blur(10px);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 8px 0;
-  position: sticky;
-  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 12px 20px;
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.1);
 }
 
 .nav-item {
@@ -341,39 +334,59 @@ const emit = defineEmits(['search'])
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 8px 4px;
+  gap: 4px;
   background: none;
   border: none;
+  color: var(--search-color);
+  padding: 8px 12px;
+  border-radius: 12px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  color: #a0a0a0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .nav-item:hover {
-  color: var(--title-color);
+  background: rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
 }
 
 .nav-item.active {
-  color: #667eea;
+  color: var(--active-tab);
+  background: rgba(240, 55, 165, 0.1);
 }
 
 .nav-icon {
-  width: 24px;
-  height: 24px;
-  margin-bottom: 4px;
+  width: 20px;
+  height: 20px;
+  transition: all 0.3s ease;
+}
+
+.nav-item.active .nav-icon {
+  transform: scale(1.1);
 }
 
 .nav-label {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 /* Responsive Design */
 @media (max-width: 480px) {
+  .mobile-header {
+    padding: 20px 16px 16px;
+  }
+
   .app-title {
     font-size: 24px;
+  }
+
+  .logo {
+    width: 28px;
+    height: 28px;
+    margin-right: 10px;
   }
 
   .app-subtitle {
@@ -381,19 +394,28 @@ const emit = defineEmits(['search'])
   }
 
   .header-actions {
-    gap: 6px;
+    gap: 8px;
   }
 
   .queue-button,
   .profile-button {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
+    padding: 10px;
   }
 
   .queue-icon,
   .profile-icon {
     width: 18px;
     height: 18px;
+  }
+
+  .mobile-main {
+    padding: 16px;
+  }
+
+  .profile-content {
+    padding: 24px 20px;
   }
 
   .profile-avatar {
@@ -407,48 +429,170 @@ const emit = defineEmits(['search'])
   }
 
   .profile-title {
-    font-size: 22px;
+    font-size: 20px;
   }
 
   .profile-description {
-    font-size: 15px;
+    font-size: 14px;
   }
-}
 
-/* Global overflow fix */
-* {
-  box-sizing: border-box;
-}
+  .bottom-navigation {
+    padding: 10px 16px;
+  }
 
-/* Override global settings styles for mobile layout */
-.mobile-layout .settings-container {
-  position: static !important;
-}
+  .nav-item {
+    padding: 6px 8px;
+    font-size: 11px;
+  }
 
-.mobile-layout .settings-menu {
-  position: static !important;
-  top: auto !important;
-  right: auto !important;
-  margin-top: 0 !important;
-  min-width: auto !important;
-  z-index: auto !important;
-  animation: none !important;
+  .nav-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .nav-label {
+    font-size: 10px;
+  }
 }
 
 /* Dark theme support */
 :root.dark .mobile-layout {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  background: linear-gradient(135deg, #0b1222 0%, #1a2332 100%);
 }
 
+:root.dark .mobile-header {
+  background: rgba(42, 46, 47, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+:root.dark .queue-button,
+:root.dark .profile-button {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--title-color);
+}
+
+:root.dark .queue-button:hover,
+:root.dark .profile-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+:root.dark .profile-content {
+  background: rgba(42, 46, 47, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+:root.dark .profile-avatar {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.dark .bottom-navigation {
+  background: rgba(42, 46, 47, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+:root.dark .nav-item {
+  color: var(--search-color);
+}
+
+:root.dark .nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.dark .nav-item.active {
+  background: rgba(240, 55, 165, 0.2);
+}
+
+/* Dark-blue theme support */
 :root.dark-blue .mobile-layout {
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
 }
 
-:root.dark-blue .mobile-layout {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+:root.dark-blue .mobile-header {
+  background: rgba(30, 41, 59, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+:root.dark-blue .queue-button,
+:root.dark-blue .profile-button {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--title-color);
+}
+
+:root.dark-blue .queue-button:hover,
+:root.dark-blue .profile-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+:root.dark-blue .profile-content {
+  background: rgba(30, 41, 59, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+:root.dark-blue .profile-avatar {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.dark-blue .bottom-navigation {
+  background: rgba(30, 41, 59, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+:root.dark-blue .nav-item {
+  color: var(--search-color);
+}
+
+:root.dark-blue .nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.dark-blue .nav-item.active {
+  background: rgba(240, 55, 165, 0.2);
+}
+
+/* DQ theme support */
 :root.dq .mobile-layout {
   background: linear-gradient(135deg, #1C1A2D 0%, var(--main-color) 100%);
 }
 
+:root.dq .mobile-header {
+  background: rgba(28, 26, 45, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+:root.dq .queue-button,
+:root.dq .profile-button {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--title-color);
+}
+
+:root.dq .queue-button:hover,
+:root.dq .profile-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+:root.dq .profile-content {
+  background: rgba(28, 26, 45, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+:root.dq .profile-avatar {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.dq .bottom-navigation {
+  background: rgba(28, 26, 45, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+:root.dq .nav-item {
+  color: var(--search-color);
+}
+
+:root.dq .nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.dq .nav-item.active {
+  background: rgba(240, 55, 165, 0.2);
+}
 </style>

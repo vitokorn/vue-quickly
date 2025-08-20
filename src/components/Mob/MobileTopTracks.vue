@@ -98,242 +98,190 @@ onMounted(async () => {
 
 <template>
   <div class="mobile-top-tracks">
-    <!-- Section Header -->
+    <!-- Modern Header -->
     <div class="section-header">
-      <div class="section-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M11.584 2.376a.75.75 0 01.832 0l9 6a.75.75 0 11-.832 1.248L12 3.901 3.416 9.624a.75.75 0 01-.832-1.248l9-6z" />
-          <path d="M20.25 11.25v5.533c0 1.036-.84 1.875-1.875 1.875H5.625A1.875 1.875 0 013.75 16.783V11.25H2.25a.75.75 0 010-1.5h1.5V6.75c0-1.036.84-1.875 1.875-1.875h.75a.75.75 0 010 1.5h-.75a.375.375 0 00-.375.375v3.375h1.5a.75.75 0 010 1.5H3.75v5.533a.375.375 0 00.375.375h12.75a.375.375 0 00.375-.375V11.25h1.5a.75.75 0 010-1.5h-1.5V6.75a.375.375 0 00-.375-.375h-.75a.75.75 0 010-1.5h.75c1.036 0 1.875.84 1.875 1.875v3.375h1.5a.75.75 0 010 1.5z" />
-        </svg>
+      <div class="header-content">
+        <div class="header-text">
+          <h2 class="section-title">Top Tracks</h2>
+          <p class="section-subtitle">{{ timeRangeLabel }}</p>
+        </div>
+        <div class="header-actions">
+          <button class="refresh-btn" @click="handleRefresh" title="Refresh">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M4.755 10.059a7.5 7.5 0 0112.548-3.364l1.903 1.903h-3.183a.75.75 0 100 1.5h4.992a.75.75 0 00.75-.75V4.356a.75.75 0 00-1.5 0v3.18l-1.9-1.9A9 9 0 003.306 9.67a.75.75 0 101.45.388zm15.408 3.352a.75.75 0 00-.919.53 7.5 7.5 0 01-12.548 3.364l-1.902-1.903h3.183a.75.75 0 000-1.5H2.984a.75.75 0 00-.75.75v4.992a.75.75 0 001.5 0v-3.18l1.9 1.9a9 9 0 0015.059-4.035.75.75 0 00-.53-.918z" clip-rule="evenodd" />
+            </svg>
+          </button>
+          <button class="view-toggle-btn" @click="toggleViewMode" :title="viewMode === 'list' ? 'Grid view' : 'List view'">
+            <svg v-if="viewMode === 'list'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h2.25a3 3 0 013 3v2.25a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9.75 0a3 3 0 013-3H18a3 3 0 013 3v2.25a3 3 0 01-3 3h-2.25a3 3 0 01-3-3V6zM3 15.75a3 3 0 013-3h2.25a3 3 0 013 3V18a3 3 0 01-3 3H6a3 3 0 01-3-3v-2.25zm9.75 0a3 3 0 013-3H18a3 3 0 013 3V18a3 3 0 01-3 3h-2.25a3 3 0 01-3-3v-2.25z" clip-rule="evenodd" />
+            </svg>
+            <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M2.625 6.75a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0A.75.75 0 018.25 6h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75zM2.625 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zM7.5 12a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12A.75.75 0 017.5 12zm-4.875 5.25a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
       </div>
-      <h3 class="section-title">Top Tracks</h3>
-    </div>
-
-    <!-- Time Range Selector -->
-    <div class="time-range-selector">
-      <div class="range-buttons">
-        <button 
-          :class="['range-btn', { active: selectedTimeRange === 1 }]"
-          @click="handleTimeRangeChange(1)"
+      
+      <!-- Modern Time Range Selector -->
+      <div class="time-range-selector">
+        <button
+          v-for="range in [
+            { id: 1, label: 'Month' },
+            { id: 2, label: '6 Months' },
+            { id: 3, label: 'All Time' }
+          ]"
+          :key="range.id"
+          class="time-range-btn"
+          :class="{ active: selectedTimeRange === range.id }"
+          @click="handleTimeRangeChange(range.id)"
         >
-          Last month
-        </button>
-        <button 
-          :class="['range-btn', { active: selectedTimeRange === 2 }]"
-          @click="handleTimeRangeChange(2)"
-        >
-          Last 6 months
-        </button>
-        <button 
-          :class="['range-btn', { active: selectedTimeRange === 3 }]"
-          @click="handleTimeRangeChange(3)"
-        >
-          All time
-        </button>
-      </div>
-      <div class="action-buttons">
-        <button class="view-toggle-btn" @click="toggleViewMode" :title="viewMode === 'list' ? 'Switch to Grid View' : 'Switch to List View'">
-          <svg v-if="viewMode === 'list'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-            <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h2.25a3 3 0 013 3v2.25a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9.75 0a3 3 0 013-3H18a3 3 0 013 3v2.25a3 3 0 01-3 3h-2.25a3 3 0 01-3-3V6zM3 15.75a3 3 0 013-3h2.25a3 3 0 013 3V18A2.25 2.25 0 018.25 20H6A2.25 2.25 0 013.75 17.75v-2.25zm9.75 0a3 3 0 013-3H18a3 3 0 013 3V18A2.25 2.25 0 0118.25 20h-2.25A2.25 2.25 0 0113.75 17.75v-2.25z" clip-rule="evenodd" />
-          </svg>
-          <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-            <path fill-rule="evenodd" d="M2.625 6.75a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0A.75.75 0 018.25 6h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75zM2.625 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zM7.5 12a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12A.75.75 0 017.5 12zm-4.875 5.25a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
-          </svg>
-        </button>
-        <button class="refresh-btn" @click="handleRefresh" :disabled="loading">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-            <path fill-rule="evenodd" d="M4.755 10.059a7.5 7.5 0 0112.548-3.364l1.903 1.903h-3.183a.75.75 0 100 1.5h4.992a.75.75 0 00.75-.75V4.356a.75.75 0 00-1.5 0v3.18l-1.9-1.9A9 9 0 003.306 9.67a.75.75 0 101.45.388zm15.408 3.352a.75.75 0 00-.919.53 7.5 7.5 0 01-12.548 3.364l-1.902-1.903h3.183a.75.75 0 000-1.5H2.984a.75.75 0 00-.75.75v4.992a.75.75 0 001.5 0v-3.18l1.9 1.9a9 9 0 0015.059-4.035.75.75 0 00-.53-.918z" clip-rule="evenodd" />
-          </svg>
+          {{ range.label }}
         </button>
       </div>
     </div>
 
-    <!-- Loading State -->
+    <!-- Modern Loading State -->
     <div v-if="loading" class="loading-state">
       <div class="loading-spinner"></div>
       <p>Loading top tracks...</p>
     </div>
 
-    <!-- Tracks List/Grid -->
-    <div v-else-if="topTracks.length > 0" :class="['tracks-container', { 'grid-view': viewMode === 'grid' }]">
-      <MobileTrackItem
-        v-for="track in topTracks.slice(0, viewMode === 'grid' ? 12 : 10)"
-        :key="track.id"
-        :track="track"
-        section-name="topTracks"
-        :parent-id="selectedTimeRange === 1 ? 'short_term' : selectedTimeRange === 2 ? 'medium_term' : 'long_term'"
-        @click="handleTrackClick"
-      />
-    </div>
-
-    <!-- Empty State -->
-    <div v-else class="empty-state">
-      <div class="empty-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M11.584 2.376a.75.75 0 01.832 0l9 6a.75.75 0 11-.832 1.248L12 3.901 3.416 9.624a.75.75 0 01-.832-1.248l9-6z" />
-          <path d="M20.25 11.25v5.533c0 1.036-.84 1.875-1.875 1.875H5.625A1.875 1.875 0 013.75 16.783V11.25H2.25a.75.75 0 010-1.5h1.5V6.75c0-1.036.84-1.875 1.875-1.875h.75a.75.75 0 010 1.5h-.75a.375.375 0 00-.375.375v3.375h1.5a.75.75 0 010 1.5H3.75v5.533a.375.375 0 00.375.375h12.75a.375.375 0 00.375-.375V11.25h1.5a.75.75 0 010-1.5h-1.5V6.75a.375.375 0 00-.375-.375h-.75a.75.75 0 010-1.5h.75c1.036 0 1.875.84 1.875 1.875v3.375h1.5a.75.75 0 010 1.5z" />
-        </svg>
+    <!-- Modern Content -->
+    <div v-else class="section-content">
+      <div v-if="topTracks.length === 0" class="empty-state">
+        <div class="empty-icon">🎵</div>
+        <h3>No tracks found</h3>
+        <p>Your top tracks will appear here</p>
       </div>
-      <h4>No top tracks available</h4>
-      <p>Try refreshing or check your connection</p>
+      
+      <div v-else :class="['tracks-container', viewMode]">
+        <MobileTrackItem
+          v-for="(track, index) in topTracks"
+          :key="track.id"
+          :track="track"
+          :section-name="'topTracks'"
+          @click="handleTrackClick"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
 .mobile-top-tracks {
-  width: 100%;
+  padding: 24px;
 }
 
+/* Modern Header */
 .section-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
-.section-icon {
-  width: 32px;
-  height: 32px;
-  background: rgba(102, 126, 234, 0.1);
-  border-radius: 8px;
+.header-content {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
 }
 
-.section-icon svg {
-  width: 20px;
-  height: 20px;
-  color: #667eea;
+.header-text {
+  flex: 1;
 }
 
 .section-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #ffffff;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--title-color);
+  margin: 0 0 4px 0;
+}
+
+.section-subtitle {
+  font-size: 14px;
+  color: var(--search-color);
   margin: 0;
+  opacity: 0.8;
 }
 
-.time-range-selector {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.range-buttons {
+.header-actions {
   display: flex;
   gap: 8px;
-  flex: 1;
 }
 
-.action-buttons {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.range-btn {
-  background: rgba(255, 255, 255, 0.1);
-  color: #a0a0a0;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  flex: 1;
-}
-
-.range-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
-}
-
-.range-btn.active {
-  background: rgba(102, 126, 234, 0.2);
-  color: #667eea;
-  border-color: rgba(102, 126, 234, 0.4);
-}
-
-.refresh-btn {
-  background: rgba(255, 255, 255, 0.1);
-  color: #a0a0a0;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  padding: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.refresh-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
-}
-
-.refresh-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.refresh-btn svg {
-  width: 16px;
-  height: 16px;
-}
-
+.refresh-btn,
 .view-toggle-btn {
-  background: rgba(255, 255, 255, 0.1);
-  color: #a0a0a0;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.05);
+  border: none;
+  color: var(--title-color);
   padding: 8px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 36px;
+  height: 36px;
 }
 
+.refresh-btn:hover,
 .view-toggle-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
+  background: rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
+.refresh-btn svg,
 .view-toggle-btn svg {
   width: 16px;
   height: 16px;
 }
 
-.tracks-container {
+/* Modern Time Range Selector */
+.time-range-selector {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 4px;
+  border-radius: 12px;
 }
 
-.tracks-container.grid-view {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
+.time-range-btn {
+  background: none;
+  border: none;
+  color: var(--search-color);
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  font-weight: 500;
+  flex: 1;
 }
 
+.time-range-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.time-range-btn.active {
+  background: var(--active-tab);
+  color: white;
+  box-shadow: 0 2px 8px rgba(240, 55, 165, 0.3);
+}
+
+/* Modern Loading State */
 .loading-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px;
+  padding: 60px 20px;
   text-align: center;
 }
 
 .loading-spinner {
-  width: 32px;
-  height: 32px;
-  border: 3px solid rgba(255, 255, 255, 0.1);
-  border-top: 3px solid #667eea;
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-top: 3px solid var(--active-tab);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 16px;
@@ -345,9 +293,15 @@ onMounted(async () => {
 }
 
 .loading-state p {
-  font-size: 14px;
-  color: #a0a0a0;
+  font-size: 16px;
+  color: var(--search-color);
   margin: 0;
+  opacity: 0.8;
+}
+
+/* Modern Content */
+.section-content {
+  min-height: 200px;
 }
 
 .empty-state {
@@ -355,58 +309,186 @@ onMounted(async () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px;
+  padding: 60px 20px;
   text-align: center;
 }
 
 .empty-icon {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto 16px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.6;
 }
 
-.empty-icon svg {
-  width: 32px;
-  height: 32px;
-  color: #a0a0a0;
-}
-
-.empty-state h4 {
+.empty-state h3 {
   font-size: 18px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--title-color);
   margin: 0 0 8px 0;
 }
 
 .empty-state p {
   font-size: 14px;
-  color: #a0a0a0;
+  color: var(--search-color);
   margin: 0;
+  opacity: 0.8;
+}
+
+/* Tracks Container */
+.tracks-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tracks-container.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
 }
 
 /* Responsive Design */
 @media (max-width: 480px) {
+  .mobile-top-tracks {
+    padding: 20px 16px;
+  }
+
   .section-title {
-    font-size: 18px;
+    font-size: 20px;
   }
 
-  .range-btn {
-    font-size: 11px;
-    padding: 6px 8px;
+  .section-subtitle {
+    font-size: 13px;
   }
 
-  .tracks-container {
-    gap: 10px;
+  .header-actions {
+    gap: 6px;
   }
 
-  .tracks-container.grid-view {
+  .refresh-btn,
+  .view-toggle-btn {
+    width: 32px;
+    height: 32px;
+    padding: 6px;
+  }
+
+  .refresh-btn svg,
+  .view-toggle-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .time-range-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  .loading-state,
+  .empty-state {
+    padding: 40px 16px;
+  }
+
+  .loading-spinner {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 12px;
+  }
+
+  .loading-state p {
+    font-size: 14px;
+  }
+
+  .empty-icon {
+    font-size: 40px;
+    margin-bottom: 12px;
+  }
+
+  .empty-state h3 {
+    font-size: 16px;
+  }
+
+  .empty-state p {
+    font-size: 13px;
+  }
+
+  .tracks-container.grid {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 8px;
   }
 }
+
+/* Dark theme support */
+:root.dark .refresh-btn,
+:root.dark .view-toggle-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--title-color);
+}
+
+:root.dark .refresh-btn:hover,
+:root.dark .view-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+:root.dark .time-range-selector {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.dark .time-range-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.dark .loading-spinner {
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid var(--active-tab);
+}
+
+/* Dark-blue theme support */
+:root.dark-blue .refresh-btn,
+:root.dark-blue .view-toggle-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--title-color);
+}
+
+:root.dark-blue .refresh-btn:hover,
+:root.dark-blue .view-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+:root.dark-blue .time-range-selector {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.dark-blue .time-range-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.dark-blue .loading-spinner {
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid var(--active-tab);
+}
+
+/* DQ theme support */
+:root.dq .refresh-btn,
+:root.dq .view-toggle-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--title-color);
+}
+
+:root.dq .refresh-btn:hover,
+:root.dq .view-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+:root.dq .time-range-selector {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.dq .time-range-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.dq .loading-spinner {
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid var(--active-tab);
+}
 </style>
+

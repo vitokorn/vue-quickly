@@ -53,7 +53,7 @@ onMounted(() => {
 
 <template>
   <div class="home-page">
-    <!-- Search Bar -->
+    <!-- Modern Search Bar -->
     <div class="search-container">
       <div class="search-bar">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="search-icon">
@@ -69,13 +69,13 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- Loading State -->
+    <!-- Modern Loading State -->
     <div v-if="loading" class="loading-state">
       <div class="loading-spinner"></div>
       <p>Loading your music...</p>
     </div>
 
-    <!-- Content Sections -->
+    <!-- Modern Content Sections -->
     <div v-else class="home-sections">
       <!-- Top Tracks Section -->
       <div class="home-section">
@@ -108,60 +108,59 @@ onMounted(() => {
 
 <style scoped>
 .home-page {
-  width: 100%;
+  padding: 0;
   max-width: 100%;
-  overflow: hidden;
-  padding: 20px;
-  box-sizing: border-box;
 }
 
-/* Search Bar Styles */
+/* Modern Search Container */
 .search-container {
-  width: 100%;
-  box-sizing: border-box;
   margin-bottom: 24px;
 }
 
 .search-bar {
   position: relative;
-  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  padding: 16px 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.search-bar:focus-within {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
 }
 
 .search-icon {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
   width: 20px;
   height: 20px;
-  color: #a0a0a0;
-  z-index: 1;
+  color: var(--search-color);
+  opacity: 0.6;
+  flex-shrink: 0;
 }
 
 .search-input {
-  width: 100%;
-  height: 48px;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 24px;
-  padding: 0 16px 0 48px;
-  color: #ffffff;
+  flex: 1;
+  border: none;
+  background: none;
+  color: var(--title-color);
   font-size: 16px;
+  font-weight: 500;
   outline: none;
-  transition: all 0.3s ease;
-  box-sizing: border-box;
+  min-width: 0;
 }
 
 .search-input::placeholder {
-  color: #a0a0a0;
+  color: var(--search-color);
+  opacity: 0.6;
 }
 
-.search-input:focus {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.4);
-}
-
-/* Loading State */
+/* Modern Loading State */
 .loading-state {
   display: flex;
   flex-direction: column;
@@ -174,8 +173,8 @@ onMounted(() => {
 .loading-spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid rgba(255, 255, 255, 0.1);
-  border-top: 3px solid #667eea;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-top: 3px solid var(--active-tab);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 16px;
@@ -188,40 +187,42 @@ onMounted(() => {
 
 .loading-state p {
   font-size: 16px;
-  color: #a0a0a0;
+  color: var(--search-color);
   margin: 0;
+  opacity: 0.8;
 }
 
-/* Home Sections */
+/* Modern Home Sections */
 .home-sections {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 24px;
 }
 
 .home-section {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
-  padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.home-section:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
 /* Responsive Design */
 @media (max-width: 480px) {
-  .home-page {
-    padding: 16px;
+  .search-bar {
+    padding: 14px 16px;
+    border-radius: 12px;
   }
 
-  .search-container {
-    margin-bottom: 20px;
-  }
-
-  .home-sections {
-    gap: 24px;
-  }
-
-  .home-section {
-    padding: 16px;
+  .search-input {
+    font-size: 14px;
   }
 
   .loading-state {
@@ -231,10 +232,87 @@ onMounted(() => {
   .loading-spinner {
     width: 32px;
     height: 32px;
+    margin-bottom: 12px;
   }
 
   .loading-state p {
     font-size: 14px;
   }
+
+  .home-sections {
+    gap: 20px;
+  }
+}
+
+/* Dark theme support */
+:root.dark .search-bar {
+  background: rgba(42, 46, 47, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+:root.dark .search-bar:focus-within {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+:root.dark .loading-spinner {
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid var(--active-tab);
+}
+
+:root.dark .home-section {
+  background: rgba(42, 46, 47, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+:root.dark .home-section:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Dark-blue theme support */
+:root.dark-blue .search-bar {
+  background: rgba(30, 41, 59, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+:root.dark-blue .search-bar:focus-within {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+:root.dark-blue .loading-spinner {
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid var(--active-tab);
+}
+
+:root.dark-blue .home-section {
+  background: rgba(30, 41, 59, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+:root.dark-blue .home-section:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* DQ theme support */
+:root.dq .search-bar {
+  background: rgba(28, 26, 45, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+:root.dq .search-bar:focus-within {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+:root.dq .loading-spinner {
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid var(--active-tab);
+}
+
+:root.dq .home-section {
+  background: rgba(28, 26, 45, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+:root.dq .home-section:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
 }
 </style>
