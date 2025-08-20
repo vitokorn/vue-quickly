@@ -39,6 +39,7 @@ const searchTerm = ref('')
 const viewMode = ref('grid') // 'list' or 'grid'
 const currentPage = ref(1)
 const showPagination = ref(false)
+const loading = ref(false)
 
 const filteredReleases = computed(() => {
   if (!searchTerm.value) {
@@ -190,17 +191,29 @@ const formatReleaseDate = (dateString) => {
 
 <template>
   <div class="mobile-release-selector">
-    <!-- Header -->
-    <div class="selector-header">
-      <div class="header-content">
-        <h3>{{ title }}</h3>
-        <p v-if="releases.length > 0">{{ releases.length }} releases available</p>
-      </div>
-      <button class="refresh-button" @click="handleRefresh" title="Refresh releases">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="refresh-icon">
-          <path fill-rule="evenodd" d="M4.755 10.059a7.5 7.5 0 0112.548-3.364l1.903 1.903h-3.183a.75.75 0 100 1.5h4.992a.75.75 0 00.75-.75V4.356a.75.75 0 00-1.5 0v3.18l-1.9-1.9A9 9 0 003.306 9.67a.75.75 0 101.45.388zm15.408 3.352a.75.75 0 00-.919.53 7.5 7.5 0 01-12.548 3.364l-1.902-1.903h3.183a.75.75 0 000-1.5H2.984a.75.75 0 00-.75.75v4.992a.75.75 0 001.5 0v-3.18l1.9 1.9a9 9 0 0015.059-4.035.75.75 0 00-.53-.918z" clip-rule="evenodd" />
+    <!-- Section Header -->
+    <div class="section-header">
+      <div class="section-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clip-rule="evenodd" />
         </svg>
-      </button>
+      </div>
+      <h3 class="section-title">{{ title }}</h3>
+      <div class="action-buttons">
+        <button class="view-toggle-btn" @click="toggleViewMode" :title="viewMode === 'list' ? 'Switch to Grid View' : 'Switch to List View'">
+          <svg v-if="viewMode === 'list'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h2.25a3 3 0 013 3v2.25a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9.75 0a3 3 0 013-3H18a3 3 0 013 3v2.25a3 3 0 01-3 3h-2.25a3 3 0 01-3-3V6zM3 15.75a3 3 0 013-3h2.25a3 3 0 013 3V18A2.25 2.25 0 018.25 20H6A2.25 2.25 0 013.75 17.75v-2.25zm9.75 0a3 3 0 013-3H18a3 3 0 013 3V18A2.25 2.25 0 0118.25 20h-2.25A2.25 2.25 0 0113.75 17.75v-2.25z" clip-rule="evenodd" />
+          </svg>
+          <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M2.625 6.75a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0A.75.75 0 018.25 6h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75zM2.625 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zM7.5 12a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12A.75.75 0 017.5 12zm-4.875 5.25a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
+          </svg>
+        </button>
+        <button class="refresh-btn" @click="handleRefresh" :disabled="loading" title="Refresh releases">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M4.755 10.059a7.5 7.5 0 0112.548-3.364l1.903 1.903h-3.183a.75.75 0 100 1.5h4.992a.75.75 0 00.75-.75V4.356a.75.75 0 00-1.5 0v3.18l-1.9-1.9A9 9 0 003.306 9.67a.75.75 0 101.45.388zm15.408 3.352a.75.75 0 00-.919.53 7.5 7.5 0 01-12.548 3.364l-1.902-1.903h3.183a.75.75 0 000-1.5H2.984a.75.75 0 00-.75.75v4.992a.75.75 0 001.5 0v-3.18l1.9 1.9a9 9 0 0015.059-4.035.75.75 0 00-.53-.918z" clip-rule="evenodd" />
+          </svg>
+        </button>
+      </div>
     </div>
 
     <!-- Search and View Controls -->
@@ -230,29 +243,7 @@ const formatReleaseDate = (dateString) => {
         </div>
       </div>
 
-      <!-- View Mode Toggle -->
-      <div class="view-toggle">
-        <button
-          @click="toggleViewMode"
-          class="view-toggle-button"
-          :class="{ 'active': viewMode === 'list' }"
-          type="button"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="view-icon">
-            <path fill-rule="evenodd" d="M2.625 6.75a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0A.75.75 0 018.25 6h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75zM2.625 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zM7.5 12a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12A.75.75 0 017.5 12zm-4.875 5.25a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
-          </svg>
-        </button>
-        <button
-          @click="toggleViewMode"
-          class="view-toggle-button"
-          :class="{ 'active': viewMode === 'grid' }"
-          type="button"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="view-icon">
-            <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h2.25a3 3 0 013 3v2.25a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9.75 0a3 3 0 013-3H18a3 3 0 013 3v2.25a3 3 0 01-3 3h-2.25a3 3 0 01-3-3V6zM3 15.75a3 3 0 013-3h2.25a3 3 0 013 3V18a3 3 0 01-3 3H6a3 3 0 01-3-3v-2.25zm9.75 0a3 3 0 013-3H18a3 3 0 013 3V18a3 3 0 01-3 3h-2.25a3 3 0 01-3-3v-2.25z" clip-rule="evenodd" />
-          </svg>
-        </button>
-      </div>
+
     </div>
 
     <!-- Releases Container -->
@@ -479,34 +470,46 @@ const formatReleaseDate = (dateString) => {
   box-sizing: border-box;
 }
 
-.selector-header {
-  margin-bottom: 24px;
+.section-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
-.header-content {
-  flex: 1;
-  text-align: left;
+.section-icon {
+  width: 32px;
+  height: 32px;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.selector-header h3 {
+.section-icon svg {
+  width: 20px;
+  height: 20px;
+  color: #667eea;
+}
+
+.section-title {
   font-size: 20px;
   font-weight: 600;
   color: #ffffff;
-  margin: 0 0 8px 0;
-}
-
-.selector-header p {
-  font-size: 14px;
-  color: #a0a0a0;
   margin: 0;
+  flex: 1;
 }
 
-.refresh-button {
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.view-toggle-btn {
   background: rgba(255, 255, 255, 0.1);
+  color: #a0a0a0;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
   padding: 8px;
@@ -515,24 +518,44 @@ const formatReleaseDate = (dateString) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
 }
 
-.refresh-button:hover {
+.view-toggle-btn:hover {
   background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: translateY(-1px);
-}
-
-.refresh-icon {
-  width: 20px;
-  height: 20px;
-  color: #a0a0a0;
-  transition: color 0.3s ease;
-}
-
-.refresh-button:hover .refresh-icon {
   color: #ffffff;
+}
+
+.view-toggle-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.refresh-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #a0a0a0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.refresh-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+.refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.refresh-btn svg {
+  width: 16px;
+  height: 16px;
 }
 
 .controls-container {
@@ -546,43 +569,7 @@ const formatReleaseDate = (dateString) => {
   flex: 1;
 }
 
-.view-toggle {
-  display: flex;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  padding: 4px;
-  gap: 4px;
-}
 
-.view-toggle-button {
-  background: none;
-  border: none;
-  padding: 8px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.view-toggle-button:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.view-toggle-button.active {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.view-icon {
-  width: 18px;
-  height: 18px;
-  color: #a0a0a0;
-}
-
-.view-toggle-button.active .view-icon {
-  color: #ffffff;
-}
 
 .search-bar {
   position: relative;
@@ -1125,4 +1112,598 @@ const formatReleaseDate = (dateString) => {
   font-weight: 600;
   color: #ffffff;
 }
+
+:root.metro .mobile-release-selector {
+  font-family: 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
+}
+
+:root.metro .section-header {
+  padding: 16px 20px 8px 20px;
+}
+
+:root.metro .section-title {
+  color: white;
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 24px;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+:root.metro .section-icon {
+  background: transparent;
+  border-radius: 0;
+  width: 24px;
+  height: 24px;
+}
+
+:root.metro .section-icon svg {
+  color: rgba(255, 255, 255, 0.8);
+  width: 18px;
+  height: 18px;
+}
+
+/* Controls */
+:root.metro .controls-container { padding: 0 20px; }
+
+:root.metro .view-toggle-btn,
+:root.metro .refresh-btn {
+  background: transparent;
+  color: #cccccc;
+  border: none;
+  border-radius: 0;
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+}
+
+:root.metro .view-toggle-btn:hover,
+:root.metro .refresh-btn:hover { 
+  background: rgba(255, 255, 255, 0.1); 
+  transform: none; 
+  border-color: transparent; 
+}
+
+:root.metro .view-toggle-btn svg,
+:root.metro .refresh-btn svg { 
+  width: 16px; 
+  height: 16px; 
+  color: rgba(255,255,255,0.8); 
+}
+
+:root.metro .release-item {
+  background: #1f1f1f;
+  border: none;
+  border-radius: 0;
+  padding: 16px 20px;
+  margin: 0 20px 8px 20px;
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+}
+
+:root.metro .release-item:hover {
+  background: #2d2d2d;
+  border-left-color: #0078d4;
+}
+
+:root.metro .release-item.selected {
+  background: #2d2d2d;
+  border-left-color: #0078d4;
+}
+
+:root.metro .release-cover {
+  background: #333333;
+  border: none;
+  border-radius: 0;
+  width: 60px;
+  height: 60px;
+}
+
+:root.metro .release-placeholder {
+  background: #333333;
+}
+
+:root.metro .release-placeholder svg {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 24px;
+}
+
+:root.metro .release-name {
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+:root.metro .release-artists {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .release-type {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+:root.metro .arrow-icon {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 16px;
+}
+
+:root.metro .release-item:hover .arrow-icon {
+  color: white;
+}
+
+:root.metro .grid-item {
+  background: #1f1f1f;
+  border: none;
+  border-radius: 0;
+  padding: 12px;
+  margin: 0;
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+}
+
+:root.metro .grid-item:hover {
+  background: #2d2d2d;
+  border-left-color: #0078d4;
+}
+
+:root.metro .grid-cover {
+  background: #333333;
+  border: none;
+  border-radius: 0;
+}
+
+:root.metro .grid-overlay {
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 0;
+}
+
+:root.metro .release-type-badge {
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  text-transform: none;
+}
+
+:root.metro .grid-name {
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .grid-artists {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+:root.metro .loading-spinner {
+  border: 3px solid #333333;
+  border-top: 3px solid #0078d4;
+}
+
+:root.metro .loading-state p {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+:root.metro .empty-state h4 {
+  color: white;
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 20px;
+}
+
+:root.metro .empty-state p {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .empty-icon {
+  background: #333333;
+  border-radius: 0;
+}
+
+:root.metro .empty-icon svg {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 32px;
+}
+
+:root.metro .pagination-container {
+  background: #1f1f1f;
+  border: none;
+  border-radius: 0;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 16px 20px;
+}
+
+:root.metro .pagination-button {
+  background: #1f1f1f;
+  color: white;
+  border: none;
+  border-radius: 0;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 80px;
+}
+
+:root.metro .pagination-button:hover:not(:disabled) {
+  background: #2d2d2d;
+  color: white;
+}
+
+:root.metro .pagination-button:disabled {
+  background: #333333;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: not-allowed;
+}
+
+:root.metro .pagination-button.active {
+  background: #0078d4;
+  color: white;
+  box-shadow: none;
+}
+
+:root.metro .pagination-info {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .show-more-item {
+  background: #2d2d2d !important;
+  border: none !important;
+  border-left: 4px solid #0078d4 !important;
+}
+
+:root.metro .show-more-item:hover {
+  background: #333333 !important;
+  transform: none;
+}
+
+:root.metro .show-more-cover {
+  background: #0078d4;
+  border-radius: 0;
+}
+
+:root.metro .show-more-text {
+  color: #0078d4 !important;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+:root.metro .show-more-subtext {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .show-more-grid-cover {
+  background: #0078d4;
+  border-radius: 0;
+}
+
+:root.metro .show-more-grid-text {
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* Material Design 3 theme support */
+:root.material .mobile-release-selector {
+  background: #fafafa;
+}
+
+:root.material .selector-header h3 {
+  color: #1d1b20;
+  font-weight: 600;
+}
+
+:root.material .selector-header p { color: #49454f; }
+
+:root.material .refresh-button {
+  background: transparent;
+  border: none;
+  border-radius: 20px;
+  width: 40px;
+  height: 40px;
+}
+
+:root.material .refresh-button:hover { background: rgba(103, 80, 164, 0.08); }
+
+:root.material .refresh-icon { color: #1d1b20; }
+
+:root.material .view-toggle { background: transparent; padding: 0; gap: 8px; }
+
+:root.material .view-toggle-button {
+  border-radius: 20px;
+  width: 40px;
+  height: 40px;
+}
+
+:root.material .view-toggle-button:hover { background: rgba(103, 80, 164, 0.08); }
+
+:root.material .view-toggle-button.active { background: rgba(103, 80, 164, 0.12); }
+
+:root.material .view-icon { color: #1d1b20; }
+
+:root.material .search-input {
+  background: #e7e0ec;
+  border: none;
+  border-radius: 28px;
+  color: #1d1b20;
+}
+
+:root.material .search-input::placeholder { color: #49454f; }
+
+:root.material .search-input:focus {
+  outline: 2px solid #6750a4;
+  background: #ece6f0;
+}
+
+:root.material .clear-button:hover { background: rgba(103, 80, 164, 0.08); }
+
+:root.material .clear-icon { color: #49454f; }
+
+:root.material .release-item {
+  background: #ffffff;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.06);
+}
+
+:root.material .release-item:hover { background: #f6f2fa; }
+
+:root.material .release-item.selected { background: #eaddff; }
+
+:root.material .release-item.playing { background: #f3edf7; }
+
+:root.material .release-cover { background: #e7e0ec; border-radius: 12px; }
+
+:root.material .release-name { color: #1d1b20; font-weight: 600; }
+
+:root.material .release-details { color: #49454f; }
+
+:root.material .type-icon { color: #6750a4; }
+
+:root.material .type-text { color: #49454f; text-transform: none; }
+
+:root.material .grid-cover { border-radius: 12px; }
+
+:root.material .grid-overlay {
+  background: rgba(231, 224, 236, 0.9);
+  border-radius: 8px;
+}
+
+:root.material .release-type-badge { color: #49454f; font-weight: 600; }
+
+:root.material .grid-name { color: #1d1b20; font-weight: 600; }
+
+:root.material .grid-details { color: #49454f; }
+
+:root.material .three-dots-button { border-radius: 20px; }
+
+:root.material .three-dots-button:hover { background: rgba(103, 80, 164, 0.08); }
+
+:root.material .three-dots-icon { color: #1d1b20; }
+
+:root.material .grid-three-dots-button {
+  background: rgba(0,0,0,0.6);
+  border-radius: 12px;
+}
+
+:root.material .grid-three-dots-button:hover { background: rgba(0,0,0,0.7); }
+
+:root.material .arrow-icon { color: #49454f; }
+
+:root.material .release-item:hover .arrow-icon { color: #1d1b20; }
+
+:root.material .pagination-container { background: transparent; padding: 16px 20px; }
+
+:root.material .pagination-button {
+  background: #eaddff;
+  color: #21005d;
+  border: none;
+  border-radius: 20px;
+}
+
+:root.material .pagination-button:hover { background: #d0bcff; }
+
+:root.material .pagination-button:disabled {
+  background: #e6e0e9;
+  color: #79747e;
+}
+
+:root.material .pagination-info { color: #49454f; }
+
+:root.material .show-more-item { background: #f3edf7 !important; border: none !important; }
+
+:root.material .show-more-cover { background: #6750a4; border-radius: 12px; }
+
+:root.material .show-more-text { color: #6750a4 !important; font-weight: 600; }
+
+:root.material .show-more-subtext { color: #49454f !important; }
+
+/* Windows Aero theme text color adjustments */
+:root.aero .selector-header h3 { color: #ffffff; }
+:root.aero .selector-header p { color: rgba(255, 255, 255, 0.85); }
+
+:root.aero .release-name,
+:root.aero .grid-name { color: #ffffff; }
+
+:root.aero .release-details,
+:root.aero .grid-details,
+:root.aero .type-text,
+:root.aero .pagination-info { color: rgba(255, 255, 255, 0.85); }
+
+:root.aero .three-dots-icon,
+:root.aero .arrow-icon,
+:root.aero .search-icon,
+:root.aero .clear-icon,
+:root.aero .view-icon { color: rgba(255, 255, 255, 0.85); }
+
+/* Cupertino liquid glass theme */
+:root.cupertino .mobile-release-selector {
+  background: linear-gradient(135deg, #e8f0ff 0%, #f8f9fb 40%, #ffe9f3 100%);
+}
+
+:root.cupertino .section-header {
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(30px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 10px 30px rgba(31, 38, 135, 0.12);
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+
+:root.cupertino .section-title {
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 600;
+}
+
+:root.cupertino .section-icon {
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+}
+
+:root.cupertino .section-icon svg {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .view-toggle-btn,
+:root.cupertino .refresh-btn {
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+}
+
+:root.cupertino .view-toggle-btn:hover,
+:root.cupertino .refresh-btn:hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.8);
+  transform: none;
+}
+
+:root.cupertino .view-toggle-btn svg,
+:root.cupertino .refresh-btn svg { 
+  color: rgba(0, 0, 0, 0.6); 
+}
+
+:root.cupertino .controls-container { gap: 12px; }
+
+:root.cupertino .search-bar .search-icon { color: rgba(0, 0, 0, 0.6); }
+
+:root.cupertino .search-input {
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 24px;
+  color: rgba(0, 0, 0, 0.8);
+  box-shadow: 0 4px 16px rgba(31, 38, 135, 0.12);
+}
+
+:root.cupertino .search-input::placeholder { color: rgba(0, 0, 0, 0.5); }
+
+:root.cupertino .search-input:focus {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 8px 24px rgba(31, 38, 135, 0.16);
+}
+
+:root.cupertino .clear-button:hover { background: rgba(255, 255, 255, 0.6); }
+:root.cupertino .clear-icon { color: rgba(0, 0, 0, 0.6); }
+
+:root.cupertino .release-item {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(31, 38, 135, 0.12);
+}
+
+:root.cupertino .release-item:hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 12px 32px rgba(31, 38, 135, 0.16);
+}
+
+:root.cupertino .release-item.selected { background: rgba(255, 255, 255, 0.75); }
+
+:root.cupertino .release-cover { background: rgba(255, 255, 255, 0.55); border: 1px solid rgba(255,255,255,0.7); }
+
+:root.cupertino .release-name,
+:root.cupertino .grid-name { color: rgba(0, 0, 0, 0.8); font-weight: 600; }
+
+:root.cupertino .release-details,
+:root.cupertino .grid-details { color: rgba(0, 0, 0, 0.6); }
+
+:root.cupertino .type-icon { color: #2e7d32; }
+:root.cupertino .type-text { color: rgba(0, 0, 0, 0.6); text-transform: none; }
+
+:root.cupertino .three-dots-button { border-radius: 12px; }
+:root.cupertino .three-dots-button:hover { background: rgba(255, 255, 255, 0.6); }
+:root.cupertino .three-dots-icon { color: rgba(0, 0, 0, 0.6); }
+
+:root.cupertino .grid-cover { border-radius: 12px; }
+:root.cupertino .grid-overlay { background: rgba(255, 255, 255, 0.8); border-radius: 8px; }
+
+:root.cupertino .releases-container.grid .pagination-container {
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(31, 38, 135, 0.12);
+}
+
+:root.cupertino .pagination-button {
+  background: rgba(255, 255, 255, 0.45);
+  color: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+}
+
+:root.cupertino .pagination-button:hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+:root.cupertino .pagination-button:disabled {
+  background: rgba(255, 255, 255, 0.3);
+  color: rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+:root.cupertino .pagination-info { color: rgba(0, 0, 0, 0.6); }
+
+:root.cupertino .empty-search h4,
+:root.cupertino .empty-state h4 { color: rgba(0, 0, 0, 0.8); font-weight: 600; }
+
+:root.cupertino .empty-search p,
+:root.cupertino .empty-state p { color: rgba(0, 0, 0, 0.6); }
+
+:root.cupertino .empty-icon { color: rgba(0, 0, 0, 0.4); }
 </style>

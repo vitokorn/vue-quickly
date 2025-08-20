@@ -59,7 +59,7 @@ const handleTrackClick = async () => {
     // For regular tracks, add to queue and get track details
     queueStore.addToQueue(props.track)
     deeperStore.getTrackDetails(props.track, props.sectionName, props.parentId)
-    
+
     // Also play audio preview if available
     const previewUrl = props.track.preview_url || props.track.previewUrl
     if (previewUrl) {
@@ -84,14 +84,14 @@ const handleAddToQueue = (event) => {
 
 const handleDeeperTrack = async (event) => {
   event.stopPropagation()
-  
+
   // Add track data to deeper store
   const trackData = {
     ...props.track,
     type: 'track',
     parentKey: props.sectionName
   }
-  
+
   // Add to appropriate section based on context
   let sectionName = 'topTracks'
   if (props.sectionName === 'yourPlaylists' || props.sectionName === 'spotifyPlaylists') {
@@ -101,13 +101,13 @@ const handleDeeperTrack = async (event) => {
   } else if (props.sectionName === 'newReleases') {
     sectionName = 'albumTracks'
   }
-  
+
   deeperStore.addToSection(sectionName, trackData)
   deeperStore.setCurrentSection(sectionName)
-  
+
   // Show the MobileDeeperTracks component with a small delay to ensure proper rendering
   const trackKey = `track_${props.track.id}__p:${props.sectionName}__`
-  
+
   // Use setTimeout to ensure the component is shown after the current event cycle
   setTimeout(() => {
     visibilityManager.showComponent(trackKey)
@@ -595,5 +595,292 @@ const isInQueue = () => {
 
 :root.dq .remove-btn:hover {
   background: rgba(255, 71, 87, 0.3);
+}
+
+:root.aero .mobile-track-item {
+  background: rgba(43, 87, 154, 0.9);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+:root.aero .mobile-track-item:hover {
+  background: rgba(43, 87, 154, 0.95);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+:root.aero .track-cover {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+:root.aero .no-image {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+:root.aero .deeper-btn,
+:root.aero .queue-btn,
+:root.aero .remove-btn {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+:root.aero .deeper-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+:root.aero .queue-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+:root.aero .queue-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+:root.aero .queue-btn.in-queue {
+  background: rgba(76, 175, 80, 0.3);
+  color: #4caf50;
+}
+
+:root.aero .queue-btn.in-queue:hover {
+  background: rgba(76, 175, 80, 0.4);
+}
+
+:root.aero .remove-btn {
+  background: rgba(255, 71, 87, 0.3);
+  color: #ff4757;
+}
+
+:root.aero .remove-btn:hover {
+  background: rgba(255, 71, 87, 0.4);
+}
+
+:root.cupertino .mobile-track-item {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 8px 24px rgba(31, 38, 135, 0.12);
+}
+
+:root.cupertino .mobile-track-item:hover {
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 12px 32px rgba(31, 38, 135, 0.16);
+  border-color: rgba(255, 255, 255, 0.75);
+}
+
+:root.cupertino .track-cover {
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+}
+
+:root.cupertino .no-image {
+  background: rgba(255, 255, 255, 0.55);
+}
+
+:root.cupertino .deeper-btn,
+:root.cupertino .queue-btn,
+:root.cupertino .remove-btn {
+  background: rgba(255, 255, 255, 0.45);
+  color: var(--title-color);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+:root.cupertino .deeper-btn:hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+:root.cupertino .queue-btn {
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--title-color);
+}
+
+:root.cupertino .queue-btn:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+:root.cupertino .queue-btn.in-queue {
+  background: rgba(76, 175, 80, 0.15);
+  color: #2e7d32;
+}
+
+:root.cupertino .queue-btn.in-queue:hover {
+  background: rgba(76, 175, 80, 0.25);
+}
+
+:root.cupertino .remove-btn {
+  background: rgba(255, 71, 87, 0.12);
+  color: #b71c1c;
+}
+
+:root.cupertino .remove-btn:hover {
+  background: rgba(255, 71, 87, 0.2);
+}
+
+:root.metro .mobile-track-item {
+  background: #1f1f1f;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 16px 20px;
+  margin-bottom: 8px;
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+}
+
+:root.metro .mobile-track-item:hover {
+  background: #2d2d2d;
+  box-shadow: none;
+  border-left-color: #0078d4;
+}
+
+:root.metro .track-cover {
+  background: #333333;
+  border: none;
+  border-radius: 0;
+  width: 60px;
+  height: 60px;
+}
+
+:root.metro .no-image {
+  background: #333333;
+}
+
+:root.metro .no-image-icon {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 24px;
+}
+
+:root.metro .track-name {
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+:root.metro .track-artists {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .deeper-btn,
+:root.metro .queue-btn,
+:root.metro .remove-btn {
+  background: transparent;
+  color: #cccccc;
+  border: none;
+  border-radius: 0;
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+}
+
+:root.metro .deeper-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.metro .queue-btn {
+  background: transparent;
+  color: #cccccc;
+}
+
+:root.metro .queue-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.metro .queue-btn.in-queue {
+  background: #0078d4;
+  color: white;
+}
+
+:root.metro .queue-btn.in-queue:hover {
+  background: #106ebe;
+}
+
+:root.metro .remove-btn {
+  background: transparent;
+  color: #ff4757;
+}
+
+:root.metro .remove-btn:hover {
+  background: rgba(255, 71, 87, 0.2);
+}
+
+:root.metro .playing-indicator {
+  background: #0078d4;
+  border-radius: 0;
+  width: 32px;
+  height: 32px;
+}
+
+:root.metro .playing-icon {
+  color: white;
+  font-size: 14px;
+}
+
+/* Material theme support */
+:root.material .mobile-track-item {
+  background: white;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+:root.material .mobile-track-item:hover {
+  background: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+:root.material .track-cover {
+  background: #f5f5f5;
+  border: 1px solid #e0e0e0;
+}
+
+:root.material .no-image {
+  background: #f5f5f5;
+}
+
+:root.material .deeper-btn,
+:root.material .queue-btn,
+:root.material .remove-btn {
+  background: rgba(33, 150, 243, 0.1);
+  color: #2196f3;
+  border: none;
+}
+
+:root.material .deeper-btn:hover {
+  background: rgba(33, 150, 243, 0.2);
+}
+
+:root.material .queue-btn {
+  background: rgba(33, 150, 243, 0.1);
+  color: #2196f3;
+}
+
+:root.material .queue-btn:hover {
+  background: rgba(33, 150, 243, 0.2);
+}
+
+:root.material .queue-btn.in-queue {
+  background: rgba(76, 175, 80, 0.1);
+  color: #4caf50;
+}
+
+:root.material .queue-btn.in-queue:hover {
+  background: rgba(76, 175, 80, 0.2);
+}
+
+:root.material .remove-btn {
+  background: rgba(255, 71, 87, 0.1);
+  color: #ff4757;
+}
+
+:root.material .remove-btn:hover {
+  background: rgba(255, 71, 87, 0.2);
 }
 </style>

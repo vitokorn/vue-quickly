@@ -67,12 +67,12 @@ const handlePlaylistArrowClick = (playlist) => {
   console.log('Playlist name:', playlist?.name)
   console.log('Playlist id:', playlist?.id)
   console.log('Playlist type:', typeof playlist)
-  
+
   if (!playlist || !playlist.id) {
     console.error('Invalid playlist data:', playlist)
     return
   }
-  
+
   // Emit a special event for arrow click to show playlist details
   emit('playlist-arrow-click', playlist)
 }
@@ -113,13 +113,33 @@ const resetPagination = () => {
 
 <template>
   <div class="mobile-playlist-selector">
-    <!-- Header -->
-    <div class="selector-header">
-      <h3>{{ title }}</h3>
-      <p v-if="playlists.length > 0">{{ playlists.length }} playlists available</p>
+    <!-- Section Header -->
+    <div class="section-header">
+      <div class="section-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M11.584 2.376a.75.75 0 01.832 0l9 6a.75.75 0 11-.832 1.248L12 3.901 3.416 9.624a.75.75 0 01-.832-1.248l9-6z" />
+          <path d="M20.25 11.25v5.533c0 1.036-.84 1.875-1.875 1.875H5.625A1.875 1.875 0 013.75 16.783V11.25H2.25a.75.75 0 010-1.5h1.5V6.75c0-1.036.84-1.875 1.875-1.875h.75a.75.75 0 010 1.5h-.75a.375.375 0 00-.375.375v3.375h1.5a.75.75 0 010 1.5H3.75v5.533a.375.375 0 00.375.375h12.75a.375.375 0 00.375-.375V11.25h1.5a.75.75 0 010-1.5h-1.5V6.75a.375.375 0 00-.375-.375h-.75a.75.75 0 010-1.5h.75c1.036 0 1.875.84 1.875 1.875v3.375h1.5a.75.75 0 010 1.5z" />
+        </svg>
+      </div>
+      <h3 class="section-title">{{ title }}</h3>
+      <div class="action-buttons">
+        <button class="view-toggle-btn" @click="toggleViewMode" :title="viewMode === 'list' ? 'Switch to Grid View' : 'Switch to List View'">
+          <svg v-if="viewMode === 'list'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h2.25a3 3 0 013 3v2.25a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9.75 0a3 3 0 013-3H18a3 3 0 013 3v2.25a3 3 0 01-3 3h-2.25a3 3 0 01-3-3V6zM3 15.75a3 3 0 013-3h2.25a3 3 0 013 3V18A2.25 2.25 0 018.25 20H6A2.25 2.25 0 013.75 17.75v-2.25zm9.75 0a3 3 0 013-3H18a3 3 0 013 3V18A2.25 2.25 0 0118.25 20h-2.25A2.25 2.25 0 0113.75 17.75v-2.25z" clip-rule="evenodd" />
+          </svg>
+          <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M2.625 6.75a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0A.75.75 0 018.25 6h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75zM2.625 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zM7.5 12a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12A.75.75 0 017.5 12zm-4.875 5.25a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
+          </svg>
+        </button>
+<!--        <button class="refresh-btn" @click="handleRefresh" :disabled="loading">-->
+<!--          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">-->
+<!--            <path fill-rule="evenodd" d="M4.755 10.059a7.5 7.5 0 0112.548-3.364l1.903 1.903h-3.183a.75.75 0 100 1.5h4.992a.75.75 0 00.75-.75V4.356a.75.75 0 00-1.5 0v3.18l-1.9-1.9A9 9 0 003.306 9.67a.75.75 0 101.45.388zm15.408 3.352a.75.75 0 00-.919.53 7.5 7.5 0 01-12.548 3.364l-1.902-1.903h3.183a.75.75 0 000-1.5H2.984a.75.75 0 00-.75.75v4.992a.75.75 0 001.5 0v-3.18l1.9 1.9a9 9 0 0015.059-4.035.75.75 0 00-.53-.918z" clip-rule="evenodd" />-->
+<!--          </svg>-->
+<!--        </button>-->
+      </div>
     </div>
 
-        <!-- Search and View Controls -->
+    <!-- Search and View Controls -->
     <div class="controls-container">
       <div class="search-container">
         <div class="search-bar">
@@ -144,30 +164,6 @@ const resetPagination = () => {
             </svg>
           </button>
         </div>
-      </div>
-
-      <!-- View Mode Toggle -->
-      <div class="view-toggle">
-        <button
-          @click="toggleViewMode"
-          class="view-toggle-button"
-          :class="{ 'active': viewMode === 'list' }"
-          type="button"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="view-icon">
-            <path fill-rule="evenodd" d="M2.625 6.75a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0A.75.75 0 018.25 6h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75zM2.625 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zM7.5 12a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12A.75.75 0 017.5 12zm-4.875 5.25a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
-          </svg>
-        </button>
-        <button
-          @click="toggleViewMode"
-          class="view-toggle-button"
-          :class="{ 'active': viewMode === 'grid' }"
-          type="button"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="view-icon">
-            <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h2.25a3 3 0 013 3v2.25a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9.75 0a3 3 0 013-3H18a3 3 0 013 3v2.25a3 3 0 01-3 3h-2.25a3 3 0 01-3-3V6zM3 15.75a3 3 0 013-3h2.25a3 3 0 013 3V18a3 3 0 01-3 3H6a3 3 0 01-3-3v-2.25zm9.75 0a3 3 0 013-3H18a3 3 0 013 3V18a3 3 0 01-3 3h-2.25a3 3 0 01-3-3v-2.25z" clip-rule="evenodd" />
-          </svg>
-        </button>
       </div>
     </div>
 
@@ -195,7 +191,7 @@ const resetPagination = () => {
       </div>
 
       <div v-else class="playlists-container" :class="viewMode">
-                        <!-- List View -->
+        <!-- List View -->
         <template v-if="viewMode === 'list'">
           <div
             v-for="playlist in displayedPlaylists"
@@ -283,7 +279,7 @@ const resetPagination = () => {
           </div>
         </template>
 
-                <!-- Grid View -->
+        <!-- Grid View -->
         <template v-else>
           <div
             v-for="playlist in displayedPlaylists"
@@ -373,22 +369,64 @@ const resetPagination = () => {
   box-sizing: border-box;
 }
 
-.selector-header {
-  margin-bottom: 24px;
-  text-align: center;
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
-.selector-header h3 {
+.section-icon {
+  width: 32px;
+  height: 32px;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.section-icon svg {
+  width: 20px;
+  height: 20px;
+  color: #667eea;
+}
+
+.section-title {
   font-size: 20px;
   font-weight: 600;
   color: #ffffff;
-  margin: 0 0 8px 0;
+  margin: 0;
+  flex: 1;
 }
 
-.selector-header p {
-  font-size: 14px;
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.view-toggle-btn {
+  background: rgba(255, 255, 255, 0.1);
   color: #a0a0a0;
-  margin: 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.view-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+.view-toggle-btn svg {
+  width: 16px;
+  height: 16px;
 }
 
 .controls-container {
@@ -402,47 +440,9 @@ const resetPagination = () => {
   flex: 1;
 }
 
-.view-toggle {
-  display: flex;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  padding: 4px;
-  gap: 4px;
-}
-
-.view-toggle-button {
-  background: none;
-  border: none;
-  padding: 8px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.view-toggle-button:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.view-toggle-button.active {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.view-icon {
-  width: 18px;
-  height: 18px;
-  color: #a0a0a0;
-}
-
-.view-toggle-button.active .view-icon {
-  color: #ffffff;
-}
-
 .search-bar {
   position: relative;
-  width: 100%;
+  width: 100%!important;
 }
 
 .search-icon {
@@ -917,5 +917,599 @@ const resetPagination = () => {
   font-size: 14px;
   font-weight: 600;
   color: #ffffff;
+}
+
+:root.metro .mobile-playlist-selector {
+  font-family: 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
+}
+
+:root.metro .section-header {
+  padding: 16px 20px 8px 20px;
+}
+
+:root.metro .section-header .section-title {
+  color: white;
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 24px;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+:root.metro .section-header p {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .section-icon {
+  background: transparent;
+  border-radius: 0;
+  width: 24px;
+  height: 24px;
+}
+
+:root.metro .section-icon svg {
+  color: rgba(255, 255, 255, 0.8);
+  width: 18px;
+  height: 18px;
+}
+
+/* Controls bar */
+:root.metro .controls-container {
+  padding: 0 20px;
+}
+
+:root.metro .view-toggle {
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  gap: 0;
+}
+
+:root.metro .refresh-btn,
+:root.metro .view-toggle-btn,
+:root.metro .view-toggle-button {
+  background: transparent;
+  color: #cccccc;
+  border: none;
+  border-radius: 0;
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+}
+
+:root.metro .refresh-btn:hover,
+:root.metro .view-toggle-btn:hover,
+:root.metro .view-toggle-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.metro .refresh-btn svg,
+:root.metro .view-toggle-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+:root.metro .playlist-item {
+  background: #1f1f1f;
+  border: none;
+  border-radius: 0;
+  padding: 16px 20px;
+  margin: 0 20px 8px 20px;
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+}
+
+:root.metro .playlist-item:hover {
+  background: #2d2d2d;
+  border-left-color: #0078d4;
+}
+
+:root.metro .playlist-item.selected {
+  background: #2d2d2d;
+  border-left-color: #0078d4;
+}
+
+:root.metro .playlist-cover {
+  background: #333333;
+  border: none;
+  border-radius: 0;
+  width: 60px;
+  height: 60px;
+}
+
+:root.metro .playlist-placeholder {
+  background: #333333;
+}
+
+:root.metro .playlist-placeholder svg {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 24px;
+}
+
+:root.metro .playlist-name {
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+:root.metro .playlist-owner {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .playlist-tracks {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+:root.metro .arrow-icon {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 16px;
+}
+
+:root.metro .playlist-item:hover .arrow-icon {
+  color: white;
+}
+
+:root.metro .grid-item {
+  background: #1f1f1f;
+  border: none;
+  border-radius: 0;
+  padding: 12px;
+  margin: 0;
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+}
+
+:root.metro .grid-item:hover {
+  background: #2d2d2d;
+  border-left-color: #0078d4;
+}
+
+:root.metro .grid-cover {
+  background: #333333;
+  border: none;
+  border-radius: 0;
+}
+
+:root.metro .grid-overlay {
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 0;
+}
+
+:root.metro .playlist-type-badge {
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  text-transform: none;
+}
+
+:root.metro .grid-name {
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .grid-owner {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+:root.metro .loading-spinner {
+  border: 3px solid #333333;
+  border-top: 3px solid #0078d4;
+}
+
+:root.metro .loading-state p {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+:root.metro .empty-state h4 {
+  color: white;
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 20px;
+}
+
+:root.metro .empty-state p {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .empty-icon {
+  background: #333333;
+  border-radius: 0;
+}
+
+:root.metro .empty-icon svg {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 32px;
+}
+
+:root.metro .pagination-container {
+  background: #1f1f1f;
+  border: none;
+  border-radius: 0;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 16px 20px;
+}
+
+:root.metro .pagination-button {
+  background: #1f1f1f;
+  color: white;
+  border: none;
+  border-radius: 0;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 80px;
+}
+
+:root.metro .pagination-button:hover:not(:disabled) {
+  background: #2d2d2d;
+  color: white;
+}
+
+:root.metro .pagination-button:disabled {
+  background: #333333;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: not-allowed;
+}
+
+:root.metro .pagination-button.active {
+  background: #0078d4;
+  color: white;
+  box-shadow: none;
+}
+
+:root.metro .pagination-info {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .show-more-item {
+  background: #2d2d2d !important;
+  border: none !important;
+  border-left: 4px solid #0078d4 !important;
+}
+
+:root.metro .show-more-item:hover {
+  background: #333333 !important;
+  transform: none;
+}
+
+:root.metro .show-more-cover {
+  background: #0078d4;
+  border-radius: 0;
+}
+
+:root.metro .show-more-text {
+  color: #0078d4 !important;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+:root.metro .show-more-subtext {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .show-more-grid-cover {
+  background: #0078d4;
+  border-radius: 0;
+}
+
+:root.metro .show-more-grid-text {
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* Cupertino liquid glass theme */
+:root.cupertino .mobile-playlist-selector {
+  background: linear-gradient(135deg, #e8f0ff 0%, #f8f9fb 40%, #ffe9f3 100%);
+}
+
+:root.cupertino .section-header {
+  padding: 16px 20px 8px 20px;
+}
+
+:root.cupertino .section-header .section-title {
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 600;
+}
+
+:root.cupertino .section-header p {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .refresh-button {
+  background: rgba(255, 255, 255, 0.45);
+  color: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+}
+
+:root.cupertino .refresh-button:hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.8);
+  transform: none;
+}
+
+:root.cupertino .refresh-icon {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .view-toggle {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(31, 38, 135, 0.12);
+}
+
+:root.cupertino .view-toggle-button {
+  background: transparent;
+  color: rgba(0, 0, 0, 0.7);
+  border-radius: 8px;
+}
+
+:root.cupertino .view-toggle-button:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+:root.cupertino .view-toggle-button.active {
+  background: rgba(255, 255, 255, 0.75);
+  color: rgba(0, 0, 0, 0.9);
+}
+
+:root.cupertino .view-icon {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .view-toggle-button.active .view-icon {
+  color: rgba(0, 0, 0, 0.9);
+}
+
+:root.cupertino .search-input {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 24px;
+  color: rgba(0, 0, 0, 0.8);
+  box-shadow: 0 4px 16px rgba(31, 38, 135, 0.12);
+}
+
+:root.cupertino .search-input::placeholder {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+:root.cupertino .search-input:focus {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 8px 24px rgba(31, 38, 135, 0.16);
+}
+
+:root.cupertino .search-icon {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .clear-button:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+:root.cupertino .clear-icon {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .playlist-item {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(31, 38, 135, 0.12);
+}
+
+:root.cupertino .playlist-item:hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 12px 32px rgba(31, 38, 135, 0.16);
+}
+
+:root.cupertino .playlist-item.selected {
+  background: rgba(255, 255, 255, 0.75);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+:root.cupertino .playlist-cover {
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+}
+
+:root.cupertino .playlist-name {
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 600;
+}
+
+:root.cupertino .playlist-details {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .playlist-status {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .lock-icon.open {
+  color: #2e7d32;
+}
+
+:root.cupertino .lock-icon.closed {
+  color: #b71c1c;
+}
+
+:root.cupertino .status-text {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .playlist-arrow:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+:root.cupertino .arrow-icon {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .playlist-item:hover .arrow-icon {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+:root.cupertino .grid-item {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(31, 38, 135, 0.12);
+}
+
+:root.cupertino .grid-item:hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 12px 32px rgba(31, 38, 135, 0.16);
+}
+
+:root.cupertino .grid-cover {
+  border-radius: 12px;
+}
+
+:root.cupertino .grid-overlay {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+}
+
+:root.cupertino .playlist-type-badge {
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  text-transform: none;
+}
+
+:root.cupertino .grid-name {
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 600;
+}
+
+:root.cupertino .grid-details {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .empty-search h4,
+:root.cupertino .empty-state h4 {
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 600;
+}
+
+:root.cupertino .empty-search p,
+:root.cupertino .empty-state p {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .empty-icon {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+:root.cupertino .pagination-container {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(31, 38, 135, 0.12);
+}
+
+:root.cupertino .pagination-button {
+  background: rgba(255, 255, 255, 0.45);
+  color: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+}
+
+:root.cupertino .pagination-button:hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+:root.cupertino .pagination-button:disabled {
+  background: rgba(255, 255, 255, 0.3);
+  color: rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+:root.cupertino .pagination-info {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .show-more-item {
+  background: rgba(255, 255, 255, 0.55) !important;
+  border-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+:root.cupertino .show-more-item:hover {
+  background: rgba(255, 255, 255, 0.7) !important;
+  border-color: rgba(255, 255, 255, 0.8) !important;
+}
+
+:root.cupertino .show-more-cover {
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+}
+
+:root.cupertino .show-more-text {
+  color: rgba(0, 0, 0, 0.8) !important;
+  font-weight: 600;
+}
+
+:root.cupertino .show-more-subtext {
+  color: rgba(0, 0, 0, 0.6) !important;
+}
+
+:root.cupertino .show-more-grid-cover {
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+}
+
+:root.cupertino .show-more-grid-text {
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 600;
 }
 </style>

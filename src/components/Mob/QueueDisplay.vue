@@ -325,4 +325,217 @@ const handleSaveToPlaylist = async (playlistId) => {
     font-size: 13px;
   }
 }
+
+:root.metro .queue-display {
+  font-family: 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
+}
+
+:root.metro .queue-title h3 {
+  color: white;
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 20px;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+:root.metro .queue-title .queue-count {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .action-btn {
+  background: transparent;
+  color: #cccccc;
+  border: none;
+  border-radius: 0;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 8px 12px;
+}
+
+:root.metro .action-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+:root.metro .action-btn.active {
+  background: #0078d4;
+  color: white;
+  box-shadow: none;
+}
+
+:root.metro .playlist-select {
+  background: #1f1f1f;
+  color: white;
+  border: none;
+  border-radius: 0;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 8px 12px;
+}
+
+:root.metro .playlist-select:focus {
+  outline: none;
+  background: #2d2d2d;
+}
+
+:root.metro .playlist-select option {
+  background: #1f1f1f;
+  color: white;
+}
+
+:root.metro .empty-queue h4 {
+  color: white;
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 20px;
+}
+
+:root.metro .empty-queue p {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .empty-icon {
+  background: #333333;
+  border-radius: 0;
+}
+
+:root.metro .empty-icon svg {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 32px;
+}
+
+:root.metro .premium-notice {
+  background: #2d2d2d;
+  border: none;
+  border-radius: 0;
+  padding: 12px;
+}
+
+:root.metro .notice-icon {
+  color: #0078d4;
+  font-size: 16px;
+}
+
+:root.metro .premium-notice span {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+/* Cupertino liquid glass theme */
+:root.cupertino .queue-display {
+  background: linear-gradient(135deg, #e8f0ff 0%, #f8f9fb 40%, #ffe9f3 100%);
+}
+
+:root.cupertino .queue-header {
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(30px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 10px 30px rgba(31, 38, 135, 0.12);
+}
+
+:root.cupertino .queue-title h3 {
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 600;
+}
+
+:root.cupertino .queue-icon {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .queue-actions {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+:root.cupertino .action-btn {
+  background: rgba(255, 255, 255, 0.45);
+  color: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+:root.cupertino .action-btn:hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+:root.cupertino .action-btn.active {
+  background: rgba(255, 255, 255, 0.75);
+  color: rgba(0, 0, 0, 0.9);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+:root.cupertino .action-icon {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .playlist-select {
+  background: rgba(255, 255, 255, 0.45);
+  color: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+:root.cupertino .playlist-select:focus {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.8);
+  outline: none;
+}
+
+:root.cupertino .playlist-select option {
+  background: rgba(255, 255, 255, 0.9);
+  color: rgba(0, 0, 0, 0.8);
+}
+
+:root.cupertino .empty-queue h4 {
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 600;
+}
+
+:root.cupertino .empty-queue p {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .empty-icon {
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+}
+
+:root.cupertino .empty-icon svg {
+  color: rgba(0, 0, 0, 0.4);
+  font-size: 32px;
+}
+
+:root.cupertino .premium-notice {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(31, 38, 135, 0.12);
+}
+
+:root.cupertino .notice-icon {
+  color: #2e7d32;
+  font-size: 16px;
+}
+
+:root.cupertino .premium-notice span {
+  color: rgba(0, 0, 0, 0.6);
+  font-weight: 500;
+}
 </style>

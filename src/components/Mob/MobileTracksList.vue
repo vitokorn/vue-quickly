@@ -172,4 +172,60 @@ const loadSampleTracks = async () => {
     gap: 10px;
   }
 }
+
+:root.metro .mobile-tracks-list {
+  font-family: 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
+}
+
+:root.metro .list-header h3 {
+  color: white;
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 20px;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+:root.metro .list-header p {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .loading-spinner {
+  border: 3px solid #333333;
+  border-top: 3px solid #0078d4;
+}
+
+:root.metro .loading p {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+:root.metro .empty-state h4 {
+  color: white;
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 20px;
+}
+
+:root.metro .empty-state p {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .empty-icon {
+  background: #333333;
+  border-radius: 0;
+}
+
+:root.metro .empty-icon svg {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 32px;
+}
 </style>

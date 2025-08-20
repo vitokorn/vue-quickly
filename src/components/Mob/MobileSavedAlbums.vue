@@ -33,40 +33,40 @@ const loadSavedAlbums = async () => {
 const handleAlbumClick = async (album, event) => {
   setSelectedItem(album.id)
   const sectionName = 'savedAlbums'
-  
+
   // Add album to deeper store for savedAlbums section
   const albumData = {
     ...album,
     type: 'album',
     parentKey: 'libraryPage'
   }
-  
+
   deeperStore.addToSection('savedAlbums', albumData)
   deeperStore.setCurrentSection('savedAlbums')
-  
+
   // Show the deeper album component
   console.log('Showing deeper album for:', album.name)
 }
 
 const handleAlbumThreeDotsClick = async (album, event) => {
   event.stopPropagation() // Prevent triggering the main click event
-  
+
   // Add album to deeper store for savedAlbums section
   const albumData = {
     ...album,
     type: 'album',
     parentKey: 'libraryPage'
   }
-  
+
   deeperStore.addToSection('savedAlbums', albumData)
   deeperStore.setCurrentSection('savedAlbums')
-  
+
   // Show the deeper album component using visibility manager
   const { useVisibilityManager } = await import('../../composables/useVisibilityManager')
   const visibilityManager = useVisibilityManager()
   const albumKey = `deeperalbum_${album.id}__p:libraryPage__`
   visibilityManager.showComponent(albumKey)
-  
+
   console.log('Showing deeper album for:', album.name, 'with key:', albumKey)
 }
 
@@ -146,9 +146,9 @@ onMounted(async () => {
             @click="handleAlbumClick(album, $event)"
           >
             <div class="album-cover">
-              <img 
-                v-if="album.images && album.images.length > 0" 
-                :src="album.images[0].url" 
+              <img
+                v-if="album.images && album.images.length > 0"
+                :src="album.images[0].url"
                 :alt="album.name"
                 @error="$event.target.style.display = 'none'"
               />
@@ -200,9 +200,9 @@ onMounted(async () => {
             @click="handleAlbumClick(album, $event)"
           >
             <div class="grid-cover">
-              <img 
-                v-if="album.images && album.images.length > 0" 
-                :src="album.images[0].url" 
+              <img
+                v-if="album.images && album.images.length > 0"
+                :src="album.images[0].url"
                 :alt="album.name"
                 @error="$event.target.style.display = 'none'"
               />
@@ -698,6 +698,418 @@ onMounted(async () => {
   .grid-details {
     font-size: 11px;
   }
+}
+
+:root.metro .mobile-saved-albums {
+  font-family: 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
+}
+
+:root.metro .section-header {
+  padding: 16px 20px 8px 20px;
+}
+
+:root.metro .section-title {
+  color: white;
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 24px;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+:root.metro .section-icon {
+  background: transparent;
+  border-radius: 0;
+  width: 24px;
+  height: 24px;
+}
+
+:root.metro .section-icon svg {
+  color: rgba(255, 255, 255, 0.8);
+  width: 18px;
+  height: 18px;
+}
+
+:root.metro .refresh-btn,
+:root.metro .view-toggle-btn {
+  background: transparent;
+  color: #cccccc;
+  border: none;
+  border-radius: 0;
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+}
+
+:root.metro .refresh-btn:hover,
+:root.metro .view-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.metro .refresh-btn svg,
+:root.metro .view-toggle-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+:root.metro .album-item {
+  background: #1f1f1f;
+  border: none;
+  border-radius: 0;
+  padding: 16px 20px;
+  margin: 0 20px 8px 20px;
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+}
+
+:root.metro .album-item:hover {
+  background: #2d2d2d;
+  border-left-color: #0078d4;
+}
+
+:root.metro .album-item.selected {
+  background: #2d2d2d;
+  border-left-color: #0078d4;
+}
+
+:root.metro .album-cover {
+  background: #333333;
+  border: none;
+  border-radius: 0;
+  width: 60px;
+  height: 60px;
+}
+
+:root.metro .album-placeholder {
+  background: #333333;
+}
+
+:root.metro .album-placeholder svg {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 24px;
+}
+
+:root.metro .album-name {
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+:root.metro .album-artists {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .album-type {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  text-transform: none;
+}
+
+:root.metro .arrow-icon {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 16px;
+}
+
+:root.metro .album-item:hover .arrow-icon {
+  color: white;
+}
+
+:root.metro .grid-item {
+  background: #1f1f1f;
+  border: none;
+  border-radius: 0;
+  padding: 12px;
+  margin: 0;
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+}
+
+:root.metro .grid-item:hover {
+  background: #2d2d2d;
+  border-left-color: #0078d4;
+}
+
+:root.metro .grid-cover {
+  background: #333333;
+  border: none;
+  border-radius: 0;
+}
+
+:root.metro .grid-overlay {
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 0;
+}
+
+:root.metro .album-type-badge {
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  text-transform: none;
+}
+
+:root.metro .grid-name {
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .grid-artists {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+:root.metro .loading-spinner {
+  border: 3px solid #333333;
+  border-top: 3px solid #0078d4;
+}
+
+:root.metro .loading-state p {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+:root.metro .empty-state h4 {
+  color: white;
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 20px;
+}
+
+:root.metro .empty-state p {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .empty-icon {
+  background: #333333;
+  border-radius: 0;
+}
+
+:root.metro .empty-icon svg {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 32px;
+}
+
+:root.metro .three-dots-button {
+  background: transparent;
+  color: #cccccc;
+  border: none;
+  border-radius: 0;
+  padding: 8px;
+}
+
+:root.metro .three-dots-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+:root.metro .grid-three-dots-button {
+  background: rgba(0, 0, 0, 0.8);
+  border: none;
+  color: white;
+  border-radius: 0;
+  padding: 6px;
+}
+
+:root.metro .grid-three-dots-button:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+/* Cupertino liquid glass theme */
+:root.cupertino .mobile-saved-albums {
+  background: linear-gradient(135deg, #e8f0ff 0%, #f8f9fb 40%, #ffe9f3 100%);
+}
+
+:root.cupertino .section-header {
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(30px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 10px 30px rgba(31, 38, 135, 0.12);
+}
+
+:root.cupertino .section-title {
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 600;
+}
+
+:root.cupertino .section-icon {
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+}
+
+:root.cupertino .section-icon svg {
+  color: rgba(0, 0, 0, 0.6);
+  width: 18px;
+  height: 18px;
+}
+
+:root.cupertino .refresh-btn,
+:root.cupertino .view-toggle-btn {
+  background: rgba(255, 255, 255, 0.45);
+  color: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+}
+
+:root.cupertino .refresh-btn:hover,
+:root.cupertino .view-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+:root.cupertino .refresh-btn svg,
+:root.cupertino .view-toggle-btn svg {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .album-item {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(31, 38, 135, 0.12);
+}
+
+:root.cupertino .album-item:hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 12px 32px rgba(31, 38, 135, 0.16);
+}
+
+:root.cupertino .album-item.selected {
+  background: rgba(255, 255, 255, 0.75);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+:root.cupertino .album-cover {
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+}
+
+:root.cupertino .album-name {
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 600;
+}
+
+:root.cupertino .album-artists {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .album-type {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .type-icon {
+  color: #2e7d32;
+}
+
+:root.cupertino .type-text {
+  color: rgba(0, 0, 0, 0.6);
+  text-transform: none;
+}
+
+:root.cupertino .three-dots-button {
+  background: rgba(255, 255, 255, 0.45);
+  color: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 20px;
+}
+
+:root.cupertino .three-dots-button:hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+:root.cupertino .grid-item {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(31, 38, 135, 0.12);
+}
+
+:root.cupertino .grid-item:hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 12px 32px rgba(31, 38, 135, 0.16);
+}
+
+:root.cupertino .grid-cover {
+  border-radius: 12px;
+}
+
+:root.cupertino .grid-overlay {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+}
+
+:root.cupertino .album-type-badge {
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 600;
+  text-transform: none;
+}
+
+:root.cupertino .grid-name {
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 600;
+}
+
+:root.cupertino .grid-artists {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .grid-three-dots-button {
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 12px;
+}
+
+:root.cupertino .grid-three-dots-button:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+:root.cupertino .loading-spinner {
+  border: 3px solid rgba(0, 0, 0, 0.05);
+  border-top: 3px solid rgba(0, 0, 0, 0.4);
+}
+
+:root.cupertino .loading-state p {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .empty-state h4 {
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 600;
+}
+
+:root.cupertino .empty-state p {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .empty-icon {
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+}
+
+:root.cupertino .empty-icon svg {
+  color: rgba(0, 0, 0, 0.4);
+  font-size: 32px;
 }
 
 </style>

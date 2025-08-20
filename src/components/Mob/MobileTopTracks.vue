@@ -71,7 +71,7 @@ const handleTrackClick = async (track, event) => {
   const sectionName = 'topTracks'
   await deeperStore.getTrackDetails(track, sectionName)
   queueStore.addToQueue(track)
-  
+
   // Also play audio preview if available
   const previewUrl = track.preview_url || track.previewUrl
   if (previewUrl) {
@@ -121,7 +121,7 @@ onMounted(async () => {
           </button>
         </div>
       </div>
-      
+
       <!-- Modern Time Range Selector -->
       <div class="time-range-selector">
         <button
@@ -153,7 +153,7 @@ onMounted(async () => {
         <h3>No tracks found</h3>
         <p>Your top tracks will appear here</p>
       </div>
-      
+
       <div v-else :class="['tracks-container', viewMode]">
         <MobileTrackItem
           v-for="(track, index) in topTracks"
@@ -489,6 +489,253 @@ onMounted(async () => {
 :root.dq .loading-spinner {
   border: 3px solid rgba(255, 255, 255, 0.1);
   border-top: 3px solid var(--active-tab);
+}
+
+/* Windows Aero theme support */
+:root.aero .refresh-btn,
+:root.aero .view-toggle-btn {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+:root.aero .refresh-btn:hover,
+:root.aero .view-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+:root.aero .time-range-selector {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+:root.aero .time-range-btn {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+:root.aero .time-range-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+:root.aero .time-range-btn.active {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+:root.aero .loading-spinner {
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top: 3px solid #ffffff;
+}
+
+:root.metro .refresh-btn,
+:root.metro .view-toggle-btn {
+  background: transparent;
+  color: white;
+  border: none;
+  border-radius: 0;
+  width: 48px;
+  height: 48px;
+  padding: 12px;
+}
+
+:root.metro .refresh-btn:hover,
+:root.metro .view-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.metro .time-range-selector {
+  background: #2d2d2d;
+  border: none;
+  border-radius: 0;
+  padding: 4px;
+  margin-bottom: 16px;
+}
+
+:root.metro .time-range-btn {
+  color: #cccccc;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  border-radius: 0;
+  padding: 8px 16px;
+}
+
+:root.metro .time-range-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.metro .time-range-btn.active {
+  background: #0078d4;
+  color: white;
+  box-shadow: none;
+}
+
+:root.metro .loading-spinner {
+  border: 3px solid #333333;
+  border-top: 3px solid #0078d4;
+}
+
+:root.metro .loading-state p {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+:root.metro .empty-state h3 {
+  color: white;
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 20px;
+}
+
+:root.metro .empty-state p {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .section-title {
+  color: white;
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 24px;
+}
+
+:root.metro .section-subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* Material theme support */
+:root.material .refresh-btn,
+:root.material .view-toggle-btn {
+  background: rgba(33, 150, 243, 0.1);
+  color: #2196f3;
+  border: none;
+}
+
+:root.material .refresh-btn:hover,
+:root.material .view-toggle-btn:hover {
+  background: rgba(33, 150, 243, 0.2);
+}
+
+:root.material .time-range-selector {
+  background: #f5f5f5;
+  border: none;
+}
+
+:root.material .time-range-btn {
+  color: #757575;
+}
+
+:root.material .time-range-btn:hover {
+  background: #e3f2fd;
+}
+
+:root.material .time-range-btn.active {
+  background: #2196f3;
+  color: white;
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+}
+
+:root.material .loading-spinner {
+  border: 3px solid #e3f2fd;
+  border-top: 3px solid #2196f3;
+}
+
+/* Cupertino liquid glass theme */
+:root.cupertino .mobile-top-tracks {
+  background: linear-gradient(135deg, #e8f0ff 0%, #f8f9fb 40%, #ffe9f3 100%);
+}
+
+:root.cupertino .section-header {
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(30px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 10px 30px rgba(31, 38, 135, 0.12);
+}
+
+:root.cupertino .section-title {
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 600;
+}
+
+:root.cupertino .section-subtitle {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .refresh-btn,
+:root.cupertino .view-toggle-btn {
+  background: rgba(255, 255, 255, 0.45);
+  color: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+}
+
+:root.cupertino .refresh-btn:hover,
+:root.cupertino .view-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+:root.cupertino .time-range-selector {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(31, 38, 135, 0.12);
+}
+
+:root.cupertino .time-range-btn {
+  color: rgba(0, 0, 0, 0.7);
+  border-radius: 12px;
+}
+
+:root.cupertino .time-range-btn:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+:root.cupertino .time-range-btn.active {
+  background: rgba(255, 255, 255, 0.75);
+  color: rgba(0, 0, 0, 0.9);
+  box-shadow: 0 4px 16px rgba(31, 38, 135, 0.16);
+}
+
+:root.cupertino .loading-spinner {
+  border: 3px solid rgba(0, 0, 0, 0.05);
+  border-top: 3px solid rgba(0, 0, 0, 0.4);
+}
+
+:root.cupertino .loading-state p {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .empty-state h3 {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+:root.cupertino .empty-state p {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* Aero theme text color adjustments */
+:root.aero .section-title {
+  color: #ffffff;
+}
+
+:root.aero .section-subtitle {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+:root.aero .loading-state p,
+:root.aero .empty-state p {
+  color: rgba(255, 255, 255, 0.85);
 }
 </style>
 

@@ -595,4 +595,311 @@ const emit = defineEmits(['search'])
 :root.dq .nav-item.active {
   background: rgba(240, 55, 165, 0.2);
 }
+
+/* Windows 7-like Aero theme */
+:root.aero .mobile-layout {
+  background: linear-gradient(135deg, #2b579a 0%, #1e3a8a 50%, #1e40af 100%);
+}
+
+:root.aero .mobile-header {
+  background: rgba(43, 87, 154, 0.9);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+}
+
+:root.aero .queue-button,
+:root.aero .profile-button {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+:root.aero .queue-button:hover,
+:root.aero .profile-button:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+:root.aero .profile-content {
+  background: rgba(43, 87, 154, 0.9);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+:root.aero .profile-avatar {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+:root.aero .bottom-navigation {
+  background: rgba(43, 87, 154, 0.9);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.2);
+}
+
+:root.aero .nav-item {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+:root.aero .nav-item:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+}
+
+:root.aero .nav-item.active {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+  border-radius: 8px;
+}
+
+/* Cupertino liquid glass theme */
+:root.cupertino .mobile-layout {
+  background: linear-gradient(135deg, #e8f0ff 0%, #f8f9fb 40%, #ffe9f3 100%);
+}
+
+:root.cupertino .mobile-header {
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(30px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 10px 30px rgba(31, 38, 135, 0.12);
+}
+
+:root.cupertino .queue-button,
+:root.cupertino .profile-button {
+  background: rgba(255, 255, 255, 0.45);
+  color: var(--title-color);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+:root.cupertino .queue-button:hover,
+:root.cupertino .profile-button:hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+:root.cupertino .profile-content {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 20px 40px rgba(31, 38, 135, 0.14);
+}
+
+:root.cupertino .profile-avatar {
+  background: rgba(255, 255, 255, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.65);
+}
+
+:root.cupertino .bottom-navigation {
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(30px) saturate(180%);
+  border-top: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 -10px 30px rgba(31, 38, 135, 0.12);
+}
+
+:root.cupertino .nav-item {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+:root.cupertino .nav-item:hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+}
+
+:root.cupertino .nav-item.active {
+  background: rgba(255, 255, 255, 0.75);
+  color: var(--title-color);
+  border-radius: 12px;
+}
+
+:root.metro .mobile-layout {
+  background: #000000;
+  font-family: 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
+}
+
+:root.metro .mobile-header {
+  background: #0078d4;
+  border-bottom: none;
+  box-shadow: none;
+  padding: 16px 20px;
+}
+
+:root.metro .app-title {
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 24px;
+  color: white;
+}
+
+:root.metro .app-subtitle {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 400;
+}
+
+:root.metro .queue-button,
+:root.metro .profile-button {
+  background: transparent;
+  color: white;
+  border: none;
+  border-radius: 0;
+  width: 48px;
+  height: 48px;
+  padding: 12px;
+}
+
+:root.metro .queue-button:hover,
+:root.metro .profile-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.metro .profile-content {
+  background: #1f1f1f;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 24px;
+  margin: 16px;
+}
+
+:root.metro .profile-avatar {
+  background: #0078d4;
+  border-radius: 0;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+  box-shadow: none;
+}
+
+:root.metro .avatar-icon {
+  color: white;
+  opacity: 1;
+  width: 40px;
+  height: 40px;
+}
+
+:root.metro .profile-title {
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 28px;
+  color: white;
+  margin: 0 0 8px 0;
+}
+
+:root.metro .profile-description {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 400;
+  margin: 0 0 24px 0;
+}
+
+:root.metro .settings-wrapper {
+  margin-top: 24px;
+}
+
+:root.metro .bottom-navigation {
+  background: #1f1f1f;
+  border-top: none;
+  box-shadow: none;
+  padding: 8px 0;
+}
+
+:root.metro .nav-item {
+  color: #cccccc;
+  border-radius: 0;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  padding: 8px 4px;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+:root.metro .nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 0;
+}
+
+:root.metro .nav-item.active {
+  background: #0078d4;
+  color: white;
+  border-radius: 0;
+}
+
+:root.metro .nav-icon {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 4px;
+}
+
+:root.metro .nav-label {
+  font-size: 11px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+/* Material theme support */
+:root.material .mobile-layout {
+  background: #fafafa;
+}
+
+:root.material .mobile-header {
+  background: #2196f3;
+  border-bottom: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+:root.material .queue-button,
+:root.material .profile-button {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+:root.material .queue-button:hover,
+:root.material .profile-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+:root.material .profile-content {
+  background: white;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+:root.material .profile-avatar {
+  background: #e3f2fd;
+  border: 2px solid #2196f3;
+}
+
+:root.material .bottom-navigation {
+  background: white;
+  border-top: 1px solid #e0e0e0;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+:root.material .nav-item {
+  color: #757575;
+  border-radius: 0;
+}
+
+:root.material .nav-item:hover {
+  background: #f5f5f5;
+  border-radius: 0;
+}
+
+:root.material .nav-item.active {
+  background: #e3f2fd;
+  color: #2196f3;
+  border-radius: 0;
+}
 </style>

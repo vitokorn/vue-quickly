@@ -32,23 +32,23 @@ const loadFollowedArtists = async () => {
 const handleArtistClick = async (artist, event) => {
   setSelectedItem(artist.id)
   const sectionName = 'followedArtists'
-  
+
   // Add artist to deeper store for followedArtists section
   const artistData = {
     ...artist,
     type: 'artist',
     parentKey: 'libraryPage'
   }
-  
+
   deeperStore.addToSection('followedArtists', artistData)
   deeperStore.setCurrentSection('followedArtists')
-  
+
   // Show the deeper artist component using visibility manager
   const { useVisibilityManager } = await import('../../composables/useVisibilityManager')
   const visibilityManager = useVisibilityManager()
   const artistKey = `deeperartist_${artist.id}__p:libraryPage__`
   visibilityManager.showComponent(artistKey)
-  
+
   console.log('Showing deeper artist for:', artist.name, 'with key:', artistKey)
 }
 
@@ -73,7 +73,7 @@ const formatFollowers = (count) => {
 const formatGenres = (genres) => {
   if (!genres || genres.length === 0) return ''
   // Take first 2 genres and capitalize first letter
-  return genres.slice(0, 2).map(genre => 
+  return genres.slice(0, 2).map(genre =>
     genre.charAt(0).toUpperCase() + genre.slice(1)
   ).join(', ')
 }
@@ -129,9 +129,9 @@ onMounted(async () => {
             @click="handleArtistClick(artist, $event)"
           >
             <div class="artist-cover">
-              <img 
-                v-if="artist.images && artist.images.length > 0" 
-                :src="artist.images[0].url" 
+              <img
+                v-if="artist.images && artist.images.length > 0"
+                :src="artist.images[0].url"
                 :alt="artist.name"
                 @error="$event.target.style.display = 'none'"
               />
@@ -171,9 +171,9 @@ onMounted(async () => {
             @click="handleArtistClick(artist, $event)"
           >
             <div class="grid-cover">
-              <img 
-                v-if="artist.images && artist.images.length > 0" 
-                :src="artist.images[0].url" 
+              <img
+                v-if="artist.images && artist.images.length > 0"
+                :src="artist.images[0].url"
                 :alt="artist.name"
                 @error="$event.target.style.display = 'none'"
               />
@@ -606,6 +606,368 @@ onMounted(async () => {
   .grid-details {
     font-size: 11px;
   }
+}
+
+:root.metro .mobile-followed-artists {
+  font-family: 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
+}
+
+:root.metro .section-header {
+  padding: 16px 20px 8px 20px;
+}
+
+:root.metro .section-title {
+  color: white;
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 24px;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+:root.metro .section-icon {
+  background: transparent;
+  border-radius: 0;
+  width: 24px;
+  height: 24px;
+}
+
+:root.metro .section-icon svg {
+  color: rgba(255, 255, 255, 0.8);
+  width: 18px;
+  height: 18px;
+}
+
+:root.metro .refresh-btn,
+:root.metro .view-toggle-btn {
+  background: transparent;
+  color: #cccccc;
+  border: none;
+  border-radius: 0;
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+}
+
+:root.metro .refresh-btn:hover,
+:root.metro .view-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.metro .refresh-btn svg,
+:root.metro .view-toggle-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+:root.metro .artist-item {
+  background: #1f1f1f;
+  border: none;
+  border-radius: 0;
+  padding: 16px 20px;
+  margin: 0 20px 8px 20px;
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+}
+
+:root.metro .artist-item:hover {
+  background: #2d2d2d;
+  border-left-color: #0078d4;
+}
+
+:root.metro .artist-item.selected {
+  background: #2d2d2d;
+  border-left-color: #0078d4;
+}
+
+:root.metro .artist-cover {
+  background: #333333;
+  border: none;
+  border-radius: 0;
+  width: 60px;
+  height: 60px;
+}
+
+:root.metro .artist-placeholder {
+  background: #333333;
+}
+
+:root.metro .artist-placeholder svg {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 24px;
+}
+
+:root.metro .artist-name {
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+:root.metro .artist-details {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .artist-type {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  text-transform: none;
+}
+
+:root.metro .arrow-icon {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 16px;
+}
+
+:root.metro .artist-item:hover .arrow-icon {
+  color: white;
+}
+
+:root.metro .grid-item {
+  background: #1f1f1f;
+  border: none;
+  border-radius: 0;
+  padding: 12px;
+  margin: 0;
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+}
+
+:root.metro .grid-item:hover {
+  background: #2d2d2d;
+  border-left-color: #0078d4;
+}
+
+:root.metro .grid-cover {
+  background: #333333;
+  border: none;
+  border-radius: 0;
+}
+
+:root.metro .grid-overlay {
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 0;
+}
+
+:root.metro .artist-type-badge {
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  text-transform: none;
+}
+
+:root.metro .grid-name {
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .grid-details {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+:root.metro .loading-spinner {
+  border: 3px solid #333333;
+  border-top: 3px solid #0078d4;
+}
+
+:root.metro .loading-state p {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+:root.metro .empty-state h4 {
+  color: white;
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 20px;
+}
+
+:root.metro .empty-state p {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .empty-icon {
+  background: #333333;
+  border-radius: 0;
+}
+
+:root.metro .empty-icon svg {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 32px;
+}
+
+/* Cupertino liquid glass theme */
+:root.cupertino .mobile-followed-artists {
+  background: linear-gradient(135deg, #e8f0ff 0%, #f8f9fb 40%, #ffe9f3 100%);
+}
+
+:root.cupertino .section-header {
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(30px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 10px 30px rgba(31, 38, 135, 0.12);
+}
+
+:root.cupertino .section-title {
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 600;
+}
+
+:root.cupertino .section-icon {
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+}
+
+:root.cupertino .section-icon svg {
+  color: rgba(0, 0, 0, 0.6);
+  width: 18px;
+  height: 18px;
+}
+
+:root.cupertino .view-toggle-btn {
+  background: rgba(255, 255, 255, 0.45);
+  color: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+}
+
+:root.cupertino .view-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+:root.cupertino .view-toggle-btn svg {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .artist-item {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(31, 38, 135, 0.12);
+}
+
+:root.cupertino .artist-item:hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 12px 32px rgba(31, 38, 135, 0.16);
+}
+
+:root.cupertino .artist-item.selected {
+  background: rgba(255, 255, 255, 0.75);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+:root.cupertino .artist-cover {
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+}
+
+:root.cupertino .artist-name {
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 600;
+}
+
+:root.cupertino .artist-details {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .artist-genres {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .arrow-icon {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .artist-item:hover .arrow-icon {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+:root.cupertino .grid-item {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(31, 38, 135, 0.12);
+}
+
+:root.cupertino .grid-item:hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 12px 32px rgba(31, 38, 135, 0.16);
+}
+
+:root.cupertino .grid-cover {
+  border-radius: 12px;
+}
+
+:root.cupertino .grid-overlay {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+}
+
+:root.cupertino .artist-type-badge {
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 600;
+  text-transform: none;
+}
+
+:root.cupertino .grid-name {
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 600;
+}
+
+:root.cupertino .grid-details {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .loading-spinner {
+  border: 3px solid rgba(0, 0, 0, 0.05);
+  border-top: 3px solid rgba(0, 0, 0, 0.4);
+}
+
+:root.cupertino .loading-state p {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .empty-state h4 {
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 600;
+}
+
+:root.cupertino .empty-state p {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+:root.cupertino .empty-icon {
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+}
+
+:root.cupertino .empty-icon svg {
+  color: rgba(0, 0, 0, 0.4);
+  font-size: 32px;
 }
 
 </style>

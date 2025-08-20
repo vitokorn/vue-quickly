@@ -87,7 +87,7 @@ onMounted(() => {
         <MobileTopArtists />
       </div>
     </div>
-    
+
     <!-- Mobile Deeper Tracks Component -->
     <MobileDeeperTracks
       v-for="track in deeperStore.getSectionData('topTracks')"
@@ -95,7 +95,7 @@ onMounted(() => {
       :d="track"
       :num="3"
     />
-    
+
     <!-- Mobile Deeper Artist Component -->
     <MobileDeeperArtist
       v-for="artist in deeperStore.getSectionData('topArtists')"
@@ -314,5 +314,145 @@ onMounted(() => {
 
 :root.dq .home-section:hover {
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+:root.aero .search-bar {
+  background: rgba(43, 87, 154, 0.9);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+:root.aero .search-bar:focus-within {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+:root.aero .loading-spinner {
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top: 3px solid #ffffff;
+}
+
+:root.aero .home-section {
+  background: rgba(43, 87, 154, 0.9);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+:root.aero .home-section:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+:root.cupertino .search-bar {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 8px 24px rgba(31, 38, 135, 0.12);
+}
+
+:root.cupertino .search-bar:focus-within {
+  box-shadow: 0 12px 32px rgba(31, 38, 135, 0.16);
+  border-color: rgba(255, 255, 255, 0.75);
+}
+
+:root.cupertino .loading-spinner {
+  border: 3px solid rgba(0, 0, 0, 0.05);
+  border-top: 3px solid rgba(0, 0, 0, 0.4);
+}
+
+:root.cupertino .home-section {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 20px 40px rgba(31, 38, 135, 0.14);
+}
+
+:root.cupertino .home-section:hover {
+  box-shadow: 0 24px 56px rgba(31, 38, 135, 0.18);
+  border-color: rgba(255, 255, 255, 0.75);
+}
+
+:root.metro .search-bar {
+  background: #1f1f1f;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+
+:root.metro .search-bar:focus-within {
+  box-shadow: none;
+  background: #2d2d2d;
+}
+
+:root.metro .search-input {
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+:root.metro .search-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+:root.metro .search-icon {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+:root.metro .loading-spinner {
+  border: 3px solid #333333;
+  border-top: 3px solid #0078d4;
+}
+
+:root.metro .loading-state p {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+:root.metro .home-section {
+  background: #1f1f1f;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  margin-bottom: 16px;
+  padding: 0;
+}
+
+:root.metro .home-section:hover {
+  box-shadow: none;
+  background: #2d2d2d;
+}
+
+/* Material theme support */
+:root.material .search-bar {
+  background: white;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+:root.material .search-bar:focus-within {
+  box-shadow: 0 4px 8px rgba(33, 150, 243, 0.2);
+  border-color: #2196f3;
+}
+
+:root.material .loading-spinner {
+  border: 3px solid #e3f2fd;
+  border-top: 3px solid #2196f3;
+}
+
+:root.material .home-section {
+  background: white;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+:root.material .home-section:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 </style>

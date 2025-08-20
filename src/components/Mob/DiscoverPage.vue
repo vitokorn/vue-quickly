@@ -81,35 +81,35 @@
       :d="album"
       :num="4"
     />
-    
+
     <MobileDeeperAlbum
       v-for="album in deeperStore.getSectionData('newReleases')"
       :key="album.id"
       :d="album"
       :num="7"
     />
-    
+
     <MobileDeeperPlaylist
       v-for="playlist in spotifyPlaylistsData"
       :key="playlist.id"
       :d="playlist"
       :num="8"
     />
-    
+
     <MobileDeeperTracks
       v-for="track in deeperStore.getSectionData('playlistTracks')"
       :key="track.id"
       :d="track"
       :num="8"
     />
-    
+
     <MobileDeeperTracks
       v-for="track in deeperStore.getSectionData('albumTracks')"
       :key="track.id"
       :d="track"
       :num="7"
     />
-    
+
     <MobileDeeperArtist
       v-for="artist in deeperStore.getSectionData('topArtists')"
       :key="artist.id"
@@ -177,7 +177,7 @@ const handlePlaylistSelect = async (playlistId, event) => {
   selectedPlaylist.value = playlistId
   const playlist = spotifyStore.getSpotifyPlaylists.find(p => p.id === playlistId)
   console.log('Playlist selected:', playlist)
-  
+
   if (playlist) {
     // Add playlist to deeper store for spotifyPlaylists section
     const playlistData = {
@@ -185,10 +185,10 @@ const handlePlaylistSelect = async (playlistId, event) => {
       type: 'playlist',
       parentKey: 'discoverPage'
     }
-    
+
     deeperStore.addToSection('spotifyPlaylists', playlistData)
     deeperStore.setCurrentSection('spotifyPlaylists')
-    
+
     // Show the deeper playlist component
     console.log('Showing deeper playlist for:', playlist.name)
   }
@@ -196,29 +196,29 @@ const handlePlaylistSelect = async (playlistId, event) => {
 
 const handlePlaylistArrowClick = async (playlist) => {
   console.log('Playlist arrow clicked:', playlist)
-  
+
   if (playlist) {
     try {
       // Fetch playlist details including tracks
       const playlistDetails = await spotifyStore.fetchPlaylist(playlist.id)
       console.log('Fetched playlist details:', playlistDetails)
-      
+
       // Add playlist to deeper store for spotifyPlaylists section
       const playlistData = {
         ...playlistDetails,
         type: 'playlist',
         parentKey: 'discoverPage'
       }
-      
+
       deeperStore.addToSection('spotifyPlaylists', playlistData)
       deeperStore.setCurrentSection('spotifyPlaylists')
-      
+
       // Show the deeper playlist component using visibility manager
       const { useVisibilityManager } = await import('../../composables/useVisibilityManager')
       const visibilityManager = useVisibilityManager()
       const playlistKey = `deeperplaylist_${playlistDetails.id}__p:discoverPage__`
       visibilityManager.showComponent(playlistKey)
-      
+
       console.log('Showing deeper playlist for:', playlist.name, 'with key:', playlistKey)
     } catch (error) {
       console.error('Error fetching playlist details:', error)
@@ -253,7 +253,7 @@ const handleReleaseSelect = async (releaseId, event) => {
   selectedRelease.value = releaseId
   const release = newReleases.value.find(r => r.id === releaseId)
   console.log('Release selected:', release)
-  
+
   if (release) {
     // Add album to deeper store for newReleases section
     const albumData = {
@@ -261,10 +261,10 @@ const handleReleaseSelect = async (releaseId, event) => {
       type: 'album',
       parentKey: 'discoverPage'
     }
-    
+
     deeperStore.addToSection('newReleases', albumData)
     deeperStore.setCurrentSection('newReleases')
-    
+
     // Show the deeper album component
     console.log('Showing deeper album for:', release.name)
   }
@@ -426,6 +426,86 @@ onMounted(() => {
 
 .retry-button:hover {
   background: rgba(102, 126, 234, 0.2);
+}
+
+:root.metro .discover-page {
+  font-family: 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
+}
+
+:root.metro .discover-title {
+  color: white;
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 28px;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+:root.metro .discover-subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+:root.metro .section-header {
+  padding: 16px 20px 8px 20px;
+}
+
+:root.metro .section-title {
+  color: white;
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 24px;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+:root.metro .section-icon {
+  background: transparent;
+  border-radius: 0;
+  width: 24px;
+  height: 24px;
+}
+
+:root.metro .section-icon svg {
+  color: rgba(255, 255, 255, 0.8);
+  width: 18px;
+  height: 18px;
+}
+
+:root.metro .loading-spinner {
+  border: 3px solid #333333;
+  border-top: 3px solid #0078d4;
+}
+
+:root.metro .loading-state p {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+:root.metro .error-state p {
+  color: #ff4757;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+:root.metro .retry-button {
+  background: transparent;
+  color: #0078d4;
+  border: none;
+  border-radius: 0;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 8px 16px;
+}
+
+:root.metro .retry-button:hover {
+  background: rgba(0, 120, 212, 0.1);
 }
 
 @media (max-width: 480px) {

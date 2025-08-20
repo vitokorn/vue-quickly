@@ -42,51 +42,51 @@ function getSectionName(num) {
   <div class="rectrack">
     <template v-for="(item, index) in dab()" :key="index">
       <!-- Seed Tracks -->
-      <SeedTracksMob 
-        v-if="item.type === 'seed_tracks'" 
-        :d="item" 
+      <SeedTracksMob
+        v-if="item.type === 'seed_tracks'"
+        :d="item"
         :num="num"
       />
-      
+
       <!-- Track Artist -->
-      <TrackArtistMob 
-        v-else-if="item.type === 'trackartist'" 
-        :d="item" 
+      <TrackArtistMob
+        v-else-if="item.type === 'trackartist'"
+        :d="item"
         :num="num"
       />
-      
+
       <!-- Deeper Tracks -->
-      <DeeperTracksMob 
-        v-else-if="item.type === 'deepertracks'" 
-        :d="item" 
+      <DeeperTracksMob
+        v-else-if="item.type === 'deepertracks'"
+        :d="item"
         :num="num"
       />
-      
+
       <!-- Deeper Tracks 2 -->
-      <DeeperTracks2Mob 
-        v-else-if="item.type === 'deepertracks2'" 
-        :d="item" 
+      <DeeperTracks2Mob
+        v-else-if="item.type === 'deepertracks2'"
+        :d="item"
         :num="num"
       />
-      
+
       <!-- Deeper Album -->
-      <DeeperAlbumMob 
-        v-else-if="item.type === 'deeperalbum'" 
-        :d="item" 
+      <DeeperAlbumMob
+        v-else-if="item.type === 'deeperalbum'"
+        :d="item"
         :num="num"
       />
-      
+
       <!-- Seed Artists -->
-      <SeedArtistsMob 
-        v-else-if="item.type === 'seed_artists'" 
-        :d="item" 
+      <SeedArtistsMob
+        v-else-if="item.type === 'seed_artists'"
+        :d="item"
         :num="num"
       />
-      
+
       <!-- Deeper Playlist -->
-      <DeeperPlaylistMob 
-        v-else-if="item.type === 'deeperplaylist'" 
-        :d="item" 
+      <DeeperPlaylistMob
+        v-else-if="item.type === 'deeperplaylist'"
+        :d="item"
         :num="num"
       />
     </template>
@@ -99,5 +99,10 @@ function getSectionName(num) {
   flex-direction: column;
   gap: 16px;
   padding: 16px;
+}
+
+:root.metro .rectrack {
+  font-family: 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
+  padding: 16px 20px;
 }
 </style>

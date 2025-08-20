@@ -62,7 +62,7 @@ const handleBackClick = () => {
   // Hide this component and show the parent
   const albumKey = `deeperalbum_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
   visibilityManager.hideComponent(albumKey)
-  
+
   // If there's a parent key, show the parent component
   if (props.d.parentKey) {
     visibilityManager.showComponent(props.d.parentKey)
@@ -122,9 +122,9 @@ onMounted(async () => {
     <!-- Modern Album Info Section -->
     <div class="album-info-section">
       <div class="album-cover">
-        <img 
-          v-if="d.images && d.images[0]" 
-          :src="d.images[0].url" 
+        <img
+          v-if="d.images && d.images[0]"
+          :src="d.images[0].url"
           :alt="d.name"
           @error="$event.target.style.display = 'none'"
         />
@@ -135,10 +135,10 @@ onMounted(async () => {
           </svg>
         </div>
       </div>
-      
+
       <div class="album-details">
         <h1 class="album-title">{{ d.name }}</h1>
-        
+
         <div class="artists-section">
           <span class="artists-label">By</span>
           <div class="artists-list">
@@ -542,5 +542,198 @@ onMounted(async () => {
 :root.dq .track-count {
   background: rgba(255, 255, 255, 0.1);
   color: var(--search-color);
+}
+
+/* Windows Aero theme support */
+:root.aero .mobile-deeper-album {
+  background: linear-gradient(135deg, #2b579a 0%, #1e3a8a 50%, #1e40af 100%);
+}
+
+:root.aero .mobile-header {
+  background: rgba(43, 87, 154, 0.9);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+}
+
+:root.aero .album-info-section {
+  background: rgba(43, 87, 154, 0.9);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+:root.aero .back-button {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+:root.aero .back-button:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+:root.aero .album-type,
+:root.aero .release-date,
+:root.aero .track-count {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+:root.metro .mobile-deeper-album {
+  background: #000000;
+  font-family: 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
+}
+
+:root.metro .mobile-header {
+  background: #0078d4;
+  border-bottom: none;
+  box-shadow: none;
+  padding: 16px 20px;
+}
+
+:root.metro .header-title {
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 18px;
+  color: white;
+}
+
+:root.metro .back-button {
+  background: transparent;
+  color: white;
+  border: none;
+  border-radius: 0;
+  width: 48px;
+  height: 48px;
+  padding: 12px;
+}
+
+:root.metro .back-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.metro .album-info-section {
+  background: #1f1f1f;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 24px;
+  margin: 16px;
+}
+
+:root.metro .album-cover {
+  background: #333333;
+  border: none;
+  border-radius: 0;
+  width: 140px;
+  height: 140px;
+}
+
+:root.metro .album-title {
+  color: white;
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 28px;
+}
+
+:root.metro .artists-label {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .artist-link {
+  color: #0078d4;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  border-radius: 0;
+  padding: 4px 8px;
+}
+
+:root.metro .artist-link:hover {
+  background: rgba(0, 120, 212, 0.1);
+  color: white;
+}
+
+:root.metro .separator {
+  color: rgba(255, 255, 255, 0.6);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .album-type,
+:root.metro .release-date,
+:root.metro .track-count {
+  background: #2d2d2d;
+  color: rgba(255, 255, 255, 0.8);
+  border: none;
+  border-radius: 0;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  padding: 6px 12px;
+}
+
+:root.metro .tracks-header {
+  padding: 16px 20px 8px 20px;
+}
+
+:root.metro .tracks-title {
+  color: white;
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 18px;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+:root.metro .tracks-icon {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 18px;
+}
+
+/* Material theme support */
+:root.material .mobile-deeper-album {
+  background: #fafafa;
+}
+
+:root.material .mobile-header {
+  background: #2196f3;
+  border-bottom: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+:root.material .album-info-section {
+  background: white;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+:root.material .back-button {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+:root.material .back-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+:root.material .album-type,
+:root.material .release-date,
+:root.material .track-count {
+  background: #e3f2fd;
+  color: #2196f3;
+  border: 1px solid #bbdefb;
 }
 </style>

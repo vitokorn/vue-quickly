@@ -79,7 +79,7 @@ const handleBackClick = () => {
   // Hide this component and show the parent
   const playlistKey = `deeperplaylist_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
   visibilityManager.hideComponent(playlistKey)
-  
+
   // If there's a parent key, show the parent component
   if (props.d.parentKey) {
     visibilityManager.showComponent(props.d.parentKey)
@@ -100,7 +100,7 @@ const handleSortChange = (option) => {
 onMounted(async () => {
   // Wait for the next tick to ensure the ref is available
   await nextTick()
-  
+
   // Register this component with the visibility manager
   const playlistKey = `deeperplaylist_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
   visibilityManager.registerComponent(playlistKey, componentRef)
@@ -109,7 +109,7 @@ onMounted(async () => {
   if (componentRef.value) {
     componentRef.value.style.display = 'none'
   }
-  
+
   console.log('MobileDeeperPlaylist registered with key:', playlistKey)
 })
 </script>
@@ -130,9 +130,9 @@ onMounted(async () => {
     <!-- Playlist Info Section -->
     <div class="playlist-info-section">
       <div class="playlist-cover">
-        <img 
-          v-if="d.images && d.images[0]" 
-          :src="d.images[0].url" 
+        <img
+          v-if="d.images && d.images[0]"
+          :src="d.images[0].url"
           :alt="d.name"
           @error="$event.target.style.display = 'none'"
         />
@@ -143,10 +143,10 @@ onMounted(async () => {
           </svg>
         </div>
       </div>
-      
+
       <div class="playlist-details">
         <h1 class="playlist-title">{{ d.name }}</h1>
-        
+
         <div class="playlist-meta">
           <span v-if="d.owner" class="playlist-owner">By {{ d.owner.display_name }}</span>
           <span v-if="d.tracks && d.tracks.items" class="track-count">{{ d.tracks.items.length }} tracks</span>
@@ -162,7 +162,7 @@ onMounted(async () => {
     <!-- Sort Options -->
     <div class="sort-section">
       <div class="sort-options">
-        <button 
+        <button
           v-for="option in ['track', 'album', 'artist', 'popularity', 'release_date', 'duration']"
           :key="option"
           :class="['sort-button', { 'active': selectedDeeperPlaylistSortOption === option }]"
@@ -427,5 +427,125 @@ onMounted(async () => {
     padding: 6px 10px;
     font-size: 11px;
   }
+}
+
+:root.metro .mobile-deeper-playlist {
+  background: #000000;
+  font-family: 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
+}
+
+:root.metro .mobile-header {
+  background: #0078d4;
+  border-bottom: none;
+  box-shadow: none;
+  padding: 16px 20px;
+}
+
+:root.metro .header-title {
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 18px;
+  color: white;
+}
+
+:root.metro .back-button {
+  background: transparent;
+  color: white;
+  border: none;
+  border-radius: 0;
+  width: 48px;
+  height: 48px;
+  padding: 12px;
+}
+
+:root.metro .back-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.metro .playlist-info-section {
+  background: #1f1f1f;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 24px;
+  margin: 16px;
+}
+
+:root.metro .playlist-cover {
+  background: #333333;
+  border: none;
+  border-radius: 0;
+  width: 140px;
+  height: 140px;
+}
+
+:root.metro .playlist-title {
+  color: white;
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 28px;
+}
+
+:root.metro .playlist-owner {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .playlist-description {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .playlist-stats {
+  background: #2d2d2d;
+  color: rgba(255, 255, 255, 0.8);
+  border: none;
+  border-radius: 0;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  padding: 6px 12px;
+}
+
+:root.metro .sort-section {
+  padding: 0 20px 16px 20px;
+}
+
+:root.metro .sort-button {
+  background: transparent;
+  color: #cccccc;
+  border: none;
+  border-radius: 0;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  padding: 8px 12px;
+}
+
+:root.metro .sort-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.metro .sort-button.active {
+  background: #0078d4;
+  color: white;
+  box-shadow: none;
+}
+
+:root.metro .tracks-section {
+  padding: 0 20px 24px 20px;
+}
+
+:root.metro .section-title {
+  color: white;
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 18px;
+  text-transform: none;
+  letter-spacing: normal;
 }
 </style>

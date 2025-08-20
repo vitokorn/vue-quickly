@@ -66,23 +66,23 @@ const handleAlbumClick = async (album, event) => {
 
 const handleRelatedArtistClick = async (artist, event) => {
   const sectionName = getSectionName(props.num)
-  
+
   // Add artist to deeper store for the current section
   const artistData = {
     ...artist,
     type: 'artist',
     parentKey: `deeperartist_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
   }
-  
+
   deeperStore.addToSection(sectionName, artistData)
   deeperStore.setCurrentSection(sectionName)
-  
+
   // Show the MobileDeeperArtist component using visibility manager
   const { useVisibilityManager } = await import('../../composables/useVisibilityManager')
   const visibilityManager = useVisibilityManager()
   const relatedArtistKey = `deeperartist_${artist.id}__p:deeperartist_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}__`
   visibilityManager.showComponent(relatedArtistKey)
-  
+
   console.log('Showing MobileDeeperArtist for related artist:', artist.name, 'with key:', relatedArtistKey)
 }
 
@@ -839,5 +839,141 @@ onMounted(async () => {
   .artist-title {
     font-size: 20px;
   }
+}
+
+:root.metro .mobile-deeper-artist {
+  background: #000000;
+  font-family: 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
+}
+
+:root.metro .mobile-header {
+  background: #0078d4;
+  border-bottom: none;
+  box-shadow: none;
+  padding: 16px 20px;
+}
+
+:root.metro .header-title {
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 18px;
+  color: white;
+}
+
+:root.metro .back-button {
+  background: transparent;
+  color: white;
+  border: none;
+  border-radius: 0;
+  width: 48px;
+  height: 48px;
+  padding: 12px;
+}
+
+:root.metro .back-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.metro .artist-info-section {
+  background: #1f1f1f;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 24px;
+  margin: 16px;
+}
+
+:root.metro .artist-cover {
+  background: #333333;
+  border: none;
+  border-radius: 0;
+  width: 140px;
+  height: 140px;
+}
+
+:root.metro .artist-title {
+  color: white;
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 28px;
+}
+
+:root.metro .artist-followers {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .artist-genres {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root.metro .artist-popularity {
+  background: #2d2d2d;
+  color: rgba(255, 255, 255, 0.8);
+  border: none;
+  border-radius: 0;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  padding: 6px 12px;
+}
+
+:root.metro .section {
+  margin-top: 24px;
+  padding: 0 20px;
+}
+
+:root.metro .section-title {
+  color: white;
+  font-family: 'Segoe UI Light', 'Segoe UI', sans-serif;
+  font-weight: 300;
+  font-size: 18px;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+:root.metro .album-item,
+:root.metro .artist-item {
+  background: #1f1f1f;
+  border: none;
+  border-radius: 0;
+  padding: 12px;
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+}
+
+:root.metro .album-item:hover,
+:root.metro .artist-item:hover {
+  background: #2d2d2d;
+  border-left-color: #0078d4;
+  transform: none;
+}
+
+:root.metro .album-cover,
+:root.metro .artist-cover {
+  background: #333333;
+  border: none;
+  border-radius: 0;
+}
+
+:root.metro .album-name,
+:root.metro .artist-name {
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+:root.metro .album-type,
+:root.metro .artist-followers {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
 }
 </style>
