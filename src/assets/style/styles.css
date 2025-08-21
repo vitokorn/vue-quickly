@@ -3473,7 +3473,6 @@ input[type=checkbox] {
 }
 
 :root.dark .modern-search-input {
-  background: rgba(42, 46, 47, 0.9);
   border-color: rgba(255, 255, 255, 0.2);
   color: var(--search-color);
 }
@@ -4729,20 +4728,6 @@ input[type=checkbox] {
   border-color: var(--active-tab);
 }
 
-@media (max-width: 768px) {
-  :root.dark .tab-item {
-    background: rgba(34, 36, 38, 0.95);
-  }
-
-  :root.dark .search-tab {
-    background: rgba(34, 36, 38, 0.98);
-  }
-
-  :root.dark .tabs-list {
-    background: rgba(255, 255, 255, 0.1);
-  }
-}
-
 :root.dark-blue .modern-tabs {
   background: rgba(18, 33, 58, 0.95);
   border-bottom-color: rgba(120, 160, 220, 0.12);
@@ -4766,11 +4751,21 @@ input[type=checkbox] {
 
   :root.dark-blue .search-tab {
     background: rgba(18, 33, 58, 0.98);
+    border-color: rgba(240, 55, 165, 0.3);
   }
 
   :root.dark-blue .tabs-list {
-    background: rgba(120, 160, 220, 0.10);
+    background: transparent;
   }
+}
+
+/* Dark-blue theme support for medium screens */
+@media (max-width: 1076px) and (min-width: 769px) {
+
+  :root.dark-blue .tab-item:hover {
+    background: rgba(240, 55, 165, 0.1);
+  }
+
 }
 
 :root.dq .modern-tabs {
@@ -5410,22 +5405,70 @@ input[type=checkbox] {
   }
 }
 
-@media (max-width: 1076px) and (min-width: 769px) {
+/* Specific breakpoint for screens around 1076px to ensure smooth transition */
+@media (min-width: 1076px) and (max-width: 1200px) {
   .tabs-list {
     flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .tab-item {
+    flex-shrink: 0;
+    min-width: 140px;
+  }
+
+  .tab-content {
+    padding: 14px 16px;
+  }
+
+  .tabs-tab-text {
+    font-size: 13px;
+  }
+
+  .search-tab {
+    margin-left: auto;
+    flex-shrink: 0;
+    min-width: 220px;
+  }
+}
+
+@media (max-width: 1076px) and (min-width: 769px) {
+  .tabs-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+
+  .tab-item {
+    flex: 1 1 auto;
+    min-width: 120px;
+    max-width: 200px;
+    margin: 2px;
   }
 
   .tab-content {
     padding: 12px 16px;
     font-size: 13px;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+    gap: 6px;
   }
 
   .tabs-tab-icon {
-    font-size: 16px;
+    font-size: 18px;
+  }
+
+  .tabs-tab-text {
+    font-size: 12px;
+    line-height: 1.2;
   }
 
   .search-tab {
     min-width: 200px;
+    flex: 2 1 auto;
+    max-width: 300px;
   }
 
   .modern-search {
@@ -5441,6 +5484,7 @@ input[type=checkbox] {
 @media (max-width: 1076px) {
   .modern-tabs {
     position: relative;
+    padding: 8px;
   }
 
   .tabs-list {
@@ -5449,12 +5493,14 @@ input[type=checkbox] {
   }
 
   .tab-item {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 0;
+    border-radius: 8px;
+    margin-bottom: 4px;
+    transition: all 0.3s ease;
   }
 
   .tab-item:last-child {
     border-bottom: none;
+    margin-bottom: 0;
   }
 
   .tab-content {
@@ -5463,25 +5509,20 @@ input[type=checkbox] {
     align-items: center;
   }
 
-  .tab-item::after {
-    content: '▼';
-    font-size: 12px;
-    transition: transform 0.3s ease;
-    opacity: 0.6;
-  }
-
   .tab-item.active::after {
     transform: rotate(180deg);
   }
 
   .tab-item:hover {
     background: rgba(240, 55, 165, 0.05);
-    transform: none;
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
   .tab-item.active {
     background: linear-gradient(135deg, var(--active-tab), #e91e63);
     border-bottom-color: transparent;
+    box-shadow: 0 4px 15px rgba(240, 55, 165, 0.3);
   }
 }
 
@@ -5489,38 +5530,43 @@ input[type=checkbox] {
   .tabs-list {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1px;
-    background: rgba(0, 0, 0, 0.1);
+    gap: 4px;
+    background: transparent;
   }
 
   .tab-item {
-    background: rgba(255, 255, 255, 0.95);
-    border: none;
-    border-radius: 0;
+    margin: 0;
+    transition: all 0.3s ease;
+  }
+
+  .tab-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 
   .tab-content {
     padding: 12px 8px;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
     text-align: center;
     justify-content: center;
   }
 
   .tabs-tab-icon {
     font-size: 20px;
+    opacity: 0.9;
   }
 
   .tabs-tab-text {
     font-size: 11px;
     display: block !important;
     line-height: 1.2;
+    font-weight: 500;
   }
 
   .search-tab {
     grid-column: 1 / -1;
     margin-left: 0;
-    background: rgba(255, 255, 255, 0.98);
   }
 
   .search-container {

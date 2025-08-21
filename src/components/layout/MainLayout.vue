@@ -878,10 +878,14 @@ const handleCloseWelcomeModal = () => {
     transition: max-height 0.3s ease-in-out;
     background: rgba(255, 255, 255, 0.95);
     border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin: 0 8px 8px 8px;
   }
 
   .accordion-content.expanded {
     max-height: 1000px;
+    padding: 16px;
   }
 }
 

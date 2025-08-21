@@ -325,7 +325,6 @@ const emit = defineEmits(['search'])
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border-top: 1px solid rgba(0, 0, 0, 0.05);
-  padding: 12px 20px;
   box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.1);
 }
 
@@ -339,7 +338,6 @@ const emit = defineEmits(['search'])
   border: none;
   color: var(--search-color);
   padding: 8px 12px;
-  border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 12px;

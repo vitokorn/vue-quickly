@@ -2,12 +2,13 @@
 /* eslint-disable no-useless-escape */
 import MobileLayout from './components/layout/MobileLayout.vue'
 import MainLayout from "./components/layout/MainLayout.vue";
+import {isMobile} from "./mixins/detectingMobileMixin.js";
 
 </script>
 
 <template>
-<!--  <MainLayout/>-->
-  <MobileLayout/>
+  <MainLayout v-if="!isMobile()"/>
+  <MobileLayout v-if="isMobile()"/>
 </template>
 
 <style>

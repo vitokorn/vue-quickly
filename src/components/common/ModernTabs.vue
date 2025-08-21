@@ -1,16 +1,6 @@
 <template>
   <nav class="modern-tabs">
     <ul class="tabs-list">
-      <li class="tab-item search-tab" id="srch">
-        <div class="search-container">
-          <input type="search"
-                 class="modern-search"
-                 v-model="searchQuery"
-                 @keyup="handleSearch"
-                 placeholder="Search music...">
-          <span class="search-icon">🔍</span>
-        </div>
-      </li>
       <li v-for="tab in tabs"
           :key="tab.id"
           :id="tab.id"
@@ -22,8 +12,17 @@
         <span class="tabs-tab-text">{{ tab.text }}</span>
         </div>
       </li>
-
     </ul>
+    <li class="tab-item search-tab" id="srch">
+      <div class="search-container">
+        <input type="search"
+               class="modern-search"
+               v-model="searchQuery"
+               @keyup="handleSearch"
+               placeholder="Search music...">
+        <span class="search-icon">🔍</span>
+      </div>
+    </li>
   </nav>
 </template>
 
