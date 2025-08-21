@@ -59,7 +59,7 @@ const handleTrackClick = async () => {
     // For regular tracks, add to queue and get track details
     queueStore.addToQueue(props.track)
     deeperStore.getTrackDetails(props.track, props.sectionName, props.parentId)
-    
+
     // Also play audio preview if available
     const previewUrl = props.track.preview_url || props.track.previewUrl
     if (previewUrl) {
@@ -84,14 +84,14 @@ const handleAddToQueue = (event) => {
 
 const handleDeeperTrack = async (event) => {
   event.stopPropagation()
-  
+
   // Add track data to deeper store
   const trackData = {
     ...props.track,
     type: 'track',
     parentKey: props.sectionName
   }
-  
+
   // Add to appropriate section based on context
   let sectionName = 'topTracks'
   if (props.sectionName === 'yourPlaylists' || props.sectionName === 'spotifyPlaylists') {
@@ -101,13 +101,13 @@ const handleDeeperTrack = async (event) => {
   } else if (props.sectionName === 'newReleases') {
     sectionName = 'albumTracks'
   }
-  
+
   deeperStore.addToSection(sectionName, trackData)
   deeperStore.setCurrentSection(sectionName)
-  
+
   // Show the MobileDeeperTracks component with a small delay to ensure proper rendering
   const trackKey = `track_${props.track.id}__p:${props.sectionName}__`
-  
+
   // Use setTimeout to ensure the component is shown after the current event cycle
   setTimeout(() => {
     visibilityManager.showComponent(trackKey)
@@ -437,6 +437,7 @@ const isInQueue = () => {
 
 :root.dark .track-cover {
   background: rgba(255, 255, 255, 0.1);
+  background-size: contain;
 }
 
 :root.dark .no-image {

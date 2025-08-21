@@ -16,10 +16,6 @@ const props = defineProps({
     type: Number,
     required: true
   },
-  accordionActive: {
-    type: Boolean,
-    default: false
-  }
 })
 
 // Emits
@@ -70,7 +66,6 @@ const handleRefresh = () => {
 <template>
   <div>
     <Loader v-if="spotifyStore.isLoading" />
-    <teleport to="#option5" :disabled="!accordionActive">
       <div id="savedtrack" class="display-flex flex-wrap" v-show="selectedTopMenu === 5">
         <div class="section-header">
           <button class="refresh-button" @click="handleRefresh">
@@ -92,7 +87,6 @@ const handleRefresh = () => {
           </template>
         </div>
       </div>
-    </teleport>
   </div>
 </template>
 

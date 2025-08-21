@@ -50,7 +50,6 @@ const {
 const {search} = useFiltering()
 
 // Local state
-const accordionActive = ref(false)
 const showWelcomeModal = ref(localStorage.getItem('welcome-modal-seen') !== 'true')
 const expandedTabs = ref(new Set())
 const selectedPlaylistSortOption = ref("")
@@ -175,17 +174,6 @@ const handleTabClick = async (tabNumber, event) => {
   // Prevent event bubbling
   event.stopPropagation()
 
-  // Handle mobile accordion behavior
-  if (accordionActive.value) {
-    if (expandedTabs.value.has(tabNumber)) {
-      expandedTabs.value.delete(tabNumber)
-    } else {
-      // Close other tabs and open this one
-      expandedTabs.value.clear()
-      expandedTabs.value.add(tabNumber)
-    }
-  }
-
   // Set the selected menu
   setSelectedTopMenu(tabNumber)
 
@@ -254,24 +242,6 @@ const handleSearch = (event) => {
   spotifyStore.search(event.target.value)
 }
 
-// Resize event listener for accordion functionality
-const handleResize = () => {
-  const wasAccordionActive = accordionActive.value
-  accordionActive.value = window.innerWidth < 1076
-
-  // If switching to desktop mode, clear expanded tabs
-  if (wasAccordionActive && !accordionActive.value) {
-    expandedTabs.value.clear()
-  }
-
-  console.log('Accordion active:', accordionActive.value)
-}
-
-window.addEventListener('resize', handleResize)
-
-// Initialize on mount
-handleResize()
-
 // Welcome modal handlers
 const handleCloseWelcomeModal = () => {
   showWelcomeModal.value = false
@@ -302,48 +272,11 @@ const handleCloseWelcomeModal = () => {
           @search="handleSearch"
       />
 
-      <!-- Mobile Accordion Content -->
-      <div v-if="accordionActive" class="accordion-content"
-           :class="{ expanded: expandedTabs.has(selectedTopMenu) }">
-        <!-- Personal Playlists Section -->
-        <div v-if="selectedTopMenu === 1">
-          <Loader v-if="spotifyStore.isLoading"/>
-          <div id="yourplaylists" class="con2">
-            <div class="rel">
-              <RefreshButton :on-click="() => spotifyStore.fetchPlaylists(0)"/>
-            </div>
-            <div class="pl justify-content-center">
-              <template v-for="(item,index) of spotifyStore.getPlaylists" :key="index">
-                <div :id="item.id"
-                     @click="setSelectedPersonalPlaylist(item.id); spotifyStore.fetchPlaylist(item.id)"
-                     class="hr-line-dashed"
-                     :class="selectedPersonalPlaylist===item.id ? 'activetab':''">
-                  {{ item.name }}
-                </div>
-              </template>
-            </div>
-            <Playlist
-                v-if="spotifyStore.getCurrentPlaylist"
-                :playlist="spotifyStore.getCurrentPlaylist"
-                :sorted-tracks="sortedPlaylistItems"
-                :selected-item="selectedItem"
-                :selected-sort-option="selectedPlaylistSortOption"
-                :unplayable-tracks="audioStore.unplayableTracks"
-                @refresh="spotifyStore.fetchPlaylists(0)"
-                @track-click="handleTrackClick"
-                @track-hover="handleTrackHover"
-                @track-leave="handleTrackLeave"
-                @sort-change="selectedPlaylistSortOption = $event"
-            />
-          </div>
-        </div>
-      </div>
-
       <!-- Content sections -->
       <div class="modern-content">
         <div class="content-container">
           <!-- Personal Playlists Section -->
-          <div v-if="selectedTopMenu === 1 && !accordionActive">
+          <div v-if="selectedTopMenu === 1">
             <Loader v-if="spotifyStore.isLoading"/>
             <div id="yourplaylists" class="con2">
               <div class="rel">
@@ -373,9 +306,8 @@ const handleCloseWelcomeModal = () => {
 
           <!-- Top Artists Section -->
           <div v-if="selectedTopMenu === 2">
-            <TopArtists 
+            <TopArtists
               :selected-top-menu="selectedTopMenu"
-              :accordion-active="accordionActive"
               @artist-click="handleArtistClick"
               @artist-hover="handleArtistHover"
               @artist-leave="handleArtistLeave"
@@ -384,9 +316,8 @@ const handleCloseWelcomeModal = () => {
 
           <!-- Top Tracks Section -->
           <div v-if="selectedTopMenu === 3">
-            <TopTracks 
+            <TopTracks
               :selected-top-menu="selectedTopMenu"
-              :accordion-active="accordionActive"
               @track-click="handleTrackClick"
               @track-hover="handleTrackHover"
               @track-leave="handleTrackLeave"
@@ -395,18 +326,16 @@ const handleCloseWelcomeModal = () => {
 
           <!-- Saved Albums Section -->
           <div v-if="selectedTopMenu === 4">
-            <SavedAlbums 
+            <SavedAlbums
               :selected-top-menu="selectedTopMenu"
-              :accordion-active="accordionActive"
               @album-click="async (album, event) => { setSelectedItem('4' + album.id); await deeperStore.getAlbumDetails(album, 'savedAlbums') }"
             />
           </div>
 
           <!-- Saved Tracks Section -->
           <div v-if="selectedTopMenu === 5">
-            <SavedTracks 
+            <SavedTracks
               :selected-top-menu="selectedTopMenu"
-              :accordion-active="accordionActive"
               @track-click="async (track, event) => { setSelectedItem('5' + track.id); await deeperStore.getTrackDetails(track, 'savedTracks'); queueStore.addToQueue(track) }"
               @track-hover="handleTrackHover"
               @track-leave="handleTrackLeave"
@@ -415,9 +344,8 @@ const handleCloseWelcomeModal = () => {
 
           <!-- Followed Artists Section -->
           <div v-if="selectedTopMenu === 6">
-            <FollowedArtists 
+            <FollowedArtists
               :selected-top-menu="selectedTopMenu"
-              :accordion-active="accordionActive"
               @artist-click="handleArtistClick"
               @artist-hover="handleArtistHover"
               @artist-leave="handleArtistLeave"
@@ -426,9 +354,8 @@ const handleCloseWelcomeModal = () => {
 
           <!-- New Releases Section -->
           <div v-if="selectedTopMenu === 7">
-            <NewReleases 
+            <NewReleases
               :selected-top-menu="selectedTopMenu"
-              :accordion-active="accordionActive"
               @album-click="async (album, event) => { setSelectedItem('7' + album.id); await deeperStore.getAlbumDetails(album, 'newReleases') }"
               @album-hover="handleTrackHover"
               @album-leave="handleTrackLeave"
@@ -438,7 +365,6 @@ const handleCloseWelcomeModal = () => {
           <!-- Spotify Playlists Section -->
           <div v-if="selectedTopMenu === 8">
             <Loader v-if="spotifyStore.isLoading"/>
-            <teleport to="#option8" :disabled="!accordionActive">
               <div id="sptplaylists" class="con2" v-show="selectedTopMenu===8">
                 <PlaylistSelector
                   :playlists="spotifyStore.getSpotifyPlaylists"
@@ -461,7 +387,6 @@ const handleCloseWelcomeModal = () => {
                     @sort-change="selectedSpotPlaylistSortOption = $event"
                 />
               </div>
-            </teleport>
           </div>
 
           <!-- Search Section -->
@@ -523,451 +448,7 @@ const handleCloseWelcomeModal = () => {
   </div>
 </template>
 
-<style scoped>
-.main-layout {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background: linear-gradient(135deg, var(--main-color) 0%, rgba(240, 55, 165, 0.05) 100%);
-}
-
-.content-wrapper {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-
-/* Modern Playlist Header */
-.modern-playlist-header {
-  display: flex;
-  gap: 24px;
-  padding: 24px;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  margin-bottom: 24px;
-}
-
-.playlist-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.playlist-title-section {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.playlist-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--title-color);
-  margin: 0;
-  line-height: 1.2;
-}
-
-.refresh-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: rgba(0, 0, 0, 0.05);
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.refresh-button:hover {
-  background: rgba(240, 55, 165, 0.1);
-  transform: rotate(180deg);
-}
-
-.refresh-icon {
-  width: 16px;
-  height: 16px;
-}
-
-.playlist-description {
-  font-size: 14px;
-  color: var(--search-color);
-  opacity: 0.8;
-  line-height: 1.4;
-}
-
-.playlist-cover {
-  flex-shrink: 0;
-}
-
-.playlist-cover img {
-  max-height: 165px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.playlist-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  min-width: 200px;
-}
-
-.spotify-link {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: linear-gradient(135deg, #1DB954, #1ed760);
-  color: white;
-  text-decoration: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(29, 185, 84, 0.3);
-}
-
-.spotify-link:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(29, 185, 84, 0.4);
-}
-
-.link-icon {
-  font-size: 16px;
-}
-
-/* Mobile Responsive for Playlist Header */
-@media (max-width: 768px) {
-  .modern-playlist-header {
-    flex-direction: column;
-    gap: 20px;
-    padding: 20px;
-  }
-
-  .playlist-title {
-    font-size: 20px;
-  }
-
-  .playlist-actions {
-    min-width: auto;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  .spotify-link {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .modern-playlist-header {
-    padding: 16px;
-  }
-
-  .playlist-title {
-    font-size: 18px;
-  }
-
-  .playlist-cover img {
-    max-height: 120px;
-  }
-}
-
-/* Dark mode support for playlist header */
-:root.dark .modern-playlist-header {
-  background: rgba(42, 46, 47, 0.9);
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-:root.dark .refresh-button {
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-:root.dark .refresh-button:hover {
-  background: rgba(240, 55, 165, 0.2);
-  box-shadow: 0 4px 12px rgba(240, 55, 165, 0.3);
-}
-
-
-/* Modern Content Styling */
-.modern-content {
-  flex: 1;
-  padding: 24px;
-  background: transparent;
-}
-
-.content-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  padding: 24px;
-  min-height: 500px;
-}
-
-/* Enhanced Card Styling */
-.con2, .con3 {
-  border-radius: 12px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.con3 {
-  position: relative;
-  overflow: hidden;
-}
-
-.con3::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1));
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-  z-index: -1;
-}
-
-.con3:hover::before {
-  opacity: 1;
-}
-
-.con3:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-}
-
-.con3.half-opacity {
-  opacity: 0.6;
-}
-
-.con3.half-opacity:hover {
-  opacity: 0.8;
-}
-
-.con3.no-image {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.con3.no-image::before {
-  display: none;
-}
-
-/* Audio element styling */
-.con3 audio {
-  display: none;
-}
-
-/* Focus styles for accessibility */
-.con3:focus {
-  outline: 2px solid var(--active-tab);
-  outline-offset: 2px;
-}
-
-/* Dark mode support */
-:root.dark .con3 {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-:root.dark .con3:hover {
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-}
-
-.con3.selected {
-  color: white;
-  text-shadow: black 0 0 3px;
-  border: 3px solid var(--active-tab);
-  box-shadow: 0 0 20px rgba(240, 55, 165, 0.4);
-}
-
-/* Button Styling */
-.btn {
-  background: linear-gradient(135deg, var(--active-tab), #e91e63);
-  border: none;
-  border-radius: 8px;
-  padding: 8px 12px;
-  color: white;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(240, 55, 165, 0.3);
-}
-
-.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(240, 55, 165, 0.4);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .modern-content {
-    padding: 16px;
-  }
-
-  .content-container {
-    padding: 16px;
-    border-radius: 12px;
-  }
-}
-
-/* Mobile Accordion Styles */
-@media (max-width: 1076px) {
-  .modern-tabs {
-    position: relative;
-  }
-
-  .tabs-list {
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .tab-item {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 0;
-  }
-
-  .tab-item:last-child {
-    border-bottom: none;
-  }
-
-  .tab-content {
-    padding: 16px 20px;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .tab-item::after {
-    content: '▼';
-    font-size: 12px;
-    transition: transform 0.3s ease;
-    opacity: 0.6;
-  }
-
-  .tab-item.active::after {
-    transform: rotate(180deg);
-  }
-
-  .tab-item:hover {
-    background: rgba(240, 55, 165, 0.05);
-    transform: none;
-  }
-
-  .tab-item.active {
-    background: linear-gradient(135deg, var(--active-tab), #e91e63);
-    border-bottom-color: transparent;
-  }
-
-  /* Accordion content animation */
-  .accordion-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-in-out;
-    background: rgba(255, 255, 255, 0.95);
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 0 0 12px 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    margin: 0 8px 8px 8px;
-  }
-
-  .accordion-content.expanded {
-    max-height: 1000px;
-    padding: 16px;
-  }
-}
-
-/* Dark mode support */
-:root.dark .modern-tabs {
-  background: rgba(34, 36, 38, 0.95);
-  border-bottom-color: rgba(255, 255, 255, 0.1);
-}
-
-:root.dark .content-container {
-  background: rgba(42, 46, 47, 0.8);
-}
-
-:root.dark-blue .content-container {
-  background: rgba(18, 33, 58, 0.85);
-  border: 1px solid rgba(120,160,220,0.12);
-}
-
-:root.dark .modern-search {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
-  color: var(--search-color);
-}
-
-:root.dark .modern-search:focus {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: var(--active-tab);
-}
-
-/* Section Header Styling */
-.section-header {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 16px;
-  padding: 8px 0;
-}
-
-.section-header .refresh-button {
-  margin-left: auto;
-}
-
-/* Enhanced Refresh Button Styling */
-.refresh-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  background: rgba(0, 0, 0, 0.05);
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.refresh-button:hover {
-  background: rgba(240, 55, 165, 0.1);
-  transform: rotate(180deg);
-  box-shadow: 0 4px 12px rgba(240, 55, 165, 0.2);
-}
-
-.refresh-icon {
-  width: 18px;
-  height: 18px;
-  opacity: 0.7;
-  transition: opacity 0.3s ease;
-}
-
-.refresh-button:hover .refresh-icon {
-  opacity: 1;
-}
-
-/* Dark mode support */
-:root.dq .modern-tabs {
-  background: #2c2a3d;
-  border-bottom-color: rgba(255, 255, 255, 0.1);
-}
-
-
-:root.dq .content-container {
-  background: #2c2a3d;
-}
+<style>
+@import "../../assets/style/styles.css";
 </style>
 

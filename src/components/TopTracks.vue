@@ -16,10 +16,6 @@ const props = defineProps({
     type: Number,
     required: true
   },
-  accordionActive: {
-    type: Boolean,
-    default: false
-  }
 })
 
 // Emits
@@ -90,7 +86,6 @@ const handleRefresh = async (rangeId, event) => {
 <template>
   <div>
     <Loader v-if="spotifyStore.isLoading" />
-    <teleport to="#option3" :disabled="!accordionActive">
       <TimeRangeSelector
         v-show="selectedTopMenu === 3"
         :selected-range="spotifyStore.selectedTracksRange"
@@ -103,7 +98,7 @@ const handleRefresh = async (rangeId, event) => {
         @range-change="handleRangeChange"
         @refresh="handleRefresh"
       />
-      
+
       <!-- Track Display Sections -->
       <TrackDisplaySection
         :tracks="sortedTTItems"
@@ -116,7 +111,7 @@ const handleRefresh = async (rangeId, event) => {
         @track-hover="handleTrackHover"
         @track-leave="handleTrackLeave"
       />
-      
+
       <TrackDisplaySection
         :tracks="sortedTTMItems"
         section-id="toptracks6"
@@ -128,7 +123,7 @@ const handleRefresh = async (rangeId, event) => {
         @track-hover="handleTrackHover"
         @track-leave="handleTrackLeave"
       />
-      
+
       <TrackDisplaySection
         :tracks="sortedTTLItems"
         section-id="toptracksall"
@@ -140,7 +135,6 @@ const handleRefresh = async (rangeId, event) => {
         @track-hover="handleTrackHover"
         @track-leave="handleTrackLeave"
       />
-    </teleport>
   </div>
 </template>
 

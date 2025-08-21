@@ -28,7 +28,7 @@ const filteredPlaylists = computed(() => {
   if (!searchTerm.value) {
     return props.playlists
   }
-  return props.playlists.filter(playlist => 
+  return props.playlists.filter(playlist =>
     playlist.name.toLowerCase().includes(searchTerm.value.toLowerCase())
   )
 })
@@ -47,7 +47,7 @@ const handleSearch = (event) => {
   <div class="playlist-selector">
     <!-- Search Header -->
     <div class="head">
-      <input class="inp"
+      <input class="inp py-3"
              type="text"
              v-model="searchTerm"
              @input="handleSearch"
