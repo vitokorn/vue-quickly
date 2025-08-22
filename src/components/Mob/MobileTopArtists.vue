@@ -66,23 +66,23 @@ const handleTimeRangeChange = async (rangeId) => {
 const handleArtistClick = async (artist, event) => {
   setSelectedItem(artist.id)
   const sectionName = 'topArtists'
-  
+
   // Add artist to deeper store for topArtists section
   const artistData = {
     ...artist,
     type: 'artist',
     parentKey: 'homePage'
   }
-  
+
   deeperStore.addToSection('topArtists', artistData)
   deeperStore.setCurrentSection('topArtists')
-  
+
   // Show the deeper artist component using visibility manager
   const { useVisibilityManager } = await import('../../composables/useVisibilityManager')
   const visibilityManager = useVisibilityManager()
   const artistKey = `deeperartist_${artist.id}__p:homePage__`
   visibilityManager.showComponent(artistKey)
-  
+
   console.log('Showing deeper artist for:', artist.name, 'with key:', artistKey)
 }
 
@@ -115,7 +115,7 @@ const formatFollowers = (count) => {
 const formatGenres = (genres) => {
   if (!genres || genres.length === 0) return ''
   // Take first 2 genres and capitalize first letter
-  return genres.slice(0, 2).map(genre => 
+  return genres.slice(0, 2).map(genre =>
     genre.charAt(0).toUpperCase() + genre.slice(1)
   ).join(', ')
 }
@@ -141,19 +141,19 @@ onMounted(async () => {
     <!-- Time Range Selector -->
     <div class="time-range-selector">
       <div class="range-buttons">
-        <button 
+        <button
           :class="['range-btn', { active: selectedTimeRange === 1 }]"
           @click="handleTimeRangeChange(1)"
         >
           Last month
         </button>
-        <button 
+        <button
           :class="['range-btn', { active: selectedTimeRange === 2 }]"
           @click="handleTimeRangeChange(2)"
         >
           Last 6 months
         </button>
-        <button 
+        <button
           :class="['range-btn', { active: selectedTimeRange === 3 }]"
           @click="handleTimeRangeChange(3)"
         >
@@ -197,9 +197,9 @@ onMounted(async () => {
             @mouseleave="handleArtistLeave"
           >
             <div class="artist-cover">
-              <img 
-                v-if="artist.images && artist.images.length > 0" 
-                :src="artist.images[0].url" 
+              <img
+                v-if="artist.images && artist.images.length > 0"
+                :src="artist.images[0].url"
                 :alt="artist.name"
                 @error="$event.target.style.display = 'none'"
               />
@@ -241,9 +241,9 @@ onMounted(async () => {
             @mouseleave="handleArtistLeave"
           >
             <div class="grid-cover">
-              <img 
-                v-if="artist.images && artist.images.length > 0" 
-                :src="artist.images[0].url" 
+              <img
+                v-if="artist.images && artist.images.length > 0"
+                :src="artist.images[0].url"
                 :alt="artist.name"
                 @error="$event.target.style.display = 'none'"
               />
@@ -620,18 +620,18 @@ onMounted(async () => {
   gap: 2px;
 }
 
-.artists-grid :deep(.con3:hover) {
+.artists-grid :deep(.media-card:hover) {
   background: rgba(255, 255, 255, 0.15);
   transform: translateY(-2px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
-.artists-grid :deep(.con3.selected) {
+.artists-grid :deep(.media-card.selected) {
   background: rgba(102, 126, 234, 0.3);
   border-color: rgba(102, 126, 234, 0.6);
 }
 
-.artists-grid :deep(.con3.has-preview) {
+.artists-grid :deep(.media-card.has-preview) {
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(102, 126, 234, 0.1));
 }
 

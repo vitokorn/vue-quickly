@@ -50,7 +50,7 @@ const shouldShowBasic = computed(() => !hasImage.value && !hasPreview.value)
 
 // Computed class for the album item
 const albumClass = computed(() => {
-  const baseClass = 'con3'
+  const baseClass = 'media-card'
   const selectedClass = props.selected ? 'selected' : ''
   const opacityClass = (shouldShowWithoutPreview.value || shouldShowBasic.value) ? 'half-opacity' : ''
   return `${baseClass} ${selectedClass} ${opacityClass}`.trim()

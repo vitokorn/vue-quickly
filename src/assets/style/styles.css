@@ -273,16 +273,67 @@ h1 {
     color: var(--pl-color)
 }
 
-.con3 {
-    width: 128px;
-    height: 128px;
+input[type="text"] {
+    padding: 10px;
+}
+@media (max-width: 480px) {
+    .media-card {
+        width: 100px;
+        height: 100px;
+        font-size: 0.6em;
+    }
+}
+
+/* Small tablets and large phones */
+@media (min-width: 481px) and (max-width: 576px) {
+    .media-card {
+        width: 110px;
+        height: 110px;
+        font-size: 0.65em;
+    }
+}
+
+/* Medium tablets */
+@media (min-width: 577px) and (max-width: 768px) {
+    .media-card {
+        width: 120px;
+        height: 120px;
+        font-size: 0.7em;
+    }
+}
+
+/* Large tablets and small desktops */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .media-card {
+        width: 140px;
+        height: 140px;
+        font-size: 0.75em;
+    }
+}
+
+/* Medium desktops */
+@media (min-width: 1025px) and (max-width: 1440px) {
+    .media-card {
+        width: 160px;
+        height: 160px;
+        font-size: 0.8em;
+    }
+}
+
+/* Large desktops */
+@media (min-width: 1441px) {
+    .media-card {
+        width: 180px;
+        height: 180px;
+        font-size: 0.85em;
+    }
+}
+
+.media-card {
     /*border: 2px solid white;*/
     display: flex;
-    -moz-box-align: center;
     align-items: center;
-    -moz-box-pack: center;
     justify-content: center;
-    /*font-size: 40px;*/
     font-weight: bolder;
     color: transparent;
     background-repeat: no-repeat;
@@ -290,7 +341,7 @@ h1 {
     background-color: gray;
 }
 
-.con3:hover {
+.media-card:hover {
     color: white;
     text-shadow: black 0 0 3px;
     transform: translateY(-4px) scale(1.02);
@@ -315,7 +366,7 @@ h1 {
 
 
 @media (min-width: 576px) {
-    .con3 {
+    .media-card {
         width: 105px;
         height: 105px;
         /*border: 2px solid white;*/
@@ -332,7 +383,7 @@ h1 {
         background-color: gray;
     }
 
-    .con3:hover {
+    .media-card:hover {
         color: white;
         text-shadow: black 0 0 3px;
         transform: translateY(-4px) scale(1.02);
@@ -346,7 +397,7 @@ h1 {
         font-size: 2em !important;
     }
 
-    .con3 {
+    .media-card {
         width: 130px;
         height: 130px;
         /*border: 2px solid white;*/
@@ -363,7 +414,7 @@ h1 {
         background-color: gray;
     }
 
-    .con3:hover {
+    .media-card:hover {
         color: white;
         text-shadow: black 0 0 3px;
         transform: translateY(-4px) scale(1.02);
@@ -373,7 +424,7 @@ h1 {
 }
 
 @media (min-width: 992px) {
-    .con3 {
+    .media-card {
         width: 150px;
         height: 150px;
         /*border: 2px solid white;*/
@@ -390,7 +441,7 @@ h1 {
         background-color: gray;
     }
 
-    .con3:hover {
+    .media-card:hover {
         color: white;
         text-shadow: black 0 0 3px;
         transform: translateY(-4px) scale(1.02);
@@ -400,7 +451,7 @@ h1 {
 }
 
 @media (min-width: 1200px) {
-    .con3 {
+    .media-card {
         width: 165px;
         height: 165px;
         /*border: 2px solid white;*/
@@ -417,7 +468,7 @@ h1 {
         background-color: gray;
     }
 
-    .con3:hover {
+    .media-card:hover {
         color: white;
         text-shadow: black 0 0 3px;
         transform: translateY(-4px) scale(1.02);
@@ -506,16 +557,10 @@ h1 {
     }
 }
 
-.pl {
-    display: flex;
-    flex-wrap: wrap;
-    height: 225px;
+.playlists {
+    height: 232px;
     overflow-y: scroll;
-    /*column-gap: 16px;*/
-    /*column-count: 2;*/
-    /*margin-bottom: 12px;*/
     color: var(--pl-color);
-    background-color: var(--pl-background-color);
 }
 
 a {
@@ -575,16 +620,6 @@ a {
     to {
         transform: rotate(359deg)
     }
-}
-
-.hr-line-dashed {
-    border-top: 1px dotted var(--border-top);
-    cursor: pointer;
-    width: 225px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .playable-search {
@@ -780,10 +815,7 @@ a {
     background-color: var(--button-background-color);
 }
 
-.inp {
-    background-color: var(--input-color);
-    border-color: var(--border-color)
-}
+
 
 .stitle {
     display: flex;
@@ -1428,38 +1460,38 @@ input[type=checkbox] {
 }
 
 .track-card:hover .track-overlay,
-.con3:hover .track-overlay, .con3:hover .album-overlay {
+.media-card:hover .track-overlay, .media-card:hover .album-overlay {
     background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
     color: white !important;
 }
 
 .track-card:hover .track-overlay .track-info,
-.con3:hover .track-overlay .track-info {
+.media-card:hover .track-overlay .track-info {
     color: white !important;
 }
 
 .track-card:hover .track-overlay .track-artists,
-.con3:hover .track-overlay .track-artists,
+.media-card:hover .track-overlay .track-artists,
 .track-card:hover .track-overlay .track-name,
-.con3:hover .track-overlay .track-name {
+.media-card:hover .track-overlay .track-name {
     color: white !important;
 }
 
 .track-card.selected .track-overlay,
-.con3.selected .track-overlay {
+.media-card.selected .track-overlay {
     background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
     color: white !important;
 }
 
 .track-card.selected .track-overlay .track-info,
-.con3.selected .track-overlay .track-info {
+.media-card.selected .track-overlay .track-info {
     color: white !important;
 }
 
 .track-card.selected .track-overlay .track-artists,
-.con3.selected .track-overlay .track-artists,
+.media-card.selected .track-overlay .track-artists,
 .track-card.selected .track-overlay .track-name,
-.con3.selected .track-overlay .track-name {
+.media-card.selected .track-overlay .track-name {
     color: white !important;
 }
 
@@ -4214,12 +4246,14 @@ input[type=checkbox] {
     margin-bottom: 16px;
 }
 
-.inp {
+.playlist-search {
     width: 100%;
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     font-size: 14px;
-    background: rgba(255, 255, 255, 0.9);
+    background-color: var(--input-color);
+    color: var(--pl-color);
+    border-color: var(--border-color);
     backdrop-filter: blur(10px);
     transition: all 0.3s ease;
     box-sizing: border-box;
@@ -4235,20 +4269,13 @@ input[type=checkbox] {
     margin-bottom: 24px;
 }
 
-.pl {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
 .hr-line-dashed {
-    padding: 8px 16px;
     border: 1px dashed rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
+    text-align: center;
 }
 
 .hr-line-dashed:hover {
@@ -4924,8 +4951,8 @@ audio {
     gap: 16px;
 }
 
-.tracks-list .con3 .track-overlay .track-artists,
-.tracks-list .con3 .track-overlay .track-name {
+.tracks-list .media-card .track-overlay .track-artists,
+.tracks-list .media-card .track-overlay .track-name {
     color: white;
 }
 
@@ -5234,4 +5261,16 @@ audio {
     :root.dq .tabs-list {
         background: rgba(255, 255, 255, 0.1);
     }
+}
+
+
+.grid-auto-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 8px;
+}
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

@@ -1,5 +1,7 @@
 <script setup>
-import { ref, computed } from 'vue'
+import {ref, computed} from 'vue'
+import RefreshButton from "./RefreshButton.vue";
+import {useSpotifyStore} from "../stores/spotify-store.js";
 
 const props = defineProps({
   playlists: {
@@ -23,13 +25,14 @@ const props = defineProps({
 const emit = defineEmits(['playlist-select', 'search'])
 
 const searchTerm = ref('')
+const spotifyStore = useSpotifyStore()
 
 const filteredPlaylists = computed(() => {
   if (!searchTerm.value) {
     return props.playlists
   }
   return props.playlists.filter(playlist =>
-    playlist.name.toLowerCase().includes(searchTerm.value.toLowerCase())
+      playlist.name.toLowerCase().includes(searchTerm.value.toLowerCase())
   )
 })
 
@@ -46,27 +49,26 @@ const handleSearch = (event) => {
 <template>
   <div class="playlist-selector">
     <!-- Search Header -->
-    <div class="head">
-      <input class="inp py-3"
+    <div class="p-2" style="display: flex;justify-content: center;align-items: center;">
+      <input class="playlist-search py-2 me-2"
              type="text"
              v-model="searchTerm"
              @input="handleSearch"
              :placeholder="placeholder"
              :title="title">
+      <RefreshButton :on-click="() => spotifyStore.fetchPlaylists(0)"/>
     </div>
 
     <!-- Playlist Selection -->
-    <div class="sp">
-      <div class="pl justify-content-center">
-        <template v-for="item of filteredPlaylists" :key="item.id">
-          <div :id="item.id"
-               @click="handlePlaylistSelect(item.id, $event)"
-               class="hr-line-dashed"
-               :class="selectedPlaylist === item.id ? 'activetab' : ''">
-            {{ item.name }}
-          </div>
-        </template>
-      </div>
+    <div class="playlists grid-auto-columns py-2">
+      <template v-for="item of filteredPlaylists" :key="item.id">
+        <div :id="item.id"
+             @click="handlePlaylistSelect(item.id, $event)"
+             class="hr-line-dashed flex-center p-3"
+             :class="selectedPlaylist === item.id ? 'activetab' : ''">
+          {{ item.name }}
+        </div>
+      </template>
     </div>
   </div>
 </template>

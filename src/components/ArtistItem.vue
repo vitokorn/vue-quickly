@@ -69,7 +69,7 @@ const shouldDisplay = computed(() => {
 
 // Computed class for the artist item
 const artistClass = computed(() => {
-  const baseClass = 'con3'
+  const baseClass = 'media-card'
   const selectedClass = props.selected ? 'selected' : ''
   return `${baseClass} ${displayClass.value} ${selectedClass}`.trim()
 })

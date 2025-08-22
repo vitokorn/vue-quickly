@@ -157,8 +157,7 @@ const handleSearch = () => {
 const emit = defineEmits(['search'])
 </script>
 
-<style>
-@import "../../assets/style/mobile.css";
+<style scoped>
 .mobile-layout {
   min-height: 100vh;
   background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);

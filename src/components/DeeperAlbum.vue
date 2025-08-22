@@ -115,7 +115,7 @@ onMounted(async ()=> {
       </div>
       <div class="tracks-list">
         <template v-for="(track, index) in tracks" :key="index" class="">
-          <div :class="['con3', getTrackMediaDisplay(track).displayClass.value, selected === track.id ? 'selected' : '']"
+          <div :class="['media-card', getTrackMediaDisplay(track).displayClass.value, selected === track.id ? 'selected' : '']"
                :style="getTrackMediaDisplay(track).backgroundStyle.value"
                @mouseover="getTrackMediaDisplay(track).hasPreview.value && audioStore.handleAudioHover($event)"
                @mouseleave="getTrackMediaDisplay(track).hasPreview.value && audioStore.handleAudioLeave($event)"

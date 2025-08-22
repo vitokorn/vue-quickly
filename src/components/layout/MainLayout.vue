@@ -277,11 +277,8 @@ const handleCloseWelcomeModal = () => {
         <div class="content-container">
           <!-- Personal Playlists Section -->
           <div v-if="selectedTopMenu === 1">
-            <Loader v-if="spotifyStore.isLoading"/>
             <div id="yourplaylists" class="con2">
-              <div class="rel">
-                <RefreshButton :on-click="() => spotifyStore.fetchPlaylists(0)"/>
-              </div>
+              <Loader v-if="spotifyStore.isLoading"/>
               <PlaylistSelector
                 :playlists="spotifyStore.getPlaylists"
                 :selected-playlist="selectedPersonalPlaylist"
@@ -448,7 +445,6 @@ const handleCloseWelcomeModal = () => {
   </div>
 </template>
 
-<style>
-@import "../../assets/style/styles.css";
+<style scoped>
 </style>
 

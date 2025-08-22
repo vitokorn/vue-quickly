@@ -9,8 +9,6 @@ import MobileTopTracks from './MobileTopTracks.vue'
 import MobileTopArtists from './MobileTopArtists.vue'
 import MobileDeeperTracks from './MobileDeeperTracks.vue'
 import MobileDeeperArtist from './MobileDeeperArtist.vue'
-import QueueDisplay from './QueueDisplay.vue'
-import MobileTracksList from './MobileTracksList.vue'
 
 const spotifyStore = useSpotifyStore()
 const audioStore = useAudioStore()
@@ -87,7 +85,7 @@ onMounted(() => {
         <MobileTopArtists />
       </div>
     </div>
-    
+
     <!-- Mobile Deeper Tracks Component -->
     <MobileDeeperTracks
       v-for="track in deeperStore.getSectionData('topTracks')"
@@ -95,7 +93,7 @@ onMounted(() => {
       :d="track"
       :num="3"
     />
-    
+
     <!-- Mobile Deeper Artist Component -->
     <MobileDeeperArtist
       v-for="artist in deeperStore.getSectionData('topArtists')"

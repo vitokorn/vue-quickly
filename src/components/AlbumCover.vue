@@ -10,10 +10,10 @@ const { displayClass, backgroundStyle, audioPreload, audioSrc, hasPreview } = us
 </script>
 
 <template>
-  <div class="con3" 
-       :class="displayClass" 
-       :style="backgroundStyle" 
-       @mouseover="hasPreview && audioStore.handleAudioHover($event)" 
+  <div class="media-card"
+       :class="displayClass"
+       :style="backgroundStyle"
+       @mouseover="hasPreview && audioStore.handleAudioHover($event)"
        @mouseleave="hasPreview && audioStore.handleAudioLeave($event)">
     {{d.name}}
     <audio :preload="audioPreload" :src="audioSrc"></audio>
