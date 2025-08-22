@@ -36,7 +36,7 @@ const queueStore = useQueueStore()
 const deeperStore = useDeeperStore()
 
 // Composables
-const {createTrackSorter, createArtistSorter, createAlbumSorter} = useSorting()
+const {createPlaylistTrackSorter, createTrackSorter, createArtistSorter, createAlbumSorter} = useSorting()
 const {
   selectedItem,
   selectedTopMenu,
@@ -53,21 +53,15 @@ const {search} = useFiltering()
 const showWelcomeModal = ref(localStorage.getItem('welcome-modal-seen') !== 'true')
 const expandedTabs = ref(new Set())
 const selectedPlaylistSortOption = ref("")
-// Removed - now handled by TopTracks and TopArtists components
-// Removed - now handled by individual components
 const selectedSpotPlaylistSortOption = ref("")
 
 // Computed sorted data using composables
-const sortedPlaylistItems = createTrackSorter(
+const sortedPlaylistItems = createPlaylistTrackSorter(
     computed(() => spotifyStore.getCurrentPlaylist?.tracks?.items || []),
     selectedPlaylistSortOption
 )
 
-// Removed - now handled by TopTracks and TopArtists components
-
-// Removed - now handled by individual components
-
-const sortedSpotPlaylistItems = createTrackSorter(
+const sortedSpotPlaylistItems = createPlaylistTrackSorter(
     computed(() => spotifyStore.getCurrentSpotifyPlaylist?.tracks?.items || []),
     selectedSpotPlaylistSortOption
 )

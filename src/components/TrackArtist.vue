@@ -138,7 +138,7 @@ onMounted(async () => {
       </div>
 
       <div v-if="item.type==='top_tracks'" class="tracks-grid">
-        <div v-for="(tt, ttIndex) in item.tracks" :key="ttIndex">
+        <template v-for="(tt, ttIndex) in item.tracks" :key="ttIndex">
           <div :class="['track-card', getMediaDisplay(tt).displayClass.value, selected === tt.id ? 'selected' : '']"
                :style="getMediaDisplay(tt).backgroundStyle.value"
                @mouseover="getMediaDisplay(tt).hasPreview.value && audioStore.handleAudioHover($event)"
@@ -149,7 +149,7 @@ onMounted(async () => {
             </div>
             <audio :preload="getMediaDisplay(tt).audioPreload.value" :src="getMediaDisplay(tt).audioSrc.value"></audio>
           </div>
-        </div>
+        </template>
       </div>
 
       <!-- Albums Section -->

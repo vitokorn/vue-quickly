@@ -1,7 +1,7 @@
 <script setup>
-import { computed } from 'vue'
-import { useMediaDisplay } from '../composables/useMediaDisplay.js'
-import { artistUtils } from '../utils/artistUtils.js'
+import {computed, ref} from 'vue'
+import {useMediaDisplay} from '../composables/useMediaDisplay.js'
+import {artistUtils} from '../utils/artistUtils.js'
 import TrackCover from './TrackCover.vue'
 import SortTracks from './SortTracks.vue'
 import PlaylistTrackItem from './PlaylistTrackItem.vue'
@@ -19,10 +19,6 @@ const props = defineProps({
     type: String,
     default: ''
   },
-  selectedSortOption: {
-    type: String,
-    default: ''
-  },
   unplayableTracks: {
     type: Boolean,
     default: false
@@ -32,6 +28,9 @@ const props = defineProps({
     default: '1'
   }
 })
+
+const selectedSortOption = ref('')
+const mobileClass = ref(false)
 
 const emit = defineEmits([
   'refresh',
@@ -47,9 +46,9 @@ const formatArtistNames = (artists) => {
 }
 
 // Media display composable for playlist cover
-const { image: coverImage, hasImage: hasCover } = useMediaDisplay(
-  computed(() => props.playlist),
-  props.playlist?.images?.[0]
+const {image: coverImage, hasImage: hasCover} = useMediaDisplay(
+    computed(() => props.playlist),
+    props.playlist?.images?.[0]
 )
 
 // Event handlers
@@ -72,18 +71,24 @@ const handleTrackLeave = (event) => {
 const handleSortChange = (value) => {
   emit('sort-change', value)
 }
+mobileClass.value = window.innerWidth < 768;
+window.addEventListener('resize', () => {
+  mobileClass.value = window.innerWidth < 768;
+})
 </script>
 
 <template>
   <div class="playlist" :id="'p' + playlist.id">
     <!-- Playlist Header -->
-    <div class="modern-playlist-header">
-      <TrackCover
-        :d="playlist"
-        :cover="coverImage"
-        v-if="hasCover"
-      />
-      <div class="playlist-info">
+    <div class="modern-playlist-header row">
+      <div class="col-sm-6 col-3 col-md-3 col-lg-3" :class="{'col-6': mobileClass}">
+        <TrackCover
+            :d="playlist"
+            :cover="coverImage"
+            v-if="hasCover"
+        />
+      </div>
+      <div class="playlist-info col-sm-6 col-md-6 col-lg-6" :class="{'col-6': mobileClass}">
         <div class="playlist-title-section">
           <h2 class="playlist-title">{{ playlist.name }}</h2>
           <button class="refresh-button" @click="handleRefresh">
@@ -91,6 +96,8 @@ const handleSortChange = (value) => {
           </button>
         </div>
         <div class="playlist-description" v-html="playlist.description"></div>
+      </div>
+      <div class="col-sm-12 col-md-3 col-lg-3" :class="{'col-12': mobileClass}">
         <a class="spotify-link"
            :href="playlist.external_urls?.spotify"
            target="_blank"
@@ -98,9 +105,7 @@ const handleSortChange = (value) => {
           <span class="link-icon">🎧</span>
           Open in Spotify
         </a>
-      </div>
-      <div class="playlist-actions">
-        <SortTracks :model-value="selectedSortOption" @update:model-value="handleSortChange"/>
+        <SortTracks v-model="selectedSortOption" @update:model-value="handleSortChange"/>
       </div>
     </div>
 
@@ -109,13 +114,13 @@ const handleSortChange = (value) => {
       <template v-for="(trackItem, index) of sortedTracks" :key="index">
         <template v-if="trackItem.track">
           <PlaylistTrackItem
-            :track="trackItem.track"
-            :track-item="trackItem"
-            :selected="selectedItem === trackPrefix + trackItem.track.id"
-            :unplayable-tracks="unplayableTracks"
-            @click="handleTrackClick"
-            @hover="handleTrackHover"
-            @leave="handleTrackLeave"
+              :track="trackItem.track"
+              :track-item="trackItem"
+              :selected="selectedItem === trackPrefix + trackItem.track.id"
+              :unplayable-tracks="unplayableTracks"
+              @click="handleTrackClick"
+              @hover="handleTrackHover"
+              @leave="handleTrackLeave"
           />
         </template>
       </template>

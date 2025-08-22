@@ -3,8 +3,8 @@ const modelValue = defineModel()
 </script>
 
 <template>
-  <div class="sort-container">
-    <select class="modern-select" v-model="modelValue">
+  <div class="sort-container w-100 py-2">
+    <select class="modern-select w-100" v-model="modelValue">
       <option value="">Initial</option>
       <option value="artist">Sort by artist</option>
       <option value="album">Sort by album</option>

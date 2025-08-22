@@ -60,7 +60,7 @@ const handleSearch = (event) => {
     </div>
 
     <!-- Playlist Selection -->
-    <div class="playlists grid-auto-columns py-2">
+    <div class="playlists grid-auto-columns py-2 my-2">
       <template v-for="item of filteredPlaylists" :key="item.id">
         <div :id="item.id"
              @click="handlePlaylistSelect(item.id, $event)"
