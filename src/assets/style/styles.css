@@ -157,12 +157,12 @@
     --reset-color: black;
     --title-color: white;
     --card2-background-color: #3f3d58;
-    --pl-color: #333;
+    --pl-color: #c3d1ea;
     --pl-background-color: white;
     --h1-color: white;
     --root-color: white;
     --border-color: transparent;
-    --input-color: grey;
+    --input-color: rgba(43, 108, 176, 0.18);
     --border-top: #e7eaec;
     --box-shadow: 0 2px 4px 1px rgba(0, 0, 0, .18);
     --search-color: grey;
@@ -1132,13 +1132,7 @@ input[type=checkbox] {
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
-
-.tracks-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
-    gap: 8px;
-}
-
+/*move to mobile*/
 .track-item {
     border-radius: 8px;
     transition: all 0.2s ease;
@@ -4064,6 +4058,17 @@ input[type=checkbox] {
 }
 
 :root.dark-blue .hr-line-dashed:hover {
+    background: rgba(43, 108, 176, 0.18);
+    border-color: var(--active-tab);
+}
+
+:root.dq .hr-line-dashed {
+    background: rgba(44, 42, 61, 0.95);
+    border-color: rgba(120, 160, 220, 0.15);
+    color: var(--pl-color);
+}
+
+:root.dq .hr-line-dashed:hover {
     background: rgba(43, 108, 176, 0.18);
     border-color: var(--active-tab);
 }
