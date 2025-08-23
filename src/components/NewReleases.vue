@@ -8,6 +8,8 @@ import { useSelection } from '../composables/useSelection.js'
 import SortAlbums from './SortAlbums.vue'
 import NewReleaseItem from './NewReleaseItem.vue'
 import Loader from './Loader.vue'
+import RefreshButton from "./RefreshButton.vue";
+import SortArtists from "./SortArtists.vue";
 
 // Props
 const props = defineProps({
@@ -26,14 +28,14 @@ const audioStore = useAudioStore()
 const deeperStore = useDeeperStore()
 
 // Composables
-const { createAlbumSorter } = useSorting()
+const { createNewReleaseSorter } = useSorting()
 const { selectedItem, setSelectedItem } = useSelection()
 
 // Local state for sorting
 const selectedNRSortOption = ref("")
 
 // Computed sorted data
-const sortedNRItems = createAlbumSorter(
+const sortedNRItems = createNewReleaseSorter(
   computed(() => spotifyStore.getNewReleases || []),
   selectedNRSortOption
 )
@@ -56,20 +58,24 @@ const handleAlbumLeave = (event) => {
 }
 
 const handleRefresh = () => {
+  spotifyStore.newReleases = []
   spotifyStore.fetchNewReleases(0)
 }
 </script>
 
 <template>
   <div>
+    <div class="p-2 flex-between-center">
+      <div class="grid-2-1">
+        <h4>New Releases</h4>
+        <div class="ps-2">
+          <RefreshButton :on-click="() => handleRefresh()"/>
+        </div>
+      </div>
+      <SortAlbums v-model="selectedNRSortOption" />
+    </div>
     <Loader v-if="spotifyStore.isLoading" />
       <div id="newrelease" class="display-flex flex-wrap" v-show="selectedTopMenu === 7">
-        <div class="section-header">
-          <button class="refresh-button" @click="handleRefresh">
-            <img class="refresh-icon" src="../assets/refresh-icon.png" alt="Refresh">
-          </button>
-        </div>
-        <SortAlbums v-model="selectedNRSortOption" />
         <div class="display-flex flex-wrap py-2 gap-8">
           <template v-for="(item, index) of sortedNRItems" :key="index">
             <NewReleaseItem

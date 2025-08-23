@@ -1,9 +1,10 @@
 <script setup>
-import { computed } from 'vue'
-import { useAudioStore } from '../stores/audio-store'
-import { useSelection } from '../composables/useSelection.js'
-import SortTracks from './SortTracks.vue'
+import {computed} from 'vue'
+import {useAudioStore} from '../stores/audio-store'
+import {useSelection} from '../composables/useSelection.js'
 import TrackItem from './TrackItem.vue'
+import Loader from "./Loader.vue";
+import {useSpotifyStore} from "../stores/spotify-store.js";
 
 // Props
 const props = defineProps({
@@ -23,20 +24,17 @@ const props = defineProps({
     type: String,
     default: '3'
   },
-  selectedSortOption: {
-    type: String,
-    default: ''
-  }
 })
 
 // Emits
-const emit = defineEmits(['sort-change', 'track-click', 'track-hover', 'track-leave'])
+const emit = defineEmits(['track-click', 'track-hover', 'track-leave'])
 
 // Stores
 const audioStore = useAudioStore()
+const spotifyStore = useSpotifyStore()
 
 // Composables
-const { selectedItem } = useSelection()
+const {selectedItem} = useSelection()
 
 // Computed
 const displayClass = computed(() => {
@@ -44,9 +42,7 @@ const displayClass = computed(() => {
 })
 
 // Event handlers
-const handleSortChange = (value) => {
-  emit('sort-change', value)
-}
+
 
 const handleTrackClick = (track, event) => {
   emit('track-click', track, event)
@@ -62,26 +58,23 @@ const handleTrackLeave = (event) => {
 </script>
 
 <template>
-  <div 
-    :id="sectionId"
-    class="display-flex flex-wrap"
-    style="color: black;width: auto;"
-    :class="displayClass"
+  <Loader v-if="spotifyStore.isLoading"/>
+  <div
+      :id="sectionId"
+      class="display-flex flex-wrap"
+      style="color: black;width: auto;"
+      :class="displayClass"
   >
-    <SortTracks 
-      :model-value="selectedSortOption"
-      @update:model-value="handleSortChange"
-    />
     <div class="display-flex flex-wrap py-2 gap-8">
       <template v-for="(item, index) of tracks" :key="index">
         <TrackItem
-          :track="item"
-          :selected="selectedItem === trackPrefix + item.id"
-          :unplayable-tracks="audioStore.unplayableTracks"
-          :track-prefix="trackPrefix"
-          @click="handleTrackClick"
-          @hover="handleTrackHover"
-          @leave="handleTrackLeave"
+            :track="item"
+            :selected="selectedItem === trackPrefix + item.id"
+            :unplayable-tracks="audioStore.unplayableTracks"
+            :track-prefix="trackPrefix"
+            @click="handleTrackClick"
+            @hover="handleTrackHover"
+            @leave="handleTrackLeave"
         />
       </template>
     </div>

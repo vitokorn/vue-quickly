@@ -26,10 +26,6 @@ const emit = defineEmits(['range-change', 'refresh'])
 const handleRangeClick = (range, event) => {
   emit('range-change', range.id, event)
 }
-
-const handleRefresh = (range, event) => {
-  emit('refresh', range.id, event)
-}
 </script>
 
 <template>
@@ -41,9 +37,6 @@ const handleRefresh = (range, event) => {
               :class="[selectedRange === range.id ? 'activetab' : '', { 'mx-2': index > 0 }]">
           {{ range.label }}
         </span>
-        <button class="refresh-button" @click="handleRefresh(range, $event)">
-          <img class="refresh-icon" src="../assets/refresh-icon.png" alt="Refresh">
-        </button>
       </template>
     </div>
   </div>

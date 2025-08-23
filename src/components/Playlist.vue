@@ -81,7 +81,7 @@ window.addEventListener('resize', () => {
   <div class="playlist" :id="'p' + playlist.id">
     <!-- Playlist Header -->
     <div class="modern-playlist-header row">
-      <div class="col-sm-6 col-3 col-md-3 col-lg-3" :class="{'col-6': mobileClass}">
+      <div class="col-sm-6 col-md-6 col-lg-3" :class="{'col-6': mobileClass}">
         <TrackCover
             :d="playlist"
             :cover="coverImage"
@@ -97,7 +97,7 @@ window.addEventListener('resize', () => {
         </div>
         <div class="playlist-description" v-html="playlist.description"></div>
       </div>
-      <div class="col-sm-12 col-md-3 col-lg-3" :class="{'col-12': mobileClass}">
+      <div class="col-sm-12 col-md-12 col-lg-3" :class="{'col-12': mobileClass}">
         <a class="spotify-link"
            :href="playlist.external_urls?.spotify"
            target="_blank"
@@ -105,7 +105,7 @@ window.addEventListener('resize', () => {
           <span class="link-icon">🎧</span>
           Open in Spotify
         </a>
-        <SortTracks v-model="selectedSortOption" @update:model-value="handleSortChange"/>
+        <SortTracks v-model="selectedSortOption" @update:model-value="handleSortChange" :full_width="true"/>
       </div>
     </div>
 

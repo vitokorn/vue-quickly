@@ -7,6 +7,8 @@ import { useSelection } from '../composables/useSelection.js'
 import SortAlbums from './SortAlbums.vue'
 import AlbumItem from './AlbumItem.vue'
 import Loader from './Loader.vue'
+import RefreshButton from "./RefreshButton.vue";
+import SortArtists from "./SortArtists.vue";
 
 // Props
 const props = defineProps({
@@ -44,20 +46,24 @@ const handleAlbumClick = async (album, event) => {
 }
 
 const handleRefresh = () => {
+  spotifyStore.savedAlbums = []
   spotifyStore.fetchSavedAlbums(0)
 }
 </script>
 
 <template>
   <div>
+    <div class="p-2 flex-between-center">
+      <div class="grid-2-1">
+        <h4>Saved Albums</h4>
+        <div class="ps-2">
+          <RefreshButton :on-click="() => handleRefresh()"/>
+        </div>
+      </div>
+      <SortAlbums v-model="selectedSASortOption" />
+    </div>
     <Loader v-if="spotifyStore.isLoading" />
       <div id="savedalbum" class="display-flex flex-wrap" v-show="selectedTopMenu === 4">
-        <div class="section-header">
-          <button class="refresh-button" @click="handleRefresh">
-            <img class="refresh-icon" src="../assets/refresh-icon.png" alt="Refresh">
-          </button>
-        </div>
-        <SortAlbums v-model="selectedSASortOption" />
         <div class="display-flex flex-wrap py-2 gap-8">
           <template v-for="(item, index) of sortedSAItems" :key="index">
             <AlbumItem

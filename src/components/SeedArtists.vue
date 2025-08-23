@@ -60,7 +60,7 @@ onMounted(async () => {
   // Register this component with the visibility manager
   const seedKey = `seed_artists_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
   visibilityManager.registerComponent(seedKey, componentRef)
-  
+
   // Show this component after registration
   console.log('Showing SeedArtists component after registration:', seedKey)
   visibilityManager.showComponent(seedKey)
@@ -83,7 +83,7 @@ onMounted(async () => {
     </div>
 
     <div class="tracks-grid">
-      <div v-for="(track, index) in sortedSAItems" :key="index" class="track-card">
+      <div v-for="(track, index) in sortedSAItems" :key="index" class="media-card">
         <div
             :class="['track-item', getTrackMediaDisplay(track).displayClass.value, selected === track.id ? 'selected' : '']"
             :style="getTrackMediaDisplay(track).backgroundStyle.value"

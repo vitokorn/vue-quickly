@@ -57,6 +57,26 @@ export function useSorting() {
         }
     }
 
+    // Generic sorting function for new releases
+    const sortNewReleases = (items, sortOption) => {
+        const itemsCopy = [...items]
+        switch (sortOption) {
+            case 'name':
+            case 'album':
+                return itemsCopy.sort((a, b) => a.name.localeCompare(b.name))
+            case 'artist':
+                return itemsCopy.sort((a, b) => a.artists[0].name.localeCompare(b.artists[0].name))
+            case 'popularity':
+                return itemsCopy.sort((a, b) => a.popularity > b.popularity)
+            case 'release_date':
+                return itemsCopy.sort((a, b) => a.release_date.localeCompare(b.release_date))
+            case 'number_of_tracks':
+                return itemsCopy.sort((a, b) => a.total_tracks > b.total_tracks)
+            default:
+                return itemsCopy
+        }
+    }
+
     // Generic sorting function for albums
     const sortAlbums = (items, sortOption) => {
         const itemsCopy = [...items]
@@ -93,6 +113,10 @@ export function useSorting() {
         return computed(() => sortAlbums(items.value, sortOption.value))
     }
 
+    const createNewReleaseSorter = (items, sortOption) => {
+        return computed(() => sortNewReleases(items.value, sortOption.value))
+    }
+
     return {
         sortTracks,
         sortArtists,
@@ -100,7 +124,8 @@ export function useSorting() {
         createPlaylistTrackSorter,
         createTrackSorter,
         createArtistSorter,
-        createAlbumSorter
+        createAlbumSorter,
+        createNewReleaseSorter
     }
 }
 

@@ -102,10 +102,10 @@ window.addEventListener('resize', () => {
 <template>
   <div class="modern-track-card" ref="componentRef">
     <div class="row items-center p-4">
-      <div class="col-sm-4" :class="{'col-6': mobileClass}">
+      <div class="col-sm-4 col-md-3 col-lg-2" :class="{'col-6': mobileClass}">
         <track-cover :d="d" :cover="cover"></track-cover>
       </div>
-      <div class="track-info col-sm-8" :class="{'col-6': mobileClass}">
+      <div class="track-info col-sm-8 col-md-9 col-lg-10" :class="{'col-6': mobileClass}">
         <h3 class="track-title">{{ d.name }}</h3>
         <div class="artists-section">
           <span class="artists-label">By</span>

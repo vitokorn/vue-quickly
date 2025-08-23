@@ -1,14 +1,15 @@
 <script setup>
-import { computed, ref } from 'vue'
-import { useSpotifyStore } from '../stores/spotify-store'
-import { useAudioStore } from '../stores/audio-store'
-import { useQueueStore } from '../stores/queue-store'
-import { useDeeperStore } from '../stores/deeper-store'
-import { useSorting } from '../composables/useSorting.js'
-import { useSelection } from '../composables/useSelection.js'
+import {computed, ref} from 'vue'
+import {useSpotifyStore} from '../stores/spotify-store'
+import {useAudioStore} from '../stores/audio-store'
+import {useQueueStore} from '../stores/queue-store'
+import {useDeeperStore} from '../stores/deeper-store'
+import {useSorting} from '../composables/useSorting.js'
+import {useSelection} from '../composables/useSelection.js'
 import TimeRangeSelector from './TimeRangeSelector.vue'
 import TrackDisplaySection from './TrackDisplaySection.vue'
-import Loader from './Loader.vue'
+import RefreshButton from "./RefreshButton.vue";
+import SortTracks from "./SortTracks.vue";
 
 // Props
 const props = defineProps({
@@ -28,8 +29,8 @@ const queueStore = useQueueStore()
 const deeperStore = useDeeperStore()
 
 // Composables
-const { createTrackSorter } = useSorting()
-const { selectedItem, setSelectedItem } = useSelection()
+const {createTrackSorter} = useSorting()
+const {selectedItem, setSelectedItem} = useSelection()
 
 // Local state for sorting
 const selectedTTSortOption = ref("")
@@ -38,18 +39,18 @@ const selectedTTLSortOption = ref("")
 
 // Computed sorted data
 const sortedTTItems = createTrackSorter(
-  computed(() => spotifyStore.getTopTracksShort || []),
-  selectedTTSortOption
+    computed(() => spotifyStore.getTopTracksShort || []),
+    selectedTTSortOption
 )
 
 const sortedTTMItems = createTrackSorter(
-  computed(() => spotifyStore.getTopTracksMedium || []),
-  selectedTTMSortOption
+    computed(() => spotifyStore.getTopTracksMedium || []),
+    selectedTTMSortOption
 )
 
 const sortedTTLItems = createTrackSorter(
-  computed(() => spotifyStore.getTopTracksLong || []),
-  selectedTTLSortOption
+    computed(() => spotifyStore.getTopTracksLong || []),
+    selectedTTLSortOption
 )
 
 // Event handlers
@@ -74,7 +75,9 @@ const handleTrackLeave = (event) => {
 const handleRangeChange = async (rangeId, event) => {
   spotifyStore.setSelectedTracksRange(rangeId)
   const timeRange = rangeId === 1 ? 'short_term' : rangeId === 2 ? 'medium_term' : 'long_term'
-  await spotifyStore.fetchTopTracks(timeRange)
+  if ((rangeId === 1 && !spotifyStore.getTopTracksShort.length) || (rangeId === 2 && !spotifyStore.getTopTracksMedium.length) || (rangeId === 3 && !spotifyStore.getTopTracksLong.length)) {
+    await spotifyStore.fetchTopTracks(timeRange)
+  }
 }
 
 const handleRefresh = async (rangeId, event) => {
@@ -85,8 +88,30 @@ const handleRefresh = async (rangeId, event) => {
 
 <template>
   <div>
-    <Loader v-if="spotifyStore.isLoading" />
-      <TimeRangeSelector
+    <div class="p-2 flex-between-center">
+      <div class="grid-2-1">
+        <h4>Top Tracks</h4>
+        <div class="ps-2">
+          <RefreshButton :on-click="() => handleRefresh(spotifyStore.selectedTracksRange)"/>
+        </div>
+      </div>
+      <SortTracks
+          v-if="spotifyStore.selectedTracksRange === 1"
+          :model-value="selectedTTSortOption"
+          @update:model-value="selectedTTSortOption = $event"
+      />
+      <SortTracks
+          v-if="spotifyStore.selectedTracksRange === 2"
+          :model-value="selectedTTMSortOption"
+          @update:model-value="selectedTTMSortOption = $event"
+      />
+      <SortTracks
+          v-if="spotifyStore.selectedTracksRange === 3"
+          :model-value="selectedTTLSortOption"
+          @update:model-value="selectedTTLSortOption = $event"
+      />
+    </div>
+    <TimeRangeSelector
         v-show="selectedTopMenu === 3"
         :selected-range="spotifyStore.selectedTracksRange"
         :section-type="'tracks'"
@@ -97,44 +122,44 @@ const handleRefresh = async (rangeId, event) => {
         ]"
         @range-change="handleRangeChange"
         @refresh="handleRefresh"
-      />
+    />
 
-      <!-- Track Display Sections -->
-      <TrackDisplaySection
+    <!-- Track Display Sections -->
+    <TrackDisplaySection
+        v-if="spotifyStore.selectedTracksRange === 1"
         :tracks="sortedTTItems"
         section-id="toptracks"
         :is-visible="spotifyStore.selectedTracksRange === 1"
         track-prefix="3"
         :selected-sort-option="selectedTTSortOption"
-        @sort-change="selectedTTSortOption = $event"
         @track-click="handleTrackClick"
         @track-hover="handleTrackHover"
         @track-leave="handleTrackLeave"
-      />
+    />
 
-      <TrackDisplaySection
+    <TrackDisplaySection
+        v-if="spotifyStore.selectedTracksRange === 2"
         :tracks="sortedTTMItems"
         section-id="toptracks6"
         :is-visible="spotifyStore.selectedTracksRange === 2"
         track-prefix="3"
         :selected-sort-option="selectedTTMSortOption"
-        @sort-change="selectedTTMSortOption = $event"
         @track-click="handleTrackClick"
         @track-hover="handleTrackHover"
         @track-leave="handleTrackLeave"
-      />
+    />
 
-      <TrackDisplaySection
+    <TrackDisplaySection
+        v-if="spotifyStore.selectedTracksRange === 3"
         :tracks="sortedTTLItems"
         section-id="toptracksall"
         :is-visible="spotifyStore.selectedTracksRange === 3"
         track-prefix="3"
         :selected-sort-option="selectedTTLSortOption"
-        @sort-change="selectedTTLSortOption = $event"
         @track-click="handleTrackClick"
         @track-hover="handleTrackHover"
         @track-leave="handleTrackLeave"
-      />
+    />
   </div>
 </template>
 

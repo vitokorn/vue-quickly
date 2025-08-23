@@ -4154,8 +4154,6 @@ input[type=checkbox] {
 }
 
 .playlist-search {
-    width: 100%;
-    border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     font-size: 14px;
     background-color: var(--input-color);
@@ -5190,5 +5188,15 @@ audio {
     justify-content: center;
 }
 .items-center {
+    align-items: center;
+}
+.grid-2-1 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    align-items: center;
+}
+.flex-between-center {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
 }

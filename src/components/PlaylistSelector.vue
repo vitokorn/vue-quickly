@@ -49,14 +49,19 @@ const handleSearch = (event) => {
 <template>
   <div class="playlist-selector">
     <!-- Search Header -->
-    <div class="p-2" style="display: flex;justify-content: center;align-items: center;">
+    <div class="p-2 flex-between-center">
+      <div class="grid-2-1">
+        <h4>{{title}}</h4>
+        <div class="ps-2">
+          <RefreshButton :on-click="() => spotifyStore.fetchPlaylists(0)"/>
+        </div>
+      </div>
       <input class="playlist-search py-2 me-2"
              type="text"
              v-model="searchTerm"
              @input="handleSearch"
              :placeholder="placeholder"
              :title="title">
-      <RefreshButton :on-click="() => spotifyStore.fetchPlaylists(0)"/>
     </div>
 
     <!-- Playlist Selection -->

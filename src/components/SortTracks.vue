@@ -1,9 +1,10 @@
 <script setup>
 const modelValue = defineModel()
+defineProps(['full_width'])
 </script>
 
 <template>
-  <div class="sort-container w-100 py-2">
+  <div class="sort-container py-2" :class="{'w-100': full_width}">
     <select class="modern-select w-100" v-model="modelValue">
       <option value="">Initial</option>
       <option value="artist">Sort by artist</option>

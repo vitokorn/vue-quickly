@@ -9,6 +9,7 @@ import { useSelection } from '../composables/useSelection.js'
 import SortTracks from './SortTracks.vue'
 import TrackItem from './TrackItem.vue'
 import Loader from './Loader.vue'
+import RefreshButton from "./RefreshButton.vue";
 
 // Props
 const props = defineProps({
@@ -59,20 +60,24 @@ const handleTrackLeave = (event) => {
 }
 
 const handleRefresh = () => {
+  spotifyStore.savedTracks = []
   spotifyStore.fetchSavedTracks(0)
 }
 </script>
 
 <template>
   <div>
+    <div class="p-2 flex-between-center">
+      <div class="grid-2-1">
+        <h4>Saved Tracks</h4>
+        <div class="ps-2">
+          <RefreshButton :on-click="() => handleRefresh()"/>
+        </div>
+      </div>
+      <SortTracks v-model="selectedSTSortOption" />
+    </div>
     <Loader v-if="spotifyStore.isLoading" />
       <div id="savedtrack" class="display-flex flex-wrap" v-show="selectedTopMenu === 5">
-        <div class="section-header">
-          <button class="refresh-button" @click="handleRefresh">
-            <img class="refresh-icon" src="../assets/refresh-icon.png" alt="Refresh">
-          </button>
-        </div>
-        <SortTracks v-model="selectedSTSortOption" />
         <div class="display-flex flex-wrap py-2 gap-8">
           <template v-for="(item, index) of sortedSTItems" :key="index">
             <TrackItem

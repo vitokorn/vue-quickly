@@ -2,8 +2,9 @@
 import { computed } from 'vue'
 import { useAudioStore } from '../stores/audio-store'
 import { useSelection } from '../composables/useSelection.js'
-import SortArtists from './SortArtists.vue'
 import ArtistItem from './ArtistItem.vue'
+import Loader from "./Loader.vue";
+import {useSpotifyStore} from "../stores/spotify-store.js";
 
 // Props
 const props = defineProps({
@@ -34,6 +35,7 @@ const emit = defineEmits(['sort-change', 'artist-click', 'artist-hover', 'artist
 
 // Stores
 const audioStore = useAudioStore()
+const spotifyStore = useSpotifyStore()
 
 // Composables
 const { selectedItem } = useSelection()
@@ -44,10 +46,6 @@ const displayClass = computed(() => {
 })
 
 // Event handlers
-const handleSortChange = (value) => {
-  emit('sort-change', value)
-}
-
 const handleArtistClick = (artist, event) => {
   emit('artist-click', artist, event)
 }
@@ -62,16 +60,13 @@ const handleArtistLeave = (event) => {
 </script>
 
 <template>
-  <div 
+  <Loader v-if="spotifyStore.isLoading" />
+  <div
     :id="sectionId"
     class="display-flex flex-wrap"
     style="color: black;width: auto;"
     :class="displayClass"
   >
-    <SortArtists 
-      :model-value="selectedSortOption"
-      @update:model-value="handleSortChange"
-    />
     <div class="display-flex flex-wrap py-2 gap-8">
       <template v-for="(item, index) of artists" :key="index">
         <ArtistItem

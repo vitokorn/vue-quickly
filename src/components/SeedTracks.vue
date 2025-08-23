@@ -80,7 +80,7 @@ onMounted(async () => {
   // Register this component with the visibility manager
   const seedKey = `seed_tracks_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
   visibilityManager.registerComponent(seedKey, componentRef)
-  
+
   // Show this component after registration
   console.log('Showing SeedTracks component after registration:', seedKey)
   visibilityManager.showComponent(seedKey)
@@ -102,9 +102,9 @@ onMounted(async () => {
       </div>
     </div>
 
-    <div class="tracks-grid">
-      <div v-for="(track, index) in sortedSTItems" :key="index" class="track-card">
-        <div :class="['track-item', getTrackMediaDisplay(track).displayClass.value, selected === track.id ? 'selected' : '']"
+    <div class="tracks-container">
+      <template v-for="(track, index) in sortedSTItems" :key="index">
+        <div :class="['media-card', getTrackMediaDisplay(track).displayClass.value, selected === track.id ? 'selected' : '']"
              :style="getTrackMediaDisplay(track).backgroundStyle.value"
              @mouseover="getTrackMediaDisplay(track).hasPreview.value && audioStore.handleAudioHover($event)"
              @mouseleave="getTrackMediaDisplay(track).hasPreview.value && audioStore.handleAudioLeave($event)"
@@ -117,7 +117,7 @@ onMounted(async () => {
           </div>
           <audio :preload="getTrackMediaDisplay(track).audioPreload.value" :src="getTrackMediaDisplay(track).audioSrc.value"></audio>
         </div>
-      </div>
+      </template>
     </div>
   </div>
 </template>

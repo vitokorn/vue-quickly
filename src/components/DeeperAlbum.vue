@@ -113,7 +113,7 @@ onMounted(async ()=> {
         <span class="tracks-icon">🎵</span>
         <h3 class="tracks-title">Tracks</h3>
       </div>
-      <div class="tracks-list">
+      <div class="tracks-container">
         <template v-for="(track, index) in tracks" :key="index" class="">
           <div :class="['media-card', getTrackMediaDisplay(track).displayClass.value, selected === track.id ? 'selected' : '']"
                :style="getTrackMediaDisplay(track).backgroundStyle.value"

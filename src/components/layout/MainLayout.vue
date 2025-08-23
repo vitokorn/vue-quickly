@@ -253,9 +253,6 @@ const handleCloseWelcomeModal = () => {
       @close="handleCloseWelcomeModal"
     />
 
-    <!-- Loader -->
-    <Loader v-if="spotifyStore.isLoading"/>
-
     <!-- Main content -->
     <div class="content-wrapper">
       <!-- Top menu navigation -->
@@ -276,6 +273,7 @@ const handleCloseWelcomeModal = () => {
               <PlaylistSelector
                 :playlists="spotifyStore.getPlaylists"
                 :selected-playlist="selectedPersonalPlaylist"
+                title="Your Personal Playlists"
                 placeholder="Search personal playlists..."
                 @playlist-select="(playlistId, event) => { setSelectedPersonalPlaylist(playlistId); spotifyStore.fetchPlaylist(playlistId) }"
               />
@@ -360,6 +358,7 @@ const handleCloseWelcomeModal = () => {
                 <PlaylistSelector
                   :playlists="spotifyStore.getSpotifyPlaylists"
                   :selected-playlist="selectedSpotifyPlaylist"
+                  title="Spotify Playlists"
                   placeholder="Search Spotify playlists..."
                   @playlist-select="(playlistId, event) => { setSelectedSpotifyPlaylist(playlistId); spotifyStore.fetchSpotifyPlaylist(playlistId) }"
                 />
@@ -383,8 +382,8 @@ const handleCloseWelcomeModal = () => {
           <!-- Search Section -->
           <div v-if="selectedTopMenu === 10" id="search">
             <Loader v-if="spotifyStore.isLoading"/>
+            <div class="col-12" style="color:var(--search-color);font-size: 1.5em;">{{ spotifyStore.searchInput }}</div>
             <div class="display-flex flex-wrap" style="height: auto;">
-              <div class="col-12" style="color:var(--search-color);font-size: 1.5em;">{{ search }}</div>
               <SearchCategory
                   title="Songs"
                   :items="spotifyStore.getSearchTracks"
