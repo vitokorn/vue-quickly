@@ -325,37 +325,48 @@ export const useSpotifyStore = defineStore('spotify', {
             }
         },
 
-        // Search actions
+        // Search actions with debouncing
+        // This function implements a 2000ms delay to prevent excessive API calls
+        // while the user is typing. The search input is updated immediately for
+        // UI responsiveness, but the actual API call is delayed.
         async search(query) {
+            this.searchInput = query
+
+            if (this.searchTimer) {
+                clearTimeout(this.searchTimer)
+            }
+
             if (!query) {
                 this.clearSearchResults()
                 return
             }
-            this.searchInput = query
-            this.setLoading(true)
-            try {
-                const response = await spotifyApi.search(query, 'album,artist,playlist,track', 5)
 
-                this.searchResults.tracks = response.data.tracks.items
-                this.searchResults.artists = response.data.artists.items
-                this.searchResults.albums = response.data.albums.items
-                this.searchResults.playlists = response.data.playlists.items
+            this.searchTimer = setTimeout(async () => {
+                this.setLoading(true)
+                try {
+                    const response = await spotifyApi.search(query, 'album,artist,playlist,track', 5)
 
-                // Fetch additional data for albums
-                await this.enrichAlbumData(this.searchResults.albums)
+                    this.searchResults.tracks = response.data.tracks.items
+                    this.searchResults.artists = response.data.artists.items
+                    this.searchResults.albums = response.data.albums.items
+                    this.searchResults.playlists = response.data.playlists.items
 
-                // Fetch additional data for artists
-                await this.enrichArtistData(this.searchResults.artists)
+                    // Fetch additional data for albums
+                    await this.enrichAlbumData(this.searchResults.albums)
 
-                // Fetch additional data for playlists
-                await this.enrichPlaylistData(this.searchResults.playlists)
+                    // Fetch additional data for artists
+                    await this.enrichArtistData(this.searchResults.artists)
 
-            } catch (error) {
-                console.error('Failed to search:', error)
-                throw error
-            } finally {
-                this.setLoading(false)
-            }
+                    // Fetch additional data for playlists
+                    await this.enrichPlaylistData(this.searchResults.playlists)
+
+                } catch (error) {
+                    console.error('Failed to search:', error)
+                    throw error
+                } finally {
+                    this.setLoading(false)
+                }
+            }, 2000) // 500ms delay
         },
 
         clearSearchResults() {
