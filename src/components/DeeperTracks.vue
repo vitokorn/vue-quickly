@@ -115,7 +115,7 @@ window.addEventListener('resize', () => {
               <span v-if="d.artists.length >= 2 && d.artists.length - 1 !== index && index !== 0"
                     class="separator">,</span>
               <button class="artist-link"
-                      @click="deeperStore.getArtistDetails(art, getSectionName(num), d.parentKey || d.id)">
+                      @click="deeperStore.getArtistDetails(art, getSectionName(num), d.id)">
                 {{ art.name }}
               </button>
             </div>
@@ -124,7 +124,7 @@ window.addEventListener('resize', () => {
 
         <div class="track-actions">
           <button class="recommend-btn"
-                  @click="deeperStore.seedTracks({item:d,num:num,sib:getSectionName(num),child:'d'+ d.id,parent: d.parentKey || d.id})">
+                  @click="deeperStore.seedTracks({item:d,num:num,sib:getSectionName(num),child:'d'+ d.id,parent: d.id})">
             <span class="btn-icon">🎵</span>
             Recommended songs based on this
           </button>

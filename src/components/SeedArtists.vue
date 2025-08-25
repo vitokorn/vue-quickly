@@ -49,6 +49,25 @@ function getTrackMediaDisplay(track) {
   return useMediaDisplay(computed(() => track))
 }
 
+function getSectionName(num) {
+  switch (num) {
+    case 1: return 'yourPlaylists'
+    case 2: return 'topArtists'
+    case 3: return 'topTracks'
+    case 4: return 'savedAlbums'
+    case 5: return 'savedTracks'
+    case 6: return 'followedArtists'
+    case 7: return 'newReleases'
+    case 8: return 'spotifyPlaylists'
+    case 10: return 'search'
+    case 22: return 'topArtists6'
+    case 23: return 'topArtistsAll'
+    case 32: return 'topTracks6'
+    case 33: return 'topTracksAll'
+    default: return 'search'
+  }
+}
+
 function setActive(id) {
   selected.value = id
 }
@@ -82,14 +101,14 @@ onMounted(async () => {
       </div>
     </div>
 
-    <div class="tracks-grid">
-      <div v-for="(track, index) in sortedSAItems" :key="index" class="media-card">
+    <div class="tracks-container">
+      <template v-for="(track, index) in sortedSAItems" :key="index">
         <div
-            :class="['track-item', getTrackMediaDisplay(track).displayClass.value, selected === track.id ? 'selected' : '']"
+            :class="['media-card', getTrackMediaDisplay(track).displayClass.value, selected === track.id ? 'selected' : '']"
             :style="getTrackMediaDisplay(track).backgroundStyle.value"
             @mouseover="getTrackMediaDisplay(track).hasPreview.value && audioStore.handleAudioHover($event)"
             @mouseleave="getTrackMediaDisplay(track).hasPreview.value && audioStore.handleAudioLeave($event)"
-            @click="setActive(track.id);deeperStore.getTrackDetails(track, 'seed_artists', d.parentKey || d.id); queueStore.addToQueue(track)">
+            @click="setActive(track.id);deeperStore.getTrackDetails(track, getSectionName(num), d.id); queueStore.addToQueue(track)">
           <div class="track-overlay">
             <div class="track-info">
               <div class="track-artists">{{ track.artists.map(a => a.name).join(', ') }}</div>
@@ -99,7 +118,7 @@ onMounted(async () => {
           <audio :preload="getTrackMediaDisplay(track).audioPreload.value"
                  :src="getTrackMediaDisplay(track).audioSrc.value"></audio>
         </div>
-      </div>
+      </template>
     </div>
   </div>
 </template>

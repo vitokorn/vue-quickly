@@ -108,7 +108,7 @@ onMounted(async () => {
              :style="getTrackMediaDisplay(track).backgroundStyle.value"
              @mouseover="getTrackMediaDisplay(track).hasPreview.value && audioStore.handleAudioHover($event)"
              @mouseleave="getTrackMediaDisplay(track).hasPreview.value && audioStore.handleAudioLeave($event)"
-             @click="setActive(track.id);deeperStore.getTrackDetails(track, getSectionName(num), d.parentKey || d.id); queueStore.addToQueue(track)">
+             @click="setActive(track.id);deeperStore.getTrackDetails(track, getSectionName(num), d.id); queueStore.addToQueue(track)">
           <div class="track-overlay">
             <div class="track-info">
               <div class="track-artists">{{ track.artists.map(a => a.name).join(', ') }}</div>
