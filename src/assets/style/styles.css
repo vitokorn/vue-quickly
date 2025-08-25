@@ -165,7 +165,7 @@
     --input-color: rgba(43, 108, 176, 0.18);
     --border-top: #e7eaec;
     --box-shadow: 0 2px 4px 1px rgba(0, 0, 0, .18);
-    --search-color: grey;
+    --search-color: white;
     --checkbox-color: invert(0%) hue-rotate(70deg) brightness(150.1%);
     --modal-background: #0a0a0a;
     --modal-color: #ffffff;
@@ -4073,6 +4073,10 @@ input[type=checkbox] {
     border-color: var(--active-tab);
 }
 
+:root.dq .modern-search:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--active-tab);
+}
 
 /* Playlist Component */
 .playlist {
@@ -5204,4 +5208,16 @@ audio {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+.search-result-image {
+    height: 48px;
+    width: 48px;
+    background-size: contain;
+}
+.search-result-content {
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    align-items: center;
+    column-gap: 12px;
+    padding: 8px;
 }

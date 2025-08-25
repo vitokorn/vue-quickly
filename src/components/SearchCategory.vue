@@ -42,22 +42,22 @@ const handleItemLeave = (event) => {
 </script>
 
 <template>
-  <div class="col-6">
-    <div class="stitle">{{ title }}</div>
-    <div v-for="(item, index) in items"
-         :key="index"
-         class="playable-search"
-         @mouseover="handleItemHover"
-         @mouseleave="handleItemLeave">
-      <SearchResultItem
-        :item="item"
-        :type="type"
-        :selected="selectedItem === `${type}${item.id}`"
-        :unplayable-tracks="unplayableTracks"
-        @click="handleItemClick"
-        @hover="handleItemHover"
-        @leave="handleItemLeave"
-      />
+  <div class="search-category">
+    <h3 class="search-category-title">{{ title }}</h3>
+    <div class="search-category-items">
+      <div v-for="(item, index) in items"
+           :key="index"
+           class="search-item-wrapper">
+        <SearchResultItem
+          :item="item"
+          :type="type"
+          :selected="selectedItem === `${type}${item.id}`"
+          :unplayable-tracks="unplayableTracks"
+          @click="handleItemClick"
+          @hover="handleItemHover"
+          @leave="handleItemLeave"
+        />
+      </div>
     </div>
   </div>
 </template>

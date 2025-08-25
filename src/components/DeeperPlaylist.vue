@@ -7,6 +7,7 @@ import {ref, computed, onMounted} from "vue";
 import SortTracks from "./SortTracks.vue";
 import {useMediaDisplay} from "../composables/useMediaDisplay";
 import { useVisibilityManager } from "../composables/useVisibilityManager";
+import TrackCover from "./TrackCover.vue";
 
 const props = defineProps(['d', 'num'])
 const spotifyStore = useSpotifyStore()
@@ -16,6 +17,7 @@ const deeperStore = useDeeperStore()
 const selected = ref()
 const selectedDeeperPlaylistSortOption = ref("")
 const componentRef = ref(null)
+const mobileClass = ref(false)
 
 // Get visibility manager
 const visibilityManager = useVisibilityManager()
@@ -52,6 +54,11 @@ function getTrackMediaDisplay(track) {
   return useMediaDisplay(computed(() => track))
 }
 
+const {image: coverImage, hasImage: hasCover} = useMediaDisplay(
+    computed(() => props.d),
+    props.images?.[0]
+)
+
 // Helper function to get section name from num
 function getSectionName(num) {
   switch (num) {
@@ -76,6 +83,19 @@ function setActive(id) {
   selected.value = id
 }
 
+const handleRefresh = (event) => {
+  emit('refresh', event)
+}
+
+const handleSortChange = (value) => {
+  emit('sort-change', value)
+}
+
+mobileClass.value = window.innerWidth < 768;
+window.addEventListener('resize', () => {
+  mobileClass.value = window.innerWidth < 768;
+})
+
 onMounted(() => {
   // Register this component with the visibility manager
   const playlistKey = `deeperplaylist_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
@@ -89,46 +109,50 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="modern-playlist-card" ref="componentRef">
-    <div class="playlist-header">
-      <div class="playlist-info">
-        <div class="playlist-title-section">
-          <h2 class="playlist-title">{{ d.name }}</h2>
-          <!-- Refresh functionality will be implemented later -->
-        </div>
-        <div class="playlist-description" v-html="d.description"></div>
+  <div class="modern-playlist-header row" ref="componentRef">
+    <div class="col-sm-6 col-md-6 col-lg-3" :class="{'col-6': mobileClass}">
+      <TrackCover
+          :d="d"
+          :cover="coverImage"
+          v-if="hasCover"
+      />
+    </div>
+    <div class="playlist-info col-sm-6 col-md-6 col-lg-6" :class="{'col-6': mobileClass}">
+      <div class="playlist-title-section">
+        <h2 class="playlist-title">{{ d.name }}</h2>
+        <button class="refresh-button" @click="handleRefresh">
+          <img class="refresh-icon" src="../assets/refresh-icon.png" alt="Refresh">
+        </button>
       </div>
-
-      <div class="playlist-cover" v-if="d.images[0]">
-        <img :src="d.images[0].url" alt="Playlist cover">
-      </div>
-
-      <div class="playlist-actions">
-        <div class="follow-section">
-          <span class="follow-label">Follow</span>
-          <label class="follow-checkbox">
-            <!-- Follow functionality will be implemented later -->
-            <input type="checkbox" v-model="d.followed" disabled>
-            <span class="checkmark"></span>
-          </label>
-        </div>
-        <a class="spotify-link" :href="d['external_urls']['spotify']" target="_blank" rel="noopener">
-          <span class="link-icon">🎧</span>
-          Open in Spotify
-        </a>
-        <div class="sort-section">
-          <sort-tracks v-model="selectedDeeperPlaylistSortOption"/>
-        </div>
+      <div class="playlist-description" v-html="d.description"></div>
+      <div class="follow-section">
+        <span class="follow-label">Follow</span>
+        <label class="follow-checkbox">
+          <!-- Follow functionality will be implemented later -->
+          <input type="checkbox" v-model="d.followed" disabled>
+          <span class="checkmark"></span>
+        </label>
       </div>
     </div>
+    <div class="col-sm-12 col-md-12 col-lg-3" :class="{'col-12': mobileClass}">
+      <a class="spotify-link"
+         :href="d['external_urls']['spotify']"
+         target="_blank"
+         rel="noopener">
+        <span class="link-icon">🎧</span>
+        Open in Spotify
+      </a>
+      <SortTracks v-model="selectedDeeperPlaylistSortOption"  :full_width="true"/>
+    </div>
+  </div>
 
-    <div class="tracks-grid">
-      <div v-for="(item, index) in sortedDeeperPlaylistItems" :key="index" class="track-card">
-        <div :class="['track-item', getTrackMediaDisplay(item.track).displayClass.value, selected === item.track.id ? 'selected' : '']"
+    <div class="tracks-container">
+      <template v-for="(item, index) in sortedDeeperPlaylistItems" :key="index">
+        <div :class="['media-card', getTrackMediaDisplay(item.track).displayClass.value, selected === item.track.id ? 'selected' : '']"
              :style="getTrackMediaDisplay(item.track).backgroundStyle.value"
              @mouseover="getTrackMediaDisplay(item.track).hasPreview.value && audioStore.handleAudioHover($event)"
              @mouseleave="getTrackMediaDisplay(item.track).hasPreview.value && audioStore.handleAudioLeave($event)"
-             @click="setActive(item.track.id);deeperStore.getTrackDetails(item.track, getSectionName(num), d.parentKey || d.id); queueStore.addToQueue(item.track)">
+             @click="setActive(item.track.id);deeperStore.getTrackDetails(item, getSectionName(num), d.parentKey || d.id); queueStore.addToQueue(item.track)">
           <div class="track-overlay">
             <div class="track-info">
               <div class="track-artists">{{ item.track.artists.map(a => a.name).join(', ') }}</div>
@@ -137,9 +161,8 @@ onMounted(() => {
           </div>
           <audio :preload="getTrackMediaDisplay(item.track).audioPreload.value" :src="getTrackMediaDisplay(item.track).audioSrc.value"></audio>
         </div>
-      </div>
+      </template>
     </div>
-  </div>
 </template>
 
 <style scoped>

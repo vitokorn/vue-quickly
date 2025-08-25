@@ -128,7 +128,7 @@ window.addEventListener('resize', () => {
             <span class="btn-icon">🎵</span>
             Recommended songs based on this
           </button>
-          <a class="spotify-link" :href="d['external_urls']['spotify']" target="_blank" rel="noopener">
+          <a class="spotify-link" :href="d.external_urls?.spotify" target="_blank" rel="noopener">
             <span class="link-icon">🎧</span>
             Open in Spotify
           </a>

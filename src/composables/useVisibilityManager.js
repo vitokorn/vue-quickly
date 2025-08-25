@@ -41,7 +41,11 @@ export function useVisibilityManager() {
         console.log('Processing pending request for:', key, pendingRequest)
       if (pendingRequest.shouldShow) {
         console.log('Showing component from pending request:', key)
-        componentRef.value.style.display = 'block'
+          if (componentRef.value.classList.contains('row')) {
+              componentRef.value.style.display = 'flex'
+          } else {
+              componentRef.value.style.display = 'block'
+          }
         visibilityState.visibleElements.set(key, true)
 
         // Scroll to the component after a short delay to ensure it's rendered

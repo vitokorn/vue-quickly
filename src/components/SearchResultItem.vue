@@ -104,9 +104,9 @@ const itemId = computed(() => {
 
 // Computed class for the item
 const itemClass = computed(() => {
-  const baseClass = 'itemImg itemImg-xs itemImg-search'
-  const selectedClass = props.selected ? 'selected' : ''
-  const opacityClass = (!hasPreview.value && props.unplayableTracks) ? 'half-opacity' : ''
+  const baseClass = 'search-result-item'
+  const selectedClass = props.selected ? 'search-result-item--selected' : ''
+  const opacityClass = (!hasPreview.value && props.unplayableTracks) ? 'search-result-item--disabled' : ''
   return `${baseClass} ${selectedClass} ${opacityClass}`.trim()
 })
 
@@ -139,28 +139,28 @@ const shouldDisplay = computed(() => {
 </script>
 
 <template>
-  <div v-if="shouldDisplay"
-       class="playable-search"
-       @mouseover="handleHover"
-       @mouseleave="handleLeave">
     <div v-if="hasPreview"
          tabindex="0"
          :class="itemClass"
          :id="itemId"
-         :style="backgroundStyle"
          @click="handleClick"
-         @mouseover="handleHover"
-         @mouseleave="handleLeave">
-      {{ displayText }}
+    >
+      <div class="search-result-content" @mouseenter="handleHover" @mouseleave="handleLeave">
+        <div class="search-result-image" :style="backgroundStyle"></div>
+        <div class="search-result-text">{{ displayText }}</div>
+      </div>
       <audio preload="auto" :src="audioSrc"></audio>
     </div>
     <div v-else-if="hasImage && unplayableTracks"
          tabindex="0"
          :class="itemClass"
          :id="itemId"
-         :style="backgroundStyle"
          @click="handleClick">
-      {{ displayText }}
+      <div class="search-result-content" @mouseenter="handleHover" @mouseleave="handleLeave">
+        <div class="search-result-image" :style="backgroundStyle"  style="opacity: 0.5;"
+        ></div>
+        <div class="search-result-text">{{ displayText }}</div>
+      </div>
       <audio preload="auto"></audio>
     </div>
     <div v-else
@@ -168,9 +168,11 @@ const shouldDisplay = computed(() => {
          :class="itemClass"
          :id="itemId"
          @click="handleClick">
-      {{ displayText }}
+      <div class="search-result-content" @mouseenter="handleHover" @mouseleave="handleLeave">
+        <div class="search-result-image search-result-image--placeholder"></div>
+        <div class="search-result-text">{{ displayText }}</div>
+      </div>
     </div>
-  </div>
 </template>
 
 <style scoped>

@@ -120,8 +120,8 @@ export const useAudioStore = defineStore('audio', {
     },
 
     handleParentAudioHover(event) {
-      const target = event.target
-      const audio = target.firstChild?.lastChild
+      const target = event.target.parentElement
+      const audio = target.lastChild
 
       if (!this.audioPreview || !audio) return
 
@@ -129,8 +129,8 @@ export const useAudioStore = defineStore('audio', {
     },
 
     handleParentAudioLeave(event) {
-      const target = event.target
-      const audio = target.firstChild?.lastChild
+      const target = event.target.parentElement
+      const audio = target.lastChild
 
       if (!this.audioPreview || !audio) return
 
@@ -187,7 +187,7 @@ export const useAudioStore = defineStore('audio', {
         console.log('Audio preview is disabled')
         return
       }
-      
+
       if (!previewUrl) {
         console.log('No preview URL available for this track')
         return
@@ -207,7 +207,7 @@ export const useAudioStore = defineStore('audio', {
           this.mobileIsPlaying = false
           this.mobileCurrentTrackId = null
         })
-        
+
         this.mobileCurrentAudio.addEventListener('error', (error) => {
           console.error('Audio playback error:', error)
           this.mobileIsPlaying = false
