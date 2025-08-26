@@ -46,26 +46,26 @@
         </div>
       </div>
 
-      <div v-else-if="currentTab === 'home'" class="home-section">
+      <div v-else-if="currentTab === 'home'">
 
         <slot name="home">
           <HomePage/>
         </slot>
       </div>
 
-      <div v-else-if="currentTab === 'discover'" class="discover-section">
+      <div v-else-if="currentTab === 'discover'">
         <slot name="discover">
           <DiscoverPage />
         </slot>
       </div>
 
-      <div v-else-if="currentTab === 'library'" class="library-section">
+      <div v-else-if="currentTab === 'library'">
         <slot name="library">
           <LibraryPage />
         </slot>
       </div>
 
-      <div v-else-if="currentTab === 'queue'" class="queue-section">
+      <div v-else-if="currentTab === 'queue'">
         <slot name="queue">
           <QueueDisplay />
         </slot>

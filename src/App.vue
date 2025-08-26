@@ -25,5 +25,6 @@ import {isMobile} from "./mixins/detectingMobileMixin.js";
 @import './assets/style/normalize.css';
 @import "./assets/style/bootstrap-grid.css";
 @import "./assets/style/styles.css";
+@import "./assets/style/mobile.css";
 </style>
 

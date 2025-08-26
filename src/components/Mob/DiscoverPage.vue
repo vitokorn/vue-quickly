@@ -7,123 +7,91 @@
     </div>
 
     <!-- Spotify Playlists Section -->
-    <div class="discover-section">
-      <div class="section-header">
-        <div class="section-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M11.584 2.376a.75.75 0 01.832 0l9 6a.75.75 0 11-.832 1.248L12 3.901 3.416 9.624a.75.75 0 01-.832-1.248l9-6z" />
-            <path d="M20.25 11.25v5.533c0 1.036-.84 1.875-1.875 1.875H5.625A1.875 1.875 0 013.75 16.783V11.25H2.25a.75.75 0 010-1.5h1.5V6.75c0-1.036.84-1.875 1.875-1.875h.75a.75.75 0 010 1.5h-.75a.375.375 0 00-.375.375v3.375h1.5a.75.75 0 010 1.5H3.75v5.533a.375.375 0 00.375.375h12.75a.375.375 0 00.375-.375V11.25h1.5a.75.75 0 010-1.5h-1.5V6.75a.375.375 0 00-.375-.375h-.75a.75.75 0 010-1.5h.75c1.036 0 1.875.84 1.875 1.875v3.375h1.5a.75.75 0 010 1.5z" />
-          </svg>
-        </div>
-        <h3 class="section-title">Spotify Playlists</h3>
-      </div>
+    <div class="home-sections">
 
       <!-- Using PlaylistSelector component -->
-      <PlaylistSelector
-        :playlists="spotifyStore.getSpotifyPlaylists"
-        :selected-playlist="selectedPlaylist"
-        title="Your Spotify Playlists"
-        placeholder="Search your playlists..."
-        :items-per-page="5"
-                  @playlist-select="handlePlaylistSelect"
-          @playlist-arrow-click="handlePlaylistArrowClick"
-        @search="handlePlaylistSearch"
-        @load-more="handleLoadMorePlaylists"
-      />
-    </div>
-
-
-
-    <!-- New Releases Section -->
-    <div class="discover-section">
-      <div class="section-header">
-        <div class="section-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-            <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clip-rule="evenodd" />
-          </svg>
-        </div>
-        <h3 class="section-title">New Releases</h3>
+      <div class="home-section">
+        <PlaylistSelector
+            :playlists="spotifyStore.getSpotifyPlaylists"
+            :selected-playlist="selectedPlaylist"
+            title="Your Spotify Playlists"
+            placeholder="Search your playlists..."
+            :items-per-page="5"
+            @playlist-select="handlePlaylistSelect"
+            @playlist-arrow-click="handlePlaylistArrowClick"
+            @search="handlePlaylistSearch"
+            @load-more="handleLoadMorePlaylists"
+        />
       </div>
 
-      <!-- Using ReleaseSelector component -->
+      <!-- New Releases Section -->
+      <div class="home-section">
+
       <ReleaseSelector
-        :releases="newReleases"
-        :selected-release="selectedRelease"
-        title="Latest Releases"
-        placeholder="Search releases..."
-        :items-per-page="10"
-        @release-select="handleReleaseSelect"
-        @search="handleReleaseSearch"
-        @load-more="handleLoadMoreReleases"
-        @refresh="handleRefreshReleases"
+          :releases="newReleases"
+          :selected-release="selectedRelease"
+          title="Latest Releases"
+          placeholder="Search releases..."
+          :items-per-page="10"
+          @release-select="handleReleaseSelect"
+          @search="handleReleaseSearch"
+          @load-more="handleLoadMoreReleases"
+          @refresh="handleRefreshReleases"
       />
+      </div>
     </div>
-
-    <!-- Loading States -->
-    <div v-if="loading" class="loading-state">
-      <div class="loading-spinner"></div>
-      <p>Loading discoveries...</p>
-    </div>
-
-    <!-- Error State -->
-    <div v-if="error" class="error-state">
-      <div class="error-icon">⚠️</div>
-      <p>{{ error }}</p>
-      <button class="retry-button" @click="loadDiscoverContent">Try Again</button>
-    </div>
-
 
 
     <!-- Mobile Deeper Components -->
     <MobileDeeperAlbum
-      v-for="album in deeperStore.getSectionData('savedAlbums')"
-      :key="album.id"
-      :d="album"
-      :num="4"
+        v-for="album in deeperStore.getSectionData('savedAlbums')"
+        :key="album.id"
+        :d="album"
+        :num="4"
     />
-    
+
     <MobileDeeperAlbum
-      v-for="album in deeperStore.getSectionData('newReleases')"
-      :key="album.id"
-      :d="album"
-      :num="7"
+        v-for="album in deeperStore.getSectionData('newReleases')"
+        :key="album.id"
+        :d="album"
+        :num="7"
     />
-    
+
     <MobileDeeperPlaylist
-      v-for="playlist in spotifyPlaylistsData"
-      :key="playlist.id"
-      :d="playlist"
-      :num="8"
+        v-for="playlist in spotifyPlaylistsData"
+        :key="playlist.id"
+        :d="playlist"
+        :num="8"
     />
-    
+
     <MobileDeeperTracks
-      v-for="track in deeperStore.getSectionData('playlistTracks')"
-      :key="track.id"
-      :d="track"
-      :num="8"
+        v-for="track in deeperStore.getSectionData('playlistTracks')"
+        :key="track.id"
+        :d="track"
+        :num="8"
     />
-    
+
     <MobileDeeperTracks
-      v-for="track in deeperStore.getSectionData('albumTracks')"
-      :key="track.id"
-      :d="track"
-      :num="7"
+        v-for="track in deeperStore.getSectionData('albumTracks')"
+        :key="track.id"
+        :d="track"
+        :num="7"
     />
-    
+
     <MobileDeeperArtist
-      v-for="artist in deeperStore.getSectionData('topArtists')"
-      :key="artist.id"
-      :d="artist"
-      :num="2"
+        v-for="artist in deeperStore.getSectionData('topArtists')"
+        :key="artist.id"
+        :d="artist"
+        :num="2"
     />
 
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useSpotifyStore } from '../../stores/spotify-store'
-import { useDeeperStore } from '../../stores/deeper-store'
+import {ref, computed, onMounted} from 'vue'
+import {useSpotifyStore} from '../../stores/spotify-store'
+import {useDeeperStore} from '../../stores/deeper-store'
 import PlaylistSelector from './PlaylistSelector.vue'
 import ReleaseSelector from './ReleaseSelector.vue'
 
@@ -144,7 +112,6 @@ const selectedRelease = ref(null)
 
 // Computed properties
 const newReleases = computed(() => spotifyStore.getNewReleases || [])
-
 
 
 // Debug computed properties
@@ -177,7 +144,7 @@ const handlePlaylistSelect = async (playlistId, event) => {
   selectedPlaylist.value = playlistId
   const playlist = spotifyStore.getSpotifyPlaylists.find(p => p.id === playlistId)
   console.log('Playlist selected:', playlist)
-  
+
   if (playlist) {
     // Add playlist to deeper store for spotifyPlaylists section
     const playlistData = {
@@ -185,10 +152,10 @@ const handlePlaylistSelect = async (playlistId, event) => {
       type: 'playlist',
       parentKey: 'discoverPage'
     }
-    
+
     deeperStore.addToSection('spotifyPlaylists', playlistData)
     deeperStore.setCurrentSection('spotifyPlaylists')
-    
+
     // Show the deeper playlist component
     console.log('Showing deeper playlist for:', playlist.name)
   }
@@ -196,29 +163,29 @@ const handlePlaylistSelect = async (playlistId, event) => {
 
 const handlePlaylistArrowClick = async (playlist) => {
   console.log('Playlist arrow clicked:', playlist)
-  
+
   if (playlist) {
     try {
       // Fetch playlist details including tracks
       const playlistDetails = await spotifyStore.fetchPlaylist(playlist.id)
       console.log('Fetched playlist details:', playlistDetails)
-      
+
       // Add playlist to deeper store for spotifyPlaylists section
       const playlistData = {
         ...playlistDetails,
         type: 'playlist',
         parentKey: 'discoverPage'
       }
-      
+
       deeperStore.addToSection('spotifyPlaylists', playlistData)
       deeperStore.setCurrentSection('spotifyPlaylists')
-      
+
       // Show the deeper playlist component using visibility manager
-      const { useVisibilityManager } = await import('../../composables/useVisibilityManager')
+      const {useVisibilityManager} = await import('../../composables/useVisibilityManager')
       const visibilityManager = useVisibilityManager()
       const playlistKey = `deeperplaylist_${playlistDetails.id}__p:discoverPage__`
       visibilityManager.showComponent(playlistKey)
-      
+
       console.log('Showing deeper playlist for:', playlist.name, 'with key:', playlistKey)
     } catch (error) {
       console.error('Error fetching playlist details:', error)
@@ -253,7 +220,7 @@ const handleReleaseSelect = async (releaseId, event) => {
   selectedRelease.value = releaseId
   const release = newReleases.value.find(r => r.id === releaseId)
   console.log('Release selected:', release)
-  
+
   if (release) {
     // Add album to deeper store for newReleases section
     const albumData = {
@@ -261,10 +228,10 @@ const handleReleaseSelect = async (releaseId, event) => {
       type: 'album',
       parentKey: 'discoverPage'
     }
-    
+
     deeperStore.addToSection('newReleases', albumData)
     deeperStore.setCurrentSection('newReleases')
-    
+
     // Show the deeper album component
     console.log('Showing deeper album for:', release.name)
   }
@@ -335,10 +302,6 @@ onMounted(() => {
   margin: 0;
 }
 
-.discover-section {
-  margin-bottom: 40px;
-}
-
 .section-header {
   display: flex;
   align-items: center;
@@ -388,8 +351,12 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-state p {
@@ -441,8 +408,6 @@ onMounted(() => {
     font-size: 18px;
   }
 }
-
-
 
 
 </style>
