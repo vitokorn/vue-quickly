@@ -197,7 +197,7 @@ const handlePlaylistSearch = (event) => {
 
 const handleLoadMorePlaylists = async () => {
   if (loadingMorePlaylists.value) return // Prevent multiple simultaneous requests
-  
+
   try {
     loadingMorePlaylists.value = true
     // For pagination, we need to ensure we have enough playlists loaded
@@ -246,7 +246,7 @@ const handleReleaseSearch = (event) => {
 
 const handleLoadMoreReleases = async () => {
   if (loadingMoreReleases.value) return // Prevent multiple simultaneous requests
-  
+
   try {
     loadingMoreReleases.value = true
     // Load more releases using the current count as offset
@@ -285,136 +285,4 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.discover-page {
-  width: 100%;
-  max-width: 100%;
-  overflow: hidden;
-}
-
-.discover-header {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.discover-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 0 0 8px 0;
-}
-
-.discover-subtitle {
-  font-size: 16px;
-  color: #a0a0a0;
-  margin: 0;
-}
-
-.section-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.section-icon {
-  width: 32px;
-  height: 32px;
-  background: rgba(102, 126, 234, 0.1);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.section-icon svg {
-  width: 20px;
-  height: 20px;
-  color: #667eea;
-}
-
-.section-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #ffffff;
-  margin: 0;
-}
-
-/* PlaylistSelector and ReleaseSelector components are now used for their respective sections */
-
-/* Loading State */
-.loading-state {
-  text-align: center;
-  padding: 40px 20px;
-}
-
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(255, 255, 255, 0.1);
-  border-top: 3px solid #667eea;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 16px;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.loading-state p {
-  color: #a0a0a0;
-  margin: 0;
-}
-
-/* Error State */
-.error-state {
-  text-align: center;
-  padding: 40px 20px;
-}
-
-.error-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
-}
-
-.error-state p {
-  color: #ef4444;
-  margin: 0 0 16px 0;
-}
-
-.retry-button {
-  background: rgba(102, 126, 234, 0.1);
-  color: #667eea;
-  border: 1px solid rgba(102, 126, 234, 0.3);
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.retry-button:hover {
-  background: rgba(102, 126, 234, 0.2);
-}
-
-@media (max-width: 480px) {
-  .discover-title {
-    font-size: 24px;
-  }
-
-  .discover-subtitle {
-    font-size: 14px;
-  }
-
-  .section-title {
-    font-size: 18px;
-  }
-}
-
-
 </style>

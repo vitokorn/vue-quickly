@@ -1,9 +1,9 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useSpotifyStore } from '../../stores/spotify-store'
-import { useAudioStore } from '../../stores/audio-store'
-import { useDeeperStore } from '../../stores/deeper-store'
-import { useSelection } from '../../composables/useSelection.js'
+import {ref, computed, onMounted} from 'vue'
+import {useSpotifyStore} from '../../stores/spotify-store'
+import {useAudioStore} from '../../stores/audio-store'
+import {useDeeperStore} from '../../stores/deeper-store'
+import {useSelection} from '../../composables/useSelection.js'
 import ArtistItem from '../ArtistItem.vue'
 
 const spotifyStore = useSpotifyStore()
@@ -11,7 +11,7 @@ const audioStore = useAudioStore()
 const deeperStore = useDeeperStore()
 
 // Composables
-const { selectedItem, setSelectedItem } = useSelection()
+const {selectedItem, setSelectedItem} = useSelection()
 
 // Local state
 const selectedTimeRange = ref(1) // 1 = short_term, 2 = medium_term, 3 = long_term
@@ -78,7 +78,7 @@ const handleArtistClick = async (artist, event) => {
   deeperStore.setCurrentSection('topArtists')
 
   // Show the deeper artist component using visibility manager
-  const { useVisibilityManager } = await import('../../composables/useVisibilityManager')
+  const {useVisibilityManager} = await import('../../composables/useVisibilityManager')
   const visibilityManager = useVisibilityManager()
   const artistKey = `deeperartist_${artist.id}__p:homePage__`
   visibilityManager.showComponent(artistKey)
@@ -116,7 +116,7 @@ const formatGenres = (genres) => {
   if (!genres || genres.length === 0) return ''
   // Take first 2 genres and capitalize first letter
   return genres.slice(0, 2).map(genre =>
-    genre.charAt(0).toUpperCase() + genre.slice(1)
+      genre.charAt(0).toUpperCase() + genre.slice(1)
   ).join(', ')
 }
 
@@ -127,48 +127,55 @@ onMounted(async () => {
 </script>
 
 <template>
-    <!-- Section Header -->
-    <div class="mobile-top-tracks">
-      <!-- Modern Header -->
-      <div class="section-header">
-        <div class="header-content">
-          <div class="header-text">
-            <h2 class="section-title">Top Artists</h2>
-          </div>
-          <div class="header-actions">
-            <button class="refresh-btn" @click="handleRefresh" title="Refresh">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path fill-rule="evenodd" d="M4.755 10.059a7.5 7.5 0 0112.548-3.364l1.903 1.903h-3.183a.75.75 0 100 1.5h4.992a.75.75 0 00.75-.75V4.356a.75.75 0 00-1.5 0v3.18l-1.9-1.9A9 9 0 003.306 9.67a.75.75 0 101.45.388zm15.408 3.352a.75.75 0 00-.919.53 7.5 7.5 0 01-12.548 3.364l-1.902-1.903h3.183a.75.75 0 000-1.5H2.984a.75.75 0 00-.75.75v4.992a.75.75 0 001.5 0v-3.18l1.9 1.9a9 9 0 0015.059-4.035.75.75 0 00-.53-.918z" clip-rule="evenodd" />
-              </svg>
-            </button>
-            <button class="view-toggle-btn" @click="toggleViewMode" :title="viewMode === 'list' ? 'Grid view' : 'List view'">
-              <svg v-if="viewMode === 'list'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h2.25a3 3 0 013 3v2.25a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9.75 0a3 3 0 013-3H18a3 3 0 013 3v2.25a3 3 0 01-3 3h-2.25a3 3 0 01-3-3V6zM3 15.75a3 3 0 013-3h2.25a3 3 0 013 3V18a3 3 0 01-3 3H6a3 3 0 01-3-3v-2.25zm9.75 0a3 3 0 013-3H18a3 3 0 013 3V18a3 3 0 01-3 3h-2.25a3 3 0 01-3-3v-2.25z" clip-rule="evenodd" />
-              </svg>
-              <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path fill-rule="evenodd" d="M2.625 6.75a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0A.75.75 0 018.25 6h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75zM2.625 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zM7.5 12a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12A.75.75 0 017.5 12zm-4.875 5.25a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
+  <!-- Section Header -->
+  <div class="mobile-top-tracks">
+    <!-- Modern Header -->
+    <div class="section-header">
+      <div class="header-content">
+        <div class="header-text">
+          <h2 class="section-title">Top Artists</h2>
         </div>
+        <div class="header-actions">
+          <button class="refresh-btn" @click="handleRefresh" title="Refresh">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd"
+                    d="M4.755 10.059a7.5 7.5 0 0112.548-3.364l1.903 1.903h-3.183a.75.75 0 100 1.5h4.992a.75.75 0 00.75-.75V4.356a.75.75 0 00-1.5 0v3.18l-1.9-1.9A9 9 0 003.306 9.67a.75.75 0 101.45.388zm15.408 3.352a.75.75 0 00-.919.53 7.5 7.5 0 01-12.548 3.364l-1.902-1.903h3.183a.75.75 0 000-1.5H2.984a.75.75 0 00-.75.75v4.992a.75.75 0 001.5 0v-3.18l1.9 1.9a9 9 0 0015.059-4.035.75.75 0 00-.53-.918z"
+                    clip-rule="evenodd"/>
+            </svg>
+          </button>
+          <button class="view-toggle-btn" @click="toggleViewMode"
+                  :title="viewMode === 'list' ? 'Grid view' : 'List view'">
+            <svg v-if="viewMode === 'list'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd"
+                    d="M3 6a3 3 0 013-3h2.25a3 3 0 013 3v2.25a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9.75 0a3 3 0 013-3H18a3 3 0 013 3v2.25a3 3 0 01-3 3h-2.25a3 3 0 01-3-3V6zM3 15.75a3 3 0 013-3h2.25a3 3 0 013 3V18a3 3 0 01-3 3H6a3 3 0 01-3-3v-2.25zm9.75 0a3 3 0 013-3H18a3 3 0 013 3V18a3 3 0 01-3 3h-2.25a3 3 0 01-3-3v-2.25z"
+                    clip-rule="evenodd"/>
+            </svg>
+            <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd"
+                    d="M2.625 6.75a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0A.75.75 0 018.25 6h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75zM2.625 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zM7.5 12a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12A.75.75 0 017.5 12zm-4.875 5.25a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75z"
+                    clip-rule="evenodd"/>
+            </svg>
+          </button>
+        </div>
+      </div>
 
-        <!-- Modern Time Range Selector -->
-        <div class="time-range-selector">
-          <button
-              v-for="range in [
+      <!-- Modern Time Range Selector -->
+      <div class="time-range-selector">
+        <button
+            v-for="range in [
             { id: 1, label: 'Month' },
             { id: 2, label: '6 Months' },
             { id: 3, label: 'All Time' }
           ]"
-              :key="range.id"
-              class="time-range-btn"
-              :class="{ active: selectedTimeRange === range.id }"
-              @click="handleTimeRangeChange(range.id)"
-          >
-            {{ range.label }}
-          </button>
-        </div>
+            :key="range.id"
+            class="time-range-btn"
+            :class="{ active: selectedTimeRange === range.id }"
+            @click="handleTimeRangeChange(range.id)"
+        >
+          {{ range.label }}
+        </button>
       </div>
+    </div>
     <!-- Loading State -->
     <div v-if="loading" class="loading-state">
       <div class="loading-spinner"></div>
@@ -176,28 +183,29 @@ onMounted(async () => {
     </div>
 
     <!-- Artists Grid/List -->
-    <div v-else-if="topArtists.length > 0" class="artists-container">
-      <div class="artists-container" :class="viewMode">
+    <template v-else-if="topArtists.length > 0" class="artists-container">
+      <div class="releases-container" :class="viewMode">
         <!-- List View -->
         <template v-if="viewMode === 'list'">
           <div
-            v-for="artist in topArtists.slice(0, 8)"
-            :key="artist.id"
-            :class="['artist-item', 'list-item', { 'selected': selectedItem === '2' + artist.id }]"
-            @click="handleArtistClick(artist, $event)"
-            @mouseover="handleArtistHover"
-            @mouseleave="handleArtistLeave"
+              v-for="artist in topArtists.slice(0, 8)"
+              :key="artist.id"
+              :class="['artist-item', 'list-item', { 'selected': selectedItem === '2' + artist.id }]"
+              @click="handleArtistClick(artist, $event)"
+              @mouseover="handleArtistHover"
+              @mouseleave="handleArtistLeave"
           >
             <div class="artist-cover">
               <img
-                v-if="artist.images && artist.images.length > 0"
-                :src="artist.images[0].url"
-                :alt="artist.name"
-                @error="$event.target.style.display = 'none'"
+                  v-if="artist.images && artist.images.length > 0"
+                  :src="artist.images[0].url"
+                  :alt="artist.name"
+                  @error="$event.target.style.display = 'none'"
               />
               <div v-else class="artist-placeholder">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z" />
+                  <path
+                      d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z"/>
                 </svg>
               </div>
             </div>
@@ -209,14 +217,17 @@ onMounted(async () => {
               </div>
               <div class="artist-type">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="type-icon">
-                  <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z" />
+                  <path
+                      d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z"/>
                 </svg>
                 <span class="type-text">Artist</span>
               </div>
             </div>
             <div class="artist-arrow">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="arrow-icon">
-                <path fill-rule="evenodd" d="M16.28 11.47a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 011.06-1.06l7.5 7.5z" clip-rule="evenodd" />
+                <path fill-rule="evenodd"
+                      d="M16.28 11.47a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 011.06-1.06l7.5 7.5z"
+                      clip-rule="evenodd"/>
               </svg>
             </div>
           </div>
@@ -225,23 +236,24 @@ onMounted(async () => {
         <!-- Grid View -->
         <template v-else>
           <div
-            v-for="artist in topArtists.slice(0, 12)"
-            :key="artist.id"
-            :class="['artist-item', 'grid-item', { 'selected': selectedItem === '2' + artist.id }]"
-            @click="handleArtistClick(artist, $event)"
-            @mouseover="handleArtistHover"
-            @mouseleave="handleArtistLeave"
+              v-for="artist in topArtists.slice(0, 12)"
+              :key="artist.id"
+              :class="['artist-item', 'grid-item', { 'selected': selectedItem === '2' + artist.id }]"
+              @click="handleArtistClick(artist, $event)"
+              @mouseover="handleArtistHover"
+              @mouseleave="handleArtistLeave"
           >
             <div class="grid-cover">
               <img
-                v-if="artist.images && artist.images.length > 0"
-                :src="artist.images[0].url"
-                :alt="artist.name"
-                @error="$event.target.style.display = 'none'"
+                  v-if="artist.images && artist.images.length > 0"
+                  :src="artist.images[0].url"
+                  :alt="artist.name"
+                  @error="$event.target.style.display = 'none'"
               />
               <div v-else class="artist-placeholder">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z" />
+                  <path
+                      d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z"/>
                 </svg>
               </div>
             </div>
@@ -255,13 +267,14 @@ onMounted(async () => {
           </div>
         </template>
       </div>
-    </div>
+    </template>
 
     <!-- Empty State -->
     <div v-else class="empty-state">
       <div class="empty-icon">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z" />
+          <path
+              d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z"/>
         </svg>
       </div>
       <h4>No top artists available</h4>
@@ -271,330 +284,4 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-
-
-.artists-container {
-  width: 100%;
-}
-
-.artists-container.list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.artists-container.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 16px;
-  padding: 0 4px;
-}
-
-/* Artist Item Styles */
-.artist-item {
-  display: flex;
-  align-items: center;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  gap: 16px;
-}
-
-.artist-item:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.artist-item.selected {
-  background: rgba(30, 215, 96, 0.2);
-  border-color: rgba(30, 215, 96, 0.4);
-}
-
-.artist-cover {
-  width: 48px;
-  height: 48px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  overflow: hidden;
-}
-
-.artist-cover img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.artist-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.artist-placeholder svg {
-  width: 24px;
-  height: 24px;
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.artist-info {
-  flex: 1;
-  min-width: 0;
-  gap: 0px;
-  margin-right: 8px;
-}
-
-.artist-name {
-  font-size: 16px;
-  font-weight: 600;
-  color: #ffffff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.artist-details {
-  font-size: 14px;
-  color: #a0a0a0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.artist-type {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 4px;
-}
-
-.type-icon {
-  width: 14px;
-  height: 14px;
-  flex-shrink: 0;
-  color: #1db954;
-}
-
-.type-text {
-  font-size: 12px;
-  color: #a0a0a0;
-  font-weight: 500;
-  text-transform: uppercase;
-}
-
-.artist-arrow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  flex-shrink: 0;
-}
-
-.arrow-icon {
-  width: 16px;
-  height: 16px;
-  color: #a0a0a0;
-  transition: color 0.2s ease;
-}
-
-.artist-item:hover .arrow-icon {
-  color: #ffffff;
-}
-
-/* Grid Item Styles */
-.grid-item {
-  flex-direction: column;
-  padding: 12px;
-  text-align: center;
-  min-height: 180px;
-  position: relative;
-}
-
-.grid-cover {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 12px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.grid-cover img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.grid-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-
-.artists-grid :deep(.media-card:hover) {
-  background: rgba(255, 255, 255, 0.15);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-}
-
-.artists-grid :deep(.media-card.selected) {
-  background: rgba(102, 126, 234, 0.3);
-  border-color: rgba(102, 126, 234, 0.6);
-}
-
-.artists-grid :deep(.media-card.has-preview) {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(102, 126, 234, 0.1));
-}
-
-.loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-  text-align: center;
-}
-
-.loading-spinner {
-  width: 32px;
-  height: 32px;
-  border: 3px solid rgba(255, 255, 255, 0.1);
-  border-top: 3px solid #667eea;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 16px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.loading-state p {
-  font-size: 14px;
-  color: #a0a0a0;
-  margin: 0;
-}
-
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-  text-align: center;
-}
-
-.empty-icon {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto 16px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.empty-icon svg {
-  width: 32px;
-  height: 32px;
-  color: #a0a0a0;
-}
-
-.empty-state h4 {
-  font-size: 18px;
-  font-weight: 600;
-  color: #ffffff;
-  margin: 0 0 8px 0;
-}
-
-.empty-state p {
-  font-size: 14px;
-  color: #a0a0a0;
-  margin: 0;
-}
-
-/* Responsive Design */
-
-/* Small screens (up to 480px) */
-@media (max-width: 480px) {
-  .section-title {
-    font-size: 18px;
-  }
-
-  .range-btn {
-    font-size: 11px;
-    padding: 6px 8px;
-  }
-
-  .artists-container.grid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 12px;
-  }
-
-  .grid-item {
-    min-height: 160px;
-  }
-
-  .grid-name {
-    font-size: 13px;
-  }
-
-  .grid-details {
-    font-size: 11px;
-  }
-}
-
-/* Medium screens (481px to 768px) */
-@media (min-width: 481px) and (max-width: 768px) {
-  .artists-container.grid {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 14px;
-  }
-
-  .grid-item {
-    min-height: 180px;
-  }
-}
-
-/* Large screens (769px to 1024px) */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .artists-container.grid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 16px;
-  }
-
-  .grid-item {
-    min-height: 200px;
-  }
-}
-
-/* Extra large screens (1025px and above) */
-@media (min-width: 1025px) {
-  .artists-container.grid {
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 18px;
-  }
-
-  .grid-item {
-    min-height: 220px;
-  }
-}
-
-
 </style>

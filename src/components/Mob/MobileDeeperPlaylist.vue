@@ -79,7 +79,7 @@ const handleBackClick = () => {
   // Hide this component and show the parent
   const playlistKey = `deeperplaylist_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
   visibilityManager.hideComponent(playlistKey)
-  
+
   // If there's a parent key, show the parent component
   if (props.d.parentKey) {
     visibilityManager.showComponent(props.d.parentKey)
@@ -100,7 +100,7 @@ const handleSortChange = (option) => {
 onMounted(async () => {
   // Wait for the next tick to ensure the ref is available
   await nextTick()
-  
+
   // Register this component with the visibility manager
   const playlistKey = `deeperplaylist_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
   visibilityManager.registerComponent(playlistKey, componentRef)
@@ -109,7 +109,7 @@ onMounted(async () => {
   if (componentRef.value) {
     componentRef.value.style.display = 'none'
   }
-  
+
   console.log('MobileDeeperPlaylist registered with key:', playlistKey)
 })
 </script>
@@ -130,9 +130,9 @@ onMounted(async () => {
     <!-- Playlist Info Section -->
     <div class="playlist-info-section">
       <div class="playlist-cover">
-        <img 
-          v-if="d.images && d.images[0]" 
-          :src="d.images[0].url" 
+        <img
+          v-if="d.images && d.images[0]"
+          :src="d.images[0].url"
           :alt="d.name"
           @error="$event.target.style.display = 'none'"
         />
@@ -143,10 +143,10 @@ onMounted(async () => {
           </svg>
         </div>
       </div>
-      
+
       <div class="playlist-details">
         <h1 class="playlist-title">{{ d.name }}</h1>
-        
+
         <div class="playlist-meta">
           <span v-if="d.owner" class="playlist-owner">By {{ d.owner.display_name }}</span>
           <span v-if="d.tracks && d.tracks.items" class="track-count">{{ d.tracks.items.length }} tracks</span>
@@ -162,7 +162,7 @@ onMounted(async () => {
     <!-- Sort Options -->
     <div class="sort-section">
       <div class="sort-options">
-        <button 
+        <button
           v-for="option in ['track', 'album', 'artist', 'popularity', 'release_date', 'duration']"
           :key="option"
           :class="['sort-button', { 'active': selectedDeeperPlaylistSortOption === option }]"
@@ -200,233 +200,4 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.mobile-deeper-playlist {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
-  z-index: 1000;
-  overflow-y: auto;
-  display: none;
-}
-
-/* Mobile Header */
-.mobile-header {
-  display: flex;
-  align-items: center;
-  padding: 16px 20px;
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.back-button {
-  background: none;
-  border: none;
-  color: #ffffff;
-  padding: 8px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.back-button:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.back-button svg {
-  width: 24px;
-  height: 24px;
-}
-
-.header-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #ffffff;
-  margin: 0;
-  flex: 1;
-  text-align: center;
-}
-
-.header-spacer {
-  width: 40px;
-}
-
-/* Playlist Info Section */
-.playlist-info-section {
-  padding: 24px 20px;
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
-}
-
-.playlist-cover {
-  width: 120px;
-  height: 120px;
-  border-radius: 12px;
-  overflow: hidden;
-  flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.playlist-cover img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.playlist-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.playlist-placeholder svg {
-  width: 48px;
-  height: 48px;
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.playlist-details {
-  flex: 1;
-  min-width: 0;
-}
-
-.playlist-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 0 0 12px 0;
-  line-height: 1.2;
-}
-
-.playlist-meta {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 12px;
-}
-
-.playlist-owner,
-.track-count,
-.playlist-visibility {
-  font-size: 12px;
-  color: #a0a0a0;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 4px 8px;
-  border-radius: 12px;
-  text-transform: uppercase;
-  font-weight: 500;
-}
-
-.playlist-description {
-  font-size: 14px;
-  color: #a0a0a0;
-  line-height: 1.4;
-  margin-top: 8px;
-}
-
-/* Sort Section */
-.sort-section {
-  padding: 0 20px 16px 20px;
-}
-
-.sort-options {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 8px;
-}
-
-.sort-button {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #a0a0a0;
-  padding: 8px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.sort-button:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
-}
-
-.sort-button.active {
-  background: #667eea;
-  border-color: #667eea;
-  color: #ffffff;
-}
-
-/* Tracks Section */
-.tracks-section {
-  padding: 0 20px 24px 20px;
-}
-
-.section-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #ffffff;
-  margin: 0 0 16px 0;
-}
-
-.tracks-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-/* Responsive Design */
-@media (max-width: 480px) {
-  .playlist-info-section {
-    padding: 20px 16px;
-    gap: 16px;
-  }
-
-  .playlist-cover {
-    width: 100px;
-    height: 100px;
-  }
-
-  .playlist-title {
-    font-size: 20px;
-  }
-
-  .sort-section {
-    padding: 0 16px 12px 16px;
-  }
-
-  .tracks-section {
-    padding: 0 16px 20px 16px;
-  }
-
-  .mobile-header {
-    padding: 12px 16px;
-  }
-
-  .sort-options {
-    gap: 6px;
-  }
-
-  .sort-button {
-    padding: 6px 10px;
-    font-size: 11px;
-  }
-}
 </style>

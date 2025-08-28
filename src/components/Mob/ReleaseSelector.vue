@@ -191,7 +191,7 @@ const formatReleaseDate = (dateString) => {
 <template>
   <div class="mobile-top-tracks">
     <!-- Modern Header -->
-    <div class="section-header">
+    <div class="">
       <div class="header-content">
         <div class="header-text">
           <h2 class="section-title">New Releases | {{ releases.length }} items</h2>

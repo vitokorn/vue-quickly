@@ -114,7 +114,7 @@ const resetPagination = () => {
 <template>
   <div class="mobile-top-tracks">
     <!-- Modern Header -->
-    <div class="section-header">
+    <div class="">
       <div class="header-content">
         <div class="header-text">
           <h2 class="section-title">{{ title }}</h2>

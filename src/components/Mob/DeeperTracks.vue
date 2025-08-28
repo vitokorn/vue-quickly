@@ -137,9 +137,4 @@ function resolveCover() {
 </template>
 
 <style scoped>
-/* Styles moved to main styles.css */
-.deeper-track {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-}
 </style>
