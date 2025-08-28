@@ -66,23 +66,23 @@ const handleAlbumClick = async (album, event) => {
 
 const handleRelatedArtistClick = async (artist, event) => {
   const sectionName = getSectionName(props.num)
-  
+
   // Add artist to deeper store for the current section
   const artistData = {
     ...artist,
     type: 'artist',
     parentKey: `deeperartist_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
   }
-  
+
   deeperStore.addToSection(sectionName, artistData)
   deeperStore.setCurrentSection(sectionName)
-  
+
   // Show the MobileDeeperArtist component using visibility manager
   const { useVisibilityManager } = await import('../../composables/useVisibilityManager')
   const visibilityManager = useVisibilityManager()
   const relatedArtistKey = `deeperartist_${artist.id}__p:deeperartist_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}__`
   visibilityManager.showComponent(relatedArtistKey)
-  
+
   console.log('Showing MobileDeeperArtist for related artist:', artist.name, 'with key:', relatedArtistKey)
 }
 
@@ -808,7 +808,6 @@ onMounted(async () => {
 .album-name, .artist-name {
   font-size: 12px;
   font-weight: 500;
-  color: #ffffff;
   margin: 0 0 4px 0;
   line-height: 1.3;
   overflow: hidden;

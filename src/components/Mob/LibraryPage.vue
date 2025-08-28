@@ -217,10 +217,6 @@ onMounted(() => {
   flex-direction: column;
 }
 
-.discover-section {
-  padding: 20px;
-}
-
 
 
 /* Loading State */
@@ -290,8 +286,5 @@ onMounted(() => {
     font-size: 14px;
   }
 
-  .discover-section {
-    padding: 16px;
-  }
 }
 </style>

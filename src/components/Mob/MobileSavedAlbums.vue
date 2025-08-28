@@ -335,7 +335,6 @@ onMounted(async () => {
 .album-name {
   font-size: 16px;
   font-weight: 600;
-  color: #ffffff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

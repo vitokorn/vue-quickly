@@ -270,7 +270,6 @@ const resetPagination = () => {
             </button>
           </div>
         </template>
-
                 <!-- Grid View -->
         <template v-else>
           <div
