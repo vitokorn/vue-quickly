@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useQueueStore } from "../../stores/queue-store"
 import { useSpotifyStore } from "../../stores/spotify-store"
 import MobileTrackItem from './MobileTrackItem.vue'
@@ -7,6 +7,7 @@ import MobileTracksList from "./MobileTracksList.vue";
 
 const queueStore = useQueueStore()
 const spotifyStore = useSpotifyStore()
+const viewMode = ref('list') // 'list' or 'grid'
 
 onMounted(() => {
   // Load queue from localStorage when component mounts
@@ -45,6 +46,10 @@ const handleSaveToPlaylist = async (playlistId) => {
     }
   }
 }
+
+const toggleViewMode = () => {
+  viewMode.value = viewMode.value === 'list' ? 'grid' : 'list'
+}
 </script>
 
 <template>
@@ -57,6 +62,16 @@ const handleSaveToPlaylist = async (playlistId) => {
           <path d="M12.971 1.816A5.23 5.23 0 0114.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 013.434 1.279 9.768 9.768 0 00-6.963-6.963z" />
         </svg>
         <h3>Queue ({{ queueStore.getQueueCount() }})</h3>
+      </div>
+      <div class="header-actions">
+        <button class="view-toggle-btn" @click="toggleViewMode" :title="viewMode === 'list' ? 'Grid view' : 'List view'">
+          <svg v-if="viewMode === 'list'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h2.25a3 3 0 013 3v2.25a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9.75 0a3 3 0 013-3H18a3 3 0 013 3v2.25a3 3 0 01-3 3h-2.25a3 3 0 01-3-3V6zM3 15.75a3 3 0 013-3h2.25a3 3 0 013 3V18a3 3 0 01-3 3H6a3 3 0 01-3-3v-2.25zm9.75 0a3 3 0 013-3H18a3 3 0 013 3V18a3 3 0 01-3 3h-2.25a3 3 0 01-3-3v-2.25z" clip-rule="evenodd" />
+          </svg>
+          <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M2.625 6.75a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0A.75.75 0 018.25 6h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75zM2.625 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zM7.5 12a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12A.75.75 0 017.5 12zm-4.875 5.25a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
+          </svg>
+        </button>
       </div>
     </div>
 
@@ -88,7 +103,7 @@ const handleSaveToPlaylist = async (playlistId) => {
     </div>
 
     <!-- Queue List -->
-    <div class="queue-list" v-if="queueStore.getQueueCount()">
+    <div :class="['queue-list', viewMode]" v-if="queueStore.getQueueCount()">
       <MobileTrackItem
         v-for="(track, index) in queueStore.getQueueArr"
         :key="index"
@@ -96,6 +111,7 @@ const handleSaveToPlaylist = async (playlistId) => {
         section-name="queue"
         parent-id="queue"
         :show-remove="true"
+        :view-mode="viewMode"
         @remove="queueStore.removeFromQueue(track.id)"
       />
     </div>
@@ -140,12 +156,46 @@ const handleSaveToPlaylist = async (playlistId) => {
 
 .queue-header {
   margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
 
 .queue-title {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.view-toggle-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: var(--title-color);
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+}
+
+.view-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.view-toggle-btn svg {
+  width: 16px;
+  height: 16px;
 }
 
 .queue-icon {
@@ -242,6 +292,12 @@ const handleSaveToPlaylist = async (playlistId) => {
   gap: 12px;
   margin-bottom: 16px;
   overflow: hidden;
+}
+
+.queue-list.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
 }
 
 .empty-queue {

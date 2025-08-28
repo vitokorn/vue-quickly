@@ -6,6 +6,7 @@ import MobileTrackItem from './MobileTrackItem.vue'
 const spotifyStore = useSpotifyStore()
 const tracks = ref([])
 const loading = ref(false)
+const viewMode = ref('list') // 'list' or 'grid'
 
 onMounted(async () => {
   await loadSampleTracks()
@@ -23,13 +24,31 @@ const loadSampleTracks = async () => {
     loading.value = false
   }
 }
+
+const toggleViewMode = () => {
+  viewMode.value = viewMode.value === 'list' ? 'grid' : 'list'
+}
 </script>
 
 <template>
   <div class="mobile-tracks-list">
     <div class="list-header">
-      <h3>Sample Tracks</h3>
-      <p>Click tracks to add them to your queue</p>
+      <div class="header-content">
+        <div class="header-text">
+          <h3>Sample Tracks</h3>
+          <p>Click tracks to add them to your queue</p>
+        </div>
+        <div class="header-actions">
+          <button class="view-toggle-btn" @click="toggleViewMode" :title="viewMode === 'list' ? 'Grid view' : 'List view'">
+            <svg v-if="viewMode === 'list'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h2.25a3 3 0 013 3v2.25a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9.75 0a3 3 0 013-3H18a3 3 0 013 3v2.25a3 3 0 01-3 3h-2.25a3 3 0 01-3-3V6zM3 15.75a3 3 0 013-3h2.25a3 3 0 013 3V18a3 3 0 01-3 3H6a3 3 0 01-3-3v-2.25zm9.75 0a3 3 0 013-3H18a3 3 0 013 3V18a3 3 0 01-3 3h-2.25a3 3 0 01-3-3v-2.25z" clip-rule="evenodd" />
+            </svg>
+            <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M2.625 6.75a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0A.75.75 0 018.25 6h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75zM2.625 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zM7.5 12a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12A.75.75 0 017.5 12zm-4.875 5.25a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
 
     <div v-if="loading" class="loading">
@@ -37,13 +56,14 @@ const loadSampleTracks = async () => {
       <p>Loading tracks...</p>
     </div>
 
-    <div v-else-if="tracks.length > 0" class="tracks-container">
+    <div v-else-if="tracks.length > 0" :class="['releases-container', viewMode]">
       <MobileTrackItem
         v-for="track in tracks"
         :key="track.id"
         :track="track"
         section-name="topTracks"
         parent-id="short_term"
+        :view-mode="viewMode"
       />
     </div>
 
@@ -67,25 +87,71 @@ const loadSampleTracks = async () => {
 
 .list-header {
   margin-bottom: 20px;
-  text-align: center;
 }
 
-.list-header h3 {
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.header-text {
+  flex: 1;
+}
+
+.header-text h3 {
   font-size: 18px;
   font-weight: 600;
   color: #ffffff;
   margin: 0 0 8px 0;
 }
 
-.list-header p {
+.header-text p {
   font-size: 14px;
   color: #a0a0a0;
   margin: 0;
 }
 
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.view-toggle-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: var(--title-color);
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+}
+
+.view-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.view-toggle-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
 .tracks-container {
   display: flex;
   flex-direction: column;
+  gap: 12px;
+}
+
+.tracks-container.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 12px;
 }
 

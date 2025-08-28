@@ -153,12 +153,13 @@ onMounted(async () => {
         <p>Your top tracks will appear here</p>
       </div>
 
-      <div v-else :class="['tracks-container', viewMode]">
+      <div v-else :class="['releases-container', viewMode]">
         <MobileTrackItem
           v-for="(track, index) in topTracks"
           :key="track.id"
           :track="track"
           :section-name="'topTracks'"
+          :view-mode="viewMode"
           @click="handleTrackClick"
         />
       </div>

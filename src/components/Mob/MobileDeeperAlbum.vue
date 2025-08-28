@@ -62,7 +62,7 @@ const handleBackClick = () => {
   // Hide this component and show the parent
   const albumKey = `deeperalbum_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
   visibilityManager.hideComponent(albumKey)
-  
+
   // If there's a parent key, show the parent component
   if (props.d.parentKey) {
     visibilityManager.showComponent(props.d.parentKey)
@@ -122,9 +122,9 @@ onMounted(async () => {
     <!-- Modern Album Info Section -->
     <div class="album-info-section">
       <div class="album-cover">
-        <img 
-          v-if="d.images && d.images[0]" 
-          :src="d.images[0].url" 
+        <img
+          v-if="d.images && d.images[0]"
+          :src="d.images[0].url"
           :alt="d.name"
           @error="$event.target.style.display = 'none'"
         />
@@ -135,10 +135,10 @@ onMounted(async () => {
           </svg>
         </div>
       </div>
-      
+
       <div class="album-details">
         <h1 class="album-title">{{ d.name }}</h1>
-        
+
         <div class="artists-section">
           <span class="artists-label">By</span>
           <div class="artists-list">
@@ -172,13 +172,14 @@ onMounted(async () => {
         <span class="tracks-icon">🎵</span>
         <h3 class="tracks-title">Tracks</h3>
       </div>
-      <div class="tracks-list">
+      <div class="releases-container">
         <MobileTrackItem
           v-for="track in tracks"
           :key="track.id"
           :track="track"
           :section-name="getSectionName(num)"
           :parent-id="d.id"
+          view-mode="list"
           @click="handleTrackClick"
         />
       </div>

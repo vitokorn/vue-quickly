@@ -183,6 +183,7 @@ onMounted(async () => {
           :track="item.track"
           :section-name="getSectionName(num)"
           :parent-id="d.id"
+          view-mode="list"
           @click="handleTrackClick"
         />
       </div>

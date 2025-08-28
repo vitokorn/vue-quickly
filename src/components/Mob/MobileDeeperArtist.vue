@@ -279,6 +279,7 @@ onMounted(async () => {
           v-for="track in d.top_tracks"
           :key="track.id"
           :track="track"
+          view-mode="list"
           @click="handleTrackClick(track, $event)"
         />
       </div>

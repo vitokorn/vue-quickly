@@ -23,6 +23,10 @@ const props = defineProps({
   showRemove: {
     type: Boolean,
     default: false
+  },
+  viewMode: {
+    type: String,
+    default: 'list' // 'list' or 'grid'
   }
 })
 
@@ -137,7 +141,8 @@ const isInQueue = () => {
 </script>
 
 <template>
-  <div class="mobile-track-item" @click="handleTrackClick">
+  <!-- List View -->
+  <div v-if="viewMode === 'list'" class="mobile-track-item list-view" @click="handleTrackClick">
     <div class="track-image">
       <div class="track-cover"
            :class="displayClass"
@@ -197,6 +202,65 @@ const isInQueue = () => {
           <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.196 51.196 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 00-6 0v-.113c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z" clip-rule="evenodd" />
         </svg>
       </button>
+    </div>
+  </div>
+
+  <!-- Grid View -->
+  <div v-else class="mobile-track-item grid-view" @click="handleTrackClick">
+    <div class="grid-cover"
+         :class="displayClass"
+         :style="backgroundStyle"
+         @click="handleAudioPreview">
+      <div v-if="!hasImage" class="no-image">
+        <span class="no-image-icon">🎵</span>
+      </div>
+      <div v-if="hasImage && audioStore.mobileIsTrackPlaying(trackId)" class="playing-indicator">
+        <span class="playing-icon">▶️</span>
+      </div>
+      <div class="grid-overlay">
+        <div class="grid-actions">
+          <button
+            v-if="!showRemove"
+            class="grid-deeper-btn"
+            @click="handleDeeperTrack"
+            title="View track details"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M4.5 12a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm6 0a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm6 0a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+
+          <button
+            v-if="!showRemove"
+            class="grid-queue-btn"
+            :class="{ 'in-queue': isInQueue() }"
+            @click="handleAddToQueue"
+            :title="isInQueue() ? 'Remove from queue' : 'Add to queue'"
+          >
+            <svg v-if="!isInQueue()" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z" clip-rule="evenodd" />
+            </svg>
+            <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+            </svg>
+          </button>
+
+          <button
+            v-else
+            class="grid-remove-btn"
+            @click="handleRemove"
+            title="Remove from queue"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.196 51.196 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 00-6 0v-.113c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="grid-info">
+      <div class="grid-name">{{ track.name }}</div>
+      <div class="grid-artists">{{ formatArtistNames(track.artists) }}</div>
     </div>
   </div>
 </template>
@@ -383,9 +447,128 @@ const isInQueue = () => {
   height: 16px;
 }
 
+/* Grid View Styles */
+.mobile-track-item.grid-view {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  background: transparent;
+  backdrop-filter: none;
+  border: none;
+  box-shadow: none;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-bottom: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile-track-item.grid-view:hover {
+  transform: translateY(-4px);
+}
+
+
+
+.grid-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.7) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 12px;
+}
+
+.grid-overlay {
+  opacity: 1;
+}
+
+.grid-actions {
+  display: flex;
+  gap: 8px;
+  flex-direction: column;
+}
+
+.grid-deeper-btn,
+.grid-queue-btn,
+.grid-remove-btn {
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  color: var(--title-color);
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  backdrop-filter: blur(10px);
+}
+
+.grid-deeper-btn:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.1);
+}
+
+.grid-queue-btn {
+  background: rgba(240, 55, 165, 0.9);
+  color: white;
+}
+
+.grid-queue-btn:hover {
+  background: rgba(240, 55, 165, 1);
+  transform: scale(1.1);
+}
+
+.grid-queue-btn.in-queue {
+  background: rgba(76, 175, 80, 0.9);
+  color: white;
+}
+
+.grid-queue-btn.in-queue:hover {
+  background: rgba(76, 175, 80, 1);
+}
+
+.grid-remove-btn {
+  background: rgba(255, 71, 87, 0.9);
+  color: white;
+}
+
+.grid-remove-btn:hover {
+  background: rgba(255, 71, 87, 1);
+  transform: scale(1.1);
+}
+
+.grid-deeper-btn svg,
+.grid-queue-btn svg,
+.grid-remove-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.grid-info {
+  padding: 0 4px;
+}
+
+
+.grid-artists {
+  font-size: 12px;
+  color: var(--search-color);
+  opacity: 0.8;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* Responsive Design */
 @media (max-width: 480px) {
-  .mobile-track-item {
+  .mobile-track-item.list-view {
     padding: 12px 16px;
     gap: 12px;
   }
@@ -421,18 +604,89 @@ const isInQueue = () => {
     width: 14px;
     height: 14px;
   }
+
+  .grid-name {
+    font-size: 13px;
+  }
+
+  .grid-artists {
+    font-size: 11px;
+  }
+
+  .grid-deeper-btn,
+  .grid-queue-btn,
+  .grid-remove-btn {
+    width: 24px;
+    height: 24px;
+    padding: 4px;
+  }
+
+  .grid-deeper-btn svg,
+  .grid-queue-btn svg,
+  .grid-remove-btn svg {
+    width: 12px;
+    height: 12px;
+  }
 }
 
 /* Dark theme support */
-:root.dark .mobile-track-item {
+:root.dark .mobile-track-item.list-view {
   background: rgba(42, 46, 47, 0.95);
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
-:root.dark .mobile-track-item:hover {
+:root.dark .mobile-track-item.list-view:hover {
   background: rgba(42, 46, 47, 0.98);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+:root.dark .mobile-track-item.grid-view {
+  background: transparent;
+}
+
+:root.dark .grid-cover {
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+:root.dark .grid-deeper-btn,
+:root.dark .grid-queue-btn,
+:root.dark .grid-remove-btn {
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  backdrop-filter: blur(10px);
+}
+
+:root.dark .grid-deeper-btn:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+:root.dark .grid-queue-btn {
+  background: rgba(240, 55, 165, 0.9);
+  color: white;
+}
+
+:root.dark .grid-queue-btn:hover {
+  background: rgba(240, 55, 165, 1);
+}
+
+:root.dark .grid-queue-btn.in-queue {
+  background: rgba(76, 175, 80, 0.9);
+  color: white;
+}
+
+:root.dark .grid-queue-btn.in-queue:hover {
+  background: rgba(76, 175, 80, 1);
+}
+
+:root.dark .grid-remove-btn {
+  background: rgba(255, 71, 87, 0.9);
+  color: white;
+}
+
+:root.dark .grid-remove-btn:hover {
+  background: rgba(255, 71, 87, 1);
 }
 
 :root.dark .track-cover {
@@ -483,15 +737,63 @@ const isInQueue = () => {
 }
 
 /* Dark-blue theme support */
-:root.dark-blue .mobile-track-item {
+:root.dark-blue .mobile-track-item.list-view {
   background: rgba(30, 41, 59, 0.95);
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
-:root.dark-blue .mobile-track-item:hover {
+:root.dark-blue .mobile-track-item.list-view:hover {
   background: rgba(30, 41, 59, 0.98);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+:root.dark-blue .mobile-track-item.grid-view {
+  background: transparent;
+}
+
+:root.dark-blue .grid-cover {
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+:root.dark-blue .grid-deeper-btn,
+:root.dark-blue .grid-queue-btn,
+:root.dark-blue .grid-remove-btn {
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  backdrop-filter: blur(10px);
+}
+
+:root.dark-blue .grid-deeper-btn:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+:root.dark-blue .grid-queue-btn {
+  background: rgba(240, 55, 165, 0.9);
+  color: white;
+}
+
+:root.dark-blue .grid-queue-btn:hover {
+  background: rgba(240, 55, 165, 1);
+}
+
+:root.dark-blue .grid-queue-btn.in-queue {
+  background: rgba(76, 175, 80, 0.9);
+  color: white;
+}
+
+:root.dark-blue .grid-queue-btn.in-queue:hover {
+  background: rgba(76, 175, 80, 1);
+}
+
+:root.dark-blue .grid-remove-btn {
+  background: rgba(255, 71, 87, 0.9);
+  color: white;
+}
+
+:root.dark-blue .grid-remove-btn:hover {
+  background: rgba(255, 71, 87, 1);
 }
 
 :root.dark-blue .track-cover {
@@ -541,15 +843,63 @@ const isInQueue = () => {
 }
 
 /* DQ theme support */
-:root.dq .mobile-track-item {
+:root.dq .mobile-track-item.list-view {
   background: rgba(28, 26, 45, 0.95);
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
-:root.dq .mobile-track-item:hover {
+:root.dq .mobile-track-item.list-view:hover {
   background: rgba(28, 26, 45, 0.98);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+:root.dq .mobile-track-item.grid-view {
+  background: transparent;
+}
+
+:root.dq .grid-cover {
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+:root.dq .grid-deeper-btn,
+:root.dq .grid-queue-btn,
+:root.dq .grid-remove-btn {
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  backdrop-filter: blur(10px);
+}
+
+:root.dq .grid-deeper-btn:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+:root.dq .grid-queue-btn {
+  background: rgba(240, 55, 165, 0.9);
+  color: white;
+}
+
+:root.dq .grid-queue-btn:hover {
+  background: rgba(240, 55, 165, 1);
+}
+
+:root.dq .grid-queue-btn.in-queue {
+  background: rgba(76, 175, 80, 0.9);
+  color: white;
+}
+
+:root.dq .grid-queue-btn.in-queue:hover {
+  background: rgba(76, 175, 80, 1);
+}
+
+:root.dq .grid-remove-btn {
+  background: rgba(255, 71, 87, 0.9);
+  color: white;
+}
+
+:root.dq .grid-remove-btn:hover {
+  background: rgba(255, 71, 87, 1);
 }
 
 :root.dq .track-cover {

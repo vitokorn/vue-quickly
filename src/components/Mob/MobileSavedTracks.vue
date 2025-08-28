@@ -18,6 +18,7 @@ const { selectedItem, setSelectedItem } = useSelection()
 // Local state
 const loading = ref(false)
 const savedTracks = ref([])
+const viewMode = ref('list') // 'list' or 'grid'
 
 // Methods
 const loadSavedTracks = async () => {
@@ -43,6 +44,10 @@ const handleTrackClick = async (track, event) => {
 
 const handleRefresh = async () => {
   await loadSavedTracks()
+}
+
+const toggleViewMode = () => {
+  viewMode.value = viewMode.value === 'list' ? 'grid' : 'list'
 }
 
 // Load initial data
@@ -84,13 +89,14 @@ onMounted(async () => {
     </div>
 
     <!-- Tracks List -->
-    <div v-else-if="savedTracks.length > 0" class="tracks-container">
+    <div v-else-if="savedTracks.length > 0" :class="['releases-container', viewMode]">
       <MobileTrackItem
         v-for="track in savedTracks.slice(0, 10)"
         :key="track.id"
         :track="track"
         section-name="savedTracks"
         parent-id="saved"
+        :view-mode="viewMode"
         @click="handleTrackClick"
       />
     </div>
