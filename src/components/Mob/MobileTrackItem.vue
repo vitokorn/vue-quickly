@@ -466,106 +466,6 @@ const isInQueue = () => {
   transform: translateY(-4px);
 }
 
-
-
-.grid-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.7) 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
-  padding: 12px;
-}
-
-.grid-overlay {
-  opacity: 1;
-}
-
-.grid-actions {
-  display: flex;
-  gap: 8px;
-  flex-direction: column;
-}
-
-.grid-deeper-btn,
-.grid-queue-btn,
-.grid-remove-btn {
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
-  color: var(--title-color);
-  padding: 6px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  backdrop-filter: blur(10px);
-}
-
-.grid-deeper-btn:hover {
-  background: rgba(255, 255, 255, 1);
-  transform: scale(1.1);
-}
-
-.grid-queue-btn {
-  background: rgba(240, 55, 165, 0.9);
-  color: white;
-}
-
-.grid-queue-btn:hover {
-  background: rgba(240, 55, 165, 1);
-  transform: scale(1.1);
-}
-
-.grid-queue-btn.in-queue {
-  background: rgba(76, 175, 80, 0.9);
-  color: white;
-}
-
-.grid-queue-btn.in-queue:hover {
-  background: rgba(76, 175, 80, 1);
-}
-
-.grid-remove-btn {
-  background: rgba(255, 71, 87, 0.9);
-  color: white;
-}
-
-.grid-remove-btn:hover {
-  background: rgba(255, 71, 87, 1);
-  transform: scale(1.1);
-}
-
-.grid-deeper-btn svg,
-.grid-queue-btn svg,
-.grid-remove-btn svg {
-  width: 14px;
-  height: 14px;
-}
-
-.grid-info {
-  padding: 0 4px;
-}
-
-
-.grid-artists {
-  font-size: 12px;
-  color: var(--search-color);
-  opacity: 0.8;
-  line-height: 1.2;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 /* Responsive Design */
 @media (max-width: 480px) {
   .mobile-track-item.list-view {
@@ -641,53 +541,7 @@ const isInQueue = () => {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
-:root.dark .mobile-track-item.grid-view {
-  background: transparent;
-}
 
-:root.dark .grid-cover {
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-:root.dark .grid-deeper-btn,
-:root.dark .grid-queue-btn,
-:root.dark .grid-remove-btn {
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  backdrop-filter: blur(10px);
-}
-
-:root.dark .grid-deeper-btn:hover {
-  background: rgba(0, 0, 0, 0.9);
-}
-
-:root.dark .grid-queue-btn {
-  background: rgba(240, 55, 165, 0.9);
-  color: white;
-}
-
-:root.dark .grid-queue-btn:hover {
-  background: rgba(240, 55, 165, 1);
-}
-
-:root.dark .grid-queue-btn.in-queue {
-  background: rgba(76, 175, 80, 0.9);
-  color: white;
-}
-
-:root.dark .grid-queue-btn.in-queue:hover {
-  background: rgba(76, 175, 80, 1);
-}
-
-:root.dark .grid-remove-btn {
-  background: rgba(255, 71, 87, 0.9);
-  color: white;
-}
-
-:root.dark .grid-remove-btn:hover {
-  background: rgba(255, 71, 87, 1);
-}
 
 :root.dark .track-cover {
   background: rgba(255, 255, 255, 0.1);
@@ -748,53 +602,7 @@ const isInQueue = () => {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
-:root.dark-blue .mobile-track-item.grid-view {
-  background: transparent;
-}
 
-:root.dark-blue .grid-cover {
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-:root.dark-blue .grid-deeper-btn,
-:root.dark-blue .grid-queue-btn,
-:root.dark-blue .grid-remove-btn {
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  backdrop-filter: blur(10px);
-}
-
-:root.dark-blue .grid-deeper-btn:hover {
-  background: rgba(0, 0, 0, 0.9);
-}
-
-:root.dark-blue .grid-queue-btn {
-  background: rgba(240, 55, 165, 0.9);
-  color: white;
-}
-
-:root.dark-blue .grid-queue-btn:hover {
-  background: rgba(240, 55, 165, 1);
-}
-
-:root.dark-blue .grid-queue-btn.in-queue {
-  background: rgba(76, 175, 80, 0.9);
-  color: white;
-}
-
-:root.dark-blue .grid-queue-btn.in-queue:hover {
-  background: rgba(76, 175, 80, 1);
-}
-
-:root.dark-blue .grid-remove-btn {
-  background: rgba(255, 71, 87, 0.9);
-  color: white;
-}
-
-:root.dark-blue .grid-remove-btn:hover {
-  background: rgba(255, 71, 87, 1);
-}
 
 :root.dark-blue .track-cover {
   background: rgba(255, 255, 255, 0.1);
@@ -854,53 +662,7 @@ const isInQueue = () => {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
-:root.dq .mobile-track-item.grid-view {
-  background: transparent;
-}
 
-:root.dq .grid-cover {
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-:root.dq .grid-deeper-btn,
-:root.dq .grid-queue-btn,
-:root.dq .grid-remove-btn {
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  backdrop-filter: blur(10px);
-}
-
-:root.dq .grid-deeper-btn:hover {
-  background: rgba(0, 0, 0, 0.9);
-}
-
-:root.dq .grid-queue-btn {
-  background: rgba(240, 55, 165, 0.9);
-  color: white;
-}
-
-:root.dq .grid-queue-btn:hover {
-  background: rgba(240, 55, 165, 1);
-}
-
-:root.dq .grid-queue-btn.in-queue {
-  background: rgba(76, 175, 80, 0.9);
-  color: white;
-}
-
-:root.dq .grid-queue-btn.in-queue:hover {
-  background: rgba(76, 175, 80, 1);
-}
-
-:root.dq .grid-remove-btn {
-  background: rgba(255, 71, 87, 0.9);
-  color: white;
-}
-
-:root.dq .grid-remove-btn:hover {
-  background: rgba(255, 71, 87, 1);
-}
 
 :root.dq .track-cover {
   background: rgba(255, 255, 255, 0.1);

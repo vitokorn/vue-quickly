@@ -104,6 +104,8 @@ const loading = ref(false)
 const error = ref(null)
 const selectedPlaylist = ref(null)
 const selectedRelease = ref(null)
+const loadingMoreReleases = ref(false)
+const loadingMorePlaylists = ref(false)
 
 // Computed properties
 const newReleases = computed(() => spotifyStore.getNewReleases || [])
@@ -194,7 +196,10 @@ const handlePlaylistSearch = (event) => {
 }
 
 const handleLoadMorePlaylists = async () => {
+  if (loadingMorePlaylists.value) return // Prevent multiple simultaneous requests
+  
   try {
+    loadingMorePlaylists.value = true
     // For pagination, we need to ensure we have enough playlists loaded
     // If we don't have enough playlists for the current page, load more
     const currentCount = spotifyStore.getSpotifyPlaylists.length
@@ -208,6 +213,8 @@ const handleLoadMorePlaylists = async () => {
     }
   } catch (error) {
     console.error('Failed to load more playlists:', error)
+  } finally {
+    loadingMorePlaylists.value = false
   }
 }
 
@@ -238,12 +245,17 @@ const handleReleaseSearch = (event) => {
 }
 
 const handleLoadMoreReleases = async () => {
+  if (loadingMoreReleases.value) return // Prevent multiple simultaneous requests
+  
   try {
+    loadingMoreReleases.value = true
     // Load more releases using the current count as offset
     const currentCount = newReleases.value.length
     await spotifyStore.fetchNewReleases(currentCount)
   } catch (error) {
     console.error('Failed to load more releases:', error)
+  } finally {
+    loadingMoreReleases.value = false
   }
 }
 

@@ -134,7 +134,7 @@ onMounted(async () => {
 
     <!-- Albums Grid/List -->
     <div v-else-if="savedAlbums.length > 0" class="albums-container">
-      <div class="albums-container" :class="viewMode">
+      <div class="releases-container" :class="viewMode">
         <!-- List View -->
         <template v-if="viewMode === 'list'">
           <div
@@ -262,12 +262,7 @@ onMounted(async () => {
   gap: 12px;
 }
 
-.albums-container.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 16px;
-  padding: 0 4px;
-}
+
 
 /* Album Item Styles */
 .album-item {
@@ -390,65 +385,7 @@ onMounted(async () => {
   color: #ffffff;
 }
 
-/* Grid Item Styles */
-.grid-item {
-  flex-direction: column;
-  padding: 12px;
-  text-align: center;
-  min-height: 180px;
-  position: relative;
-}
 
-.grid-cover {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 12px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.grid-cover img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.grid-overlay {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: 12px;
-  padding: 4px 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.album-type-badge {
-  font-size: 10px;
-  color: #ffffff;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.grid-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.grid-details {
-  font-size: 12px;
-  color: #a0a0a0;
-  line-height: 1.2;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
 
 .loading-state {
   display: flex;
