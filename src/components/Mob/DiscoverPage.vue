@@ -1,10 +1,5 @@
 <template>
   <div class="discover-page">
-    <!-- Discover Header -->
-    <div class="discover-header">
-      <h2 class="discover-title">Discover</h2>
-      <p class="discover-subtitle">Find new music and artists</p>
-    </div>
 
     <!-- Spotify Playlists Section -->
     <div class="home-sections">

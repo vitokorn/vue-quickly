@@ -32,23 +32,23 @@ const loadFollowedArtists = async () => {
 const handleArtistClick = async (artist, event) => {
   setSelectedItem(artist.id)
   const sectionName = 'followedArtists'
-  
+
   // Add artist to deeper store for followedArtists section
   const artistData = {
     ...artist,
     type: 'artist',
     parentKey: 'libraryPage'
   }
-  
+
   deeperStore.addToSection('followedArtists', artistData)
   deeperStore.setCurrentSection('followedArtists')
-  
+
   // Show the deeper artist component using visibility manager
   const { useVisibilityManager } = await import('../../composables/useVisibilityManager')
   const visibilityManager = useVisibilityManager()
   const artistKey = `deeperartist_${artist.id}__p:libraryPage__`
   visibilityManager.showComponent(artistKey)
-  
+
   console.log('Showing deeper artist for:', artist.name, 'with key:', artistKey)
 }
 
@@ -73,7 +73,7 @@ const formatFollowers = (count) => {
 const formatGenres = (genres) => {
   if (!genres || genres.length === 0) return ''
   // Take first 2 genres and capitalize first letter
-  return genres.slice(0, 2).map(genre => 
+  return genres.slice(0, 2).map(genre =>
     genre.charAt(0).toUpperCase() + genre.slice(1)
   ).join(', ')
 }
@@ -85,29 +85,28 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="mobile-followed-artists">
-    <!-- Section Header -->
+  <div class="mobile-top-tracks">
+    <!-- Modern Header -->
     <div class="section-header">
-      <div class="section-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-          <path fill-rule="evenodd" d="M15.75 4.5a3 3 0 11.825 2.066l-8.421 4.679a3.002 3.002 0 010 1.51l8.421 4.679a3 3 0 11-.729 1.31l-8.421-4.678a3 3 0 110-4.132l8.421-4.679a3 3 0 01-.096-.755z" clip-rule="evenodd" />
-        </svg>
-      </div>
-      <h3 class="section-title">Followed Artists</h3>
-      <div class="action-buttons">
-        <button class="view-toggle-btn" @click="toggleViewMode" :title="viewMode === 'list' ? 'Switch to Grid View' : 'Switch to List View'">
-          <svg v-if="viewMode === 'list'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-            <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h2.25a3 3 0 013 3v2.25a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9.75 0a3 3 0 013-3H18a3 3 0 013 3v2.25a3 3 0 01-3 3h-2.25a3 3 0 01-3-3V6zM3 15.75a3 3 0 013-3h2.25a3 3 0 013 3V18A2.25 2.25 0 018.25 20H6A2.25 2.25 0 013.75 17.75v-2.25zm9.75 0a3 3 0 013-3H18a3 3 0 013 3V18A2.25 2.25 0 0118.25 20h-2.25A2.25 2.25 0 0113.75 17.75v-2.25z" clip-rule="evenodd" />
-          </svg>
-          <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-            <path fill-rule="evenodd" d="M2.625 6.75a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0A.75.75 0 018.25 6h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75zM2.625 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zM7.5 12a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12A.75.75 0 017.5 12zm-4.875 5.25a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
-          </svg>
-        </button>
-        <button class="refresh-btn" @click="handleRefresh" :disabled="loading">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-            <path fill-rule="evenodd" d="M4.755 10.059a7.5 7.5 0 0112.548-3.364l1.903 1.903h-3.183a.75.75 0 100 1.5h4.992a.75.75 0 00.75-.75V4.356a.75.75 0 00-1.5 0v3.18l-1.9-1.9A9 9 0 003.306 9.67a.75.75 0 101.45.388zm15.408 3.352a.75.75 0 00-.919.53 7.5 7.5 0 01-12.548 3.364l-1.902-1.903h3.183a.75.75 0 000-1.5H2.984a.75.75 0 00-.75.75v4.992a.75.75 0 001.5 0v-3.18l1.9 1.9a9 9 0 0015.059-4.035.75.75 0 00-.53-.918z" clip-rule="evenodd" />
-          </svg>
-        </button>
+      <div class="header-content">
+        <div class="header-text">
+          <h2 class="section-title">Followed Artists</h2>
+        </div>
+        <div class="header-actions">
+          <button class="refresh-btn" @click="handleRefresh" title="Refresh">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M4.755 10.059a7.5 7.5 0 0112.548-3.364l1.903 1.903h-3.183a.75.75 0 100 1.5h4.992a.75.75 0 00.75-.75V4.356a.75.75 0 00-1.5 0v3.18l-1.9-1.9A9 9 0 003.306 9.67a.75.75 0 101.45.388zm15.408 3.352a.75.75 0 00-.919.53 7.5 7.5 0 01-12.548 3.364l-1.902-1.903h3.183a.75.75 0 000-1.5H2.984a.75.75 0 00-.75.75v4.992a.75.75 0 001.5 0v-3.18l1.9 1.9a9 9 0 0015.059-4.035.75.75 0 00-.53-.918z" clip-rule="evenodd" />
+            </svg>
+          </button>
+          <button class="view-toggle-btn" @click="toggleViewMode" :title="viewMode === 'list' ? 'Grid view' : 'List view'">
+            <svg v-if="viewMode === 'list'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h2.25a3 3 0 013 3v2.25a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9.75 0a3 3 0 013-3H18a3 3 0 013 3v2.25a3 3 0 01-3 3h-2.25a3 3 0 01-3-3V6zM3 15.75a3 3 0 013-3h2.25a3 3 0 013 3V18a3 3 0 01-3 3H6a3 3 0 01-3-3v-2.25zm9.75 0a3 3 0 013-3H18a3 3 0 013 3V18a3 3 0 01-3 3h-2.25a3 3 0 01-3-3v-2.25z" clip-rule="evenodd" />
+            </svg>
+            <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M2.625 6.75a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0A.75.75 0 018.25 6h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75zM2.625 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zM7.5 12a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12A.75.75 0 017.5 12zm-4.875 5.25a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -129,9 +128,9 @@ onMounted(async () => {
             @click="handleArtistClick(artist, $event)"
           >
             <div class="artist-cover">
-              <img 
-                v-if="artist.images && artist.images.length > 0" 
-                :src="artist.images[0].url" 
+              <img
+                v-if="artist.images && artist.images.length > 0"
+                :src="artist.images[0].url"
                 :alt="artist.name"
                 @error="$event.target.style.display = 'none'"
               />
@@ -171,9 +170,9 @@ onMounted(async () => {
             @click="handleArtistClick(artist, $event)"
           >
             <div class="grid-cover">
-              <img 
-                v-if="artist.images && artist.images.length > 0" 
-                :src="artist.images[0].url" 
+              <img
+                v-if="artist.images && artist.images.length > 0"
+                :src="artist.images[0].url"
                 :alt="artist.name"
                 @error="$event.target.style.display = 'none'"
               />
@@ -212,98 +211,6 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.mobile-followed-artists {
-  width: 100%;
-}
-
-.section-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.section-icon {
-  width: 32px;
-  height: 32px;
-  background: rgba(102, 126, 234, 0.1);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.section-icon svg {
-  width: 20px;
-  height: 20px;
-  color: #667eea;
-}
-
-.section-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #ffffff;
-  margin: 0;
-  flex: 1;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.view-toggle-btn {
-  background: rgba(255, 255, 255, 0.1);
-  color: #a0a0a0;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  padding: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.view-toggle-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
-}
-
-.view-toggle-btn svg {
-  width: 16px;
-  height: 16px;
-}
-
-.refresh-btn {
-  background: rgba(255, 255, 255, 0.1);
-  color: #a0a0a0;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  padding: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.refresh-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
-}
-
-.refresh-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.refresh-btn svg {
-  width: 16px;
-  height: 16px;
-}
-
 .artists-container {
   width: 100%;
 }
@@ -387,7 +294,6 @@ onMounted(async () => {
 .artist-name {
   font-size: 16px;
   font-weight: 600;
-  color: #ffffff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -492,27 +398,6 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   gap: 4px;
-}
-
-.grid-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: #ffffff;
-  line-height: 1.2;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-.grid-details {
-  font-size: 12px;
-  color: #a0a0a0;
-  line-height: 1.2;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
 }
 
 .loading-state {

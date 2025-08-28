@@ -183,7 +183,7 @@ const emit = defineEmits(['search'])
 .header-content {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   margin-bottom: 20px;
   width: 100%;
   box-sizing: border-box;
@@ -264,12 +264,7 @@ const emit = defineEmits(['search'])
 }
 
 .profile-content {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border-radius: 20px;
   padding: 32px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
   text-align: center;
 }
 
@@ -474,11 +469,6 @@ const emit = defineEmits(['search'])
   background: rgba(255, 255, 255, 0.15);
 }
 
-:root.dark .profile-content {
-  background: rgba(42, 46, 47, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
 :root.dark .profile-avatar {
   background: rgba(255, 255, 255, 0.1);
 }
@@ -521,10 +511,6 @@ const emit = defineEmits(['search'])
   background: rgba(255, 255, 255, 0.15);
 }
 
-:root.dark-blue .profile-content {
-  background: rgba(30, 41, 59, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
 
 :root.dark-blue .profile-avatar {
   background: rgba(255, 255, 255, 0.1);
@@ -566,11 +552,6 @@ const emit = defineEmits(['search'])
 :root.dq .queue-button:hover,
 :root.dq .profile-button:hover {
   background: rgba(255, 255, 255, 0.15);
-}
-
-:root.dq .profile-content {
-  background: rgba(28, 26, 45, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 :root.dq .profile-avatar {

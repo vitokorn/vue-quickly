@@ -1,11 +1,5 @@
 <template>
   <div class="library-page">
-    <!-- Library Header -->
-    <div class="library-header">
-      <h2 class="library-title">Library</h2>
-      <p class="library-subtitle">Your saved music and playlists</p>
-    </div>
-
     <!-- Library Sections -->
     <div class="library-sections">
       <!-- Personal Playlists Section -->
@@ -13,7 +7,7 @@
         <PlaylistSelector
           :playlists="spotifyStore.getPlaylists"
           :selected-playlist="selectedPersonalPlaylist"
-          title="Your Personal Playlists"
+          title="Your Playlists"
           placeholder="Search personal playlists..."
           :items-per-page="5"
           @playlist-select="handlePersonalPlaylistSelect"
@@ -58,21 +52,21 @@
       :d="album"
       :num="4"
     />
-    
+
     <MobileDeeperPlaylist
       v-for="playlist in deeperStore.getSectionData('yourPlaylists')"
       :key="playlist.id"
       :d="playlist"
       :num="1"
     />
-    
+
     <MobileDeeperTracks
       v-for="track in deeperStore.getSectionData('savedTracks')"
       :key="track.id"
       :d="track"
       :num="5"
     />
-    
+
     <MobileDeeperArtist
       v-for="artist in deeperStore.getSectionData('followedArtists')"
       :key="artist.id"
@@ -138,7 +132,7 @@ const handlePersonalPlaylistSelect = async (playlistId, event) => {
   setSelectedPersonalPlaylist(playlistId)
   const playlist = spotifyStore.getPlaylists.find(p => p.id === playlistId)
   console.log('Personal playlist selected:', playlist)
-  
+
   if (playlist) {
     // Add playlist to deeper store for yourPlaylists section
     const playlistData = {
@@ -146,10 +140,10 @@ const handlePersonalPlaylistSelect = async (playlistId, event) => {
       type: 'playlist',
       parentKey: 'libraryPage'
     }
-    
+
     deeperStore.addToSection('yourPlaylists', playlistData)
     deeperStore.setCurrentSection('yourPlaylists')
-    
+
     // Show the deeper playlist component
     console.log('Showing deeper playlist for:', playlist.name)
   }
@@ -157,29 +151,29 @@ const handlePersonalPlaylistSelect = async (playlistId, event) => {
 
 const handlePersonalPlaylistArrowClick = async (playlist) => {
   console.log('Personal playlist arrow clicked:', playlist)
-  
+
   if (playlist) {
     try {
       // Fetch playlist details including tracks
       const playlistDetails = await spotifyStore.fetchPlaylist(playlist.id)
       console.log('Fetched playlist details:', playlistDetails)
-      
+
       // Add playlist to deeper store for yourPlaylists section
       const playlistData = {
         ...playlistDetails,
         type: 'playlist',
         parentKey: 'libraryPage'
       }
-      
+
       deeperStore.addToSection('yourPlaylists', playlistData)
       deeperStore.setCurrentSection('yourPlaylists')
-      
+
       // Show the deeper playlist component using visibility manager
       const { useVisibilityManager } = await import('../../composables/useVisibilityManager')
       const visibilityManager = useVisibilityManager()
       const playlistKey = `deeperplaylist_${playlistDetails.id}__p:libraryPage__`
       visibilityManager.showComponent(playlistKey)
-      
+
       console.log('Showing deeper playlist for:', playlist.name, 'with key:', playlistKey)
     } catch (error) {
       console.error('Error fetching playlist details:', error)
@@ -221,14 +215,10 @@ onMounted(() => {
 .library-sections {
   display: flex;
   flex-direction: column;
-  gap: 32px;
 }
 
 .discover-section {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
   padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 

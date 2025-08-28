@@ -466,26 +466,6 @@ onMounted(async () => {
   gap: 4px;
 }
 
-.grid-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: #ffffff;
-  line-height: 1.2;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-.grid-details {
-  font-size: 12px;
-  color: #a0a0a0;
-  line-height: 1.2;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
 
 .artists-grid :deep(.media-card:hover) {
   background: rgba(255, 255, 255, 0.15);
