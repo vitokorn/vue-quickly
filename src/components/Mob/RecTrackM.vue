@@ -39,7 +39,7 @@ function getSectionName(num) {
 </script>
 
 <template>
-  <div class="rectrack">
+  <div class="rec_track">
     <template v-for="(item, index) in dab()" :key="index">
       <!-- Seed Tracks -->
       <SeedTracksMob

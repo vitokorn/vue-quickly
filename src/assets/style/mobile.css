@@ -1,233 +1,11 @@
-/* Mobile Styles - Extracted from styles.css */
-:root {
-    --main-color: white;
-    --tabs-background: #eee;
-    --tabs-color: #4b5056;
-    --tabs-target: #ccc;
-    --recomended-color: #f037a5;
-    --active-tab: #f037a5;
-    --button-background-color: #fff;
-    --button-background-border: 2px solid #4caf50;
-    --reset-color: black;
-    --title-color: black;
-    --card2-background-color: #fff;
-    --pl-color: black;
-    --pl-background-color: white;
-    --h1-color: black;
-    --root-color: black;
-    --border-color: none;
-    --input-color: white;
-    --border-top: #e7eaec;
-    --box-shadow: 0 2px 4px 1px rgba(0, 0, 0, .18);
-    --search-color: black;
-    --modal-background: white;
-    --modal-color: black;
-    --link-color: black;
-    --logo-color: #f3bd1c;
-    --queue-modal-bg: rgba(255, 255, 255, 0.95);
-    --queue-modal-border: rgba(0, 0, 0, 0.1);
-    --queue-item-bg: rgba(255, 255, 255, 0.03);
-    --queue-item-hover: rgba(240, 55, 165, 0.08);
-    --queue-item-border: rgba(255, 255, 255, 0.05);
-    --queue-item-hover-border: rgba(240, 55, 165, 0.25);
-    --queue-action-bg: rgba(0, 0, 0, 0.05);
-    --queue-action-hover: rgba(240, 55, 165, 0.1);
-    --queue-save-hover: rgba(76, 175, 80, 0.1);
-    --queue-clear-hover: rgba(255, 71, 87, 0.1);
-    --queue-footer-bg: rgba(0, 0, 0, 0.02);
-    --queue-notice-bg: rgba(0, 0, 0, 0.03);
-    --queue-notice-border: rgba(0, 0, 0, 0.05);
-    --settings-menu-bg: rgba(255, 255, 255, 0.95);
-    --settings-menu-border: rgba(255, 255, 255, 0.2);
-    --settings-section-border: rgba(0, 0, 0, 0.05);
-    --settings-toggle-bg: rgba(0, 0, 0, 0.05);
-    --settings-toggle-hover: rgba(240, 55, 165, 0.1);
-    --settings-action-bg: rgba(0, 0, 0, 0.05);
-    --settings-action-hover: rgba(240, 55, 165, 0.1)
-}
-
-:root.dark {
-    --main-color: #181a1b;
-    --tabs-background: #202325;
-    --tabs-color: #e0e3e7;
-    --tabs-target: #2a2f34;
-    --recomended-color: #f037a5;
-    --active-tab: #f037a5;
-    --button-background-color: transparent;
-    --button-background-border: 2px solid #5e6a7d;
-    --reset-color: #ffffff;
-    --title-color: #ffffff;
-    --card2-background-color: #232628;
-    --pl-color: #e0e3e7;
-    --pl-background-color: #2a2e2f;
-    --h1-color: #e5e7eb;
-    --root-color: #e5e7eb;
-    --border-color: #2c3136;
-    --input-color: #222426;
-    --border-top: #3a3f44;
-    --box-shadow: 0 2px 4px 1px rgba(0, 0, 0, .35);
-    --search-color: #c9ced4;
-    --checkbox-color: grayscale(100%) brightness(85%);
-    --modal-background: #1f2325;
-    --modal-color: #e5e7eb;
-    --link-color: #f037a5;
-    --logo-color: #f3bd1c;
-    --queue-modal-bg: rgba(42, 46, 47, 0.95);
-    --queue-modal-border: rgba(255, 255, 255, 0.1);
-    --queue-item-bg: rgba(255, 255, 255, 0.05);
-    --queue-item-hover: rgba(240, 55, 165, 0.15);
-    --queue-item-border: rgba(255, 255, 255, 0.08);
-    --queue-item-hover-border: rgba(240, 55, 165, 0.35);
-    --queue-action-bg: rgba(255, 255, 255, 0.1);
-    --queue-action-hover: rgba(240, 55, 165, 0.2);
-    --queue-save-hover: rgba(76, 175, 80, 0.2);
-    --queue-clear-hover: rgba(255, 71, 87, 0.2);
-    --queue-footer-bg: rgba(255, 255, 255, 0.05);
-    --queue-notice-bg: rgba(255, 255, 255, 0.08);
-    --queue-notice-border: rgba(255, 255, 255, 0.1);
-    --settings-menu-bg: rgba(42, 46, 47, 0.95);
-    --settings-menu-border: rgba(255, 255, 255, 0.1);
-    --settings-section-border: rgba(255, 255, 255, 0.1);
-    --settings-toggle-bg: rgba(255, 255, 255, 0.1);
-    --settings-toggle-hover: rgba(240, 55, 165, 0.2);
-    --settings-action-bg: rgba(255, 255, 255, 0.1);
-    --settings-action-hover: rgba(240, 55, 165, 0.2)
-
-}
-
-:root.dark-blue {
-    --main-color: #0b1222;
-    --tabs-background: #121e33;
-    --tabs-color: #d1dcf0;
-    --tabs-target: #182843;
-    --recomended-color: #2b6cb0;
-    --active-tab: #2b6cb0;
-    --button-background-color: transparent;
-    --button-background-border: 2px solid #2b6cb0;
-    --reset-color: #e2ecff;
-    --title-color: #e2ecff;
-    --card2-background-color: #12213a;
-    --pl-color: #c3d1ea;
-    --pl-background-color: #142541;
-    --h1-color: #dfe9ff;
-    --root-color: #dfe9ff;
-    --border-color: #162845;
-    --input-color: #0a162a;
-    --border-top: #1b2e4e;
-    --box-shadow: 0 2px 4px 1px rgba(6, 22, 44, .5);
-    --search-color: #b7c9e6;
-    --checkbox-color: invert(0%) hue-rotate(220deg) brightness(115%);
-    --selected-color: #2b6cb0;
-    --modal-background: #0a1628;
-    --modal-color: #dbe7ff;
-    --link-color: #a7c8ff;
-    --logo-color: #f3bd1c;
-    --queue-modal-bg: rgba(18, 33, 58, 0.95);
-    --queue-modal-border: rgba(120, 160, 220, 0.2);
-    --queue-item-bg: rgba(120, 160, 220, 0.05);
-    --queue-item-hover: rgba(43, 108, 176, 0.15);
-    --queue-item-border: rgba(120, 160, 220, 0.08);
-    --queue-item-hover-border: rgba(43, 108, 176, 0.35);
-    --queue-action-bg: rgba(43, 108, 176, 0.1);
-    --queue-action-hover: rgba(43, 108, 176, 0.2);
-    --queue-save-hover: rgba(76, 175, 80, 0.2);
-    --queue-clear-hover: rgba(255, 71, 87, 0.2);
-    --queue-footer-bg: rgba(43, 108, 176, 0.05);
-    --queue-notice-bg: rgba(43, 108, 176, 0.08);
-    --queue-notice-border: rgba(43, 108, 176, 0.15);
-    --settings-menu-bg: rgba(18, 33, 58, 0.95);
-    --settings-menu-border: rgba(120, 160, 220, 0.12);
-    --settings-section-border: rgba(120, 160, 220, 0.12);
-    --settings-toggle-bg: rgba(43, 108, 176, 0.12);
-    --settings-toggle-hover: rgba(43, 108, 176, 0.2);
-    --settings-action-bg: rgba(43, 108, 176, 0.12);
-    --settings-action-hover: rgba(43, 108, 176, 0.2)
-    /*--con2-color:#42566D;*/
-    /*#1F2D40*/
-}
-
-:root.dq {
-    --main-color: #3f3d58;
-    --tabs-background: rgba(0, 0, 0, .3);
-    --tabs-color: white;
-    --tabs-target: #f037a5;
-    --recomended-color: #f037a5;
-    --active-tab: #f037a5;
-    --button-background-color: transparent;
-    --button-background-border: 2px solid #4caf50;
-    --reset-color: black;
-    --title-color: white;
-    --card2-background-color: #3f3d58;
-    --pl-color: #c3d1ea;
-    --pl-background-color: white;
-    --h1-color: white;
-    --root-color: white;
-    --border-color: transparent;
-    --input-color: rgba(43, 108, 176, 0.18);
-    --border-top: #e7eaec;
-    --box-shadow: 0 2px 4px 1px rgba(0, 0, 0, .18);
-    --search-color: white;
-    --checkbox-color: invert(0%) hue-rotate(70deg) brightness(150.1%);
-    --modal-background: #0a0a0a;
-    --modal-color: #ffffff;
-    --link-color: #f037a5;
-    --logo-color: #f3bd1c;
-    --queue-modal-bg: rgba(63, 61, 88, 0.95);
-    --queue-modal-border: rgba(240, 55, 165, 0.2);
-    /*--queue-item-bg: rgba(240, 55, 165, 0.08);*/
-    --queue-item-bg: #2c2a3d;
-    --queue-item-hover: rgba(240, 55, 165, 0.2);
-    --queue-item-border: rgba(240, 55, 165, 0.12);
-    --queue-item-hover-border: rgba(240, 55, 165, 0.45);
-    --queue-action-bg: rgba(240, 55, 165, 0.1);
-    --queue-action-hover: rgba(240, 55, 165, 0.25);
-    --queue-save-hover: rgba(76, 175, 80, 0.25);
-    --queue-clear-hover: rgba(255, 71, 87, 0.25);
-    --queue-footer-bg: rgba(240, 55, 165, 0.05);
-    --queue-notice-bg: rgba(240, 55, 165, 0.1);
-    --queue-notice-border: rgba(240, 55, 165, 0.2);
-    --settings-menu-bg: rgba(63, 61, 88, 0.95);
-    --settings-menu-border: rgba(240, 55, 165, 0.2);
-    --settings-section-border: rgba(240, 55, 165, 0.15);
-    --settings-toggle-bg: rgba(240, 55, 165, 0.1);
-    --settings-toggle-hover: rgba(240, 55, 165, 0.25);
-    --settings-action-bg: rgba(240, 55, 165, 0.1);
-    --settings-action-hover: rgba(240, 55, 165, 0.25)
-}
 /* Basic Mobile Styles */
 @media (max-width: 576px) {
-    .con3 {
-        width: 128px;
-        height: 128px;
-        color: transparent;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.7em;
-        font-weight: bolder;
-        background-repeat: no-repeat;
-        background-size: cover;
-        background-color: gray;
-    }
-
-    .rectrack {
+    .rec_track {
         font-size: 0.9em;
     }
 
     h1 {
         font-size: 1.4em !important;
-    }
-
-    .cover {
-        color: transparent;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.7em;
-        font-weight: bolder;
-        background-repeat: no-repeat;
-        background-size: cover;
-        background-color: gray;
     }
 }
 
@@ -245,23 +23,9 @@
     }
 }
 
-/* Tab Content Mobile */
-@media (max-width: 991px) {
-    .tab-content > .tab-pane {
-        display: block;
-        opacity: 1;
-    }
-}
-
 /* Modern Component Mobile Styles */
 @media (max-width: 768px) {
     /* TrackArtist Responsive Design */
-    .artist-header {
-        flex-direction: column;
-        gap: 20px;
-        padding: 20px;
-    }
-
     .artist-cover {
         width: 160px;
         height: 160px;
@@ -278,8 +42,7 @@
         gap: 8px;
     }
 
-    .recommend-btn,
-    .spotify-link {
+    .recommend-btn {
         justify-content: center;
     }
 
@@ -400,9 +163,6 @@
         padding: 10px 14px;
     }
 
-    .suggestion-text {
-        font-size: 13px;
-    }
 
     .btn-medium {
         padding: 10px 20px;
@@ -460,10 +220,6 @@
         min-width: auto;
     }
 
-    .action-btn {
-        justify-content: center;
-    }
-
     .queue-list {
         max-height: 250px;
     }
@@ -488,38 +244,12 @@
         right: -10px;
     }
 
-    .settings-section {
-        padding: 12px;
-    }
-
-    .setting-item {
-        padding: 6px;
-    }
-
-
-
-    /* Responsive design for additional components */
-    .modal-content {
-        width: 95%;
-        max-height: 85vh;
-    }
-
     .modal-header,
     .modal-actions,
     .queue-list,
     .modal-footer {
         padding-left: 16px;
         padding-right: 16px;
-    }
-
-    .modal-actions {
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .action-btn {
-        width: 100%;
-        justify-content: center;
     }
 
     .playlist-selector {
@@ -547,10 +277,6 @@
         padding: 20px;
     }
 
-    .playlist-title {
-        font-size: 20px;
-    }
-
     .playlist-actions {
         min-width: auto;
         flex-direction: row;
@@ -558,11 +284,151 @@
         gap: 12px;
     }
 
-    .spotify-link {
-        justify-content: center;
-    }
 
+}
 
+/* ==========================
+   Mobile SettingsDisplay (migrated from styles.css with mobile- prefix)
+   ========================== */
+
+.mobile-settings-display {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    overflow: hidden;
+}
+
+.mobile-settings-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+    padding: 20px 0;
+    width: 100%;
+}
+
+.mobile-header-icon {
+    width: 28px;
+    height: 28px;
+    margin-right: 16px;
+    color: var(--title-color);
+}
+
+.mobile-header-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.mobile-header-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--title-color);
+    margin: 0;
+}
+
+.mobile-actions-section {
+    margin-bottom: 40px;
+    width: 100%;
+}
+
+.mobile-action-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--settings-action-bg);
+    border: none;
+    border-radius: 8px;
+    color: var(--search-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.mobile-action-button:last-child {
+    margin-bottom: 0;
+}
+
+.mobile-action-button:hover {
+    background: var(--settings-action-hover);
+    color: var(--active-tab);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(240, 55, 165, 0.15);
+}
+
+.mobile-action-icon {
+    font-size: 16px;
+}
+
+.mobile-action-text {
+    flex: 1;
+    text-align: left;
+}
+
+.mobile-action-status {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.1);
+    color: var(--search-color);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.mobile-action-status.active {
+    background: #22c55e;
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.mobile-logout-section {
+    margin-bottom: 40px;
+    width: 100%;
+}
+
+/* Theme support for mobile settings */
+:root.dark .mobile-action-button {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+:root.dark .mobile-action-button:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+:root.dark .mobile-action-status {
+    background: var(--active-tab);
+    color: var(--title-color);
+}
+
+:root.dark-blue .mobile-action-button {
+    background: rgba(43, 108, 176, 0.12);
+}
+
+:root.dark-blue .mobile-action-button:hover {
+    background: rgba(43, 108, 176, 0.18);
+}
+
+:root.dark-blue .mobile-action-status {
+    background: var(--active-tab);
+    color: var(--title-color);
+}
+
+:root.dq .mobile-action-button {
+    background: rgba(240, 55, 165, 0.12);
+}
+
+:root.dq .mobile-action-button:hover {
+    background: rgba(240, 55, 165, 0.18);
+}
+
+:root.dq .mobile-action-status {
+    background: var(--active-tab);
+    color: var(--title-color);
 }
 
 /* Profile & Actions Section (migrated) */
@@ -616,10 +482,6 @@
         gap: 12px;
     }
 
-    .artist-header {
-        padding: 16px;
-    }
-
     .artist-cover {
         width: 120px;
         height: 120px;
@@ -647,11 +509,6 @@
     .album-overlay,
     .artist-overlay {
         padding: 12px;
-    }
-
-    .track-name,
-    .album-name {
-        font-size: 12px;
     }
 
     /* Mobile Responsive Styles */
@@ -710,11 +567,6 @@
         word-break: break-word;
         white-space: normal;
         line-height: 1.3;
-    }
-
-    .artist-cover {
-        width: 120px;
-        height: 120px;
     }
 
     .modern-recommendations {
@@ -837,10 +689,6 @@
         padding: 16px 20px 12px;
     }
 
-    .modal-actions {
-        padding: 12px 20px;
-    }
-
     .queue-list {
         padding: 12px 20px;
         max-height: 200px;
@@ -865,28 +713,6 @@
         font-size: 22px;
     }
 
-    .settings-card {
-        margin-bottom: 24px;
-    }
-
-    .setting-item {
-        padding: 18px 20px;
-    }
-
-    .setting-text {
-        font-size: 15px;
-    }
-
-    .action-button {
-        padding: 18px 20px;
-        font-size: 15px;
-        margin-bottom: 12px;
-    }
-
-    .action-icon {
-        font-size: 20px;
-    }
-
     .action-status {
         font-size: 11px;
         padding: 3px 6px;
@@ -896,10 +722,6 @@
     .settings-menu {
         min-width: 240px;
         right: -20px;
-    }
-
-    .settings-section {
-        padding: 10px;
     }
 
     .settings-section h3 {
@@ -927,20 +749,8 @@
         height: 40px;
     }
 
-    .track-name {
-        font-size: 13px;
-    }
-
-    .track-artists {
-        font-size: 11px;
-    }
-
     .modern-playlist-header {
         padding: 16px;
-    }
-
-    .playlist-title {
-        font-size: 18px;
     }
 }
 
@@ -1009,7 +819,6 @@
     align-items: center;
 }
 
-.queue-button,
 .profile-button {
     background: rgba(0, 0, 0, 0.05);
     border: none;
@@ -1025,13 +834,11 @@
     height: 44px;
 }
 
-.queue-button:hover,
 .profile-button:hover {
     background: rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
 }
 
-.queue-icon,
 .profile-icon { width: 20px; height: 20px; }
 
 /* Main Content Area */
@@ -1474,15 +1281,6 @@
     min-height: 200px;
 }
 
-.empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 20px;
-    text-align: center;
-}
-
 .empty-icon {
     font-size: 48px;
     margin-bottom: 16px;
@@ -1503,18 +1301,7 @@
     opacity: 0.8;
 }
 
-/* Tracks Container */
-.tracks-container {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.tracks-container.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 12px;
-}
+/* Tracks Container - removed from mobile.css, only used in regular components */
 
 /* Responsive Design */
 @media (max-width: 480px) {
@@ -1578,11 +1365,6 @@
 
     .empty-state p {
         font-size: 13px;
-    }
-
-    .tracks-container.grid {
-        grid-template-columns: 1fr;
-        gap: 8px;
     }
 
     .releases-container.grid {
@@ -2211,12 +1993,6 @@
     -webkit-box-orient: vertical;
 }
 
-.grid-details {
-    font-size: 12px;
-    color: #a0a0a0;
-    line-height: 1.2;
-}
-
 .playlist-cover {
     width: 48px;
     height: 48px;
@@ -2360,9 +2136,7 @@
 }
 
 
-.refresh-button:hover .refresh-icon {
-    color: #ffffff;
-}
+/* .refresh-button styles removed - only used in regular components */
 
 .controls-container {
     display: flex;
@@ -2683,15 +2457,6 @@
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-}
-
-.grid-details {
-    font-size: 12px;
-    color: #a0a0a0;
-    line-height: 1.2;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
 }
 
 .release-cover {

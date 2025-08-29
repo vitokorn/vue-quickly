@@ -268,7 +268,7 @@ const handleCloseWelcomeModal = () => {
         <div class="content-container">
           <!-- Personal Playlists Section -->
           <div v-if="selectedTopMenu === 1">
-            <div id="yourplaylists" class="con2">
+            <div id="yourplaylists" class="flex-stretch">
               <Loader v-if="spotifyStore.isLoading"/>
               <PlaylistSelector
                 :playlists="spotifyStore.getPlaylists"
@@ -354,7 +354,7 @@ const handleCloseWelcomeModal = () => {
           <!-- Spotify Playlists Section -->
           <div v-if="selectedTopMenu === 8">
             <Loader v-if="spotifyStore.isLoading"/>
-              <div id="sptplaylists" class="con2" v-show="selectedTopMenu===8">
+              <div id="sptplaylists" class="flex-stretch" v-show="selectedTopMenu===8">
                 <PlaylistSelector
                   :playlists="spotifyStore.getSpotifyPlaylists"
                   :selected-playlist="selectedSpotifyPlaylist"
