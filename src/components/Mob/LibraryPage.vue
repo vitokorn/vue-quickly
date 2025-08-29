@@ -38,13 +38,6 @@
       <p>Loading your library...</p>
     </div>
 
-    <!-- Error State -->
-    <div v-if="error" class="error-state">
-      <div class="error-icon">⚠️</div>
-      <p>{{ error }}</p>
-      <button class="retry-button" @click="loadLibraryContent">Try Again</button>
-    </div>
-
     <!-- Mobile Deeper Components -->
     <MobileDeeperAlbum
       v-for="album in deeperStore.getSectionData('savedAlbums')"
