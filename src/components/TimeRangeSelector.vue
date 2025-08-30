@@ -34,7 +34,7 @@ const handleRangeClick = (range, event) => {
       <template v-for="(range, index) of ranges" :key="range.id">
         <span :id="`top${sectionType}${range.id === 1 ? '' : range.id}`"
               @click="handleRangeClick(range, $event)"
-              :class="[selectedRange === range.id ? 'activetab' : '', { 'mx-2': index > 0 }]">
+              :class="[selectedRange === range.id ? 'active_tab' : '', { 'mx-2': index > 0 }]">
           {{ range.label }}
         </span>
       </template>

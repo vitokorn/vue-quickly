@@ -41,7 +41,7 @@ const props = defineProps({
 const emit = defineEmits(['tab-click', 'search'])
 
 const tabs = [
-  { id: 'option1', value: 1, icon: '📁', text: 'Playlists' },
+  { id: 'option1', value: 1, icon: '📁', text: 'Your Playlists' },
   { id: 'option2', value: 2, icon: '👤', text: 'Top Artists' },
   { id: 'option3', value: 3, icon: '🎵', text: 'Top Tracks' },
   { id: 'option4', value: 4, icon: '💿', text: 'Saved Albums' },

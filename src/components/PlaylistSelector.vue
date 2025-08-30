@@ -70,7 +70,7 @@ const handleSearch = (event) => {
         <div :id="item.id"
              @click="handlePlaylistSelect(item.id, $event)"
              class="hr-line-dashed flex-center p-3"
-             :class="selectedPlaylist === item.id ? 'activetab' : ''">
+             :class="selectedPlaylist === item.id ? 'active_tab' : ''">
           {{ item.name }}
         </div>
       </template>

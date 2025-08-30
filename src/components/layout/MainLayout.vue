@@ -71,7 +71,11 @@ const handleTrackClick = async (track, event) => {
   setSelectedItem(track.id)
   const sectionName = getSectionName(selectedTopMenu.value)
   await deeperStore.getTrackDetails(track, sectionName)
-  queueStore.addToQueue(track)
+  if (selectedTopMenu.value in [1,8]) {
+    queueStore.addToQueue(track.track)
+  } else {
+    queueStore.addToQueue(track)
+  }
 }
 
 const handleTrackHover = (event) => {
