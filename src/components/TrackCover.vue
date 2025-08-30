@@ -6,7 +6,7 @@ import {computed} from "vue";
 const props = defineProps(['d', 'cover'])
 const audioStore = useAudioStore()
 
-const { displayClass, backgroundStyle, audioPreload, audioSrc, hasPreview } = useMediaDisplay(computed(() => props.d), props.cover)
+const { displayClass, backgroundStyle, audioPreload, audioSrc, hasPreview } = useMediaDisplay(computed(() => props.d), computed(() => props.cover))
 </script>
 
 <template>

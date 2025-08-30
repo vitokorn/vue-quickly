@@ -88,8 +88,12 @@ export const useAudioStore = defineStore('audio', {
       const audio = target.lastChild || target
 
       if (!this.audioPreview || !audio || typeof audio.play !== 'function') return
+      if (!audio.src || audio.src === '') return
 
-      audio.play()
+      audio.play().catch(error => {
+        // Silently handle play errors (e.g., when audio is not available)
+        console.debug('Audio play failed:', error.message)
+      })
     },
 
     handleAudioLeave(event) {
@@ -97,6 +101,7 @@ export const useAudioStore = defineStore('audio', {
       const audio = target.lastChild || target
 
       if (!this.audioPreview || !audio || typeof audio.pause !== 'function') return
+      if (!audio.src || audio.src === '') return
 
       this.pauseAudio(audio)
     },
@@ -124,8 +129,12 @@ export const useAudioStore = defineStore('audio', {
       const audio = target.lastChild
 
       if (!this.audioPreview || !audio) return
+      if (!audio.src || audio.src === '') return
 
-      audio.play()
+      audio.play().catch(error => {
+        // Silently handle play errors (e.g., when audio is not available)
+        console.debug('Audio play failed:', error.message)
+      })
     },
 
     handleParentAudioLeave(event) {

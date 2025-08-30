@@ -9,6 +9,7 @@ import { computed } from 'vue'
 export function useMediaDisplay(item, cover = null) {
   // Get the image to use (either from cover parameter or item.images[0])
   const image = computed(() => {
+    if (cover && cover.value) return cover.value
     if (cover) return cover
     if (item.value?.images?.[0]) return item.value.images[0]
     if (item.value?.album?.images?.[0]) return item.value.album.images[0]

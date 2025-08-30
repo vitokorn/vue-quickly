@@ -47,8 +47,7 @@ const formatArtistNames = (artists) => {
 
 // Media display composable for playlist cover
 const {image: coverImage, hasImage: hasCover} = useMediaDisplay(
-    computed(() => props.playlist),
-    props.playlist?.images?.[0]
+    computed(() => props.playlist)
 )
 
 // Event handlers
@@ -78,7 +77,7 @@ window.addEventListener('resize', () => {
 </script>
 
 <template>
-  <div class="playlist" :id="'p' + playlist.id">
+  <div class="w-100" :id="'p' + playlist.id">
     <!-- Playlist Header -->
     <div class="modern-playlist-header row">
       <div class="col-sm-6 col-md-6 col-lg-3" :class="{'col-6': mobileClass}">
