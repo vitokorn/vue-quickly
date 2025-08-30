@@ -64,7 +64,7 @@ const handleArtistLeave = (event) => {
   <div
     :id="sectionId"
     class="display-flex flex-wrap"
-    style="color: black;width: auto;"
+    style="width: auto;"
     :class="displayClass"
   >
     <div class="display-flex flex-wrap py-2 gap-8">

@@ -164,6 +164,7 @@ input[type="text"] {
     background-size: cover;
     background-color: gray;
     position: relative;
+    color: transparent;
 }
 
 .media-card:hover {

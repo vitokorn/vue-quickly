@@ -1695,6 +1695,21 @@
     display: none;
 }
 
+/* Mobile Deeper Album, Playlist, Track Containers - match artist deeper look */
+.mobile-deeper-album,
+.mobile-deeper-playlist,
+.mobile-deeper-track {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--theme-mobile-bg);
+    z-index: 1000;
+    overflow-y: auto;
+    display: none;
+}
+
 /* Mobile Deeper Artist Header (scoped to avoid conflict with main mobile-header) */
 .mobile-deeper-artist .mobile-header {
     display: flex;
@@ -1703,6 +1718,21 @@
     background: var(--grid-three-dots-bg);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+/* Scoped headers for album/playlist/track to avoid conflicts */
+.mobile-deeper-album .mobile-header,
+.mobile-deeper-playlist .mobile-header,
+.mobile-deeper-track .mobile-header {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    background: var(--mobile-header-bg);
+    backdrop-filter: blur(10px);
+    border-bottom: var(--mobile-header-border);
     position: sticky;
     top: 0;
     z-index: 10;
@@ -1731,6 +1761,36 @@
     height: 24px;
 }
 
+/* Make back button consistent across all mobile deeper components */
+.mobile-deeper-album .back-button,
+.mobile-deeper-playlist .back-button,
+.mobile-deeper-track .back-button {
+    background: none;
+    border: none;
+    color: #ffffff;
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+}
+
+.mobile-deeper-album .back-button:hover,
+.mobile-deeper-playlist .back-button:hover,
+.mobile-deeper-track .back-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.mobile-deeper-album .back-button svg,
+.mobile-deeper-playlist .back-button svg,
+.mobile-deeper-track .back-button svg {
+    width: 24px;
+    height: 24px;
+}
+
 .mobile-deeper-artist .header-title {
     font-size: 18px;
     font-weight: 600;
@@ -1751,6 +1811,47 @@
     text-align: center;
     gap: 16px;
 }
+
+/* Album info section */
+.album-info-section,
+.playlist-info-section,
+.track-info-section {
+    padding: 20px;
+    display: flex;
+    gap: 16px;
+}
+
+.album-info-section { align-items: center; }
+.playlist-info-section { align-items: center; }
+.track-info-section { align-items: flex-start; }
+
+.album-cover,
+.playlist-cover {
+    width: 120px;
+    height: 120px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--grid-cover-bg);
+    box-shadow: var(--card-shadow);
+    flex-shrink: 0;
+}
+
+.album-cover img,
+.playlist-cover img { width: 100%; height: 100%; object-fit: cover; }
+
+.album-details,
+.playlist-details,
+.track-details { flex: 1; min-width: 0; }
+
+.playlist-meta,
+.track-meta,
+.album-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; color: var(--search-color); opacity: 0.9; }
+
+.track-count,
+.playlist-owner,
+.playlist-visibility,
+.duration,
+.popularity { font-size: 13px; }
 
 .artist-placeholder {
     width: 60px;
@@ -1773,6 +1874,92 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+}
+
+/* Tracks and sections spacing */
+.tracks-section,
+.related-tracks-section { padding: 0 20px 20px; }
+
+/* Mobile Deeper Track specific sizing and typography */
+.mobile-deeper-track .track-cover {
+    width: 120px;
+    height: 120px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--grid-cover-bg);
+    box-shadow: var(--card-shadow);
+    flex-shrink: 0;
+    background-size: contain;
+}
+
+.mobile-deeper-track .track-title {
+    font-size: 24px;
+    margin: 0 0 8px 0;
+    color: var(--title-color);
+}
+
+.mobile-deeper-track .artists-section { margin-top: 6px; }
+.mobile-deeper-track .track-meta { margin-top: 8px; }
+.mobile-deeper-track .release-info { margin-top: 8px; }
+
+.related-tracks-section .section-header { margin-bottom: 12px; }
+.related-tracks-list { display: flex; flex-direction: column; gap: 8px; }
+
+@media (max-width: 480px) {
+    .mobile-deeper-track .track-cover { width: 100px; height: 100px; }
+    .mobile-deeper-track .track-title { font-size: 20px; }
+}
+
+/* ==========================
+   Mobile QueueDisplay
+   ========================== */
+.queue-display { padding: 20px; }
+
+.queue-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.queue-title { display: flex; align-items: center; gap: 10px; }
+.queue-title h3 { margin: 0; font-size: 20px; color: var(--title-color); }
+.queue-icon { width: 20px; height: 20px; color: var(--title-color); opacity: 0.9; }
+
+.queue-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.queue-actions .playlist-selector { min-width: 180px; flex: 1; }
+.queue-actions .playlist-select { width: 100%; }
+
+.queue-list.list { display: flex; flex-direction: column; gap: 8px; }
+.queue-list.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    padding: 0 4px;
+}
+
+.empty-queue { padding: 40px 20px; text-align: center; }
+.empty-queue h4 { margin: 8px 0; color: var(--title-color); }
+.empty-queue p { margin: 0; color: var(--search-color); opacity: 0.8; }
+
+.queue-display .notice-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--search-color);
+    opacity: 0.8;
+    flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+    .queue-display { padding: 16px; }
+    .queue-title h3 { font-size: 18px; }
 }
 
 
@@ -1871,6 +2058,42 @@
     display: flex;
     justify-content: flex-end;
 }
+
+/* Deeper playlist sort buttons */
+.sort-options { display: flex; gap: 8px; padding: 0 20px 12px; flex-wrap: wrap; }
+.sort-button {
+    background: var(--action-btn-bg);
+    border: 1px solid var(--item-border);
+    color: var(--title-color);
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 13px;
+}
+.sort-button:hover { background: var(--action-btn-hover-bg); }
+.sort-button.active { background: var(--active-tab); color: #fff; box-shadow: 0 2px 8px var(--active-tab-component); }
+
+/* Deeper track actions */
+.track-actions { display: flex; gap: 8px; padding: 0 20px 20px; flex-wrap: wrap; }
+.play-btn,
+.queue-btn {
+    background: var(--action-btn-bg);
+    border: none;
+    color: var(--title-color);
+    padding: 10px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+.queue-btn { background: var(--mlist-queue-bg); color: var(--active-tab); }
+.play-btn:hover,
+.queue-btn:hover { transform: translateY(-1px); background: var(--action-btn-hover-bg); }
+.queue-btn:hover { background: var(--mlist-queue-hover-bg); }
 
 .artist-item {
     display: flex;
