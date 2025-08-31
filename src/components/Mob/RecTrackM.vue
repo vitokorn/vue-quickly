@@ -1,12 +1,10 @@
 <script setup>
-import PlaylistMob from "./PlaylistMob.vue";
-import SeedTracksMob from "./SeedTracksMob.vue";
-import TrackArtistMob from "./TrackArtistMob.vue";
-import DeeperTracksMob from "./DeeperTracksMob.vue";
-import DeeperTracks2Mob from "./DeeperTracks2Mob.vue";
-import DeeperAlbumMob from "./DeeperAlbumMob.vue";
+import MobileDeeperArtist from "./MobileDeeperArtist.vue";
+import MobileDeeperTracks from "./MobileDeeperTracks.vue";
+import MobileDeeperAlbum from "./MobileDeeperAlbum.vue";
 import SeedArtistsMob from "./SeedArtistsMob.vue";
-import DeeperPlaylistMob from "./DeeperPlaylistMob.vue";
+import SeedTracksMob from "./SeedTracksMob.vue";
+import MobileDeeperPlaylist from "./MobileDeeperPlaylist.vue";
 import {useDeeperStore} from "../../stores/deeper-store";
 
 const props = defineProps(['num'])
@@ -49,28 +47,21 @@ function getSectionName(num) {
       />
 
       <!-- Track Artist -->
-      <TrackArtistMob
+      <MobileDeeperArtist
         v-else-if="item.type === 'trackartist'"
         :d="item"
         :num="num"
       />
 
       <!-- Deeper Tracks -->
-      <DeeperTracksMob
-        v-else-if="item.type === 'deepertracks'"
-        :d="item"
-        :num="num"
-      />
-
-      <!-- Deeper Tracks 2 -->
-      <DeeperTracks2Mob
-        v-else-if="item.type === 'deepertracks2'"
+      <MobileDeeperTracks
+        v-else-if="item.type === 'deepertracks' || item.type === 'track'"
         :d="item"
         :num="num"
       />
 
       <!-- Deeper Album -->
-      <DeeperAlbumMob
+      <MobileDeeperAlbum
         v-else-if="item.type === 'deeperalbum'"
         :d="item"
         :num="num"
@@ -84,7 +75,7 @@ function getSectionName(num) {
       />
 
       <!-- Deeper Playlist -->
-      <DeeperPlaylistMob
+      <MobileDeeperPlaylist
         v-else-if="item.type === 'deeperplaylist'"
         :d="item"
         :num="num"

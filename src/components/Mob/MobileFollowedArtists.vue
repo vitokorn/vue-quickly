@@ -33,20 +33,12 @@ const handleArtistClick = async (artist, event) => {
   setSelectedItem(artist.id)
   const sectionName = 'followedArtists'
 
-  // Add artist to deeper store for followedArtists section
-  const artistData = {
-    ...artist,
-    type: 'artist',
-    parentKey: 'libraryPage'
-  }
-
-  deeperStore.addToSection('followedArtists', artistData)
-  deeperStore.setCurrentSection('followedArtists')
+  await deeperStore.getArtistDetails(artist, 'followedArtists')
 
   // Show the deeper artist component using visibility manager
   const { useVisibilityManager } = await import('../../composables/useVisibilityManager')
   const visibilityManager = useVisibilityManager()
-  const artistKey = `deeperartist_${artist.id}__p:libraryPage__`
+  const artistKey = `trackartist_${artist.id}__p:followedArtistsPage__`
   visibilityManager.showComponent(artistKey)
 
   console.log('Showing deeper artist for:', artist.name, 'with key:', artistKey)

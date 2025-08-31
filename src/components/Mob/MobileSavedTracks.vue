@@ -37,8 +37,9 @@ const loadSavedTracks = async () => {
 
 const handleTrackClick = async (track, event) => {
   setSelectedItem(track.id)
-  const sectionName = 'savedTracks'
-  await deeperStore.getTrackDetails(track, sectionName)
+  
+  await deeperStore.getTrackDetails(track, 'savedTracks')
+  
   queueStore.addToQueue(track)
 }
 

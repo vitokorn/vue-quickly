@@ -3,7 +3,7 @@ import { useSpotifyStore } from "../../stores/spotify-store"
 import { useAudioStore } from "../../stores/audio-store"
 import { useQueueStore } from "../../stores/queue-store"
 import { useDeeperStore } from "../../stores/deeper-store"
-import { ref, computed, onMounted, nextTick } from "vue"
+import { ref, computed, onMounted, onUnmounted, nextTick } from "vue"
 import { useVisibilityManager } from "../../composables/useVisibilityManager"
 import { useMobileMediaDisplay } from "../../composables/useMobileMediaDisplay.js"
 import MobileTrackItem from './MobileTrackItem.vue'
@@ -88,9 +88,16 @@ const handleBackClick = () => {
 
 const handleTrackClick = async (track, event) => {
   setActive(track.id)
-  const sectionName = getSectionName(props.num)
-  await deeperStore.getTrackDetails(track, sectionName)
+
+  await deeperStore.getTrackDetails(track, 'playlistTracks')
+
   queueStore.addToQueue(track)
+
+  // Also play audio preview if available
+  const previewUrl = track.preview_url || track.previewUrl
+  if (previewUrl) {
+    await audioStore.mobileToggleTrack(track.id, previewUrl)
+  }
 }
 
 const handleSortChange = (option) => {
@@ -111,6 +118,13 @@ onMounted(async () => {
   }
 
   console.log('MobileDeeperPlaylist registered with key:', playlistKey)
+})
+
+// Unregister component when unmounted
+onUnmounted(() => {
+  const playlistKey = `deeperplaylist_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
+  visibilityManager.unregisterComponent(playlistKey)
+  console.log('MobileDeeperPlaylist unregistered:', playlistKey)
 })
 </script>
 
@@ -181,21 +195,13 @@ onMounted(async () => {
           v-for="item in sortedDeeperPlaylistItems"
           :key="item.track.id"
           :track="item.track"
-          :section-name="getSectionName(num)"
+          :section-name="'playlistTracks'"
           :parent-id="d.id"
           view-mode="list"
-          @click="handleTrackClick"
         />
       </div>
     </div>
 
-    <!-- Mobile Deeper Tracks Components -->
-    <MobileDeeperTracks
-      v-for="track in deeperStore.getSectionData('playlistTracks')"
-      :key="track.id"
-      :d="track"
-      :num="8"
-    />
   </div>
 </template>
 

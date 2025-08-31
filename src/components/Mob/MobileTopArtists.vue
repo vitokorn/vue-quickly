@@ -68,19 +68,12 @@ const handleArtistClick = async (artist, event) => {
   const sectionName = 'topArtists'
 
   // Add artist to deeper store for topArtists section
-  const artistData = {
-    ...artist,
-    type: 'artist',
-    parentKey: 'homePage'
-  }
-
-  deeperStore.addToSection('topArtists', artistData)
-  deeperStore.setCurrentSection('topArtists')
+  await deeperStore.getArtistDetails(artist, sectionName)
 
   // Show the deeper artist component using visibility manager
   const {useVisibilityManager} = await import('../../composables/useVisibilityManager')
   const visibilityManager = useVisibilityManager()
-  const artistKey = `deeperartist_${artist.id}__p:homePage__`
+  const artistKey = `trackartist_${artist.id}__p:topArtistsPage__`
   visibilityManager.showComponent(artistKey)
 
   console.log('Showing deeper artist for:', artist.name, 'with key:', artistKey)

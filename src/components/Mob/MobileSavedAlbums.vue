@@ -34,15 +34,7 @@ const handleAlbumClick = async (album, event) => {
   setSelectedItem(album.id)
   const sectionName = 'savedAlbums'
 
-  // Add album to deeper store for savedAlbums section
-  const albumData = {
-    ...album,
-    type: 'album',
-    parentKey: 'libraryPage'
-  }
-
-  deeperStore.addToSection('savedAlbums', albumData)
-  deeperStore.setCurrentSection('savedAlbums')
+  await deeperStore.getAlbumDetails(album, 'savedAlbums')
 
   // Show the deeper album component
   console.log('Showing deeper album for:', album.name)
@@ -51,22 +43,14 @@ const handleAlbumClick = async (album, event) => {
 const handleAlbumThreeDotsClick = async (album, event) => {
   event.stopPropagation() // Prevent triggering the main click event
 
-  // Add album to deeper store for savedAlbums section
-  const albumData = {
-    ...album,
-    type: 'album',
-    parentKey: 'libraryPage'
-  }
-
-  deeperStore.addToSection('savedAlbums', albumData)
-  deeperStore.setCurrentSection('savedAlbums')
-
+  await deeperStore.getAlbumDetails(album, 'savedAlbums')
+  
   // Show the deeper album component using visibility manager
   const { useVisibilityManager } = await import('../../composables/useVisibilityManager')
   const visibilityManager = useVisibilityManager()
-  const albumKey = `deeperalbum_${album.id}__p:libraryPage__`
+  const albumKey = `deeperalbum_${album.id}__p:savedAlbumsPage__`
   visibilityManager.showComponent(albumKey)
-
+  
   console.log('Showing deeper album for:', album.name, 'with key:', albumKey)
 }
 

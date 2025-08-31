@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { useSpotifyStore } from '../../stores/spotify-store'
 import { useDeeperStore } from '../../stores/deeper-store'
 import { useQueueStore } from '../../stores/queue-store'
@@ -7,10 +7,60 @@ import { useAudioStore } from '../../stores/audio-store'
 import { useVisibilityManager } from '../../composables/useVisibilityManager'
 import { useMobileMediaDisplay } from '../../composables/useMobileMediaDisplay.js'
 import MobileTrackItem from './MobileTrackItem.vue'
-import MobileDeeperTracks from './MobileDeeperTracks.vue'
 import {spotifyApi} from "../../services/spotifyApi.js";
 
 const props = defineProps(['d', 'num'])
+
+// Extract artist data from trackartist structure
+const artistData = computed(() => {
+  if (props.d.data && Array.isArray(props.d.data)) {
+    // Find the trackartist item in the data array
+    const artistItem = props.d.data.find(item => item.type === 'trackartist')
+    return artistItem || props.d
+  }
+  return props.d
+})
+
+// Extract other data from trackartist structure
+const topTracksData = computed(() => {
+  if (props.d.data && Array.isArray(props.d.data)) {
+    const topTracksItem = props.d.data.find(item => item.type === 'top_tracks')
+    return topTracksItem?.tracks || []
+  }
+  return props.d.top_tracks || []
+})
+
+const albumsData = computed(() => {
+  if (props.d.data && Array.isArray(props.d.data)) {
+    const albumsItem = props.d.data.find(item => item.type === 'albums')
+    return albumsItem?.items || []
+  }
+  return props.d.albums || []
+})
+
+const singlesData = computed(() => {
+  if (props.d.data && Array.isArray(props.d.data)) {
+    const singlesItem = props.d.data.find(item => item.type === 'single')
+    return singlesItem?.items || []
+  }
+  return props.d.singles || []
+})
+
+const appearsOnData = computed(() => {
+  if (props.d.data && Array.isArray(props.d.data)) {
+    const appearsOnItem = props.d.data.find(item => item.type === 'appears_on')
+    return appearsOnItem?.items || []
+  }
+  return props.d.appears_on || []
+})
+
+const relatedArtistsData = computed(() => {
+  if (props.d.data && Array.isArray(props.d.data)) {
+    const relatedItem = props.d.data.find(item => item.type === 'related-artists')
+    return relatedItem?.artists || []
+  }
+  return props.d.related_artists || []
+})
 const spotifyStore = useSpotifyStore()
 const deeperStore = useDeeperStore()
 const queueStore = useQueueStore()
@@ -20,7 +70,12 @@ const componentRef = ref(null)
 const loading = ref(true)
 
 // Get mobile media display for artist
-const { displayClass, backgroundStyle, hasPreview, previewUrl, trackId } = useMobileMediaDisplay(computed(() => props.d))
+const { displayClass, backgroundStyle, hasPreview, previewUrl, trackId } = useMobileMediaDisplay(computed(() => artistData.value))
+
+// Check if artist has an image
+const hasImage = computed(() => {
+  return artistData.value.images && artistData.value.images.length > 0 && artistData.value.images[0] && artistData.value.images[0].url
+})
 
 // Helper function to get section name from num
 function getSectionName(num) {
@@ -44,7 +99,7 @@ function getSectionName(num) {
 
 const handleBackClick = () => {
   // Hide this component and show the parent
-  const artistKey = `deeperartist_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
+  const artistKey = `trackartist_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
   visibilityManager.hideComponent(artistKey)
 
   // If there's a parent key, show the parent component
@@ -67,20 +122,10 @@ const handleAlbumClick = async (album, event) => {
 const handleRelatedArtistClick = async (artist, event) => {
   const sectionName = getSectionName(props.num)
 
-  // Add artist to deeper store for the current section
-  const artistData = {
-    ...artist,
-    type: 'artist',
-    parentKey: `deeperartist_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
-  }
-
-  deeperStore.addToSection(sectionName, artistData)
-  deeperStore.setCurrentSection(sectionName)
+  await deeperStore.getArtistDetails(artist, sectionName)
 
   // Show the MobileDeeperArtist component using visibility manager
-  const { useVisibilityManager } = await import('../../composables/useVisibilityManager')
-  const visibilityManager = useVisibilityManager()
-  const relatedArtistKey = `deeperartist_${artist.id}__p:deeperartist_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}__`
+  const relatedArtistKey = `trackartist_${artist.id}__p:trackartist_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}__`
   visibilityManager.showComponent(relatedArtistKey)
 
   console.log('Showing MobileDeeperArtist for related artist:', artist.name, 'with key:', relatedArtistKey)
@@ -91,7 +136,7 @@ const handleGenreClick = (genre) => {
 }
 
 const handleRecommendClick = () => {
-  deeperStore.getSeedArtistRecommendations(props.d, getSectionName(props.num), props.d.id)
+  deeperStore.getSeedArtistRecommendations(artistData.value, getSectionName(props.num), props.d.id)
 }
 
 const handleAudioPreview = (event) => {
@@ -135,7 +180,7 @@ const fetchArtistDetails = async () => {
     }
 
     // Update the deeper store with the complete artist data
-    deeperStore.addToSection(getSectionName(props.num), updatedArtistData)
+    await deeperStore.getArtistDetails(props.d, getSectionName(props.num))
 
     console.log('Artist details fetched:', {
       topTracks: topTracks.length,
@@ -171,7 +216,7 @@ onMounted(async () => {
   await nextTick()
 
   // Register this component with the visibility manager
-  const artistKey = `deeperartist_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
+  const artistKey = `trackartist_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
   visibilityManager.registerComponent(artistKey, componentRef)
 
   // Initially hide this component
@@ -181,8 +226,21 @@ onMounted(async () => {
 
   console.log('MobileDeeperArtist registered with key:', artistKey)
 
-  // Fetch all artist details
-  await fetchArtistDetails()
+  // If we have trackartist data structure, we don't need to fetch details
+  if (props.d.data && Array.isArray(props.d.data)) {
+    console.log('Using existing trackartist data structure')
+    loading.value = false
+  } else {
+    // Fetch all artist details
+    await fetchArtistDetails()
+  }
+})
+
+// Unregister component when unmounted
+onUnmounted(() => {
+  const artistKey = `trackartist_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
+  visibilityManager.unregisterComponent(artistKey)
+  console.log('MobileDeeperArtist unregistered:', artistKey)
 })
 </script>
 
@@ -201,17 +259,18 @@ onMounted(async () => {
 
     <!-- Artist Info Section -->
     <div class="artist-info-section">
-      <div class="artist-cover"
-           :class="displayClass"
-           :style="backgroundStyle"
-           @click="handleAudioPreview">
+      <div>
         <img
-          v-if="d.images && d.images[0] && !hasImage"
-          :src="d.images[0].url"
-          :alt="d.name"
+          v-if="hasImage"
+          class="artist-cover"
+          :class="displayClass"
+          :style="backgroundStyle"
+          @click="handleAudioPreview"
+          :src="artistData.images[0].url"
+          :alt="artistData.name"
           @error="$event.target.style.display = 'none'"
         />
-        <div v-else-if="!hasImage" class="artist-placeholder">
+        <div v-else class="artist-placeholder">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
             <path d="M11.584 2.376a.75.75 0 01.832 0l9 6a.75.75 0 11-.832 1.248L12 3.901 3.416 9.624a.75.75 0 01-.832-1.248l9-6z" />
             <path d="M20.25 11.25v5.533c0 1.036-.84 1.875-1.875 1.875H5.625A1.875 1.875 0 013.75 16.783V11.25H2.25a.75.75 0 010-1.5h1.5V6.75c0-1.036.84-1.875 1.875-1.875h.75a.75.75 0 010 1.5h-.75a.375.375 0 00-.375.375v3.375h1.5a.75.75 0 010 1.5H3.75v5.533a.375.375 0 00.375.375h12.75a.375.375 0 00.375-.375V11.25h1.5a.75.75 0 010-1.5h-1.5V6.75a.375.375 0 00-.375-.375h-.75a.75.75 0 010-1.5h.75c1.036 0 1.875.84 1.875 1.875v3.375h1.5a.75.75 0 010 1.5z" />
@@ -223,16 +282,16 @@ onMounted(async () => {
       </div>
 
       <div class="artist-details">
-        <h1 class="artist-title">{{ d.name }}</h1>
+        <h1 class="artist-title">{{ artistData.name }}</h1>
 
         <div class="artist-stats">
-          <span class="followers-count">{{ formatFollowers(d.followers?.total || 0) }} followers</span>
+          <span class="followers-count">{{ formatFollowers(artistData.followers?.total || 0) }} followers</span>
         </div>
 
         <!-- Genres -->
-        <div class="genres-section" v-if="d.genres && d.genres.length > 0">
+        <div class="genres-section" v-if="artistData.genres && artistData.genres.length > 0">
           <div class="genres-list">
-            <span v-for="(genre, index) in d.genres.slice(0, 3)" :key="index" class="genre-tag" @click="handleGenreClick(genre)">
+            <span v-for="(genre, index) in artistData.genres.slice(0, 3)" :key="index" class="genre-tag" @click="handleGenreClick(genre)">
               {{ genre }}
             </span>
           </div>
@@ -270,13 +329,13 @@ onMounted(async () => {
     <!-- Content Sections -->
     <div v-else>
       <!-- Top Tracks Section -->
-    <div v-if="d.top_tracks && d.top_tracks.length > 0" class="section">
+    <div v-if="topTracksData.length > 0" class="section">
       <div class="section-header">
         <h3 class="section-title">Top Tracks</h3>
       </div>
       <div class="tracks-list">
         <MobileTrackItem
-          v-for="track in d.top_tracks"
+          v-for="track in topTracksData"
           :key="track.id"
           :track="track"
           view-mode="list"
@@ -286,13 +345,13 @@ onMounted(async () => {
     </div>
 
     <!-- Albums Section -->
-    <div v-if="d.albums && d.albums.length > 0" class="section">
+    <div v-if="albumsData.length > 0" class="section">
       <div class="section-header">
         <h3 class="section-title">Albums</h3>
       </div>
       <div class="albums-grid">
         <div
-          v-for="album in d.albums"
+          v-for="album in albumsData"
           :key="album.id"
           class="album-item"
           @click="handleAlbumClick(album, $event)"
@@ -320,13 +379,13 @@ onMounted(async () => {
     </div>
 
     <!-- Singles Section -->
-    <div v-if="d.singles && d.singles.length > 0" class="section">
+    <div v-if="singlesData.length > 0" class="section">
       <div class="section-header">
         <h3 class="section-title">Singles</h3>
       </div>
       <div class="albums-grid">
         <div
-          v-for="single in d.singles"
+          v-for="single in singlesData"
           :key="single.id"
           class="album-item"
           @click="handleAlbumClick(single, $event)"
@@ -354,13 +413,13 @@ onMounted(async () => {
     </div>
 
     <!-- Appears On Section -->
-    <div v-if="d.appears_on && d.appears_on.length > 0" class="section">
+    <div v-if="appearsOnData.length > 0" class="section">
       <div class="section-header">
         <h3 class="section-title">Appears On</h3>
       </div>
       <div class="albums-grid">
         <div
-          v-for="appearsOn in d.appears_on"
+          v-for="appearsOn in appearsOnData"
           :key="appearsOn.id"
           class="album-item"
           @click="handleAlbumClick(appearsOn, $event)"
@@ -388,13 +447,13 @@ onMounted(async () => {
     </div>
 
     <!-- Related Artists Section -->
-    <div v-if="d.related_artists && d.related_artists.length > 0" class="section">
+    <div v-if="relatedArtistsData.length > 0" class="section">
       <div class="section-header">
         <h3 class="section-title">Related Artists</h3>
       </div>
       <div class="artists-grid">
         <div
-          v-for="artist in d.related_artists"
+          v-for="artist in relatedArtistsData"
           :key="artist.id"
           class="artist-item"
           @click="handleRelatedArtistClick(artist, $event)"
@@ -421,13 +480,6 @@ onMounted(async () => {
       </div>
     </div>
 
-    <!-- Mobile Deeper Tracks Components -->
-    <MobileDeeperTracks
-      v-for="track in deeperStore.getSectionData('topTracks')"
-      :key="track.id"
-      :d="track"
-      :num="3"
-    />
     </div>
   </div>
 </template>

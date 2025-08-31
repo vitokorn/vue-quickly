@@ -62,12 +62,15 @@ export const useDeeperStore = defineStore('deeper', {
                 this.sections[sectionName] = []
             }
 
-            // Replace if an item with the same type and parentKey already exists
+            // Check if this exact item already exists (same id, type, and parentKey)
             if (item.parentKey !== undefined) {
-                const sameParentIndex = this.sections[sectionName].findIndex(i => i.type === item.type && (i.parentKey || null) === (item.parentKey || null))
-                if (sameParentIndex !== -1) {
-                    this.sections[sectionName].splice(sameParentIndex, 1, item)
-                    console.log('Replaced existing item with same type/parentKey at index', sameParentIndex)
+                const existingIndex = this.sections[sectionName].findIndex(i => 
+                    i.id === item.id && 
+                    i.type === item.type && 
+                    (i.parentKey || null) === (item.parentKey || null)
+                )
+                if (existingIndex !== -1) {
+                    console.log('Item already exists in section, skipping')
                     return
                 }
             }

@@ -68,8 +68,9 @@ const handleTimeRangeChange = async (rangeId) => {
 const handleTrackClick = async (track, event) => {
   console.log('Track clicked:', track.name, 'Preview URL:', track.preview_url || track.previewUrl)
   setSelectedItem(track.id)
-  const sectionName = 'topTracks'
-  await deeperStore.getTrackDetails(track, sectionName)
+  
+  await deeperStore.getTrackDetails(track, 'topTracks')
+  
   queueStore.addToQueue(track)
 
   // Also play audio preview if available

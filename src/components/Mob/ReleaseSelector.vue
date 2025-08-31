@@ -114,18 +114,10 @@ const handleReleaseClick = (release, event) => {
   }
 }
 
-const handleDeeperAlbumClick = (release, event) => {
+const handleDeeperAlbumClick = async (release, event) => {
   event.stopPropagation() // Prevent triggering the main click event
 
-  // Add album to deeper store for newReleases section
-  const albumData = {
-    ...release,
-    type: 'album',
-    parentKey: 'releaseSelector'
-  }
-
-  deeperStore.addToSection('newReleases', albumData)
-  deeperStore.setCurrentSection('newReleases')
+  await deeperStore.getAlbumDetails(release, 'newReleases')
 
   // Show the deeper album component using visibility manager
   const playlistKey = `deeperalbum_${release.id}__p:releaseSelector__`

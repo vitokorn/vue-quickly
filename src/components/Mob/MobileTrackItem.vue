@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, nextTick } from 'vue'
 import { useQueueStore } from "../../stores/queue-store"
 import { useDeeperStore } from "../../stores/deeper-store"
 import { useAudioStore } from "../../stores/audio-store"
@@ -106,17 +106,15 @@ const handleDeeperTrack = async (event) => {
     sectionName = 'albumTracks'
   }
 
-  deeperStore.addToSection(sectionName, trackData)
-  deeperStore.setCurrentSection(sectionName)
+  await deeperStore.getTrackDetails(props.track, sectionName)
 
-  // Show the MobileDeeperTracks component with a small delay to ensure proper rendering
-  const trackKey = `track_${props.track.id}__p:${props.sectionName}__`
+  // Show the MobileDeeperTracks component after ensuring proper rendering
+  const trackKey = `${props.track.type || 'track'}_${props.track.id}__p:${props.sectionName}__`
 
-  // Use setTimeout to ensure the component is shown after the current event cycle
-  setTimeout(() => {
-    visibilityManager.showComponent(trackKey)
-    console.log('Showing deeper track for:', props.track.name, 'with key:', trackKey)
-  }, 100)
+  // Use nextTick to ensure the component is rendered before trying to show it
+  await nextTick()
+  visibilityManager.showComponent(trackKey)
+  console.log('Showing deeper track for:', props.track.name, 'with key:', trackKey)
 }
 
 const handleAudioPreview = async (event) => {

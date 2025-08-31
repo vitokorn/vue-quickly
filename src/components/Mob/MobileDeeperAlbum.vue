@@ -3,7 +3,7 @@ import { useSpotifyStore } from "../../stores/spotify-store"
 import { useAudioStore } from "../../stores/audio-store"
 import { useQueueStore } from "../../stores/queue-store"
 import { useDeeperStore } from "../../stores/deeper-store"
-import { ref, computed, onMounted, nextTick } from "vue"
+import { ref, computed, onMounted, onUnmounted, nextTick } from "vue"
 import { useVisibilityManager } from "../../composables/useVisibilityManager"
 import { useMobileMediaDisplay } from "../../composables/useMobileMediaDisplay.js"
 import MobileTrackItem from './MobileTrackItem.vue'
@@ -71,13 +71,27 @@ const handleBackClick = () => {
 
 const handleTrackClick = async (track, event) => {
   setActive(track.id)
-  const sectionName = getSectionName(props.num)
-  await deeperStore.getTrackDetails(track, sectionName)
+
+  await deeperStore.getTrackDetails(track, 'albumTracks')
+
   queueStore.addToQueue(track)
+
+  // Also play audio preview if available
+  const previewUrl = track.preview_url || track.previewUrl
+  if (previewUrl) {
+    await audioStore.mobileToggleTrack(track.id, previewUrl)
+  }
 }
 
 const handleArtistClick = async (artist, event) => {
   await deeperStore.getArtistDetails(artist, getSectionName(props.num), props.d.id)
+}
+
+const handleAlbumCoverClick = async () => {
+  // Play audio preview if available
+  if (hasPreview.value && previewUrl.value) {
+    await audioStore.mobileToggleTrack(trackId.value, previewUrl.value)
+  }
 }
 
 const formatReleaseDate = (dateString) => {
@@ -104,6 +118,13 @@ onMounted(async () => {
   console.log('Showing MobileDeeperAlbum component after registration:', albumKey)
   visibilityManager.showComponent(albumKey)
 })
+
+// Unregister component when unmounted
+onUnmounted(() => {
+  const albumKey = `deeperalbum_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
+  visibilityManager.unregisterComponent(albumKey)
+  console.log('MobileDeeperAlbum unregistered:', albumKey)
+})
 </script>
 
 <template>
@@ -121,7 +142,10 @@ onMounted(async () => {
 
     <!-- Modern Album Info Section -->
     <div class="album-info-section">
-      <div class="album-cover">
+      <div class="album-cover"
+           :class="displayClass"
+           :style="backgroundStyle"
+           @click="handleAlbumCoverClick">
         <img
           v-if="d.images && d.images[0]"
           :src="d.images[0].url"
@@ -134,6 +158,7 @@ onMounted(async () => {
             <path d="M20.25 11.25v5.533c0 1.036-.84 1.875-1.875 1.875H5.625A1.875 1.875 0 013.75 16.783V11.25H2.25a.75.75 0 010-1.5h1.5V6.75c0-1.036.84-1.875 1.875-1.875h.75a.75.75 0 010 1.5h-.75a.375.375 0 00-.375.375v3.375h1.5a.75.75 0 010 1.5H3.75v5.533a.375.375 0 00.375.375h12.75a.375.375 0 00.375-.375V11.25h1.5a.75.75 0 010 1.5h-1.5V6.75a.375.375 0 00-.375-.375h-.75a.75.75 0 010 1.5h.75c1.036 0 1.875.84 1.875 1.875v3.375h1.5a.75.75 0 010 1.5z" />
           </svg>
         </div>
+        <audio v-if="hasPreview" :preload="'metadata'" :src="previewUrl"></audio>
       </div>
 
       <div class="album-details">
@@ -177,21 +202,13 @@ onMounted(async () => {
           v-for="track in tracks"
           :key="track.id"
           :track="track"
-          :section-name="getSectionName(num)"
+          :section-name="'albumTracks'"
           :parent-id="d.id"
           view-mode="list"
-          @click="handleTrackClick"
         />
       </div>
     </div>
 
-    <!-- Mobile Deeper Tracks Components -->
-    <MobileDeeperTracks
-      v-for="track in deeperStore.getSectionData('albumTracks')"
-      :key="track.id"
-      :d="track"
-      :num="7"
-    />
   </div>
 </template>
 

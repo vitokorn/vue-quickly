@@ -160,7 +160,7 @@ const resetPagination = () => {
     </div>
 
     <!-- Playlist List -->
-    <div class="playlists-container">
+    <div class="my-2">
       <div v-if="filteredPlaylists.length === 0 && searchTerm" class="empty-search">
         <div class="empty-icon">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">

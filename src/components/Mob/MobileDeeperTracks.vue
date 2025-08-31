@@ -3,10 +3,11 @@ import { useSpotifyStore } from "../../stores/spotify-store"
 import { useAudioStore } from "../../stores/audio-store"
 import { useQueueStore } from "../../stores/queue-store"
 import { useDeeperStore } from "../../stores/deeper-store"
-import { onMounted, ref, computed, nextTick, watch } from "vue"
+import { onMounted, onUnmounted, ref, computed, nextTick, watch } from "vue"
 import { useVisibilityManager } from "../../composables/useVisibilityManager"
 import { useMobileMediaDisplay } from "../../composables/useMobileMediaDisplay.js"
 import MobileTrackItem from './MobileTrackItem.vue'
+import { spotifyApi } from "../../services/spotifyApi.js"
 
 const props = defineProps(['d', 'num'])
 const spotifyStore = useSpotifyStore()
@@ -16,6 +17,8 @@ const deeperStore = useDeeperStore()
 const selected = ref()
 const cover = ref(null)
 const componentRef = ref(null)
+const seedTracksData = ref(null)
+const loadingRecommendations = ref(false)
 
 // Get mobile media display for track
 const { displayClass, backgroundStyle, hasPreview, previewUrl, trackId } = useMobileMediaDisplay(computed(() => props.d))
@@ -61,7 +64,7 @@ function resolveCover() {
 
 const handleBackClick = () => {
   // Hide this component and show the parent
-  const trackKey = `track_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
+  const trackKey = `${props.d.type}_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
   visibilityManager.hideComponent(trackKey)
 
   // If there's a parent key, show the parent component
@@ -104,6 +107,35 @@ const formatReleaseDate = (dateString) => {
   })
 }
 
+const handleRecommendClick = async () => {
+  try {
+    loadingRecommendations.value = true
+    seedTracksData.value = null
+    
+    // Get recommendations directly using the Spotify API
+    const response = await spotifyApi.getRecommendations({
+      seed_tracks: props.d.id,
+      limit: 20,
+      offset: 0,
+      market: 'UA'
+    })
+
+    seedTracksData.value = {
+      tracks: response.data.tracks,
+      type: 'seed_tracks',
+      id: `st${props.d.id}`,
+      name: props.d.name
+    }
+
+    console.log('Recommendations loaded:', seedTracksData.value.tracks.length, 'tracks')
+  } catch (error) {
+    console.error('Failed to get recommendations:', error)
+    alert('Failed to load recommendations. Please try again.')
+  } finally {
+    loadingRecommendations.value = false
+  }
+}
+
 onMounted(async () => {
   resolveCover()
 
@@ -111,7 +143,7 @@ onMounted(async () => {
   await nextTick()
 
   // Register this component with the visibility manager
-  const trackKey = `track_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
+  const trackKey = `${props.d.type}_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
   console.log('Registering component with ref:', componentRef.value)
   console.log('Ref element:', componentRef.value?.tagName, componentRef.value?.className)
   console.log('Registering with key:', trackKey)
@@ -123,6 +155,13 @@ onMounted(async () => {
   }
 
   console.log('MobileDeeperTracks registered with key:', trackKey)
+})
+
+// Unregister component when unmounted
+onUnmounted(() => {
+  const trackKey = `${props.d.type}_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
+  visibilityManager.unregisterComponent(trackKey)
+  console.log('MobileDeeperTracks unregistered:', trackKey)
 })
 </script>
 
@@ -210,32 +249,129 @@ onMounted(async () => {
         Play Track
       </button>
 
+      <button class="recommend-btn" @click="handleRecommendClick">
+        <span class="btn-icon">🎵</span>
+        Get Recommendations
+      </button>
+
       <button class="queue-btn" @click="queueStore.addToQueue(d)">
         <span class="btn-icon">➕</span>
         Add to Queue
       </button>
     </div>
 
-    <!-- Related Tracks Section -->
-    <div class="related-tracks-section">
+    <!-- Seed Track Recommendations Section -->
+    <div v-if="seedTracksData" class="related-tracks-section">
       <div class="section-header">
         <span class="section-icon">🎵</span>
-        <h3 class="section-title">Related Tracks</h3>
+        <h3 class="section-title">Recommended Tracks</h3>
       </div>
       <div class="related-tracks-list">
         <MobileTrackItem
-          v-for="track in deeperStore.getSectionData('relatedTracks')"
+          v-for="track in seedTracksData.tracks"
           :key="track.id"
           :track="track"
-          :section-name="getSectionName(num)"
-          :parent-id="d.id"
           view-mode="list"
-          @click="handleTrackClick"
+          @click="handleTrackClick(track, $event)"
         />
       </div>
+    </div>
+
+    <!-- Loading State for Recommendations -->
+    <div v-if="loadingRecommendations" class="loading-section">
+      <div class="loading-spinner"></div>
+      <p>Loading recommendations...</p>
     </div>
   </div>
 </template>
 
 <style scoped>
+.related-tracks-section {
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.section-icon {
+  font-size: 20px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--title-color);
+  margin: 0;
+}
+
+.related-tracks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.loading-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--search-color);
+  border-top: 3px solid var(--active-tab);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 12px;
+}
+
+.loading-section p {
+  font-size: 14px;
+  color: var(--search-color);
+  margin: 0;
+  opacity: 0.8;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+  .related-tracks-section {
+    padding: 16px;
+  }
+
+  .section-title {
+    font-size: 16px;
+  }
+
+  .loading-section {
+    padding: 30px 16px;
+  }
+}
+
+@media (max-width: 360px) {
+  .related-tracks-section {
+    padding: 12px;
+  }
+
+  .section-title {
+    font-size: 15px;
+  }
+
+  .loading-section {
+    padding: 25px 12px;
+  }
+}
 </style>
