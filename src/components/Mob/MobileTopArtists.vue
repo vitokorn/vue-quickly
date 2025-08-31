@@ -47,9 +47,18 @@ const timeRangeLabel = computed(() => {
 
 // Methods
 const loadTopArtists = async (timeRange) => {
+  const rangeString = timeRange === 1 ? 'short_term' : timeRange === 2 ? 'medium_term' : 'long_term'
+  const timeRangeKey = rangeString === 'short_term' ? 'short' :
+                      rangeString === 'medium_term' ? 'medium' : 'long'
+  const existingData = spotifyStore[`getTopArtists${timeRangeKey.charAt(0).toUpperCase() + timeRangeKey.slice(1)}`]
+
+  if (existingData && existingData.length > 0) {
+    console.log('Using cached top artists data for', rangeString)
+    return
+  }
+
   loading.value = true
   try {
-    const rangeString = timeRange === 1 ? 'short_term' : timeRange === 2 ? 'medium_term' : 'long_term'
     await spotifyStore.fetchTopArtists(rangeString)
   } catch (error) {
     console.error('Failed to load top artists:', error)
@@ -88,6 +97,11 @@ const handleArtistLeave = (event) => {
 }
 
 const handleRefresh = async () => {
+  // Clear existing data and fetch fresh
+  const rangeString = selectedTimeRange.value === 1 ? 'short_term' : selectedTimeRange.value === 2 ? 'medium_term' : 'long_term'
+  const timeRangeKey = rangeString === 'short_term' ? 'short' :
+                      rangeString === 'medium_term' ? 'medium' : 'long'
+  spotifyStore[`topArtists.${timeRangeKey}`] = []
   await loadTopArtists(selectedTimeRange.value)
 }
 

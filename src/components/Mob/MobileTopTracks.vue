@@ -49,9 +49,18 @@ const timeRangeLabel = computed(() => {
 
 // Methods
 const loadTopTracks = async (timeRange) => {
+  const rangeString = timeRange === 1 ? 'short_term' : timeRange === 2 ? 'medium_term' : 'long_term'
+  const timeRangeKey = rangeString === 'short_term' ? 'short' :
+                      rangeString === 'medium_term' ? 'medium' : 'long'
+  const existingData = spotifyStore[`getTopTracks${timeRangeKey.charAt(0).toUpperCase() + timeRangeKey.slice(1)}`]
+
+  if (existingData && existingData.length > 0) {
+    console.log('Using cached top tracks data for', rangeString)
+    return
+  }
+
   loading.value = true
   try {
-    const rangeString = timeRange === 1 ? 'short_term' : timeRange === 2 ? 'medium_term' : 'long_term'
     await spotifyStore.fetchTopTracks(rangeString)
   } catch (error) {
     console.error('Failed to load top tracks:', error)
@@ -68,9 +77,9 @@ const handleTimeRangeChange = async (rangeId) => {
 const handleTrackClick = async (track, event) => {
   console.log('Track clicked:', track.name, 'Preview URL:', track.preview_url || track.previewUrl)
   setSelectedItem(track.id)
-  
+
   await deeperStore.getTrackDetails(track, 'topTracks')
-  
+
   queueStore.addToQueue(track)
 
   // Also play audio preview if available
@@ -84,6 +93,11 @@ const handleTrackClick = async (track, event) => {
 }
 
 const handleRefresh = async () => {
+  // Clear existing data and fetch fresh
+  const rangeString = selectedTimeRange.value === 1 ? 'short_term' : selectedTimeRange.value === 2 ? 'medium_term' : 'long_term'
+  const timeRangeKey = rangeString === 'short_term' ? 'short' :
+                      rangeString === 'medium_term' ? 'medium' : 'long'
+  spotifyStore[`topTracks.${timeRangeKey}`] = []
   await loadTopTracks(selectedTimeRange.value)
 }
 

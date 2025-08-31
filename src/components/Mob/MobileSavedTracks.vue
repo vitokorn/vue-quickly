@@ -22,6 +22,12 @@ const viewMode = ref('list') // 'list' or 'grid'
 
 // Methods
 const loadSavedTracks = async () => {
+  if (spotifyStore.getSavedTracks && spotifyStore.getSavedTracks.length > 0) {
+    console.log('Using cached saved tracks data')
+    savedTracks.value = spotifyStore.getSavedTracks.map(item => item.track)
+    return
+  }
+
   loading.value = true
   try {
     // Load saved tracks from Spotify API
@@ -37,13 +43,15 @@ const loadSavedTracks = async () => {
 
 const handleTrackClick = async (track, event) => {
   setSelectedItem(track.id)
-  
+
   await deeperStore.getTrackDetails(track, 'savedTracks')
-  
+
   queueStore.addToQueue(track)
 }
 
 const handleRefresh = async () => {
+  // Clear existing data and fetch fresh
+  spotifyStore.savedTracks = []
   await loadSavedTracks()
 }
 

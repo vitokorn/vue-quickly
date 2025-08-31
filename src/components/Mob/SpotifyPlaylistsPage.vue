@@ -50,14 +50,22 @@ const {
 
 // Methods
 const loadPlaylistsContent = async () => {
+  const hasPersonalPlaylists = spotifyStore.getPlaylists && spotifyStore.getPlaylists.length > 0
+  const hasSpotifyPlaylists = spotifyStore.getSpotifyPlaylists && spotifyStore.getSpotifyPlaylists.length > 0
+
+  if (hasPersonalPlaylists && hasSpotifyPlaylists) {
+    console.log('Using cached playlists data')
+    return
+  }
+
   loading.value = true
   error.value = null
 
   try {
     // Load both personal and Spotify playlists
     await Promise.all([
-      spotifyStore.fetchPlaylists(0),
-      spotifyStore.fetchSpotifyPlaylists(0)
+      hasPersonalPlaylists ? Promise.resolve() : spotifyStore.fetchPlaylists(0),
+      hasSpotifyPlaylists ? Promise.resolve() : spotifyStore.fetchSpotifyPlaylists(0)
     ])
   } catch (err) {
     error.value = 'Failed to load playlists'

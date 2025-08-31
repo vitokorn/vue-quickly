@@ -13,6 +13,12 @@ onMounted(async () => {
 })
 
 const loadSampleTracks = async () => {
+  if (spotifyStore.getTopTracksShort && spotifyStore.getTopTracksShort.length > 0) {
+    console.log('Using cached top tracks data for sample tracks')
+    tracks.value = spotifyStore.getTopTracksShort.slice(0, 10) // Show first 10 tracks
+    return
+  }
+
   loading.value = true
   try {
     // Load top tracks as sample data

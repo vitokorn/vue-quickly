@@ -17,6 +17,12 @@ const savedAlbums = ref([])
 
 // Methods
 const loadSavedAlbums = async () => {
+  if (spotifyStore.getSavedAlbums && spotifyStore.getSavedAlbums.length > 0) {
+    console.log('Using cached saved albums data')
+    savedAlbums.value = spotifyStore.getSavedAlbums.map(item => item.album)
+    return
+  }
+
   loading.value = true
   try {
     // Load saved albums from Spotify API
@@ -44,13 +50,13 @@ const handleAlbumThreeDotsClick = async (album, event) => {
   event.stopPropagation() // Prevent triggering the main click event
 
   await deeperStore.getAlbumDetails(album, 'savedAlbums')
-  
+
   // Show the deeper album component using visibility manager
   const { useVisibilityManager } = await import('../../composables/useVisibilityManager')
   const visibilityManager = useVisibilityManager()
   const albumKey = `deeperalbum_${album.id}__p:savedAlbumsPage__`
   visibilityManager.showComponent(albumKey)
-  
+
   console.log('Showing deeper album for:', album.name, 'with key:', albumKey)
 }
 
@@ -59,6 +65,8 @@ const toggleViewMode = () => {
 }
 
 const handleRefresh = async () => {
+  // Clear existing data and fetch fresh
+  spotifyStore.savedAlbums = []
   await loadSavedAlbums()
 }
 

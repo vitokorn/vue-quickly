@@ -17,6 +17,12 @@ const followedArtists = ref([])
 
 // Methods
 const loadFollowedArtists = async () => {
+  if (spotifyStore.getFollowedArtists && spotifyStore.getFollowedArtists.length > 0) {
+    console.log('Using cached followed artists data')
+    followedArtists.value = spotifyStore.getFollowedArtists
+    return
+  }
+
   loading.value = true
   try {
     // Load followed artists from Spotify API
@@ -49,6 +55,8 @@ const toggleViewMode = () => {
 }
 
 const handleRefresh = async () => {
+  // Clear existing data and fetch fresh
+  spotifyStore.followedArtists = []
   await loadFollowedArtists()
 }
 

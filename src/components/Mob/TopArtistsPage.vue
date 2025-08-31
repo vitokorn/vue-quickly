@@ -55,6 +55,15 @@ const timeRanges = [
 
 // Methods
 const loadTopArtistsContent = async () => {
+  const timeRangeKey = selectedTimeRange.value === 'short_term' ? 'short' :
+                      selectedTimeRange.value === 'medium_term' ? 'medium' : 'long'
+  const existingData = spotifyStore[`getTopArtists${timeRangeKey.charAt(0).toUpperCase() + timeRangeKey.slice(1)}`]
+
+  if (existingData && existingData.length > 0) {
+    console.log('Using cached top artists data for', selectedTimeRange.value)
+    return
+  }
+
   loading.value = true
   try {
     await spotifyStore.fetchTopArtists(selectedTimeRange.value)
@@ -67,6 +76,17 @@ const loadTopArtistsContent = async () => {
 
 const handleTimeRangeChange = async (timeRange) => {
   selectedTimeRange.value = timeRange
+
+  // Check if data already exists in store for the new time range
+  const timeRangeKey = timeRange === 'short_term' ? 'short' :
+                      timeRange === 'medium_term' ? 'medium' : 'long'
+  const existingData = spotifyStore[`getTopArtists${timeRangeKey.charAt(0).toUpperCase() + timeRangeKey.slice(1)}`]
+
+  if (existingData && existingData.length > 0) {
+    console.log('Using cached top artists data for', timeRange)
+    return
+  }
+
   loading.value = true
   try {
     await spotifyStore.fetchTopArtists(timeRange)

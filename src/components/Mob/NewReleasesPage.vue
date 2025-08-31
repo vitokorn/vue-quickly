@@ -9,11 +9,10 @@
     <!-- Content -->
     <div v-else class="new-releases-content">
       <div class="releases-section">
-        <h2 class="section-title">Latest Releases</h2>
         <ReleaseSelector
           :releases="newReleases"
           :selected-release="selectedRelease"
-          title=""
+          title="New Releases"
           placeholder="Search releases..."
           :items-per-page="20"
           @release-select="handleReleaseSelect"
@@ -32,7 +31,6 @@ import { ref, computed, onMounted } from 'vue'
 import { useSpotifyStore } from '../../stores/spotify-store'
 import { useDeeperStore } from '../../stores/deeper-store'
 import ReleaseSelector from './ReleaseSelector.vue'
-import MobileDeeperAlbum from './MobileDeeperAlbum.vue'
 
 const spotifyStore = useSpotifyStore()
 const deeperStore = useDeeperStore()
@@ -47,6 +45,12 @@ const newReleases = computed(() => spotifyStore.getNewReleases || [])
 
 // Methods
 const loadNewReleasesContent = async () => {
+  // Check if data already exists in store
+  if (spotifyStore.getNewReleases && spotifyStore.getNewReleases.length > 0) {
+    console.log('Using cached new releases data')
+    return
+  }
+  
   loading.value = true
   try {
     await spotifyStore.fetchNewReleases(0)
@@ -86,6 +90,8 @@ const handleLoadMoreReleases = async () => {
 }
 
 const handleRefreshReleases = () => {
+  // Clear existing data and fetch fresh
+  spotifyStore.newReleases = []
   spotifyStore.fetchNewReleases(0)
 }
 
