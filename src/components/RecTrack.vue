@@ -6,11 +6,13 @@ import DeeperTracks from "./DeeperTracks.vue";
 import DeeperAlbum from "./DeeperAlbum.vue";
 import SeedArtists from "./SeedArtists.vue";
 import DeeperPlaylist from "./DeeperPlaylist.vue";
+import {computed} from 'vue';
 
 const props = defineProps(['num'])
 const deeperStore = useDeeperStore()
 
-function dab() {
+// Convert dab() function to computed property for stable rendering
+const sectionData = computed(() => {
   const sectionName = getSectionName(props.num)
   const data = deeperStore.getSectionData(sectionName)
   console.log('RecTrack - Num:', props.num, 'Section name:', sectionName, 'Data length:', data.length, 'Data:', data)
@@ -23,7 +25,7 @@ function dab() {
   console.log('RecTrack: Will render components of types:', componentTypes)
 
   return data
-}
+})
 
 function getSectionName(num) {
   switch (num) {
@@ -48,7 +50,7 @@ function getSectionName(num) {
 <template>
   <div class="modern-recommendations">
     <div class="rec_track">
-      <template v-for="(item, index) in dab()" :key="`${item.type}_${item.id}${item.parentKey ? `__p:${item.parentKey}__` : ''}`">
+      <template v-for="(item, index) in sectionData" :key="`${item.type}_${item.id}${item.parentKey ? `__p:${item.parentKey}__` : ''}`">
         <!-- Seed Tracks -->
         <SeedTracks
           v-if="item.type === 'seed_tracks'"

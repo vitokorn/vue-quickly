@@ -64,9 +64,9 @@ export const useDeeperStore = defineStore('deeper', {
 
             // Check if this exact item already exists (same id, type, and parentKey)
             if (item.parentKey !== undefined) {
-                const existingIndex = this.sections[sectionName].findIndex(i => 
-                    i.id === item.id && 
-                    i.type === item.type && 
+                const existingIndex = this.sections[sectionName].findIndex(i =>
+                    i.id === item.id &&
+                    i.type === item.type &&
                     (i.parentKey || null) === (item.parentKey || null)
                 )
                 if (existingIndex !== -1) {
@@ -239,7 +239,7 @@ export const useDeeperStore = defineStore('deeper', {
             } else {
                 console.log('Creating new track data for:', item.id)
                 // Prepare track data - create a new object to avoid modifying reactive properties
-                if (item.track) {
+                if (item.track && (typeof item.track === 'object')) {
                     trackData = {...item.track}
                 } else {
                     trackData = {...item}
@@ -252,6 +252,7 @@ export const useDeeperStore = defineStore('deeper', {
                     const response = await spotifyApi.checkFollowingTrack(trackData.id)
                     trackData.followed = response.data[0]
                 } catch (error) {
+                    console.error(258,error)
                     trackData.followed = false
                 }
 

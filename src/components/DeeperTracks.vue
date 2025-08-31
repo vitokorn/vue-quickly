@@ -124,7 +124,7 @@ window.addEventListener('resize', () => {
 
         <div class="track-actions">
           <button class="recommend-btn"
-                  @click="deeperStore.seedTracks({item:d,num:num,sib:getSectionName(num),child:'d'+ d.id,parent: d.id})">
+                  @click="deeperStore.seedTracks({item:d,num:num,parent: d.id})">
             <span class="btn-icon">🎵</span>
             Recommended songs based on this
           </button>

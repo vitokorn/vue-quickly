@@ -90,24 +90,7 @@ const handleAddToQueue = (event) => {
 const handleDeeperTrack = async (event) => {
   event.stopPropagation()
 
-  // Add track data to deeper store
-  const trackData = {
-    ...props.track,
-    type: 'track',
-    parentKey: props.sectionName
-  }
-
-  // Add to appropriate section based on context
-  let sectionName = 'topTracks'
-  if (props.sectionName === 'yourPlaylists' || props.sectionName === 'spotifyPlaylists') {
-    sectionName = 'playlistTracks'
-  } else if (props.sectionName === 'savedTracks') {
-    sectionName = 'savedTracks'
-  } else if (props.sectionName === 'newReleases') {
-    sectionName = 'albumTracks'
-  }
-
-  await deeperStore.getTrackDetails(props.track, sectionName)
+  await deeperStore.getTrackDetails(props.track, props.sectionName)
 
   // Show the MobileDeeperTracks component after ensuring proper rendering
   const trackKey = `${props.track.type || 'track'}_${props.track.id}__p:${props.sectionName}__`

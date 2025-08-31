@@ -12,7 +12,33 @@ const deeperStore = useDeeperStore()
 
 function dab() {
   const sectionName = getSectionName(props.num)
-  return deeperStore.getSectionData(sectionName)
+  console.log(14, sectionName)
+  let data = deeperStore.getSectionData(sectionName)
+  console.log('RecTrack - Num:', props.num, 'Section name:', sectionName, 'Data length:', data.length, 'Data:', data)
+
+  // Set the current section so other components know what section is being displayed
+  deeperStore.setCurrentSection(sectionName)
+
+  // If we're in a section that can show playlists (yourPlaylists or spotifyPlaylists),
+  // also include playlistTracks section data
+  if (props.num === 1 || props.num === 8) {
+    const playlistTracksData = deeperStore.getSectionData('playlistTracks')
+    console.log('RecTrack - Also including playlistTracks data:', playlistTracksData.length, 'items')
+    data = [...data, ...playlistTracksData]
+  }
+
+  // If we're in New Releases (tab 7), also include albumTracks section data
+  if (props.num === 7) {
+    const albumTracksData = deeperStore.getSectionData('albumTracks')
+    console.log('RecTrack - Also including albumTracks data:', albumTracksData.length, 'items')
+    data = [...data, ...albumTracksData]
+  }
+
+  // Debug: Log what components will be rendered
+  const componentTypes = data.map(item => item.type)
+  console.log('RecTrack: Will render components of types:', componentTypes)
+
+  return data
 }
 
 function getSectionName(num) {

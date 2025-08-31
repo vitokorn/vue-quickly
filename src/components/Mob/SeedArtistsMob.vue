@@ -121,7 +121,7 @@ onMounted(async () => {
         <h3>No recommended tracks</h3>
         <p>Try refreshing to get new recommendations</p>
       </div>
-      
+
       <div v-else class="tracks-list">
         <MobileTrackItem
           v-for="track in sortedSAItems"

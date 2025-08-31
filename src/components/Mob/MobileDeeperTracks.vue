@@ -75,8 +75,7 @@ const handleBackClick = () => {
 
 const handleTrackClick = async (track, event) => {
   setActive(track.id)
-  const sectionName = getSectionName(props.num)
-  await deeperStore.getTrackDetails(track, sectionName)
+  await deeperStore.getTrackDetails(track, props.sectionName)
   queueStore.addToQueue(track)
 }
 
@@ -149,12 +148,9 @@ onMounted(async () => {
   console.log('Registering with key:', trackKey)
   visibilityManager.registerComponent(trackKey, componentRef)
 
-  // Initially hide the component
-  if (componentRef.value) {
-    componentRef.value.style.display = 'none'
-  }
-
-  console.log('MobileDeeperTracks registered with key:', trackKey)
+  // Show this component after registration
+  console.log('Showing component after registration:', trackKey)
+  visibilityManager.showComponent(trackKey)
 })
 
 // Unregister component when unmounted
@@ -247,7 +243,7 @@ onUnmounted(() => {
         Play Track
       </button>
 
-      <button class="recommend-btn" @click="handleRecommendClick">
+      <button class="recommend-btn" @click="deeperStore.seedTracks({item:d,num:num,parent: d.id})">
         <span class="btn-icon">🎵</span>
         Get Recommendations
       </button>
@@ -256,23 +252,6 @@ onUnmounted(() => {
         <span class="btn-icon">➕</span>
         Add to Queue
       </button>
-    </div>
-
-    <!-- Seed Track Recommendations Section -->
-    <div v-if="seedTracksData" class="related-tracks-section">
-      <div class="section-header">
-        <span class="section-icon">🎵</span>
-        <h3 class="section-title">Recommended Tracks</h3>
-      </div>
-      <div class="related-tracks-list">
-        <MobileTrackItem
-          v-for="track in seedTracksData.tracks"
-          :key="track.id"
-          :track="track"
-          view-mode="list"
-          @click="handleTrackClick(track, $event)"
-        />
-      </div>
     </div>
 
     <!-- Loading State for Recommendations -->
