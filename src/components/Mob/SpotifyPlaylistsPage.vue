@@ -101,7 +101,7 @@ const handlePersonalPlaylistSelect = async (playlistId, event) => {
   if (playlist) {
     const playlistData = {
       ...playlist,
-      type: 'playlist',
+      type: 'deeperplaylist',
       parentKey: 'playlistsPage'
     }
 
@@ -115,24 +115,8 @@ const handlePersonalPlaylistArrowClick = async (playlist) => {
 
   if (playlist) {
     try {
-      const playlistDetails = await spotifyStore.fetchPlaylist(playlist.id)
-      console.log('Fetched playlist details:', playlistDetails)
-
-      const playlistData = {
-        ...playlistDetails,
-        type: 'playlist',
-        parentKey: 'playlistsPage'
-      }
-
-      deeperStore.addToSection('yourPlaylists', playlistData)
-      deeperStore.setCurrentSection('yourPlaylists')
-
-      const { useVisibilityManager } = await import('../../composables/useVisibilityManager')
-      const visibilityManager = useVisibilityManager()
-      const playlistKey = `deeperplaylist_${playlistDetails.id}__p:playlistsPage__`
-      visibilityManager.showComponent(playlistKey)
-
-      console.log('Showing deeper playlist for:', playlist.name, 'with key:', playlistKey)
+      await deeperStore.getPlaylistDetails(playlist, 'yourPlaylists', 'playlistsPage')
+      console.log('Playlist details fetched and added to section')
     } catch (error) {
       console.error('Error fetching playlist details:', error)
     }
@@ -147,7 +131,7 @@ const handleSpotifyPlaylistSelect = async (playlistId, event) => {
   if (playlist) {
     const playlistData = {
       ...playlist,
-      type: 'playlist',
+      type: 'deeperplaylist',
       parentKey: 'playlistsPage'
     }
 
@@ -161,24 +145,8 @@ const handleSpotifyPlaylistArrowClick = async (playlist) => {
 
   if (playlist) {
     try {
-      const playlistDetails = await spotifyStore.fetchPlaylist(playlist.id)
-      console.log('Fetched playlist details:', playlistDetails)
-
-      const playlistData = {
-        ...playlistDetails,
-        type: 'playlist',
-        parentKey: 'playlistsPage'
-      }
-
-      deeperStore.addToSection('spotifyPlaylists', playlistData)
-      deeperStore.setCurrentSection('spotifyPlaylists')
-
-      const { useVisibilityManager } = await import('../../composables/useVisibilityManager')
-      const visibilityManager = useVisibilityManager()
-      const playlistKey = `deeperplaylist_${playlistDetails.id}__p:playlistsPage__`
-      visibilityManager.showComponent(playlistKey)
-
-      console.log('Showing deeper playlist for:', playlist.name, 'with key:', playlistKey)
+      await deeperStore.getPlaylistDetails(playlist, 'spotifyPlaylists', 'playlistsPage')
+      console.log('Playlist details fetched and added to section')
     } catch (error) {
       console.error('Error fetching playlist details:', error)
     }

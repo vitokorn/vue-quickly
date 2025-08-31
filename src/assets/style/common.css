@@ -1122,10 +1122,8 @@ h1 {
 }
 
 .follow-checkbox {
-    display: block;
+    display: flex;
     position: relative;
-    padding-left: 35px;
-    margin-bottom: 12px;
     cursor: pointer;
     font-size: 22px;
     -webkit-user-select: none;
@@ -1579,12 +1577,6 @@ h1 {
     font-size: 14px;
     font-weight: 600;
     color: var(--title-color);
-}
-
-.follow-checkbox {
-    position: relative;
-    display: inline-block;
-    cursor: pointer;
 }
 
 .checkmark {

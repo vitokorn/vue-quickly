@@ -176,18 +176,16 @@ onUnmounted(() => {
             </div>
           </div>
         </div>
-
-        <div class="album-meta">
-          <span class="album-type">{{ d.album_type || 'Album' }}</span>
-          <span v-if="d.release_date" class="release-date">
+      </div>
+      <div class="album-meta">
+        <span v-if="d.release_date" class="release-date">
             <span class="meta-icon">📅</span>
             {{ formatReleaseDate(d.release_date) }}
           </span>
-          <span v-if="tracks.length > 0" class="track-count">
+        <span v-if="tracks.length > 0" class="track-count">
             <span class="meta-icon">🎵</span>
             {{ tracks.length }} tracks
           </span>
-        </div>
       </div>
     </div>
 

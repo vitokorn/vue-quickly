@@ -111,7 +111,7 @@ const handleRecommendClick = async () => {
   try {
     loadingRecommendations.value = true
     seedTracksData.value = null
-    
+
     // Get recommendations directly using the Spotify API
     const response = await spotifyApi.getRecommendations({
       seed_tracks: props.d.id,
@@ -206,6 +206,7 @@ onUnmounted(() => {
         <h1 class="track-title">{{ d.name }}</h1>
 
         <div class="artists-section">
+          <span class="meta-icon">💿</span>
           <span class="artists-label">By</span>
           <div class="artists-list">
             <div v-for="(art, index) in d.artists" :key="index" class="artist-item">
@@ -218,21 +219,17 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div class="track-meta">
-          <span v-if="d.album" class="album-name">
-            <span class="meta-icon">💿</span>
-            {{ d.album.name }}
-          </span>
-          <span v-if="d.duration_ms" class="duration">
+
+      </div>
+      <div class="track-meta">
+        <div v-if="d.duration_ms" class="duration">
             <span class="meta-icon">⏱️</span>
             {{ formatDuration(d.duration_ms) }}
-          </span>
-          <span v-if="d.popularity" class="popularity">
+          </div>
+        <div v-if="d.popularity" class="popularity">
             <span class="meta-icon">📊</span>
             {{ d.popularity }}% popular
-          </span>
-        </div>
-
+          </div>
         <div v-if="d.album && d.album.release_date" class="release-info">
           <span class="release-date">
             <span class="meta-icon">📅</span>
@@ -240,10 +237,11 @@ onUnmounted(() => {
           </span>
         </div>
       </div>
+
     </div>
 
     <!-- Modern Track Actions -->
-    <div class="track-actions">
+    <div class="track-actions px-4">
       <button class="play-btn" @click="audioStore.playTrack(d)">
         <span class="btn-icon">▶️</span>
         Play Track

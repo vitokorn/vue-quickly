@@ -61,8 +61,9 @@ const handleTrackClick = async () => {
     handleAudioPlayback()
   } else {
     // For regular tracks, add to queue and get track details
+    console.log(64, props.track)
     queueStore.addToQueue(props.track)
-    deeperStore.getTrackDetails(props.track, props.sectionName, props.parentId)
+    await deeperStore.getTrackDetails(props.track, props.sectionName, props.parentId)
 
     // Also play audio preview if available
     const previewUrl = props.track.preview_url || props.track.previewUrl

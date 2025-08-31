@@ -296,26 +296,24 @@ onUnmounted(() => {
             </span>
           </div>
         </div>
+    </div>
+      <div class="artist-actions">
+        <button class="recommend-btn" @click="handleRecommendClick">
+          <span class="btn-icon">🎵</span>
+          Get Recommendations
+        </button>
 
-        <!-- Actions -->
-        <div class="artist-actions">
-          <button class="recommend-btn" @click="handleRecommendClick">
-            <span class="btn-icon">🎵</span>
-            Get Recommendations
-          </button>
+        <a class="spotify-link" :href="d.external_urls?.spotify" target="_blank" rel="noopener">
+          <span class="link-icon">🎧</span>
+          Open in Spotify
+        </a>
 
-          <a class="spotify-link" :href="d.external_urls?.spotify" target="_blank" rel="noopener">
-            <span class="link-icon">🎧</span>
-            Open in Spotify
-          </a>
-
-          <div class="follow-section">
-            <span class="follow-label">Follow</span>
-            <label class="follow-checkbox">
-              <input type="checkbox" v-model="d.followed" @click="spotifyStore.followArtist(d)">
-              <span class="checkmark"></span>
-            </label>
-          </div>
+        <div class="follow-section">
+          <span class="follow-label">Follow</span>
+          <label class="follow-checkbox">
+            <input type="checkbox" v-model="d.followed" @click="spotifyStore.followArtist(d)">
+            <span class="checkmark"></span>
+          </label>
         </div>
       </div>
     </div>

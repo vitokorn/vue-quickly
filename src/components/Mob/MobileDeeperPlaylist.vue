@@ -171,19 +171,18 @@ onUnmounted(() => {
 
         <div v-if="d.description" class="playlist-description" v-html="d.description"></div>
       </div>
-    </div>
-
-    <!-- Sort Options -->
-    <div class="sort-section">
-      <div class="sort-options">
-        <button
-          v-for="option in ['track', 'album', 'artist', 'popularity', 'release_date', 'duration']"
-          :key="option"
-          :class="['sort-button', { 'active': selectedDeeperPlaylistSortOption === option }]"
-          @click="handleSortChange(option)"
-        >
-          {{ option.charAt(0).toUpperCase() + option.slice(1).replace('_', ' ') }}
-        </button>
+      <!-- Sort Options -->
+      <div class="sort-section">
+        <div class="sort-options">
+          <button
+              v-for="option in ['track', 'album', 'artist', 'popularity', 'release_date', 'duration']"
+              :key="option"
+              :class="['sort-button', { 'active': selectedDeeperPlaylistSortOption === option }]"
+              @click="handleSortChange(option)"
+          >
+            {{ option.charAt(0).toUpperCase() + option.slice(1).replace('_', ' ') }}
+          </button>
+        </div>
       </div>
     </div>
 

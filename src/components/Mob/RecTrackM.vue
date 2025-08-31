@@ -11,7 +11,6 @@ const props = defineProps(['num'])
 const deeperStore = useDeeperStore()
 
 function dab() {
-  console.log(props.num)
   const sectionName = getSectionName(props.num)
   return deeperStore.getSectionData(sectionName)
 }
@@ -38,7 +37,7 @@ function getSectionName(num) {
 
 <template>
   <div class="rec_track">
-    <template v-for="(item, index) in dab()" :key="index">
+    <template v-for="(item, index) in dab()" :key="`${item.type}_${item.id}${item.parentKey ? `__p:${item.parentKey}__` : ''}`">
       <!-- Seed Tracks -->
       <SeedTracksMob
         v-if="item.type === 'seed_tracks'"

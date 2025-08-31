@@ -38,7 +38,6 @@ const visibilityManager = useVisibilityManager()
 const searchTerm = ref('')
 const viewMode = ref('grid') // 'list' or 'grid'
 const currentPage = ref(1)
-const showPagination = ref(false)
 
 const filteredReleases = computed(() => {
   if (!searchTerm.value) {
@@ -54,14 +53,6 @@ const displayedReleases = computed(() => {
   const startIndex = (currentPage.value - 1) * props.itemsPerPage
   const endIndex = startIndex + props.itemsPerPage
   return filteredReleases.value.slice(startIndex, endIndex)
-})
-
-const hasMoreReleases = computed(() => {
-  return currentPage.value < totalPages.value
-})
-
-const showLoadMoreItem = computed(() => {
-  return hasMoreReleases.value && filteredReleases.value.length > props.itemsPerPage && !showPagination.value
 })
 
 const totalPages = computed(() => {
@@ -143,10 +134,6 @@ const toggleViewMode = () => {
   viewMode.value = viewMode.value === 'list' ? 'grid' : 'list'
 }
 
-const handleLoadMoreClick = () => {
-  showPagination.value = true
-}
-
 const handlePageChange = (page) => {
   currentPage.value = page
   // Keep pagination visible when changing pages
@@ -157,7 +144,6 @@ const handlePageChange = (page) => {
 
 const resetPagination = () => {
   currentPage.value = 1
-  showPagination.value = false
 }
 
 const handleRefresh = () => {
@@ -308,33 +294,8 @@ const formatReleaseDate = (dateString) => {
               </svg>
             </div>
           </div>
-
-          <!-- Show More Item for List View -->
-          <div
-            v-if="showLoadMoreItem"
-            @click="handleLoadMoreClick"
-            class="release-item list-item show-more-item"
-          >
-            <div class="release-cover show-more-cover">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="show-more-icon">
-                <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clip-rule="evenodd" />
-              </svg>
-            </div>
-            <div class="release-info">
-              <div class="release-name show-more-text">Show More Releases</div>
-              <p class="release-details show-more-subtext">
-                {{ filteredReleases.length - displayedReleases.length }} more releases available
-              </p>
-            </div>
-            <div class="release-arrow">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="arrow-icon">
-                <path fill-rule="evenodd" d="M16.28 11.47a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 011.06-1.06l7.5 7.5z" clip-rule="evenodd" />
-              </svg>
-            </div>
-          </div>
-
           <!-- Pagination -->
-          <div v-if="showPagination" class="pagination-container">
+          <div class="pagination-container">
             <button
               @click="handlePageChange(currentPage - 1)"
               :disabled="currentPage === 1"
@@ -398,28 +359,8 @@ const formatReleaseDate = (dateString) => {
             </button>
           </div>
 
-          <!-- Show More Item for Grid View -->
-          <div
-            v-if="showLoadMoreItem"
-            @click="handleLoadMoreClick"
-            class="release-item grid-item show-more-item"
-          >
-            <div class="grid-cover show-more-grid-cover">
-              <div class="show-more-grid-content">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="show-more-grid-icon">
-                  <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clip-rule="evenodd" />
-                </svg>
-                <div class="show-more-grid-text">Show More</div>
-              </div>
-            </div>
-            <div class="grid-info">
-              <div class="grid-name show-more-text">{{ filteredReleases.length - displayedReleases.length }} more</div>
-              <div class="grid-details show-more-subtext">releases</div>
-            </div>
-          </div>
-
           <!-- Pagination -->
-          <div v-if="showPagination" class="pagination-container">
+          <div class="pagination-container">
             <button
               @click="handlePageChange(currentPage - 1)"
               :disabled="currentPage === 1"
