@@ -25,6 +25,7 @@ const artistData = computed(() => {
 const topTracksData = computed(() => {
   if (props.d.data && Array.isArray(props.d.data)) {
     const topTracksItem = props.d.data.find(item => item.type === 'top_tracks')
+    console.log('topTracksItem', topTracksItem)
     return topTracksItem?.tracks || []
   }
   return props.d.top_tracks || []
@@ -89,17 +90,19 @@ const handleBackClick = () => {
 }
 
 const handleTrackClick = async (track, event) => {
-  await deeperStore.getTrackDetails(track, props.sectionName)
+  const sectionName = getSectionName(props.num)
+  await deeperStore.getTrackDetails(track, sectionName)
   queueStore.addToQueue(track)
 }
 
 const handleAlbumClick = async (album, event) => {
-  await deeperStore.getAlbumDetails(album, props.sectionName, props.d.id)
+  const sectionName = getSectionName(props.num)
+  await deeperStore.getAlbumDetails(album, sectionName, props.d.id)
 }
 
 const handleRelatedArtistClick = async (artist, event) => {
-
-  await deeperStore.getArtistDetails(artist, props.sectionName)
+  const sectionName = getSectionName(props.num)
+  await deeperStore.getArtistDetails(artist, sectionName)
 
   // Show the MobileDeeperArtist component using visibility manager
   const relatedArtistKey = `trackartist_${artist.id}__p:trackartist_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}__`

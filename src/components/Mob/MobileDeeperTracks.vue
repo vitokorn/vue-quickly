@@ -75,7 +75,8 @@ const handleBackClick = () => {
 
 const handleTrackClick = async (track, event) => {
   setActive(track.id)
-  await deeperStore.getTrackDetails(track, props.sectionName)
+  const sectionName = getSectionName(props.num)
+  await deeperStore.getTrackDetails(track, sectionName)
   queueStore.addToQueue(track)
 }
 

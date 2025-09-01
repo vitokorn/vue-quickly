@@ -2044,3 +2044,7 @@ h1 {
     opacity: 0.8;
     font-weight: 500;
 }
+
+.half-opacity {
+    opacity: 0.6;
+}
