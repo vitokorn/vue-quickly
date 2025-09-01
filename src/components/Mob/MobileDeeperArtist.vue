@@ -183,6 +183,27 @@ const formatFollowers = (count) => {
   return count.toString()
 }
 
+
+function getSectionName(num) {
+  switch (num) {
+    case 1: return 'yourPlaylists'
+    case 2: return 'topArtists'
+    case 3: return 'topTracks'
+    case 4: return 'savedAlbums'
+    case 5: return 'savedTracks'
+    case 6: return 'followedArtists'
+    case 7: return 'newReleases'
+    case 8: return 'spotifyPlaylists'
+    case 10: return 'search'
+    case 22: return 'topArtists6'
+    case 23: return 'topArtistsAll'
+    case 32: return 'topTracks6'
+    case 33: return 'topTracksAll'
+    default: return 'search'
+  }
+}
+
+
 const formatGenres = (genres) => {
   if (!genres || genres.length === 0) return 'No genres'
   return genres.slice(0, 3).join(', ')
@@ -313,7 +334,7 @@ onUnmounted(() => {
           v-for="track in topTracksData"
           :key="track.id"
           :track="track"
-          view-mode="list"
+          :num="num"
           @click="handleTrackClick(track, $event)"
         />
       </div>

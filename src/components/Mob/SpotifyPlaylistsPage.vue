@@ -137,6 +137,7 @@ const handleSpotifyPlaylistSelect = async (playlistId, event) => {
 
     deeperStore.addToSection('spotifyPlaylists', playlistData)
     deeperStore.setCurrentSection('spotifyPlaylists')
+    
   }
 }
 

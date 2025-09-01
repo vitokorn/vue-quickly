@@ -6,6 +6,7 @@ import { useQueueStore } from '../../stores/queue-store'
 import { useDeeperStore } from '../../stores/deeper-store'
 import { useSelection } from '../../composables/useSelection.js'
 import MobileTrackItem from './MobileTrackItem.vue'
+import MobileTrackDisplaySection from "./MobileTrackDisplaySection.vue";
 
 const spotifyStore = useSpotifyStore()
 const audioStore = useAudioStore()
@@ -173,7 +174,7 @@ onMounted(async () => {
           v-for="(track, index) in topTracks"
           :key="track.id"
           :track="track"
-          :section-name="'topTracks'"
+          :num="3"
           :view-mode="viewMode"
           @click="handleTrackClick"
         />

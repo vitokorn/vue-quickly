@@ -172,7 +172,7 @@ const formatReleaseDate = (dateString) => {
     <div class="">
       <div class="header-content">
         <div class="header-text">
-          <h2 class="section-title">New Releases | {{ releases.length }} items</h2>
+          <h2 class="section-title">{{title}} | {{ releases.length }} items</h2>
         </div>
         <div class="header-actions">
           <button class="refresh-btn" @click="handleRefresh" title="Refresh">

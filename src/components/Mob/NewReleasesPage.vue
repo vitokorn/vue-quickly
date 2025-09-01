@@ -16,8 +16,6 @@
           placeholder="Search releases..."
           :items-per-page="20"
           @release-select="handleReleaseSelect"
-          @search="handleReleaseSearch"
-          @load-more="handleLoadMoreReleases"
           @refresh="handleRefreshReleases"
         />
       </div>
@@ -50,7 +48,7 @@ const loadNewReleasesContent = async () => {
     console.log('Using cached new releases data')
     return
   }
-  
+
   loading.value = true
   try {
     await spotifyStore.fetchNewReleases(0)

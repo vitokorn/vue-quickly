@@ -1,251 +1,155 @@
 <script setup>
-import { computed, nextTick } from 'vue'
-import { useQueueStore } from "../../stores/queue-store"
-import { useDeeperStore } from "../../stores/deeper-store"
-import { useAudioStore } from "../../stores/audio-store"
-import { useVisibilityManager } from "../../composables/useVisibilityManager"
-import { useMobileMediaDisplay } from "../../composables/useMobileMediaDisplay.js"
-import { artistUtils } from "../../utils/artistUtils.js"
+import { computed } from 'vue'
+import { useMobileMediaDisplay } from '../../composables/useMobileMediaDisplay.js'
+import { artistUtils } from '../../utils/artistUtils.js'
 
 const props = defineProps({
   track: {
     type: Object,
     required: true
   },
-  sectionName: {
-    type: String,
-    default: 'search'
+  trackItem: {
+    type: Object,
+    required: false
   },
-  parentId: {
-    type: String,
-    default: ''
-  },
-  showRemove: {
+  selected: {
     type: Boolean,
     default: false
   },
+  unplayableTracks: {
+    type: Boolean,
+    default: false
+  },
+  num: {
+    type: Number,
+    required: true
+  },
   viewMode: {
     type: String,
-    default: 'list' // 'list' or 'grid'
+    default: 'list'
   }
 })
 
-const queueStore = useQueueStore()
-const deeperStore = useDeeperStore()
-const audioStore = useAudioStore()
-const visibilityManager = useVisibilityManager()
-
-// Get mobile media display for track
-const { displayClass, backgroundStyle, hasImage, trackId } = useMobileMediaDisplay(computed(() => props.track))
-
-const emit = defineEmits(['remove'])
-
-// Computed property to check if this track is playing
-const isPlaying = computed(() => audioStore.mobileIsTrackPlaying(props.track.id))
+const emit = defineEmits(['click', 'hover', 'leave'])
 
 // Utility function for formatting artist names
 const formatArtistNames = (artists) => {
-  // Handle both string and array formats for backward compatibility
-  if (typeof artists === 'string') {
-    return artists
-  }
-  if (!artists || !Array.isArray(artists)) {
-    return 'Unknown Artist'
-  }
   return artistUtils.formatArtistNamesSimple(artists)
 }
 
-const handleTrackClick = async () => {
-  if (props.showRemove) {
-    // For queue items, handle audio playback
-    handleAudioPlayback()
-  } else {
-    // For regular tracks, add to queue and get track details
-    console.log(64, props.track)
-    queueStore.addToQueue(props.track)
-    await deeperStore.getTrackDetails(props.track, props.sectionName, props.parentId)
+// Media display composable for track
+const {
+  hasPreview,
+  hasImage,
+  displayClass,
+  backgroundStyle,
+  audioPreload,
+  audioSrc
+} = useMobileMediaDisplay(computed(() => props.track))
 
-    // Also play audio preview if available
-    const previewUrl = props.track.preview_url || props.track.previewUrl
-    if (previewUrl) {
-      await audioStore.mobileToggleTrack(props.track.id, previewUrl)
-    }
+// Event handlers
+const handleClick = (event) => {
+  emit('click', props.trackItem || props.track, event)
+}
+
+const handleHover = (event) => {
+  emit('hover', event)
+}
+
+const handleLeave = (event) => {
+  emit('leave', event)
+}
+
+// Determine if track should be displayed based on conditions
+const shouldDisplay = computed(() => {
+  // If track has preview URL and image, always show
+  if (hasPreview.value && hasImage.value) {
+    return true
   }
-}
 
-const handleAudioPlayback = () => {
-  // Get preview URL from track
-  const previewUrl = props.track.preview_url || props.track.previewUrl
-  console.log(59)
-  // Use global audio store to toggle track
-  console.log(props.track)
-  audioStore.mobileToggleTrack(props.track?.id, previewUrl)
-}
-
-const handleAddToQueue = (event) => {
-  event.stopPropagation()
-  queueStore.addToQueue(props.track)
-}
-
-const handleDeeperTrack = async (event) => {
-  event.stopPropagation()
-
-  await deeperStore.getTrackDetails(props.track, props.sectionName)
-
-  // Show the MobileDeeperTracks component after ensuring proper rendering
-  const trackKey = `${props.track.type || 'track'}_${props.track.id}__p:${props.sectionName}__`
-
-  // Use nextTick to ensure the component is rendered before trying to show it
-  await nextTick()
-  visibilityManager.showComponent(trackKey)
-  console.log('Showing deeper track for:', props.track.name, 'with key:', trackKey)
-}
-
-const handleAudioPreview = async (event) => {
-  event.stopPropagation()
-  if (hasImage.value) {
-    await audioStore.mobileToggleTrack(trackId.value, props.track.preview_url || props.track.previewUrl)
+  // If track has image but no preview URL, show only if unplayable tracks are enabled
+  if (hasImage.value && !hasPreview.value) {
+    return props.unplayableTracks
   }
-}
 
-const handleRemove = (event) => {
-  event.stopPropagation()
-  // Stop audio if this track is playing
-  if (audioStore.mobileIsTrackPlaying(props.track.id)) {
-    audioStore.mobileStopCurrentAudio()
+  // If track has preview URL but no image, always show
+  if (hasPreview.value && !hasImage.value) {
+    return true
   }
-  emit('remove')
-}
 
-const isInQueue = () => {
-  return queueStore.isInQueue(props.track.id)
-}
+  // If track has neither preview URL nor image, show only if unplayable tracks are enabled
+  return props.unplayableTracks
+})
+
+// Computed class for the track item
+const trackClass = computed(() => {
+  const baseClass = 'mobile-track-item'
+  const viewClass = props.viewMode === 'grid' ? 'grid' : 'list-view'
+  const selectedClass = props.selected ? 'selected' : ''
+  return `${baseClass} ${viewClass} ${selectedClass}`.trim()
+})
 </script>
 
 <template>
-  <!-- List View -->
-  <div v-if="viewMode === 'list'" class="mobile-track-item list-view" @click="handleTrackClick">
-    <div class="track-image">
-      <div class="track-cover"
-           :class="displayClass"
-           :style="backgroundStyle"
-           @click="handleAudioPreview">
-        <div v-if="!hasImage" class="no-image">
-          <span class="no-image-icon">🎵</span>
+  <div v-if="shouldDisplay"
+       tabindex="0"
+       :class="trackClass"
+       @click.stop="handleClick"
+       @mouseover="handleHover"
+       @mouseleave="handleLeave">
+    <!-- Grid View Structure -->
+    <template v-if="viewMode === 'grid'">
+      <div class="track-image">
+          <img
+              class="track-cover"
+            v-if="track.album && track.album.images && track.album.images[0]"
+            :src="track.album.images[0].url"
+            :alt="track.name"
+            @error="$event.target.style.display = 'none'"
+          />
+          <div v-else class="no-image">
+            <span class="no-image-icon">🎵</span>
+          </div>
         </div>
-        <div v-if="hasImage && audioStore.mobileIsTrackPlaying(trackId)" class="playing-indicator">
-          <span class="playing-icon">▶️</span>
+
+      <div class="track-details">
+        <div class="track-name">{{ track.name }}</div>
+        <div class="track-artists">{{ formatArtistNames(track.artists) }}</div>
+      </div>
+
+      <div class="track-actions">
+        <!-- Action buttons can be added here if needed -->
+      </div>
+    </template>
+
+    <!-- List View Structure -->
+    <template v-else>
+      <div class="mobile-track-overlay">
+        <!-- Track Cover Image -->
+        <div >
+          <img
+              class="track-cover"
+            v-if="track.album && track.album.images && track.album.images[0]"
+            :src="track.album.images[0].url"
+            :alt="track.name"
+            @error="$event.target.style.display = 'none'"
+          />
+          <div v-else class="no-image">
+            <span>🎵</span>
+          </div>
         </div>
-      </div>
-    </div>
 
-    <div class="track-details">
-      <div class="track-name">
-        {{ track.name }}
-        <span v-if="showRemove && isPlaying" class="playing-indicator">▶️</span>
-      </div>
-      <div class="track-artists">{{ formatArtistNames(track.artists) }}</div>
-    </div>
-
-    <div class="track-actions">
-      <button
-        v-if="!showRemove"
-        class="deeper-btn"
-        @click="handleDeeperTrack"
-        title="View track details"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-          <path fill-rule="evenodd" d="M4.5 12a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm6 0a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm6 0a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" clip-rule="evenodd" />
-        </svg>
-      </button>
-
-      <button
-        v-if="!showRemove"
-        class="queue-btn"
-        :class="{ 'in-queue': isInQueue() }"
-        @click="handleAddToQueue"
-        :title="isInQueue() ? 'Remove from queue' : 'Add to queue'"
-      >
-        <svg v-if="!isInQueue()" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-          <path fill-rule="evenodd" d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z" clip-rule="evenodd" />
-        </svg>
-        <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-          <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
-        </svg>
-      </button>
-
-      <button
-        v-else
-        class="remove-btn"
-        @click="handleRemove"
-        title="Remove from queue"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-          <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.196 51.196 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 00-6 0v-.113c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z" clip-rule="evenodd" />
-        </svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- Grid View -->
-  <div v-else class="mobile-track-item grid-view" @click="handleTrackClick">
-    <div class="grid-cover"
-         :class="displayClass"
-         :style="backgroundStyle"
-         @click="handleAudioPreview">
-      <div v-if="!hasImage" class="no-image">
-        <span class="no-image-icon">🎵</span>
-      </div>
-      <div v-if="hasImage && audioStore.mobileIsTrackPlaying(trackId)" class="playing-indicator">
-        <span class="playing-icon">▶️</span>
-      </div>
-      <div class="grid-overlay">
-        <div class="grid-actions">
-          <button
-            v-if="!showRemove"
-            class="grid-deeper-btn"
-            @click="handleDeeperTrack"
-            title="View track details"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path fill-rule="evenodd" d="M4.5 12a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm6 0a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm6 0a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" clip-rule="evenodd" />
-            </svg>
-          </button>
-
-          <button
-            v-if="!showRemove"
-            class="grid-queue-btn"
-            :class="{ 'in-queue': isInQueue() }"
-            @click="handleAddToQueue"
-            :title="isInQueue() ? 'Remove from queue' : 'Add to queue'"
-          >
-            <svg v-if="!isInQueue()" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path fill-rule="evenodd" d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z" clip-rule="evenodd" />
-            </svg>
-            <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
-            </svg>
-          </button>
-
-          <button
-            v-else
-            class="grid-remove-btn"
-            @click="handleRemove"
-            title="Remove from queue"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.196 51.196 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 00-6 0v-.113c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z" clip-rule="evenodd" />
-            </svg>
-          </button>
+        <!-- Track Info -->
+        <div class="track-info">
+          <div class="track-artists">{{ formatArtistNames(track.artists) }}</div>
+          <div class="track-name">{{ track.name }}</div>
         </div>
       </div>
-    </div>
-    <div class="grid-info">
-      <div class="grid-name">{{ track.name }}</div>
-      <div class="grid-artists">{{ formatArtistNames(track.artists) }}</div>
-    </div>
+    </template>
+    <audio :preload="audioPreload" :src="audioSrc"></audio>
   </div>
 </template>
 
 <style scoped>
+
 </style>

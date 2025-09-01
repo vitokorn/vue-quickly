@@ -180,9 +180,7 @@ onUnmounted(() => {
           v-for="track in tracks"
           :key="track.id"
           :track="track"
-          :section-name="'albumTracks'"
-          :parent-id="d.id"
-          view-mode="list"
+          :num="num"
         />
       </div>
     </div>

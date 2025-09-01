@@ -60,6 +60,7 @@ const handleRefresh = () => {
   spotifyStore.followedArtists = []
   spotifyStore.fetchFollowedArtists()
 }
+
 </script>
 
 <template>

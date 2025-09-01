@@ -176,7 +176,7 @@ onUnmounted(() => {
 
     <!-- Modern Track Info Section -->
     <div class="track-info-section">
-      <div>
+      <div style="position: relative">
         <img
           v-if="cover"
           class="track-cover"

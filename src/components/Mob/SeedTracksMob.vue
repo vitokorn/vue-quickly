@@ -15,6 +15,7 @@ const queueStore = useQueueStore()
 const deeperStore = useDeeperStore()
 const selected = ref()
 const selectedSTSortOption = ref("")
+const viewMode = ref('list') // 'list' or 'grid'
 const componentRef = ref(null)
 
 // Get visibility manager
@@ -74,6 +75,21 @@ const handleRefresh = () => {
   spotifyStore.reloadST({num: props.num, id: props.d.id, name: props.d.name})
 }
 
+const handleBackClick = () => {
+  // Hide this component and show the parent
+  const seedKey = `seed_tracks_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
+  visibilityManager.hideComponent(seedKey)
+
+  // If there's a parent key, show the parent component
+  if (props.d.parentKey) {
+    visibilityManager.showComponent(props.d.parentKey)
+  }
+}
+
+const toggleViewMode = () => {
+  viewMode.value = viewMode.value === 'list' ? 'grid' : 'list'
+}
+
 onMounted(async () => {
   // Wait for the next tick to ensure the ref is available
   await nextTick()
@@ -90,56 +106,111 @@ onMounted(async () => {
 
 <template>
   <div class="mobile-seed-tracks" ref="componentRef">
-    <!-- Header Section -->
-    <div class="seed-header">
-      <div class="seed-title">
-        <span class="title-icon">🎵</span>
-        <span class="title-text">Recommended songs based on {{ d.name }}</span>
-      </div>
-      <div class="seed-actions">
-        <button class="refresh-button" @click="handleRefresh">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="refresh-icon">
-            <path fill-rule="evenodd" d="M4.755 10.059a7.5 7.5 0 0112.548-3.364l1.903 1.903h-3.183a.75.75 0 100 1.5h4.992a.75.75 0 00.75-.75V4.356a.75.75 0 00-1.5 0v3.18l-1.9-1.9A9 9 0 003.306 9.67a.75.75 0 101.45.388zm15.408 3.352a.75.75 0 00-.919.53 7.5 7.5 0 01-12.548 3.364l-1.902-1.903h3.183a.75.75 0 000-1.5H2.984a.75.75 0 00-.75.75v4.992a.75.75 0 001.5 0v-3.18l1.9 1.9a9 9 0 0015.059-4.035.75.75 0 00-.53-.918z" clip-rule="evenodd" />
+    <!-- Content Section -->
+    <div class="seed-content">
+      <!-- Header Section -->
+      <div class="seed-header">
+        <button class="back-button" @click="handleBackClick">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z" clip-rule="evenodd" />
           </svg>
         </button>
-        <select class="sort-select" v-model="selectedSTSortOption">
-          <option value="">Initial</option>
-          <option value="artist">Sort by artist</option>
-          <option value="album">Sort by album</option>
-          <option value="duration">Sort by duration</option>
-          <option value="popularity">Sort by popularity</option>
-          <option value="release_date">Sort by release date</option>
-          <option value="track">Sort by track name</option>
-        </select>
+        <div class="seed-title">
+          <span class="title-icon">🎵</span>
+          <span class="title-text">Recommended songs based on {{ d.name }}</span>
+        </div>
+        <div class="seed-actions">
+          <button class="refresh-button" @click="handleRefresh">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="refresh-icon">
+              <path fill-rule="evenodd" d="M4.755 10.059a7.5 7.5 0 0112.548-3.364l1.903 1.903h-3.183a.75.75 0 100 1.5h4.992a.75.75 0 00.75-.75V4.356a.75.75 0 00-1.5 0v3.18l-1.9-1.9A9 9 0 003.306 9.67a.75.75 0 101.45.388zm15.408 3.352a.75.75 0 00-.919.53 7.5 7.5 0 01-12.548 3.364l-1.902-1.903h3.183a.75.75 0 000-1.5H2.984a.75.75 0 00-.75.75v4.992a.75.75 0 001.5 0v-3.18l1.9 1.9a9 9 0 0015.059-4.035.75.75 0 00-.53-.918z" clip-rule="evenodd" />
+            </svg>
+          </button>
+          <button class="view-toggle-btn" @click="toggleViewMode" :title="viewMode === 'list' ? 'Grid view' : 'List view'">
+            <svg v-if="viewMode === 'list'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h2.25a3 3 0 013 3v2.25a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9.75 0a3 3 0 013-3H18a3 3 0 013 3v2.25a3 3 0 01-3 3h-2.25a3 3 0 01-3-3V6zM3 15.75a3 3 0 013-3h2.25a3 3 0 013 3V18a3 3 0 01-3 3H6a3 3 0 01-3-3v-2.25zm9.75 0a3 3 0 013-3H18a3 3 0 013 3V18a3 3 0 01-3 3h-2.25a3 3 0 01-3-3v-2.25z" clip-rule="evenodd" />
+            </svg>
+            <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M2.625 6.75a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0A.75.75 0 018.25 6h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75zM2.625 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zM7.5 12a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12A.75.75 0 017.5 12zm-4.875 5.25a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0A.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
+            </svg>
+          </button>
+          <select class="sort-select" v-model="selectedSTSortOption">
+            <option value="">Initial</option>
+            <option value="artist">Sort by artist</option>
+            <option value="album">Sort by album</option>
+            <option value="duration">Sort by duration</option>
+            <option value="popularity">Sort by popularity</option>
+            <option value="release_date">Sort by release date</option>
+            <option value="track">Sort by track name</option>
+          </select>
+        </div>
       </div>
-    </div>
 
-    <!-- Tracks List -->
-    <div class="tracks-container">
-      <div v-if="sortedSTItems.length === 0" class="empty-state">
-        <div class="empty-icon">🎵</div>
-        <h3>No recommended tracks</h3>
-        <p>Try refreshing to get new recommendations</p>
-      </div>
+      <!-- Tracks Container -->
+      <div class="mobile-tracks-container">
+        <div v-if="sortedSTItems.length === 0" class="empty-state">
+          <div class="empty-icon">🎵</div>
+          <h3>No recommended tracks</h3>
+          <p>Try refreshing to get new recommendations</p>
+        </div>
 
-      <div v-else class="tracks-list">
-        <MobileTrackItem
-          v-for="track in sortedSTItems"
-          :key="track.id"
-          :track="track"
-          view-mode="list"
-          @click="handleTrackClick(track, $event)"
-        />
+        <div v-else :class="['tracks-list', viewMode]">
+          <MobileTrackItem
+            v-for="track in sortedSTItems"
+            :key="track.id"
+            :track="track"
+            :num="num"
+            :view-mode="viewMode"
+            @click="handleTrackClick(track, $event)"
+          />
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.mobile-seed-tracks {
-  padding: 20px;
-  background: var(--theme-mobile-bg);
-  min-height: 100vh;
+.mobile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--item-border);
+}
+
+.back-button {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  color: var(--title-color);
+}
+
+.back-button:hover {
+  background: var(--action-btn-hover-bg);
+  transform: translateX(-2px);
+}
+
+.header-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--title-color);
+  margin: 0 auto;
+  text-align: center;
+}
+
+.header-spacer {
+  flex-grow: 1;
+}
+
+.seed-content {
+  /* Add styles for the content section if needed */
 }
 
 .seed-header {
@@ -191,6 +262,31 @@ onMounted(async () => {
 }
 
 .refresh-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.view-toggle-btn {
+  background: var(--action-btn-bg);
+  border: none;
+  color: var(--title-color);
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.view-toggle-btn:hover {
+  background: var(--action-btn-hover-bg);
+  transform: translateY(-1px);
+}
+
+.view-toggle-btn svg {
   width: 20px;
   height: 20px;
 }
@@ -258,17 +354,18 @@ onMounted(async () => {
 
 /* Responsive design */
 @media (max-width: 480px) {
-  .mobile-seed-tracks {
-    padding: 16px;
+  .mobile-header {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
   }
 
-  .title-text {
+  .header-title {
     font-size: 18px;
   }
 
-  .seed-actions {
-    flex-direction: column;
-    gap: 8px;
+  .back-button {
+    width: 36px;
+    height: 36px;
   }
 
   .refresh-button {
@@ -281,6 +378,16 @@ onMounted(async () => {
     height: 18px;
   }
 
+  .view-toggle-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .view-toggle-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
   .sort-select {
     font-size: 13px;
     padding: 8px 10px;
@@ -288,12 +395,9 @@ onMounted(async () => {
 }
 
 @media (max-width: 360px) {
-  .mobile-seed-tracks {
-    padding: 12px;
-  }
-
-  .title-text {
-    font-size: 16px;
+  .back-button {
+    width: 32px;
+    height: 32px;
   }
 
   .refresh-button {
@@ -302,6 +406,16 @@ onMounted(async () => {
   }
 
   .refresh-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .view-toggle-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .view-toggle-btn svg {
     width: 16px;
     height: 16px;
   }

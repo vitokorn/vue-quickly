@@ -101,7 +101,7 @@ onMounted(async () => {
       </div>
     </div>
 
-    <div class="tracks-container">
+    <div class="mobile-tracks-container">
       <template v-for="(track, index) in sortedSAItems" :key="index">
         <div
             :class="['media-card', getTrackMediaDisplay(track).displayClass.value, selected === track.id ? 'selected' : '']"

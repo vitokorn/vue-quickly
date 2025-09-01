@@ -89,7 +89,8 @@ const handleBackClick = () => {
 const handleTrackClick = async (track, event) => {
   setActive(track.id)
 
-  await deeperStore.getTrackDetails(track, 'playlistTracks')
+  const sectionName = getSectionName(props.num)
+  await deeperStore.getTrackDetails(track, sectionName, props.d.id)
 
   queueStore.addToQueue(track)
 
@@ -194,9 +195,8 @@ onUnmounted(() => {
           v-for="item in sortedDeeperPlaylistItems"
           :key="item.track.id"
           :track="item.track"
-          :section-name="'playlistTracks'"
-          :parent-id="d.id"
-          view-mode="list"
+          :num="num"
+          @click="handleTrackClick(item.track, $event)"
         />
       </div>
     </div>

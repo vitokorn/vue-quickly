@@ -7,6 +7,13 @@ import { useDeeperStore } from '../../stores/deeper-store'
 import { useSelection } from '../../composables/useSelection.js'
 import MobileTrackItem from './MobileTrackItem.vue'
 
+const props = defineProps({
+  num: {
+    type: Number,
+    default: 5 // Default to savedTracks section
+  }
+})
+
 const spotifyStore = useSpotifyStore()
 const audioStore = useAudioStore()
 const queueStore = useQueueStore()
@@ -103,9 +110,7 @@ onMounted(async () => {
         v-for="track in savedTracks.slice(0, 10)"
         :key="track.id"
         :track="track"
-        section-name="savedTracks"
-        parent-id="saved"
-        :view-mode="viewMode"
+        :num="props.num"
         @click="handleTrackClick"
       />
     </div>

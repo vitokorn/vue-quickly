@@ -3,6 +3,13 @@ import { ref, onMounted } from 'vue'
 import { useSpotifyStore } from "../../stores/spotify-store"
 import MobileTrackItem from './MobileTrackItem.vue'
 
+const props = defineProps({
+  num: {
+    type: Number,
+    default: 3 // Default to topTracks section
+  }
+})
+
 const spotifyStore = useSpotifyStore()
 const tracks = ref([])
 const loading = ref(false)
@@ -67,9 +74,7 @@ const toggleViewMode = () => {
         v-for="track in tracks"
         :key="track.id"
         :track="track"
-        section-name="topTracks"
-        parent-id="short_term"
-        :view-mode="viewMode"
+        :num="props.num"
       />
     </div>
 
