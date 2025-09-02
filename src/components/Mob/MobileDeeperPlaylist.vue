@@ -175,14 +175,15 @@ onUnmounted(() => {
       <!-- Sort Options -->
       <div class="sort-section">
         <div class="sort-options">
-          <button
-              v-for="option in ['track', 'album', 'artist', 'popularity', 'release_date', 'duration']"
-              :key="option"
-              :class="['sort-button', { 'active': selectedDeeperPlaylistSortOption === option }]"
-              @click="handleSortChange(option)"
-          >
-            {{ option.charAt(0).toUpperCase() + option.slice(1).replace('_', ' ') }}
-          </button>
+          <select class="sort-select" v-model="selectedDeeperPlaylistSortOption">
+            <option value="">Initial</option>
+            <option value="artist">Sort by artist</option>
+            <option value="album">Sort by album</option>
+            <option value="duration">Sort by duration</option>
+            <option value="popularity">Sort by popularity</option>
+            <option value="release_date">Sort by release date</option>
+            <option value="track">Sort by track name</option>
+          </select>
         </div>
       </div>
     </div>
@@ -190,13 +191,14 @@ onUnmounted(() => {
     <!-- Tracks Section -->
     <div class="tracks-section">
       <h3 class="section-title">Tracks</h3>
-      <div class="releases-container">
+      <div class="releases-container grid">
         <MobileTrackItem
           v-for="item in sortedDeeperPlaylistItems"
           :key="item.track.id"
           :track="item.track"
           :num="num"
           @click="handleTrackClick(item.track, $event)"
+          view-mode="grid"
         />
       </div>
     </div>

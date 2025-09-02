@@ -7,7 +7,9 @@ import {isMobile} from "./mixins/detectingMobileMixin.js";
 </script>
 
 <template>
-  <MainLayout v-if="!isMobile()"/>
+  <div class="container" v-if="!isMobile()">
+    <MainLayout/>
+  </div>
   <MobileLayout v-if="isMobile()"/>
 </template>
 
