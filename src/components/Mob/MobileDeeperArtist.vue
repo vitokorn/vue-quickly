@@ -82,7 +82,7 @@ const handleBackClick = () => {
   // Hide this component and show the parent
   const artistKey = `trackartist_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
   visibilityManager.hideComponent(artistKey)
-
+  console.log(props.d.parentKey)
   // If there's a parent key, show the parent component
   if (props.d.parentKey) {
     visibilityManager.showComponent(props.d.parentKey)

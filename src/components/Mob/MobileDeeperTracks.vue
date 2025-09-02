@@ -239,7 +239,7 @@ onUnmounted(() => {
 
     <!-- Modern Track Actions -->
     <div class="track-actions px-4">
-      <button class="play-btn" @click="audioStore.playTrack(d)">
+      <button class="play-btn" @click="handleAudioPreview">
         <span class="btn-icon">▶️</span>
         Play Track
       </button>
