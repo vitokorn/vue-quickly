@@ -1962,7 +1962,13 @@
 }
 
 /* Mobile Deeper Artist Header (scoped to avoid conflict with main mobile-header) */
-.mobile-deeper-artist .mobile-header {
+.mobile-deeper-album .mobile-header,
+.mobile-deeper-playlist .mobile-header,
+.mobile-deeper-track .mobile-header,
+.mobile-deeper-artist .mobile-header,
+.mobile-seed-artists .mobile-header,
+.mobile-seed-tracks .mobile-header
+{
     display: flex;
     align-items: center;
     padding: 16px 20px;
@@ -1975,19 +1981,6 @@
 }
 
 /* Scoped headers for album/playlist/track to avoid conflicts */
-.mobile-deeper-album .mobile-header,
-.mobile-deeper-playlist .mobile-header,
-.mobile-deeper-track .mobile-header {
-    display: flex;
-    align-items: center;
-    padding: 16px 20px;
-    background: var(--mobile-header-bg);
-    backdrop-filter: blur(10px);
-    border-bottom: var(--mobile-header-border);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
 
 .mobile-deeper-artist .back-button {
     background: none;
@@ -2007,15 +2000,13 @@
     background: rgba(255, 255, 255, 0.1);
 }
 
-.mobile-deeper-artist .back-button svg {
-    width: 24px;
-    height: 24px;
-}
-
 /* Make back button consistent across all mobile deeper components */
+.mobile-deeper-artist .back-button,
 .mobile-deeper-album .back-button,
 .mobile-deeper-playlist .back-button,
-.mobile-deeper-track .back-button {
+.mobile-deeper-track .back-button,
+.mobile-seed-artists .back-button,
+.mobile-seed-tracks .back-button{
     background: none;
     border: none;
     color: #ffffff;
@@ -2028,16 +2019,21 @@
     justify-content: center;
     margin-right: 12px;
 }
-
+.mobile-deeper-artist .back-button:hover,
 .mobile-deeper-album .back-button:hover,
 .mobile-deeper-playlist .back-button:hover,
-.mobile-deeper-track .back-button:hover {
+.mobile-deeper-track .back-button:hover,
+.mobile-seed-artists .back-button:hover,
+.mobile-seed-tracks .back-button:hover {
     background: rgba(255, 255, 255, 0.1);
 }
 
+.mobile-deeper-artist .back-button svg,
 .mobile-deeper-album .back-button svg,
 .mobile-deeper-playlist .back-button svg,
-.mobile-deeper-track .back-button svg {
+.mobile-deeper-track .back-button svg,
+.mobile-seed-tracks .back-button svg,
+.mobile-seed-tracks .back-button svg {
     width: 24px;
     height: 24px;
 }
@@ -2869,7 +2865,7 @@
 }
 
 .mobile-track-item.grid .track-cover {
-    width: 100%;
+    width: 120px;
     height: 120px;
     border-radius: 12px;
 }
@@ -2906,11 +2902,6 @@
         padding: 12px;
         margin-bottom: 8px;
         min-height: 70px;
-    }
-
-
-    .mobile-track-item.grid .track-cover {
-        height: 100px;
     }
 }
 

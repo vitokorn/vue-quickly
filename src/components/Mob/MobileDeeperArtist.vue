@@ -105,7 +105,7 @@ const handleRelatedArtistClick = async (artist, event) => {
   await deeperStore.getArtistDetails(artist, sectionName, props.d.id)
 
   // Show the MobileDeeperArtist component using visibility manager
-  const relatedArtistKey = `trackartist_${artist.id}__p:trackartist_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}__`
+  const relatedArtistKey = `trackartist_${artist.id}__p:${props.d.id}__`
   visibilityManager.showComponent(relatedArtistKey)
 
   console.log('Showing MobileDeeperArtist for related artist:', artist.name, 'with key:', relatedArtistKey)
@@ -240,7 +240,7 @@ onUnmounted(() => {
     <!-- Mobile Header with Back Button -->
     <div class="mobile-header">
       <button class="back-button" @click="handleBackClick">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24">>
           <path fill-rule="evenodd" d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z" clip-rule="evenodd" />
         </svg>
       </button>
@@ -322,13 +322,14 @@ onUnmounted(() => {
       <div class="section-header">
         <h3 class="section-title">Top Tracks</h3>
       </div>
-      <div class="tracks-list">
+      <div class="releases-container grid">
         <MobileTrackItem
           v-for="track in topTracksData"
           :key="track.id"
           :track="track"
           :num="num"
           @click="handleTrackClick(track, $event)"
+          view-mode="grid"
         />
       </div>
     </div>

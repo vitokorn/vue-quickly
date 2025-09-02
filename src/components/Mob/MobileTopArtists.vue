@@ -168,7 +168,7 @@ onMounted(async () => {
     </div>
 
     <MobileArtistDisplaySection
-        title="Followed Artists"
+        title="Top Artists"
         :artists="topArtists"
         :view-mode="viewMode"
         @artist-click="handleArtistClick"

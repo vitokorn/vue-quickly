@@ -1,7 +1,7 @@
 <script setup>
-import { computed } from 'vue'
-import { useMobileMediaDisplay } from '../../composables/useMobileMediaDisplay.js'
-import { artistUtils } from '../../utils/artistUtils.js'
+import {computed} from 'vue'
+import {useMobileMediaDisplay} from '../../composables/useMobileMediaDisplay.js'
+import {artistUtils} from '../../utils/artistUtils.js'
 
 const props = defineProps({
   track: {
@@ -68,8 +68,11 @@ const trackClass = computed(() => {
   return `${baseClass} ${viewClass} ${selectedClass}`.trim()
 })
 const getReleasePreviewUrl = (release) => {
+  console.log(release)
   if (release.tracks && release.tracks.items && release.tracks.items.length > 0) {
     return release.tracks.items[0].preview_url
+  } else if (release.preview_url) {
+    return release.preview_url
   }
   return null
 }
@@ -93,26 +96,26 @@ const getDisplayClass = (release) => {
 
 <template>
   <div
-       tabindex="0"
-       :class="trackClass"
-       @click.stop="handleClick"
-       @mouseover="handleHover"
-       @mouseleave="handleLeave">
+      tabindex="0"
+      :class="trackClass"
+      @click.stop="handleClick"
+      @mouseover="handleHover"
+      @mouseleave="handleLeave">
     <!-- Grid View Structure -->
     <template v-if="viewMode === 'grid'">
       <div class="track-image">
-          <img
-              class="track-cover 2"
+        <img
+            class="track-cover"
             v-if="track.album && track.album.images && track.album.images[0]"
             :src="track.album.images[0].url"
             :alt="track.name"
-              :class="getDisplayClass(track)"
+            :class="getDisplayClass(track)"
             @error="$event.target.style.display = 'none'"
-          />
-          <div v-else class="no-image">
-            <span class="no-image-icon">🎵</span>
-          </div>
+        />
+        <div v-else class="no-image">
+          <span class="no-image-icon">🎵</span>
         </div>
+      </div>
 
       <div class="track-details">
         <div class="track-name">{{ track.name }}</div>
@@ -128,12 +131,12 @@ const getDisplayClass = (release) => {
     <template v-else>
       <div class="mobile-track-overlay">
         <!-- Track Cover Image -->
-        <div >
+        <div>
           <img
-              class="track-cover 1"
-            v-if="track.album && track.album.images && track.album.images[0]"
-            :src="track.album.images[0].url"
-            :alt="track.name"
+              class="track-cover"
+              v-if="track.album && track.album.images && track.album.images[0]"
+              :src="track.album.images[0].url"
+              :alt="track.name"
               :class="getDisplayClass(track)"
               @error="$event.target.style.display = 'none'"
           />

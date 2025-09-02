@@ -77,7 +77,7 @@ const trackClass = computed(() => {
     <div class="section-header">
       <div class="header-content">
         <div class="header-text">
-          <h2 class="section-title">Followed Artists</h2>
+          <h2 class="section-title">{{title}}</h2>
         </div>
         <div class="header-actions">
           <button class="refresh-btn" @click="handleRefresh" title="Refresh">
