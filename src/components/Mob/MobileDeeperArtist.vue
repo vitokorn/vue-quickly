@@ -102,7 +102,7 @@ const handleAlbumClick = async (album, event) => {
 
 const handleRelatedArtistClick = async (artist, event) => {
   const sectionName = getSectionName(props.num)
-  await deeperStore.getArtistDetails(artist, sectionName)
+  await deeperStore.getArtistDetails(artist, sectionName, props.d.id)
 
   // Show the MobileDeeperArtist component using visibility manager
   const relatedArtistKey = `trackartist_${artist.id}__p:trackartist_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}__`
@@ -149,18 +149,8 @@ const fetchArtistDetails = async () => {
     const relatedArtistsResponse = await spotifyApi.getRelatedArtists(props.d.id)
     const relatedArtists = relatedArtistsResponse.data.artists || []
 
-    // Update the artist data with all the fetched content
-    const updatedArtistData = {
-      ...props.d,
-      top_tracks: topTracks,
-      albums: albums,
-      singles: singles,
-      appears_on: appearsOn,
-      related_artists: relatedArtists
-    }
-
     // Update the deeper store with the complete artist data
-    await deeperStore.getArtistDetails(props.d, getSectionName(props.num))
+    await deeperStore.getArtistDetails(props.d, getSectionName(props.num), props.d.id)
 
     console.log('Artist details fetched:', {
       topTracks: topTracks.length,
