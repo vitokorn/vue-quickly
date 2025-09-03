@@ -1343,8 +1343,9 @@ input[type=checkbox] {
     margin-bottom: 24px;
 }
 
-.artist-header {
-    display: flex;
+.deeper-header {
+    display: grid;
+    grid-template-columns: 1fr 2fr 2fr;
     gap: 24px;
     padding: 24px;
 }
@@ -2021,6 +2022,7 @@ audio {
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     width: 120px;
+    text-align: center;
 }
 
 .track-card:hover,

@@ -9,7 +9,12 @@
     :disabled="disabled || loading"
     @click="$emit('click', $event)"
   >
-    <span v-if="loading" class="loading-spinner"></span>
+    <LoadingSpinner
+      v-if="loading"
+      size="20"
+      :color="'currentColor'"
+      :background-color="'transparent'"
+    />
     <span v-else class="button-content">
       <span v-if="icon" class="button-icon">{{ icon }}</span>
       <span v-if="$slots.default" class="button-text">
@@ -20,6 +25,8 @@
 </template>
 
 <script setup>
+import LoadingSpinner from './LoadingSpinner.vue'
+
 defineProps({
   variant: {
     type: String,

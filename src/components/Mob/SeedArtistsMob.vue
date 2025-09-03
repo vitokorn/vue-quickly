@@ -1,10 +1,10 @@
 <script setup>
 import {useSpotifyStore} from "../../stores/spotify-store";
+import { getSectionName } from '../../utils/sectionUtils';
 import {useAudioStore} from "../../stores/audio-store";
 import {useQueueStore} from "../../stores/queue-store";
 import {useDeeperStore} from "../../stores/deeper-store";
 import {ref, computed, onMounted, onUnmounted, nextTick} from "vue";
-import {useMobileMediaDisplay} from "../../composables/useMobileMediaDisplay.js";
 import { useVisibilityManager } from "../../composables/useVisibilityManager";
 import MobileTrackItem from './MobileTrackItem.vue';
 
@@ -46,24 +46,6 @@ const sortedSAItems = computed(() => {
 })
 
 // Helper function to get section name from num
-function getSectionName(num) {
-  switch (num) {
-    case 1: return 'yourPlaylists'
-    case 2: return 'topArtists'
-    case 3: return 'topTracks'
-    case 4: return 'savedAlbums'
-    case 5: return 'savedTracks'
-    case 6: return 'followedArtists'
-    case 7: return 'newReleases'
-    case 8: return 'spotifyPlaylists'
-    case 10: return 'search'
-    case 22: return 'topArtists6'
-    case 23: return 'topArtistsAll'
-    case 32: return 'topTracks6'
-    case 33: return 'topTracksAll'
-    default: return 'search'
-  }
-}
 
 const handleTrackClick = async (track, event) => {
   const sectionName = getSectionName(props.num)

@@ -2103,16 +2103,6 @@
     opacity: 0.8;
 }
 
-.genres-section {
-    margin-bottom: 20px;
-}
-
-.genres-list {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    justify-content: center;
-}
 
 .genre-tag {
     background: var(--action-btn-bg);

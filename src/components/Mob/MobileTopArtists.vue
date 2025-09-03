@@ -4,7 +4,10 @@ import {useSpotifyStore} from '../../stores/spotify-store'
 import {useAudioStore} from '../../stores/audio-store'
 import {useDeeperStore} from '../../stores/deeper-store'
 import {useSelection} from '../../composables/useSelection.js'
+import {useLoading} from '../../composables/useLoading'
+import { getSectionName } from '../../utils/sectionUtils'
 import MobileArtistDisplaySection from "./MobileArtistDisplaySection.vue";
+import LoadingState from "../common/LoadingState.vue";
 
 const spotifyStore = useSpotifyStore()
 const audioStore = useAudioStore()
@@ -12,10 +15,12 @@ const deeperStore = useDeeperStore()
 
 // Composables
 const {selectedItem, setSelectedItem} = useSelection()
+const { isLoading, loadingMessage, withLoading } = useLoading({
+  message: 'Loading top artists...'
+})
 
 // Local state
 const selectedTimeRange = ref(1) // 1 = short_term, 2 = medium_term, 3 = long_term
-const loading = ref(false)
 const viewMode = ref('grid') // 'list' or 'grid'
 
 // Computed properties
@@ -57,19 +62,18 @@ const loadTopArtists = async (timeRange) => {
     return
   }
 
-  loading.value = true
   try {
     await spotifyStore.fetchTopArtists(rangeString)
   } catch (error) {
     console.error('Failed to load top artists:', error)
-  } finally {
-    loading.value = false
   }
 }
 
 const handleTimeRangeChange = async (rangeId) => {
   selectedTimeRange.value = rangeId
-  await loadTopArtists(rangeId)
+  await withLoading(async () => {
+    await loadTopArtists(rangeId)
+  }, { message: 'Loading top artists...' })
 }
 
 const handleArtistClick = async (artist, event) => {
@@ -129,7 +133,9 @@ const formatGenres = (genres) => {
 
 // Load initial data
 onMounted(async () => {
-  await loadTopArtists(selectedTimeRange.value)
+  await withLoading(async () => {
+    await loadTopArtists(selectedTimeRange.value)
+  }, { message: 'Loading your top artists...' })
 })
 </script>
 
@@ -162,10 +168,11 @@ onMounted(async () => {
       </div>
     </div>
     <!-- Loading State -->
-    <div v-if="loading" class="loading-state">
-      <div class="loading-spinner"></div>
-      <p>Loading top artists...</p>
-    </div>
+    <LoadingState
+      v-if="isLoading"
+      :message="loadingMessage"
+      variant="default"
+    />
 
     <MobileArtistDisplaySection
         title="Top Artists"

@@ -1175,12 +1175,6 @@ h1 {
     transform: translateY(-1px) scale(1.05);
 }
 
-.genres-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
 /* Loading Components */
 .loading-spinner {
     width: 40px;
@@ -1348,10 +1342,9 @@ h1 {
 }
 
 .genres-section {
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    /*display: flex;*/
+    /*flex-direction: column;*/
+    /*gap: 8px;*/
 }
 
 
@@ -1449,7 +1442,7 @@ h1 {
     object-fit: cover;
 }
 
-.album-info, .artist-info {
+.album-info {
     text-align: center;
 }
 
