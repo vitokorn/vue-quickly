@@ -2131,9 +2131,6 @@
 
 .recommend-btn,
 .spotify-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     gap: 8px;
     border-radius: 8px;
     font-size: 14px;

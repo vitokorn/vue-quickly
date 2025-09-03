@@ -106,7 +106,7 @@ window.addEventListener('resize', () => {
           </div>
         </div>
       </div>
-      <div class="track-actions">
+      <div class="artist-actions">
         <button class="recommend-btn"
                 @click="deeperStore.seedTracks({item:d,num:num,parent: d.id})">
           <span class="btn-icon">🎵</span>
