@@ -102,7 +102,6 @@ const handlePersonalPlaylistSelect = async (playlistId, event) => {
     const playlistData = {
       ...playlist,
       type: 'deeperplaylist',
-      parentKey: 'playlistsPage'
     }
 
     deeperStore.addToSection('yourPlaylists', playlistData)
@@ -115,7 +114,7 @@ const handlePersonalPlaylistArrowClick = async (playlist) => {
 
   if (playlist) {
     try {
-      await deeperStore.getPlaylistDetails(playlist, 'yourPlaylists', 'playlistsPage')
+      await deeperStore.getPlaylistDetails(playlist, 'yourPlaylists')
       console.log('Playlist details fetched and added to section')
     } catch (error) {
       console.error('Error fetching playlist details:', error)
@@ -132,7 +131,6 @@ const handleSpotifyPlaylistSelect = async (playlistId, event) => {
     const playlistData = {
       ...playlist,
       type: 'deeperplaylist',
-      parentKey: 'playlistsPage'
     }
 
     deeperStore.addToSection('spotifyPlaylists', playlistData)
@@ -145,7 +143,7 @@ const handleSpotifyPlaylistArrowClick = async (playlist) => {
 
   if (playlist) {
     try {
-      await deeperStore.getPlaylistDetails(playlist, 'spotifyPlaylists', 'playlistsPage')
+      await deeperStore.getPlaylistDetails(playlist, 'spotifyPlaylists')
       console.log('Playlist details fetched and added to section')
     } catch (error) {
       console.error('Error fetching playlist details:', error)

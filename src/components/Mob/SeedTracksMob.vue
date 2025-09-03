@@ -3,7 +3,7 @@ import {useSpotifyStore} from "../../stores/spotify-store";
 import {useAudioStore} from "../../stores/audio-store";
 import {useQueueStore} from "../../stores/queue-store";
 import {useDeeperStore} from "../../stores/deeper-store";
-import {ref, computed, onMounted, nextTick} from "vue";
+import {ref, computed, onMounted, onUnmounted, nextTick} from "vue";
 import {useMobileMediaDisplay} from "../../composables/useMobileMediaDisplay.js";
 import { useVisibilityManager } from "../../composables/useVisibilityManager";
 import MobileTrackItem from './MobileTrackItem.vue';
@@ -101,6 +101,12 @@ onMounted(async () => {
   // Show this component after registration
   console.log('Showing SeedTracksMob component after registration:', seedKey)
   visibilityManager.showComponent(seedKey)
+})
+
+onUnmounted(() => {
+  const seedKey = `seed_tracks_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
+  visibilityManager.unregisterComponent(seedKey)
+  console.log('SeedTracksMob component unregistered:', seedKey)
 })
 </script>
 

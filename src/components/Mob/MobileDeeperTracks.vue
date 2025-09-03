@@ -110,24 +110,8 @@ const formatReleaseDate = (dateString) => {
 const handleRecommendClick = async () => {
   try {
     loadingRecommendations.value = true
-    seedTracksData.value = null
-
-    // Get recommendations directly using the Spotify API
-    const response = await spotifyApi.getRecommendations({
-      seed_tracks: props.d.id,
-      limit: 20,
-      offset: 0,
-      market: 'UA'
-    })
-
-    seedTracksData.value = {
-      tracks: response.data.tracks,
-      type: 'seed_tracks',
-      id: `st${props.d.id}`,
-      name: props.d.name
-    }
-
-    console.log('Recommendations loaded:', seedTracksData.value.tracks.length, 'tracks')
+    const sectionName = getSectionName(props.num)
+    await deeperStore.getSeedTrackRecommendations(props.d, sectionName, props.d.id)
   } catch (error) {
     console.error('Failed to get recommendations:', error)
     alert('Failed to load recommendations. Please try again.')
@@ -244,7 +228,7 @@ onUnmounted(() => {
         Play Track
       </button>
 
-      <button class="recommend-btn" @click="deeperStore.seedTracks({item:d,num:num,parent: d.id})">
+      <button class="recommend-btn" @click="handleRecommendClick">
         <span class="btn-icon">🎵</span>
         Get Recommendations
       </button>
