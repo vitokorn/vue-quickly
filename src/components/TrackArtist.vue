@@ -6,7 +6,10 @@ import {useDeeperStore} from "../stores/deeper-store";
 import {ref, computed, onMounted, nextTick} from "vue";
 import {useMediaDisplay} from "../composables/useMediaDisplay";
 import { useVisibilityManager } from "../composables/useVisibilityManager";
+import {useDataHandler} from "../composables/useDataHandler";
+import {useErrorHandler} from "../composables/useErrorHandler";
 import { getSectionName } from "../utils/sectionUtils";
+import ErrorBoundary from "./common/ErrorBoundary.vue";
 
 const props = defineProps(['d', 'num'])
 const spotifyStore = useSpotifyStore()
@@ -15,6 +18,48 @@ const queueStore = useQueueStore()
 const deeperStore = useDeeperStore()
 const selected = ref()
 const componentRef = ref(null)
+
+// Improved data and error handling
+const {
+  hasData,
+  hasError,
+  error,
+  isLoading,
+  loadData,
+  clearData
+} = useDataHandler({
+  initialData: { artist: null, tracks: [], albums: [], singles: [], related: [] },
+  validation: {
+    artist: (data) => data && typeof data === 'object' && data.name,
+    tracks: (data) => Array.isArray(data),
+    albums: (data) => Array.isArray(data)
+  },
+  transformers: {
+    tracks: (tracks) => tracks?.filter(track => track && track.name) || [],
+    albums: (albums) => albums?.filter(album => album && album.name) || []
+  }
+})
+
+const {
+  withErrorHandling,
+  hasCurrentError,
+  canRetry,
+  latestError,
+  addError
+} = useErrorHandler({
+  messages: {
+    network: 'Unable to load artist data. Please check your connection.',
+    server: 'Server error loading artist information. Please try again.',
+    authentication: 'Authentication required to load artist data.'
+  },
+  recovery: {
+    network: async () => {
+      // Retry after a delay
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      return loadData()
+    }
+  }
+})
 
 // Get visibility manager
 const visibilityManager = useVisibilityManager()
@@ -79,19 +124,55 @@ function setActive(id) {
   selected.value = id
 }
 
+// Error boundary handlers
+const handleBoundaryError = (error) => {
+  console.error('TrackArtist boundary caught error:', error)
+  addError(error.error, { component: 'TrackArtist', boundary: true })
+}
+
+const handleBoundaryRetry = async ({ attempt }) => {
+  console.log(`TrackArtist retry attempt ${attempt}`)
+  await withErrorHandling(async () => {
+    await loadData()
+  }, {
+    context: { component: 'TrackArtist', retry: attempt },
+    retry: false // Don't retry again from boundary
+  })
+}
+
+const handleBoundaryReset = () => {
+  console.log('TrackArtist boundary reset')
+  clearData()
+}
+
 onMounted(async () => {
   await nextTick()
   console.log('TrackArtist component mounted with props:', props.d)
+
   const artistKey = `trackartist_${props.d?.id || 'default'}${props.d?.parentKey ? `__p:${props.d.parentKey}__` : ''}`
   console.log('Registering TrackArtist component with key:', artistKey)
   visibilityManager.registerComponent(artistKey, componentRef)
-  console.log('Showing TrackArtist component after registration:', artistKey)
-  visibilityManager.showComponent(artistKey)
+
+  // Load artist data with improved error handling
+  await withErrorHandling(async () => {
+    await loadData()
+  }, {
+    context: { component: 'TrackArtist', artistId: props.d?.id },
+    retry: true,
+    recovery: true
+  })
+
+  // Component will be shown by parent component or store when needed
 })
 </script>
 
 <template>
-  <div class="modern-track-artist" ref="componentRef">
+  <ErrorBoundary
+    @error="handleBoundaryError"
+    @retry="handleBoundaryRetry"
+    @reset="handleBoundaryReset"
+  >
+    <div class="modern-track-artist" ref="componentRef">
     <!-- Artist Section -->
     <div v-if="artistData" class="artist-section">
       <div class="deeper-header">
@@ -261,7 +342,8 @@ onMounted(async () => {
         </div>
       </div>
     </div>
-  </div>
+    </div>
+  </ErrorBoundary>
 </template>
 
 <style scoped>

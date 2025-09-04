@@ -8,8 +8,11 @@ import TrackCover from "./TrackCover.vue";
 import {useMediaDisplay} from "../composables/useMediaDisplay";
 import {useVisibilityManager} from "../composables/useVisibilityManager";
 import {useLoading} from "../composables/useLoading";
+import {useDataHandler} from "../composables/useDataHandler";
+import {useErrorHandler} from "../composables/useErrorHandler";
 import { getSectionName } from '../utils/sectionUtils';
 import LoadingState from "./common/LoadingState.vue";
+import ErrorBoundary from "./common/ErrorBoundary.vue";
 const props = defineProps(['d', 'num'])
 const spotifyStore = useSpotifyStore()
 const audioStore = useAudioStore()
@@ -20,8 +23,47 @@ const cover = ref(null)
 const componentRef = ref(null)
 const mobileClass = ref(false)
 
-// Loading state management
-const { isLoading, loadingMessage, withLoading } = useLoading({
+// Improved data and error handling
+const {
+  hasData,
+  hasError,
+  error,
+  isLoading,
+  loadData,
+  clearData
+} = useDataHandler({
+  initialData: { track: null, artists: [] },
+  validation: {
+    track: (data) => data && typeof data === 'object' && data.name,
+    artists: (data) => Array.isArray(data)
+  },
+  transformers: {
+    artists: (artists) => artists?.filter(artist => artist && artist.name) || []
+  }
+})
+
+const {
+  withErrorHandling,
+  hasCurrentError,
+  canRetry,
+  latestError,
+  addError
+} = useErrorHandler({
+  messages: {
+    network: 'Unable to load track data. Please check your connection.',
+    server: 'Server error loading track information. Please try again.',
+    validation: 'Track data is invalid or incomplete.'
+  },
+  recovery: {
+    network: async () => {
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      return loadData()
+    }
+  }
+})
+
+// Legacy loading state management (for backward compatibility)
+const { loadingMessage: legacyLoadingMessage, withLoading: legacyWithLoading } = useLoading({
   message: 'Loading track details...'
 })
 
@@ -51,8 +93,29 @@ function resolveCover() {
   console.log(cover.value)
 }
 
+// Error boundary handlers
+const handleBoundaryError = (error) => {
+  console.error('DeeperTracks boundary caught error:', error)
+  addError(error.error, { component: 'DeeperTracks', boundary: true })
+}
+
+const handleBoundaryRetry = async ({ attempt }) => {
+  console.log(`DeeperTracks retry attempt ${attempt}`)
+  await withErrorHandling(async () => {
+    await loadData()
+  }, {
+    context: { component: 'DeeperTracks', retry: attempt },
+    retry: false
+  })
+}
+
+const handleBoundaryReset = () => {
+  console.log('DeeperTracks boundary reset')
+  clearData()
+}
+
 onMounted(async () => {
-  await withLoading(async () => {
+  await legacyWithLoading(async () => {
     resolveCover()
 
     // Wait for the next tick to ensure the ref is available
@@ -77,7 +140,12 @@ window.addEventListener('resize', () => {
 </script>
 
 <template>
-  <div class="modern-track-card" ref="componentRef">
+  <ErrorBoundary
+    @error="handleBoundaryError"
+    @retry="handleBoundaryRetry"
+    @reset="handleBoundaryReset"
+  >
+    <div class="modern-track-card" ref="componentRef">
     <!-- Loading State -->
     <LoadingState
       v-if="isLoading"
@@ -133,7 +201,8 @@ window.addEventListener('resize', () => {
     <!--        </div>-->
     <!--      </div>-->
     <!--    </div>-->
-  </div>
+    </div>
+  </ErrorBoundary>
 </template>
 
 <style scoped>
