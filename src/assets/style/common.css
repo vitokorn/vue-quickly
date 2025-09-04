@@ -591,12 +591,6 @@ h1 {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.artist-cover {
-    width: 200px;
-    height: 200px;
-    flex-shrink: 0;
-}
-
 .artist-card {
     height: 100px;
 }
@@ -702,7 +696,6 @@ h1 {
     .related-artists-grid {
         grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
         gap: 0px;
-        padding: 0 16px;
     }
 
     .track-card,
@@ -933,7 +926,6 @@ h1 {
     .related-artists-grid {
         grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
         gap: 0px;
-        padding: 0 20px;
     }
 
     .track-card,
@@ -1414,15 +1406,14 @@ h1 {
 }
 
 .section-header {
-    margin-bottom: 16px;
-    padding: 0 24px;
+    padding: 0 4px;
 }
 
 .albums-grid, .artists-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 16px;
-    padding: 0 24px;
+    padding: 0 4px;
 }
 
 .album-cover, .artist-cover {
@@ -1676,9 +1667,15 @@ h1 {
     box-shadow: 0 2px 8px var(--tab-box-shadow);
 }
 
+:root .recommend-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--tab-box-shadow);
+    color: var(--active-tab-hover);
+}
+
 .recommend-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(240, 55, 165, 0.4);
+    box-shadow: var(--tab-box-shadow);
 }
 
 .btn-icon {

@@ -44,13 +44,13 @@ const loadFollowedArtists = async () => {
 const handleArtistClick = async (artist, event) => {
   console.log('Artist clicked:', artist.name, artist)
   setSelectedItem(artist.id)
-  
+
   try {
     // Get artist details from deeper store
     console.log('Getting artist details for followedArtists section...')
     await deeperStore.getArtistDetails(artist, 'followedArtists')
     console.log('Artist details loaded successfully')
-    
+
     // RecTrackM will automatically render the deeper artist component
     // No need to manually show/hide components
   } catch (error) {
@@ -109,7 +109,7 @@ onMounted(async () => {
       <p>Sorted items: {{ sortedFAItems.length }}</p>
       <p>Loading: {{ loading }}</p>
     </div>
-    
+
     <MobileArtistDisplaySection
         title="Followed Artists"
         :artists="sortedFAItems"
@@ -126,128 +126,6 @@ onMounted(async () => {
   min-height: 100vh;
 }
 
-/* Section Header */
-.section-header {
-  margin-bottom: 24px;
-}
-
-.section-header .header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.section-header .header-text {
-  flex: 1;
-}
-
-.section-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--title-color);
-  margin: 0 0 4px 0;
-}
-
-.header-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.refresh-btn,
-.view-toggle-btn {
-  background: var(--action-btn-bg);
-  border: none;
-  color: var(--title-color);
-  padding: 8px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-}
-
-.refresh-btn:hover,
-.view-toggle-btn:hover {
-  background: var(--action-btn-hover-bg);
-  transform: translateY(-1px);
-}
-
-.refresh-btn svg,
-.view-toggle-btn svg {
-  width: 16px;
-  height: 16px;
-}
-
-/* Loading State */
-.loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
-  text-align: center;
-}
-
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid var(--item-border);
-  border-top: 3px solid var(--active-tab);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 16px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.loading-state p {
-  font-size: 16px;
-  color: var(--search-color);
-  margin: 0;
-  opacity: 0.8;
-}
-
-/* Content */
-.section-content {
-  min-height: 200px;
-}
-
-/* Empty State */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
-  text-align: center;
-}
-
-.empty-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
-  opacity: 0.6;
-}
-
-.empty-state h3 {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--title-color);
-  margin: 0 0 8px 0;
-}
-
-.empty-state p {
-  font-size: 14px;
-  color: var(--search-color);
-  margin: 0;
-  opacity: 0.8;
-}
 
 /* Debug Info */
 .debug-info {
@@ -325,17 +203,6 @@ onMounted(async () => {
 @media (max-width: 360px) {
   .mobile-followed-artists {
     padding: 12px;
-  }
-
-  .section-title {
-    font-size: 18px;
-  }
-
-  .refresh-btn,
-  .view-toggle-btn {
-    width: 28px;
-    height: 28px;
-    padding: 5px;
   }
 
   .refresh-btn svg,

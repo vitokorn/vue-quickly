@@ -86,7 +86,7 @@ window.addEventListener('resize', () => {
     />
 
     <div v-else class="deeper-header p-4">
-      <div class="" :class="{'col-6': mobileClass}">
+      <div :class="{'col-6': mobileClass}">
         <track-cover :d="d" :cover="cover"></track-cover>
       </div>
       <div class="track-info" :class="{'col-6': mobileClass}">

@@ -761,10 +761,6 @@
 }
 
 /* Modern Header */
-.section-header {
-    margin-bottom: 24px;
-}
-
 .section-header .header-content {
     display: flex;
     justify-content: space-between;
@@ -2061,7 +2057,7 @@
     box-sizing: border-box;
 }
 
-.artist-cover {
+.artist-info-section .artist-cover {
     width: 120px;
     height: 120px;
     border-radius: 12px;
