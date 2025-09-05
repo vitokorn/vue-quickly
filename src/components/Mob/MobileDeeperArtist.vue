@@ -91,17 +91,20 @@ const handleBackClick = () => {
 }
 
 const handleTrackClick = async (track, event) => {
+  if (deeperStore.getIsGloballyLoading) return
   const sectionName = getSectionName(props.num)
   await deeperStore.getTrackDetails(track, sectionName)
   queueStore.addToQueue(track)
 }
 
 const handleAlbumClick = async (album, event) => {
+  if (deeperStore.getIsGloballyLoading) return
   const sectionName = getSectionName(props.num)
   await deeperStore.getAlbumDetails(album, sectionName, props.d.id)
 }
 
 const handleRelatedArtistClick = async (artist, event) => {
+  if (deeperStore.getIsGloballyLoading) return
   const sectionName = getSectionName(props.num)
   await deeperStore.getArtistDetails(artist, sectionName, props.d.id)
 

@@ -48,6 +48,7 @@ const sortedSAItems = computed(() => {
 // Helper function to get section name from num
 
 const handleTrackClick = async (track, event) => {
+  if (deeperStore.getIsGloballyLoading) return
   const sectionName = getSectionName(props.num)
   await deeperStore.getTrackDetails(track, sectionName, props.d.id)
   queueStore.addToQueue(track)

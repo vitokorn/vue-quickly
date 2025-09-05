@@ -199,6 +199,9 @@
     </main>
 
     <RecTrackM :num="currentTab"/>
+    
+    <!-- Global Preloader -->
+    <GlobalPreloader />
   </div>
 </template>
 
@@ -215,6 +218,7 @@ import MobileTopTracks from "../Mob/MobileTopTracks.vue";
 import MobileSavedAlbums from "../Mob/MobileSavedAlbums.vue";
 import MobileFollowedArtists from "../Mob/MobileFollowedArtists.vue";
 import MobileSavedTracks from "../Mob/MobileSavedTracks.vue";
+import GlobalPreloader from "../common/GlobalPreloader.vue";
 
 // Reactive state
 const currentTab = ref('profile')

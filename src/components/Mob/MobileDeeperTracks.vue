@@ -55,6 +55,7 @@ const handleBackClick = () => {
 }
 
 const handleTrackClick = async (track, event) => {
+  if (deeperStore.getIsGloballyLoading) return
   setActive(track.id)
   const sectionName = getSectionName(props.num)
   await deeperStore.getTrackDetails(track, sectionName)
@@ -62,6 +63,7 @@ const handleTrackClick = async (track, event) => {
 }
 
 const handleArtistClick = async (artist, event) => {
+  if (deeperStore.getIsGloballyLoading) return
   await deeperStore.getArtistDetails(artist, getSectionName(props.num), props.d.parentKey || props.d.id)
 }
 

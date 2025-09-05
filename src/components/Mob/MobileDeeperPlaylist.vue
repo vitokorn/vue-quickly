@@ -69,6 +69,7 @@ const handleBackClick = () => {
 }
 
 const handleTrackClick = async (track, event) => {
+  if (deeperStore.getIsGloballyLoading) return
   setActive(track.id)
 
   const sectionName = getSectionName(props.num)
