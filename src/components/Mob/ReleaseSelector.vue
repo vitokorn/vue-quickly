@@ -106,19 +106,6 @@ const handleReleaseClick = (release, event) => {
   }
 }
 
-const handleDeeperAlbumClick = async (release, event) => {
-  event.stopPropagation() // Prevent triggering the main click event
-
-  await deeperStore.getAlbumDetails(release, 'newReleases')
-
-  // Show the deeper album component using visibility manager
-  const playlistKey = `deeperalbum_${release.id}__p:releaseSelector__`
-  visibilityManager.showComponent(playlistKey)
-
-  // Show the deeper album component
-  console.log('Showing deeper album for:', release.name)
-}
-
 const handleSearch = (event) => {
   searchTerm.value = event.target.value
   resetPagination()
@@ -263,7 +250,7 @@ const formatReleaseDate = (dateString) => {
               v-for="(release, index) in displayedReleases"
               :key="index"
               class="search-item"
-              @click="handleReleaseClick(release, $event);handleDeeperAlbumClick(release, $event)"
+              @click="handleReleaseClick(release, $event);handleReleaseSelect(release.id, $event)"
           >
             <div class="item-cover" v-if="release.images && release.images[0]">
               <img :src="release.images[0].url" :alt="release.name"/>

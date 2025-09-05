@@ -500,12 +500,12 @@ input[type=checkbox] {
 }
 
 
-.album-card.no-image,
-.related-artist-card.no-image,
-.artist-card.no-image,
-.track-card.no-image,
-.playlist-cover.no-image {
+.no-image {
     background: var(--cover-no-image);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Modern Footer Component */

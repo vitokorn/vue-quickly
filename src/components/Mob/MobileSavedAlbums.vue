@@ -38,6 +38,7 @@ const loadSavedAlbums = async () => {
 }
 
 const handleReleaseSelect = async (releaseId, event) => {
+  console.log('ReleaseSelect', releaseId, event)
   selectedRelease.value = releaseId
   const release = savedAlbums.value.find(r => r.id === releaseId)
   console.log('Release selected:', release)

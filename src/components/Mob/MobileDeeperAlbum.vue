@@ -6,8 +6,8 @@ import { useDeeperStore } from "../../stores/deeper-store"
 import { ref, computed, onMounted, onUnmounted, nextTick } from "vue"
 import { useVisibilityManager } from "../../composables/useVisibilityManager"
 import { useMobileMediaDisplay } from "../../composables/useMobileMediaDisplay.js"
+import { getSectionName } from '../../utils/sectionUtils';
 import MobileTrackItem from './MobileTrackItem.vue'
-import MobileDeeperTracks from './MobileDeeperTracks.vue'
 
 const props = defineProps(['d', 'num'])
 const spotifyStore = useSpotifyStore()
@@ -183,6 +183,7 @@ onUnmounted(() => {
           :key="track.id"
           :track="track"
           :num="num"
+          @click="handleTrackClick"
         />
       </div>
     </div>

@@ -60,13 +60,6 @@ const handleLeave = (event) => {
   emit('leave', event)
 }
 
-// Computed class for the track item
-const trackClass = computed(() => {
-  const baseClass = 'mobile-track-item'
-  const viewClass = props.viewMode === 'grid' ? 'grid' : 'list-view'
-  const selectedClass = props.selected ? 'selected' : ''
-  return `${baseClass} ${viewClass} ${selectedClass}`.trim()
-})
 const getReleasePreviewUrl = (release) => {
   console.log(release)
   if (release.tracks && release.tracks.items && release.tracks.items.length > 0) {

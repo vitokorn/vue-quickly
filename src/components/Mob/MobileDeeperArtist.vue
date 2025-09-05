@@ -4,9 +4,9 @@ import { useSpotifyStore } from '../../stores/spotify-store'
 import { useDeeperStore } from '../../stores/deeper-store'
 import { useQueueStore } from '../../stores/queue-store'
 import { useAudioStore } from '../../stores/audio-store'
+import { usePreferencesStore } from '../../stores/preferences-store'
 import { useVisibilityManager } from '../../composables/useVisibilityManager'
 import { useMobileMediaDisplay } from '../../composables/useMobileMediaDisplay.js'
-import MobileTrackItem from './MobileTrackItem.vue'
 import {spotifyApi} from "../../services/spotifyApi.js";
 import { getSectionName } from '../../utils/sectionUtils';
 
@@ -67,6 +67,7 @@ const spotifyStore = useSpotifyStore()
 const deeperStore = useDeeperStore()
 const queueStore = useQueueStore()
 const audioStore = useAudioStore()
+const preferencesStore = usePreferencesStore()
 const visibilityManager = useVisibilityManager()
 const componentRef = ref(null)
 const loading = ref(true)
@@ -128,6 +129,10 @@ const handleAudioPreview = (event) => {
   if (hasPreview.value && previewUrl.value) {
     audioStore.mobileToggleTrack(trackId.value, previewUrl.value)
   }
+}
+
+const toggleViewMode = () => {
+  preferencesStore.toggleViewMode()
 }
 
 // Fetch artist details including top tracks, albums, singles, appears on, and related artists
@@ -232,7 +237,16 @@ onUnmounted(() => {
         </svg>
       </button>
       <h2 class="header-title">Artist</h2>
-      <div class="header-spacer"></div>
+      <div class="header-actions">
+        <button class="view-toggle-btn" @click="toggleViewMode" :title="preferencesStore.viewMode === 'list' ? 'Grid view' : 'List view'">
+          <svg v-if="preferencesStore.viewMode === 'list'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h2.25a3 3 0 013 3v2.25a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9.75 0a3 3 0 013-3H18a3 3 0 013 3v2.25a3 3 0 01-3 3h-2.25a3 3 0 01-3-3V6zM3 15.75a3 3 0 013-3h2.25a3 3 0 013 3V18a3 3 0 01-3 3H6a3 3 0 01-3-3v-2.25zm9.75 0a3 3 0 013-3H18a3 3 0 013 3V18a3 3 0 01-3 3h-2.25a3 3 0 01-3-3v-2.25z" clip-rule="evenodd" />
+          </svg>
+          <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M2.625 6.75a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0A.75.75 0 018.25 6h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75zM2.625 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zM7.5 12a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12A.75.75 0 017.5 12zm-4.875 5.25a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
+          </svg>
+        </button>
+      </div>
     </div>
 
     <!-- Artist Info Section -->
@@ -309,15 +323,32 @@ onUnmounted(() => {
       <div class="section-header">
         <h3 class="section-title">Top Tracks</h3>
       </div>
-      <div class="releases-container grid">
-        <MobileTrackItem
+      <div :class="['releases-container', preferencesStore.viewMode]">
+        <div
           v-for="track in topTracksData"
           :key="track.id"
-          :track="track"
-          :num="num"
+          class="search-item"
           @click="handleTrackClick(track, $event)"
-          view-mode="grid"
-        />
+        >
+          <div class="item-cover">
+            <img
+              v-if="track.album && track.album.images && track.album.images[0]"
+              :src="track.album.images[0].url"
+              :alt="track.name"
+              @error="$event.target.style.display = 'none'"
+            />
+            <div v-else class="album-placeholder">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11.584 2.376a.75.75 0 01.832 0l9 6a.75.75 0 11-.832 1.248L12 3.901 3.416 9.624a.75.75 0 01-.832-1.248l9-6z" />
+                <path d="M20.25 11.25v5.533c0 1.036-.84 1.875-1.875 1.875H5.625A1.875 1.875 0 013.75 16.783V11.25H2.25a.75.75 0 010-1.5h1.5V6.75c0-1.036.84-1.875 1.875-1.875h.75a.75.75 0 010 1.5h-.75a.375.375 0 00-.375.375v3.375h1.5a.75.75 0 010 1.5H3.75v5.533a.375.375 0 00.375.375h12.75a.375.375 0 00.375-.375V11.25h1.5a.75.75 0 010-1.5h-1.5V6.75a.375.375 0 00-.375-.375h-.75a.75.75 0 010-1.5h.75c1.036 0 1.875.84 1.875 1.875v3.375h1.5a.75.75 0 010 1.5z" />
+              </svg>
+            </div>
+          </div>
+          <div class="item-info">
+            <div class="item-name">{{ track.name }}</div>
+            <div class="item-artist">{{ track.artists?.[0]?.name || 'Unknown Artist' }}</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -326,14 +357,14 @@ onUnmounted(() => {
       <div class="section-header">
         <h3 class="section-title">Albums</h3>
       </div>
-      <div class="albums-grid">
+      <div :class="['releases-container', preferencesStore.viewMode]">
         <div
           v-for="album in albumsData"
           :key="album.id"
-          class="album-item"
+          class="search-item"
           @click="handleAlbumClick(album, $event)"
         >
-          <div class="album-cover">
+          <div class="item-cover">
             <img
               v-if="album.images && album.images[0]"
               :src="album.images[0].url"
@@ -347,9 +378,9 @@ onUnmounted(() => {
               </svg>
             </div>
           </div>
-          <div class="album-info">
-            <div class="album-name">{{ album.name }}</div>
-            <div class="album-type">{{ album.album_type || 'Album' }}</div>
+          <div class="item-info">
+            <div class="item-name">{{ album.name }}</div>
+            <div class="item-artist">{{ album.album_type || 'Album' }}</div>
           </div>
         </div>
       </div>
@@ -360,14 +391,14 @@ onUnmounted(() => {
       <div class="section-header">
         <h3 class="section-title">Singles</h3>
       </div>
-      <div class="albums-grid">
+      <div :class="['releases-container', preferencesStore.viewMode]">
         <div
           v-for="single in singlesData"
           :key="single.id"
-          class="album-item"
+          class="search-item"
           @click="handleAlbumClick(single, $event)"
         >
-          <div class="album-cover">
+          <div class="item-cover">
             <img
               v-if="single.images && single.images[0]"
               :src="single.images[0].url"
@@ -381,9 +412,9 @@ onUnmounted(() => {
               </svg>
             </div>
           </div>
-          <div class="album-info">
-            <div class="album-name">{{ single.name }}</div>
-            <div class="album-type">{{ single.album_type || 'Single' }}</div>
+          <div class="item-info">
+            <div class="item-name">{{ single.name }}</div>
+            <div class="item-artist">{{ single.album_type || 'Single' }}</div>
           </div>
         </div>
       </div>
@@ -394,14 +425,14 @@ onUnmounted(() => {
       <div class="section-header">
         <h3 class="section-title">Appears On</h3>
       </div>
-      <div class="albums-grid">
+      <div :class="['releases-container', preferencesStore.viewMode]">
         <div
           v-for="appearsOn in appearsOnData"
           :key="appearsOn.id"
-          class="album-item"
+          class="search-item"
           @click="handleAlbumClick(appearsOn, $event)"
         >
-          <div class="album-cover">
+          <div class="item-cover">
             <img
               v-if="appearsOn.images && appearsOn.images[0]"
               :src="appearsOn.images[0].url"
@@ -415,9 +446,9 @@ onUnmounted(() => {
               </svg>
             </div>
           </div>
-          <div class="album-info">
-            <div class="album-name">{{ appearsOn.name }}</div>
-            <div class="album-type">{{ appearsOn.album_type || 'Compilation' }}</div>
+          <div class="item-info">
+            <div class="item-name">{{ appearsOn.name }}</div>
+            <div class="item-artist">{{ appearsOn.album_type || 'Compilation' }}</div>
           </div>
         </div>
       </div>
@@ -428,30 +459,34 @@ onUnmounted(() => {
       <div class="section-header">
         <h3 class="section-title">Related Artists</h3>
       </div>
-      <div class="artists-grid">
+      <div :class="['releases-container', preferencesStore.viewMode]">
         <div
           v-for="artist in relatedArtistsData"
           :key="artist.id"
-          class="artist-item"
+          class="search-item"
           @click="handleRelatedArtistClick(artist, $event)"
         >
-          <div class="artist-cover">
+          <div class="item-cover">
             <img
-              v-if="artist.images && artist.images[0]"
+              v-if="artist.images && artist.images.length > 0"
               :src="artist.images[0].url"
               :alt="artist.name"
               @error="$event.target.style.display = 'none'"
             />
             <div v-else class="artist-placeholder">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M11.584 2.376a.75.75 0 01.832 0l9 6a.75.75 0 11-.832 1.248L12 3.901 3.416 9.624a.75.75 0 01-.832-1.248l9-6z" />
-                <path d="M20.25 11.25v5.533c0 1.036-.84 1.875-1.875 1.875H5.625A1.875 1.875 0 013.75 16.783V11.25H2.25a.75.75 0 010-1.5h1.5V6.75c0-1.036.84-1.875 1.875-1.875h.75a.75.75 0 010 1.5h-.75a.375.375 0 00-.375.375v3.375h1.5a.75.75 0 010 1.5H3.75v5.533a.375.375 0 00.375.375h12.75a.375.375 0 00.375-.375V11.25h1.5a.75.75 0 010-1.5h-1.5V6.75a.375.375 0 00-.375-.375h-.75a.75.75 0 010-1.5h.75c1.036 0 1.875.84 1.875 1.875v3.375h1.5a.75.75 0 010 1.5z" />
+                <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z" />
               </svg>
             </div>
           </div>
-          <div class="artist-info">
-            <div class="artist-name">{{ artist.name }}</div>
-            <div class="artist-followers">{{ formatFollowers(artist.followers?.total || 0) }} followers</div>
+          <div class="item-info">
+            <div class="item-name">{{ artist.name }}</div>
+            <div class="item-artist" v-if="artist.followers">
+              {{ formatFollowers(artist.followers.total) }} followers
+            </div>
+            <div class="item-artist" v-if="artist.genres && artist.genres.length > 0">
+              {{ formatGenres(artist.genres) }}
+            </div>
           </div>
         </div>
       </div>

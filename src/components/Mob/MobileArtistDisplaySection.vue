@@ -63,13 +63,6 @@ const formatGenres = (genres) => {
   ).join(', ')
 }
 
-const trackClass = computed(() => {
-  const baseClass = 'mobile-track-item'
-  const viewClass = preferencesStore.viewMode === 'grid' ? 'grid' : 'list-view'
-  const selectedClass = props.selected ? 'selected' : ''
-  return `${baseClass} ${viewClass} ${selectedClass}`.trim()
-})
-
 </script>
 
 <template>
