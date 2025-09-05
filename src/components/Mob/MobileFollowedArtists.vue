@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useSpotifyStore } from '../../stores/spotify-store'
+import { usePreferencesStore } from '../../stores/preferences-store'
 import { useDeeperStore } from '../../stores/deeper-store'
 import { useSelection } from '../../composables/useSelection.js'
 import MobileArtistDisplaySection from "./MobileArtistDisplaySection.vue";
@@ -8,6 +9,7 @@ import {useSorting} from "../../composables/useSorting.js";
 
 const spotifyStore = useSpotifyStore()
 const deeperStore = useDeeperStore()
+const preferencesStore = usePreferencesStore()
 
 // Composables
 const { createArtistSorter } = useSorting()
@@ -18,7 +20,6 @@ const selectedFASortOption = ref("")
 
 // Local state
 const loading = ref(false)
-const viewMode = ref('grid') // 'list' or 'grid'
 const followedArtists = ref([])
 
 // Methods
@@ -59,7 +60,7 @@ const handleArtistClick = async (artist, event) => {
 }
 
 const toggleViewMode = () => {
-  viewMode.value = viewMode.value === 'list' ? 'grid' : 'list'
+  preferencesStore.toggleViewMode()
 }
 
 const handleRefresh = async () => {
@@ -102,144 +103,15 @@ onMounted(async () => {
 
 <template>
   <div class="mobile-followed-artists">
-    <!-- Debug Info -->
-    <div class="debug-info">
-      <p>Local followedArtists: {{ followedArtists.length }}</p>
-      <p>Store getFollowedArtists: {{ (spotifyStore.getFollowedArtists || []).length }}</p>
-      <p>Sorted items: {{ sortedFAItems.length }}</p>
-      <p>Loading: {{ loading }}</p>
-    </div>
-
     <MobileArtistDisplaySection
         title="Followed Artists"
         :artists="sortedFAItems"
-        :view-mode="viewMode"
+        :view-mode="preferencesStore.viewMode"
         @artist-click="handleArtistClick"
     />
   </div>
 </template>
 
 <style scoped>
-.mobile-followed-artists {
-  padding: 20px;
-  background: var(--theme-mobile-bg);
-  min-height: 100vh;
-}
 
-
-/* Debug Info */
-.debug-info {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 12px;
-  margin-bottom: 16px;
-  border-radius: 8px;
-  font-size: 12px;
-  color: var(--search-color);
-}
-
-.debug-info p {
-  margin: 4px 0;
-}
-
-/* Responsive Design */
-@media (max-width: 480px) {
-  .mobile-followed-artists {
-    padding: 16px;
-  }
-
-  .section-title {
-    font-size: 20px;
-  }
-
-  .header-actions {
-    gap: 6px;
-  }
-
-  .refresh-btn,
-  .view-toggle-btn {
-    width: 32px;
-    height: 32px;
-    padding: 6px;
-  }
-
-  .refresh-btn svg,
-  .view-toggle-btn svg {
-    width: 14px;
-    height: 14px;
-  }
-
-  .loading-state {
-    padding: 40px 16px;
-  }
-
-  .loading-spinner {
-    width: 32px;
-    height: 32px;
-    margin-bottom: 12px;
-  }
-
-  .loading-state p {
-    font-size: 14px;
-  }
-
-  .empty-state {
-    padding: 40px 16px;
-  }
-
-  .empty-icon {
-    font-size: 40px;
-    margin-bottom: 12px;
-  }
-
-  .empty-state h3 {
-    font-size: 16px;
-  }
-
-  .empty-state p {
-    font-size: 13px;
-  }
-}
-
-@media (max-width: 360px) {
-  .mobile-followed-artists {
-    padding: 12px;
-  }
-
-  .refresh-btn svg,
-  .view-toggle-btn svg {
-    width: 12px;
-    height: 12px;
-  }
-
-  .loading-state {
-    padding: 30px 12px;
-  }
-
-  .loading-spinner {
-    width: 28px;
-    height: 28px;
-    margin-bottom: 10px;
-  }
-
-  .loading-state p {
-    font-size: 13px;
-  }
-
-  .empty-state {
-    padding: 30px 12px;
-  }
-
-  .empty-icon {
-    font-size: 36px;
-    margin-bottom: 10px;
-  }
-
-  .empty-state h3 {
-    font-size: 15px;
-  }
-
-  .empty-state p {
-    font-size: 12px;
-  }
-}
 </style>

@@ -98,6 +98,25 @@
       </button>
     </div>
 
+    <!-- Display Settings Section -->
+    <div class="mobile-settings-header">
+      <div class="mobile-header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h2.25a3 3 0 013 3v2.25a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9.75 0a3 3 0 013-3H18a3 3 0 013 3v2.25a3 3 0 01-3 3h-2.25a3 3 0 01-3-3V6zM3 15.75a3 3 0 013-3h2.25a3 3 0 013 3V18a3 3 0 01-3 3H6a3 3 0 01-3-3v-2.25zm9.75 0a3 3 0 013-3H18a3 3 0 013 3V18a3 3 0 01-3 3h-2.25a3 3 0 01-3-3v-2.25z" clip-rule="evenodd" />
+        </svg>
+      </div>
+      <h1 class="mobile-header-title">Display Settings</h1>
+    </div>
+    <div class="mobile-actions-section">
+      <button class="mobile-action-button" @click="toggleViewMode">
+        <span class="mobile-action-icon">📱</span>
+        <span class="mobile-action-text">View Mode</span>
+        <span class="mobile-action-status" :class="{ active: preferencesStore.viewMode === 'grid' }">
+          {{ preferencesStore.viewMode === 'list' ? 'LIST' : 'GRID' }}
+        </span>
+      </button>
+    </div>
+
     <!-- Actions Section -->
     <div class="mobile-settings-header">
       <div class="mobile-header-icon">
@@ -131,9 +150,11 @@
 <script setup>
 import Logout from "../Logout.vue";
 import { useAudioStore } from "../../stores/audio-store.js";
+import { usePreferencesStore } from "../../stores/preferences-store.js";
 import { ref, onMounted } from 'vue';
 
 const audioStore = useAudioStore()
+const preferencesStore = usePreferencesStore()
 const currentTheme = ref('light')
 
 const changeTheme = (theme) => {
@@ -157,6 +178,10 @@ const toggleUnplayableTracks = () => {
 
 const toggleOpenLinks = () => {
   audioStore.setOpenLinks(!audioStore.openLinks)
+}
+
+const toggleViewMode = () => {
+  preferencesStore.toggleViewMode()
 }
 
 const clearCache = () => {

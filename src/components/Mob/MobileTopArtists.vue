@@ -3,6 +3,7 @@ import {ref, computed, onMounted} from 'vue'
 import {useSpotifyStore} from '../../stores/spotify-store'
 import {useAudioStore} from '../../stores/audio-store'
 import {useDeeperStore} from '../../stores/deeper-store'
+import {usePreferencesStore} from '../../stores/preferences-store'
 import {useSelection} from '../../composables/useSelection.js'
 import {useLoading} from '../../composables/useLoading'
 import { getSectionName } from '../../utils/sectionUtils'
@@ -12,6 +13,7 @@ import LoadingState from "../common/LoadingState.vue";
 const spotifyStore = useSpotifyStore()
 const audioStore = useAudioStore()
 const deeperStore = useDeeperStore()
+const preferencesStore = usePreferencesStore()
 
 // Composables
 const {selectedItem, setSelectedItem} = useSelection()
@@ -21,7 +23,6 @@ const { isLoading, loadingMessage, withLoading } = useLoading({
 
 // Local state
 const selectedTimeRange = ref(1) // 1 = short_term, 2 = medium_term, 3 = long_term
-const viewMode = ref('grid') // 'list' or 'grid'
 
 // Computed properties
 const topArtists = computed(() => {
@@ -110,7 +111,7 @@ const handleRefresh = async () => {
 }
 
 const toggleViewMode = () => {
-  viewMode.value = viewMode.value === 'list' ? 'grid' : 'list'
+  preferencesStore.toggleViewMode()
 }
 
 // Formatting functions
@@ -144,11 +145,6 @@ onMounted(async () => {
   <div class="mobile-top-tracks">
     <!-- Modern Header -->
     <div class="section-header">
-      <div class="header-content">
-        <div class="header-text">
-          <h2 class="section-title">Top Artists</h2>
-        </div>
-      </div>
 
       <!-- Modern Time Range Selector -->
       <div class="time-range-selector">
@@ -177,7 +173,7 @@ onMounted(async () => {
     <MobileArtistDisplaySection
         title="Top Artists"
         :artists="topArtists"
-        :view-mode="viewMode"
+        :view-mode="preferencesStore.viewMode"
         @artist-click="handleArtistClick"
     />
   </div>

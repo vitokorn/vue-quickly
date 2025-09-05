@@ -33,7 +33,19 @@ function getArtistMediaDisplay(artist) {
   return useMediaDisplay(computed(() => artist))
 }
 
-// Helper function to get section name from num
+const handleRecommendClick = async () => {
+  try {
+  deeperStore.setGlobalLoading(true)
+    const sectionName = getSectionName(props.num)
+    await deeperStore.getSeedTrackRecommendations(props.d, sectionName, props.d.id)
+  } catch (error) {
+    console.error('Failed to get recommendations:', error)
+    alert('Failed to load recommendations. Please try again.')
+  } finally {
+    deeperStore.setGlobalLoading(false)
+  }
+}
+
 
 function setActive(id) {
   selected.value = id
@@ -108,7 +120,7 @@ window.addEventListener('resize', () => {
       </div>
       <div class="artist-actions">
         <button class="recommend-btn"
-                @click="deeperStore.seedTracks({item:d,num:num,parent: d.id})">
+                @click="handleRecommendClick">
           <span class="btn-icon">🎵</span>
           Recommended songs based on this
         </button>

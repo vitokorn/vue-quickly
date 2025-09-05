@@ -19,7 +19,7 @@ export const useDeeperStore = defineStore('deeper', {
         },
 
         // Currently loading items for UI feedback
-        
+
         // Global loading state to prevent multiple clicks
         isGloballyLoading: false,
 
@@ -69,9 +69,9 @@ export const useDeeperStore = defineStore('deeper', {
         isPlaylistLoading: (state) => (id) => state.loading.playlists.has(id),
         isSeedArtistLoading: (state) => (id) => state.loading.seedArtists.has(id),
         isSeedTrackLoading: (state) => (id) => state.loading.seedTracks.has(id),
-        
+
         // Currently loading getter
-        
+
         // Global loading getter
         getIsGloballyLoading: (state) => state.isGloballyLoading
     },
@@ -281,11 +281,11 @@ export const useDeeperStore = defineStore('deeper', {
         // Track details
         async getTrackDetails(item, sectionName, parentKey = null) {
             console.log('getTrackDetails called with item:', item.id, 'sectionName:', sectionName)
-            
+
             // Set loading state
             this.setLoading('tracks', item.id, true)
             this.setGlobalLoading(true)
-            
+
             try {
                 let trackData = item
 
@@ -409,11 +409,11 @@ export const useDeeperStore = defineStore('deeper', {
         // Artist details
         async getArtistDetails(item, sectionName, parentKey = null) {
             console.log('getArtistDetails called with item:', item.id, 'sectionName:', sectionName)
-            
+
             // Set loading state
             this.setLoading('artists', item.id, true)
             this.setGlobalLoading(true)
-            
+
             try {
                 let artistData = this.getCachedArtist(item.id)
 
@@ -546,7 +546,7 @@ export const useDeeperStore = defineStore('deeper', {
             // Set loading state
             this.setLoading('albums', item.id, true)
             this.setGlobalLoading(true)
-            
+
             try {
                 let albumData = item
 
@@ -613,7 +613,7 @@ export const useDeeperStore = defineStore('deeper', {
             // Set loading state
             this.setLoading('playlists', item.id, true)
             this.setGlobalLoading(true)
-            
+
             try {
                 let playlistData = item
 
@@ -685,11 +685,11 @@ export const useDeeperStore = defineStore('deeper', {
         // Seed artist recommendations
         async getSeedArtistRecommendations(item, sectionName, parentKey = null) {
             const seedId = `sa${item.id}`
-            
+
             // Set loading state
             this.setLoading('seedArtists', seedId, true)
             this.setGlobalLoading(true)
-            
+
             try {
                 let seedData = this.getCachedSeedArtist(seedId)
 
@@ -745,11 +745,11 @@ export const useDeeperStore = defineStore('deeper', {
         // Seed track recommendations
         async getSeedTrackRecommendations(item, sectionName, parentKey = null) {
             const seedId = `st${item.id}`
-            
+
             // Set loading state
             this.setLoading('seedTracks', seedId, true)
             this.setGlobalLoading(true)
-            
+
             try {
                 let seedData = this.getCachedSeedTrack(seedId)
 
@@ -803,116 +803,6 @@ export const useDeeperStore = defineStore('deeper', {
                 this.setLoading('seedTracks', seedId, false)
                 this.setGlobalLoading(false)
             }
-        },
-
-        // Legacy method for compatibility with existing components
-        async seedTracks(payload) {
-            console.log('seedTracks called with:', payload)
-            const {item, num, parent} = payload
-
-            // Get section name based on num
-            let sectionName
-            switch (num) {
-                case 1:
-                    sectionName = 'yourPlaylists';
-                    break
-                case 2:
-                    sectionName = 'topArtists';
-                    break
-                case 22:
-                    sectionName = 'topArtists6';
-                    break
-                case 23:
-                    sectionName = 'topArtistsAll';
-                    break
-                case 3:
-                    sectionName = 'topTracks';
-                    break
-                case 32:
-                    sectionName = 'topTracks6';
-                    break
-                case 33:
-                    sectionName = 'topTracksAll';
-                    break
-                case 4:
-                    sectionName = 'savedAlbums';
-                    break
-                case 5:
-                    sectionName = 'savedTracks';
-                    break
-                case 6:
-                    sectionName = 'followedArtists';
-                    break
-                case 7:
-                    sectionName = 'newReleases';
-                    break
-                case 8:
-                    sectionName = 'spotifyPlaylists';
-                    break
-                case 10:
-                    sectionName = 'search';
-                    break
-                default:
-                    sectionName = 'search'
-            }
-
-            // Call the new method
-            return await this.getSeedTrackRecommendations(item, sectionName, parent || null)
-        },
-
-        // Legacy method for mobile components compatibility
-        async seedTracksM(payload) {
-            console.log('seedTracksM called with:', payload)
-            const {item, num, parent} = payload
-
-            // Get section name based on num
-            let sectionName
-            switch (num) {
-                case 1:
-                    sectionName = 'yourPlaylists';
-                    break
-                case 2:
-                    sectionName = 'topArtists';
-                    break
-                case 22:
-                    sectionName = 'topArtists6';
-                    break
-                case 23:
-                    sectionName = 'topArtistsAll';
-                    break
-                case 3:
-                    sectionName = 'topTracks';
-                    break
-                case 32:
-                    sectionName = 'topTracks6';
-                    break
-                case 33:
-                    sectionName = 'topTracksAll';
-                    break
-                case 4:
-                    sectionName = 'savedAlbums';
-                    break
-                case 5:
-                    sectionName = 'savedTracks';
-                    break
-                case 6:
-                    sectionName = 'followedArtists';
-                    break
-                case 7:
-                    sectionName = 'newReleases';
-                    break
-                case 8:
-                    sectionName = 'spotifyPlaylists';
-                    break
-                case 10:
-                    sectionName = 'search';
-                    break
-                default:
-                    sectionName = 'search'
-            }
-
-            // Call the new method (same as seedTracks for now)
-            return await this.getSeedTrackRecommendations(item, sectionName, parent || null)
         },
 
         // Helper methods

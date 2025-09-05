@@ -9,14 +9,12 @@
     <!-- Content -->
     <div v-else class="playlists-content">
       <div class="playlists-section">
-        <h2 class="section-title">Spotify Playlists</h2>
         <PlaylistSelector
           :playlists="spotifyStore.getSpotifyPlaylists"
           :selected-playlist="selectedSpotifyPlaylist"
-          title=""
+          title="Spotify Playlists"
           placeholder="Search Spotify playlists..."
           :items-per-page="10"
-          @playlist-select="handleSpotifyPlaylistSelect"
           @playlist-arrow-click="handleSpotifyPlaylistArrowClick"
           @search="handlePlaylistSearch"
           @load-more="handleLoadMoreSpotifyPlaylists"
@@ -119,23 +117,6 @@ const handlePersonalPlaylistArrowClick = async (playlist) => {
     } catch (error) {
       console.error('Error fetching playlist details:', error)
     }
-  }
-}
-
-const handleSpotifyPlaylistSelect = async (playlistId, event) => {
-  selectedSpotifyPlaylist.value = playlistId
-  const playlist = spotifyStore.getSpotifyPlaylists.find(p => p.id === playlistId)
-  console.log('Spotify playlist selected:', playlist)
-
-  if (playlist) {
-    const playlistData = {
-      ...playlist,
-      type: 'deeperplaylist',
-    }
-
-    deeperStore.addToSection('spotifyPlaylists', playlistData)
-    deeperStore.setCurrentSection('spotifyPlaylists')
-
   }
 }
 

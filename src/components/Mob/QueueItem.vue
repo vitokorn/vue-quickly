@@ -2,6 +2,7 @@
 import {computed} from 'vue'
 import {useMobileMediaDisplay} from '../../composables/useMobileMediaDisplay.js'
 import {artistUtils} from '../../utils/artistUtils.js'
+import {useAudioStore} from '../../stores/audio-store.js'
 
 const props = defineProps({
   track: {
@@ -32,41 +33,26 @@ const props = defineProps({
 
 const emit = defineEmits(['click', 'hover', 'leave'])
 
-// Utility function for formatting artist names
-const formatArtistNames = (artists) => {
-  return artistUtils.formatArtistNamesSimple(artists)
-}
+const audioStore = useAudioStore()
 
 // Media display composable for track
 const {
   hasPreview,
-  hasImage,
-  displayClass,
-  backgroundStyle,
   audioPreload,
   audioSrc
 } = useMobileMediaDisplay(computed(() => props.track))
 
 // Event handlers
-const handleClick = (event) => {
+const handleClick = async (event) => {
   emit('click', props.trackItem || props.track, event)
+
+  // Play/pause audio on click
+  const previewUrl = props.track.preview_url
+  if (previewUrl) {
+    await audioStore.mobileToggleTrack(props.track.id, previewUrl)
+  }
 }
 
-const handleHover = (event) => {
-  emit('hover', event)
-}
-
-const handleLeave = (event) => {
-  emit('leave', event)
-}
-
-// Computed class for the track item
-const trackClass = computed(() => {
-  const baseClass = 'mobile-track-item'
-  const viewClass = props.viewMode === 'grid' ? 'grid' : 'list-view'
-  const selectedClass = props.selected ? 'selected' : ''
-  return `${baseClass} ${viewClass} ${selectedClass}`.trim()
-})
 const getReleasePreviewUrl = (release) => {
   console.log(release)
   if (release.tracks && release.tracks.items && release.tracks.items.length > 0) {
@@ -91,6 +77,24 @@ const getDisplayClass = (release) => {
     return 'unplayable no-image half-opacity'
   }
 }
+const resolveCover = computed(() => {
+  const track = props.track
+  if (track.image) {
+    return track.image.url
+  } else if (track.album?.image) {
+    return track.album.image.url
+  }
+})
+
+const resolveArtist = computed(() => {
+  const track = props.track
+  return track.artists
+})
+
+// Check if this track is currently playing
+const isPlaying = computed(() => {
+  return audioStore.mobileIsTrackPlaying(props.track.id)
+})
 
 </script>
 
@@ -99,21 +103,23 @@ const getDisplayClass = (release) => {
       class="search-item"
       @click="handleClick"
   >
-    <div class="item-cover">
+    <div class="item-cover" style="position: relative">
       <img
-          v-if="track.album && track.album.images && track.album.images[0]"
-          :src="track.album.images[0].url"
+          :src="resolveCover"
           :alt="track.name"
           :class="getDisplayClass(track)"
       />
-      <div v-else class="no-image">
-        <span class="no-image-icon">🎵</span>
+      <div v-if="hasPreview && isPlaying" class="playing-indicator">
+        <span class="playing-icon">▶️</span>
       </div>
     </div>
     <div class="item-info">
-      <div class="item-name">{{ track.name }}</div>
-      <div class="item-artist" v-if="track.artists">
-        {{ formatArtistNames(track.artists) }}
+      <div class="item-name">
+        {{ track.name }}
+
+      </div>
+      <div class="item-artist">
+        {{ resolveArtist }}
       </div>
     </div>
     <audio :preload="audioPreload" :src="audioSrc"></audio>

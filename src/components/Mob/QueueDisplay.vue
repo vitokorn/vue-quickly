@@ -2,12 +2,14 @@
 import { onMounted, ref } from 'vue'
 import { useQueueStore } from "../../stores/queue-store"
 import { useSpotifyStore } from "../../stores/spotify-store"
+import { usePreferencesStore } from "../../stores/preferences-store"
 import MobileTrackItem from './MobileTrackItem.vue'
 import MobileTracksList from "./MobileTracksList.vue";
+import QueueItem from "./QueueItem.vue";
 
 const queueStore = useQueueStore()
 const spotifyStore = useSpotifyStore()
-const viewMode = ref('list') // 'list' or 'grid'
+const preferencesStore = usePreferencesStore()
 
 onMounted(() => {
   // Load queue from localStorage when component mounts
@@ -48,7 +50,7 @@ const handleSaveToPlaylist = async (playlistId) => {
 }
 
 const toggleViewMode = () => {
-  viewMode.value = viewMode.value === 'list' ? 'grid' : 'list'
+  preferencesStore.toggleViewMode()
 }
 </script>
 
@@ -64,8 +66,8 @@ const toggleViewMode = () => {
         <h3>Queue ({{ queueStore.getQueueCount() }})</h3>
       </div>
       <div class="header-actions">
-        <button class="view-toggle-btn" @click="toggleViewMode" :title="viewMode === 'list' ? 'Grid view' : 'List view'">
-          <svg v-if="viewMode === 'list'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <button class="view-toggle-btn" @click="toggleViewMode" :title="preferencesStore.viewMode === 'list' ? 'Grid view' : 'List view'">
+          <svg v-if="preferencesStore.viewMode === 'list'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
             <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h2.25a3 3 0 013 3v2.25a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9.75 0a3 3 0 013-3H18a3 3 0 013 3v2.25a3 3 0 01-3 3h-2.25a3 3 0 01-3-3V6zM3 15.75a3 3 0 013-3h2.25a3 3 0 013 3V18a3 3 0 01-3 3H6a3 3 0 01-3-3v-2.25zm9.75 0a3 3 0 013-3H18a3 3 0 013 3V18a3 3 0 01-3 3h-2.25a3 3 0 01-3-3v-2.25z" clip-rule="evenodd" />
           </svg>
           <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -103,15 +105,16 @@ const toggleViewMode = () => {
     </div>
 
     <!-- Queue List -->
-    <div :class="['queue-list', viewMode]" v-if="queueStore.getQueueCount()">
-      <MobileTrackItem
+    <div :class="['releases-container', preferencesStore.viewMode]" v-if="queueStore.getQueueCount()">
+      <QueueItem
         v-for="(track, index) in queueStore.getQueueArr"
         :key="index"
         :track="track"
         section-name="queue"
         parent-id="queue"
+        :num="11"
         :show-remove="true"
-        :view-mode="viewMode"
+        :view-mode="preferencesStore.viewMode"
         @remove="queueStore.removeFromQueue(track.id)"
       />
     </div>
@@ -136,9 +139,6 @@ const toggleViewMode = () => {
       <span>Spotify Premium required to play full songs. Save tracks to listen in the main Spotify app.</span>
     </div>
   </div>
-
-  <!-- Sample Tracks List -->
-  <MobileTracksList />
 </template>
 
 <style scoped>

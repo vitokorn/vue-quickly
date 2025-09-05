@@ -1,3 +1,54 @@
+<script setup>
+import { ref } from 'vue'
+import SettingsDisplay from '../Mob/SettingsDisplay.vue'
+import QueueDisplay from "../Mob/QueueDisplay.vue"
+import PlaylistsPage from "../Mob/PlaylistsPage.vue"
+import NewReleasesPage from "../Mob/NewReleasesPage.vue"
+import RecTrackM from "../Mob/RecTrackM.vue";
+import SpotifyPlaylistsPage from "../Mob/SpotifyPlaylistsPage.vue";
+import MobileTopArtists from "../Mob/MobileTopArtists.vue";
+import MobileTopTracks from "../Mob/MobileTopTracks.vue";
+import MobileSavedAlbums from "../Mob/MobileSavedAlbums.vue";
+import MobileFollowedArtists from "../Mob/MobileFollowedArtists.vue";
+import MobileSavedTracks from "../Mob/MobileSavedTracks.vue";
+import MobileSearchPage from "../Mob/MobileSearchPage.vue";
+import GlobalPreloader from "../common/GlobalPreloader.vue";
+
+// Reactive state
+const currentTab = ref(0)
+const searchQuery = ref('')
+const isSidebarOpen = ref(false)
+
+// Methods
+const setCurrentTab = (tab) => {
+  currentTab.value = tab
+}
+
+const showProfile = () => {
+  setCurrentTab('profile')
+}
+
+const showQueue = () => {
+  setCurrentTab('queue')
+}
+
+const toggleSidebar = () => {
+  isSidebarOpen.value = !isSidebarOpen.value
+}
+
+const closeSidebar = () => {
+  isSidebarOpen.value = false
+}
+
+const handleSearch = () => {
+  // Emit search event for parent components
+  emit('search', searchQuery.value)
+}
+
+// Define emits
+const emit = defineEmits(['search'])
+</script>
+
 <template>
   <div class="mobile-layout">
     <!-- Header Section -->
@@ -213,62 +264,11 @@
     </main>
 
     <RecTrackM :num="currentTab"/>
-    
+
     <!-- Global Preloader -->
     <GlobalPreloader />
   </div>
 </template>
-
-<script setup>
-import { ref } from 'vue'
-import SettingsDisplay from '../Mob/SettingsDisplay.vue'
-import QueueDisplay from "../Mob/QueueDisplay.vue"
-import PlaylistsPage from "../Mob/PlaylistsPage.vue"
-import NewReleasesPage from "../Mob/NewReleasesPage.vue"
-import RecTrackM from "../Mob/RecTrackM.vue";
-import SpotifyPlaylistsPage from "../Mob/SpotifyPlaylistsPage.vue";
-import MobileTopArtists from "../Mob/MobileTopArtists.vue";
-import MobileTopTracks from "../Mob/MobileTopTracks.vue";
-import MobileSavedAlbums from "../Mob/MobileSavedAlbums.vue";
-import MobileFollowedArtists from "../Mob/MobileFollowedArtists.vue";
-import MobileSavedTracks from "../Mob/MobileSavedTracks.vue";
-import MobileSearchPage from "../Mob/MobileSearchPage.vue";
-import GlobalPreloader from "../common/GlobalPreloader.vue";
-
-// Reactive state
-const currentTab = ref(0)
-const searchQuery = ref('')
-const isSidebarOpen = ref(false)
-
-// Methods
-const setCurrentTab = (tab) => {
-  currentTab.value = tab
-}
-
-const showProfile = () => {
-  setCurrentTab('profile')
-}
-
-const showQueue = () => {
-  setCurrentTab('queue')
-}
-
-const toggleSidebar = () => {
-  isSidebarOpen.value = !isSidebarOpen.value
-}
-
-const closeSidebar = () => {
-  isSidebarOpen.value = false
-}
-
-const handleSearch = () => {
-  // Emit search event for parent components
-  emit('search', searchQuery.value)
-}
-
-// Define emits
-const emit = defineEmits(['search'])
-</script>
 
 <style scoped>
 

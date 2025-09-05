@@ -16,7 +16,6 @@
           title="Your Playlists"
           placeholder="Search personal playlists..."
           :items-per-page="10"
-          @playlist-select="handlePersonalPlaylistSelect"
           @playlist-arrow-click="handlePersonalPlaylistArrowClick"
           @load-more="handleLoadMorePersonalPlaylists"
         />
@@ -81,31 +80,6 @@ const handleLoadMorePersonalPlaylists = async () => {
     await spotifyStore.fetchPlaylists(currentCount)
   } catch (error) {
     console.error('Failed to load more personal playlists:', error)
-  }
-}
-
-const handleLoadMoreSpotifyPlaylists = async () => {
-  try {
-    const currentCount = spotifyStore.getSpotifyPlaylists.length
-    await spotifyStore.fetchSpotifyPlaylists(currentCount)
-  } catch (error) {
-    console.error('Failed to load more Spotify playlists:', error)
-  }
-}
-
-const handlePersonalPlaylistSelect = async (playlistId, event) => {
-  setSelectedPersonalPlaylist(playlistId)
-  const playlist = spotifyStore.getPlaylists.find(p => p.id === playlistId)
-  console.log('Personal playlist selected:', playlist)
-
-  if (playlist) {
-    const playlistData = {
-      ...playlist,
-      type: 'deeperplaylist',
-    }
-
-    deeperStore.addToSection('yourPlaylists', playlistData)
-    deeperStore.setCurrentSection('yourPlaylists')
   }
 }
 

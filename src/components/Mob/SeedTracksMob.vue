@@ -4,6 +4,7 @@ import { getSectionName } from '../../utils/sectionUtils';
 import {useAudioStore} from "../../stores/audio-store";
 import {useQueueStore} from "../../stores/queue-store";
 import {useDeeperStore} from "../../stores/deeper-store";
+import {usePreferencesStore} from "../../stores/preferences-store";
 import {ref, computed, onMounted, onUnmounted, nextTick} from "vue";
 import {useMobileMediaDisplay} from "../../composables/useMobileMediaDisplay.js";
 import { useVisibilityManager } from "../../composables/useVisibilityManager";
@@ -14,9 +15,9 @@ const spotifyStore = useSpotifyStore()
 const audioStore = useAudioStore()
 const queueStore = useQueueStore()
 const deeperStore = useDeeperStore()
+const preferencesStore = usePreferencesStore()
 const selected = ref()
 const selectedSTSortOption = ref("")
-const viewMode = ref('list') // 'list' or 'grid'
 const componentRef = ref(null)
 
 // Get visibility manager
@@ -71,7 +72,7 @@ const handleBackClick = () => {
 }
 
 const toggleViewMode = () => {
-  viewMode.value = viewMode.value === 'list' ? 'grid' : 'list'
+  preferencesStore.toggleViewMode()
 }
 
 onMounted(async () => {
@@ -115,8 +116,8 @@ onUnmounted(() => {
               <path fill-rule="evenodd" d="M4.755 10.059a7.5 7.5 0 0112.548-3.364l1.903 1.903h-3.183a.75.75 0 100 1.5h4.992a.75.75 0 00.75-.75V4.356a.75.75 0 00-1.5 0v3.18l-1.9-1.9A9 9 0 003.306 9.67a.75.75 0 101.45.388zm15.408 3.352a.75.75 0 00-.919.53 7.5 7.5 0 01-12.548 3.364l-1.902-1.903h3.183a.75.75 0 000-1.5H2.984a.75.75 0 00-.75.75v4.992a.75.75 0 001.5 0v-3.18l1.9 1.9a9 9 0 0015.059-4.035.75.75 0 00-.53-.918z" clip-rule="evenodd" />
             </svg>
           </button>
-          <button class="view-toggle-btn" @click="toggleViewMode" :title="viewMode === 'list' ? 'Grid view' : 'List view'">
-            <svg v-if="viewMode === 'list'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <button class="view-toggle-btn" @click="toggleViewMode" :title="preferencesStore.viewMode === 'list' ? 'Grid view' : 'List view'">
+            <svg v-if="preferencesStore.viewMode === 'list'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
               <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h2.25a3 3 0 013 3v2.25a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9.75 0a3 3 0 013-3H18a3 3 0 013 3v2.25a3 3 0 01-3 3h-2.25a3 3 0 01-3-3V6zM3 15.75a3 3 0 013-3h2.25a3 3 0 013 3V18a3 3 0 01-3 3H6a3 3 0 01-3-3v-2.25zm9.75 0a3 3 0 013-3H18a3 3 0 013 3V18a3 3 0 01-3 3h-2.25a3 3 0 01-3-3v-2.25z" clip-rule="evenodd" />
             </svg>
             <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -143,13 +144,13 @@ onUnmounted(() => {
           <p>Try refreshing to get new recommendations</p>
         </div>
 
-        <div v-else :class="['releases-container', viewMode]">
+        <div v-else :class="['releases-container', preferencesStore.viewMode]">
           <MobileTrackItem
             v-for="track in sortedSTItems"
             :key="track.id"
             :track="track"
             :num="num"
-            :view-mode="viewMode"
+            :view-mode="preferencesStore.viewMode"
             @click="handleTrackClick(track, $event)"
           />
         </div>

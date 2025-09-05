@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useSpotifyStore } from "../../stores/spotify-store"
+import { usePreferencesStore } from "../../stores/preferences-store"
 import MobileTrackItem from './MobileTrackItem.vue'
 
 const props = defineProps({
@@ -11,9 +12,9 @@ const props = defineProps({
 })
 
 const spotifyStore = useSpotifyStore()
+const preferencesStore = usePreferencesStore()
 const tracks = ref([])
 const loading = ref(false)
-const viewMode = ref('list') // 'list' or 'grid'
 
 onMounted(async () => {
   await loadSampleTracks()
@@ -39,7 +40,7 @@ const loadSampleTracks = async () => {
 }
 
 const toggleViewMode = () => {
-  viewMode.value = viewMode.value === 'list' ? 'grid' : 'list'
+  preferencesStore.toggleViewMode()
 }
 </script>
 
@@ -52,8 +53,8 @@ const toggleViewMode = () => {
           <p>Click tracks to add them to your queue</p>
         </div>
         <div class="header-actions">
-          <button class="view-toggle-btn" @click="toggleViewMode" :title="viewMode === 'list' ? 'Grid view' : 'List view'">
-            <svg v-if="viewMode === 'list'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <button class="view-toggle-btn" @click="toggleViewMode" :title="preferencesStore.viewMode === 'list' ? 'Grid view' : 'List view'">
+            <svg v-if="preferencesStore.viewMode === 'list'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
               <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h2.25a3 3 0 013 3v2.25a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9.75 0a3 3 0 013-3H18a3 3 0 013 3v2.25a3 3 0 01-3 3h-2.25a3 3 0 01-3-3V6zM3 15.75a3 3 0 013-3h2.25a3 3 0 013 3V18a3 3 0 01-3 3H6a3 3 0 01-3-3v-2.25zm9.75 0a3 3 0 013-3H18a3 3 0 013 3V18a3 3 0 01-3 3h-2.25a3 3 0 01-3-3v-2.25z" clip-rule="evenodd" />
             </svg>
             <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -69,7 +70,7 @@ const toggleViewMode = () => {
       <p>Loading tracks...</p>
     </div>
 
-    <div v-else-if="tracks.length > 0" :class="['releases-container', viewMode]">
+    <div v-else-if="tracks.length > 0" :class="['releases-container', preferencesStore.viewMode]">
       <MobileTrackItem
         v-for="track in tracks"
         :key="track.id"

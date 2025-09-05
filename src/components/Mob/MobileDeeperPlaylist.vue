@@ -180,7 +180,7 @@ onUnmounted(() => {
           :key="item.track.id"
           :track="item.track"
           :num="num"
-          @click="handleTrackClick(item.track, $event)"
+          @click="handleTrackClick"
           view-mode="grid"
         />
       </div>
