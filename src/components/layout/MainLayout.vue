@@ -14,6 +14,7 @@ import Footer from '../Footer.vue'
 import ModernTabs from '../common/ModernTabs.vue'
 import TrackCover from "../TrackCover.vue"
 import Playlist from '../Playlist.vue'
+import GlobalPreloader from '../common/GlobalPreloader.vue'
 import PlaylistSelector from '../PlaylistSelector.vue'
 import TrackItem from '../TrackItem.vue'
 import ArtistItem from '../ArtistItem.vue'
@@ -66,17 +67,23 @@ const sortedSpotPlaylistItems = createPlaylistTrackSorter(
     selectedSpotPlaylistSortOption
 )
 
-// Event handlers
-const handleTrackClick = async (track, event) => {
-  setSelectedItem(track.id)
-  const sectionName = getSectionName(selectedTopMenu.value)
-  await deeperStore.getTrackDetails(track, sectionName)
-  if (selectedTopMenu.value in [1,8]) {
-    queueStore.addToQueue(track.track)
-  } else {
-    queueStore.addToQueue(track)
+  // Event handlers
+  const handleTrackClick = async (track, event) => {
+    // Prevent multiple clicks when globally loading
+    if (deeperStore.getIsGloballyLoading) {
+      console.log('Track click blocked - global loading in progress')
+      return
+    }
+    
+    setSelectedItem(track.id)
+    const sectionName = getSectionName(selectedTopMenu.value)
+    await deeperStore.getTrackDetails(track, sectionName)
+    if (selectedTopMenu.value in [1,8]) {
+      queueStore.addToQueue(track.track)
+    } else {
+      queueStore.addToQueue(track)
+    }
   }
-}
 
 const handleTrackHover = (event) => {
   audioStore.handleAudioHover(event)
@@ -86,11 +93,17 @@ const handleTrackLeave = (event) => {
   audioStore.handleAudioLeave(event)
 }
 
-const handleArtistClick = async (artist, event) => {
-  setSelectedItem(artist.id)
-  const sectionName = getSectionName(selectedTopMenu.value)
-  await deeperStore.getArtistDetails(artist, sectionName)
-}
+  const handleArtistClick = async (artist, event) => {
+    // Prevent multiple clicks when globally loading
+    if (deeperStore.getIsGloballyLoading) {
+      console.log('Artist click blocked - global loading in progress')
+      return
+    }
+    
+    setSelectedItem(artist.id)
+    const sectionName = getSectionName(selectedTopMenu.value)
+    await deeperStore.getArtistDetails(artist, sectionName)
+  }
 
 const handleArtistHover = (event) => {
   audioStore.handleAudioHover(event)
@@ -319,17 +332,17 @@ const handleCloseWelcomeModal = () => {
 
           <!-- Saved Albums Section -->
           <div v-if="selectedTopMenu === 4">
-            <SavedAlbums
-              :selected-top-menu="selectedTopMenu"
-              @album-click="async (album, event) => { setSelectedItem('4' + album.id); await deeperStore.getAlbumDetails(album, 'savedAlbums') }"
-            />
+                          <SavedAlbums
+                :selected-top-menu="selectedTopMenu"
+                @album-click="async (album, event) => { if (deeperStore.getIsGloballyLoading) return; setSelectedItem('4' + album.id); await deeperStore.getAlbumDetails(album, 'savedAlbums') }"
+              />
           </div>
 
           <!-- Saved Tracks Section -->
           <div v-if="selectedTopMenu === 5">
-            <SavedTracks
-              :selected-top-menu="selectedTopMenu"
-              @track-click="async (track, event) => { setSelectedItem('5' + track.id); await deeperStore.getTrackDetails(track, 'savedTracks'); queueStore.addToQueue(track) }"
+                          <SavedTracks
+                :selected-top-menu="selectedTopMenu"
+                @track-click="async (track, event) => { if (deeperStore.getIsGloballyLoading) return; setSelectedItem('5' + track.id); await deeperStore.getTrackDetails(track, 'savedTracks'); queueStore.addToQueue(track) }"
               @track-hover="handleTrackHover"
               @track-leave="handleTrackLeave"
             />
@@ -347,9 +360,9 @@ const handleCloseWelcomeModal = () => {
 
           <!-- New Releases Section -->
           <div v-if="selectedTopMenu === 7">
-            <NewReleases
-              :selected-top-menu="selectedTopMenu"
-              @album-click="async (album, event) => { setSelectedItem('7' + album.id); await deeperStore.getAlbumDetails(album, 'newReleases') }"
+                          <NewReleases
+                :selected-top-menu="selectedTopMenu"
+                @album-click="async (album, event) => { if (deeperStore.getIsGloballyLoading) return; setSelectedItem('7' + album.id); await deeperStore.getAlbumDetails(album, 'newReleases') }"
               @album-hover="handleTrackHover"
               @album-leave="handleTrackLeave"
             />
@@ -396,7 +409,7 @@ const handleCloseWelcomeModal = () => {
                   type="song"
                   :selected-item="selectedItem"
                   :unplayable-tracks="audioStore.unplayableTracks"
-                  @item-click="async (item, event) => { setSelectedItem('song' + item.id); await deeperStore.getTrackDetails(item, 'search') }"
+                  @item-click="async (item, event) => { if (deeperStore.getIsGloballyLoading) return; setSelectedItem('song' + item.id); await deeperStore.getTrackDetails(item, 'search') }"
                   @item-hover="audioStore.handleParentAudioHover"
                   @item-leave="audioStore.handleParentAudioLeave"
               />
@@ -406,7 +419,7 @@ const handleCloseWelcomeModal = () => {
                   type="artist"
                   :selected-item="selectedItem"
                   :unplayable-tracks="audioStore.unplayableTracks"
-                  @item-click="async (item, event) => { setSelectedItem('artist' + item.id); await deeperStore.getArtistDetails(item, 'search') }"
+                  @item-click="async (item, event) => { if (deeperStore.getIsGloballyLoading) return; setSelectedItem('artist' + item.id); await deeperStore.getArtistDetails(item, 'search') }"
                   @item-hover="audioStore.handleParentAudioHover"
                   @item-leave="audioStore.handleParentAudioLeave"
               />
@@ -416,7 +429,7 @@ const handleCloseWelcomeModal = () => {
                   type="album"
                   :selected-item="selectedItem"
                   :unplayable-tracks="audioStore.unplayableTracks"
-                  @item-click="async (item, event) => { setSelectedItem('album' + item.id); await deeperStore.getAlbumDetails(item, 'search') }"
+                  @item-click="async (item, event) => { if (deeperStore.getIsGloballyLoading) return; setSelectedItem('album' + item.id); await deeperStore.getAlbumDetails(item, 'search') }"
                   @item-hover="audioStore.handleParentAudioHover"
                   @item-leave="audioStore.handleParentAudioLeave"
               />
@@ -426,7 +439,7 @@ const handleCloseWelcomeModal = () => {
                   type="playlist"
                   :selected-item="selectedItem"
                   :unplayable-tracks="audioStore.unplayableTracks"
-                  @item-click="async (item, event) => { setSelectedItem('playlist' + item.id); await deeperStore.getPlaylistDetails(item, 'search') }"
+                  @item-click="async (item, event) => { if (deeperStore.getIsGloballyLoading) return; setSelectedItem('playlist' + item.id); await deeperStore.getPlaylistDetails(item, 'search') }"
                   @item-hover="audioStore.handleParentAudioHover"
                   @item-leave="audioStore.handleParentAudioLeave"
               />
@@ -442,6 +455,9 @@ const handleCloseWelcomeModal = () => {
       <Footer/>
     </div>
   </div>
+
+  <!-- Global Preloader -->
+  <GlobalPreloader />
 </template>
 
 <style scoped>

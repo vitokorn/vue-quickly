@@ -8,6 +8,21 @@ export const useDeeperStore = defineStore('deeper', {
         // Current section being displayed
         currentSection: 'search',
 
+        // Loading states for deeper elements
+        loading: {
+            tracks: new Set(),
+            artists: new Set(),
+            albums: new Set(),
+            playlists: new Set(),
+            seedArtists: new Set(),
+            seedTracks: new Set()
+        },
+
+        // Currently loading items for UI feedback
+        
+        // Global loading state to prevent multiple clicks
+        isGloballyLoading: false,
+
         // Detailed data sections
         sections: {
             yourPlaylists: [],
@@ -45,7 +60,20 @@ export const useDeeperStore = defineStore('deeper', {
         getCachedAlbum: (state) => (id) => state.cache.albums.get(id),
         getCachedPlaylist: (state) => (id) => state.cache.playlists.get(id),
         getCachedSeedArtist: (state) => (id) => state.cache.seedArtists.get(id),
-        getCachedSeedTrack: (state) => (id) => state.cache.seedTracks.get(id)
+        getCachedSeedTrack: (state) => (id) => state.cache.seedTracks.get(id),
+
+        // Loading state getters
+        isTrackLoading: (state) => (id) => state.loading.tracks.has(id),
+        isArtistLoading: (state) => (id) => state.loading.artists.has(id),
+        isAlbumLoading: (state) => (id) => state.loading.albums.has(id),
+        isPlaylistLoading: (state) => (id) => state.loading.playlists.has(id),
+        isSeedArtistLoading: (state) => (id) => state.loading.seedArtists.has(id),
+        isSeedTrackLoading: (state) => (id) => state.loading.seedTracks.has(id),
+        
+        // Currently loading getter
+        
+        // Global loading getter
+        getIsGloballyLoading: (state) => state.isGloballyLoading
     },
 
     actions: {
@@ -53,6 +81,30 @@ export const useDeeperStore = defineStore('deeper', {
         setCurrentSection(sectionName) {
             this.currentSection = sectionName
             console.log('Current section set to:', sectionName)
+        },
+
+        // Loading state management
+        setLoading(type, id, isLoading) {
+            if (isLoading) {
+                this.loading[type].add(id)
+            } else {
+                this.loading[type].delete(id)
+            }
+        },
+
+        clearLoading(type) {
+            this.loading[type].clear()
+        },
+
+        clearAllLoading() {
+            Object.keys(this.loading).forEach(key => {
+                this.loading[key].clear()
+            })
+        },
+
+        // Global loading management
+        setGlobalLoading(isLoading) {
+            this.isGloballyLoading = isLoading
         },
 
         // Add item to section
@@ -229,67 +281,78 @@ export const useDeeperStore = defineStore('deeper', {
         // Track details
         async getTrackDetails(item, sectionName, parentKey = null) {
             console.log('getTrackDetails called with item:', item.id, 'sectionName:', sectionName)
-            let trackData = item
+            
+            // Set loading state
+            this.setLoading('tracks', item.id, true)
+            this.setGlobalLoading(true)
+            
+            try {
+                let trackData = item
 
-            // Check if we have cached data
-            const cached = this.getCachedTrack(item.id)
-            if (cached) {
-                trackData = cached
-                console.log('Using cached track data for:', item.id)
-            } else {
-                console.log('Creating new track data for:', item.id)
-                // Prepare track data - create a new object to avoid modifying reactive properties
-                if (item.track && (typeof item.track === 'object')) {
-                    trackData = {...item.track}
+                // Check if we have cached data
+                const cached = this.getCachedTrack(item.id)
+                if (cached) {
+                    trackData = cached
+                    console.log('Using cached track data for:', item.id)
                 } else {
-                    trackData = {...item}
-                }
-                trackData.type = 'deepertracks'
-                trackData = toRaw(trackData)
+                    console.log('Creating new track data for:', item.id)
+                    // Prepare track data - create a new object to avoid modifying reactive properties
+                    if (item.track && (typeof item.track === 'object')) {
+                        trackData = {...item.track}
+                    } else {
+                        trackData = {...item}
+                    }
+                    trackData.type = 'deepertracks'
+                    trackData = toRaw(trackData)
 
-                // Check if user follows this track
-                try {
-                    const response = await spotifyApi.checkFollowingTrack(trackData.id)
-                    trackData.followed = response.data[0]
-                } catch (error) {
-                    console.error(258,error)
-                    trackData.followed = false
+                    // Check if user follows this track
+                    try {
+                        const response = await spotifyApi.checkFollowingTrack(trackData.id)
+                        trackData.followed = response.data[0]
+                    } catch (error) {
+                        console.error(258,error)
+                        trackData.followed = false
+                    }
+
+                    // Cache the track data
+                    this.cache.tracks.set(trackData.id, trackData)
                 }
 
-                // Cache the track data
-                this.cache.tracks.set(trackData.id, trackData)
+                // Use explicit parentKey only; no auto-derivation.
+                const effectiveParentKey = parentKey || null
+                // Create a new object with parentKey to avoid modifying reactive properties
+                trackData = {...trackData, parentKey: effectiveParentKey}
+
+                // Initialize visibility manager before any usage
+                const visibilityManager = useVisibilityManager()
+
+                // If this is a new ROOT track, replace root and purge entire subtree of previous root
+                if (!effectiveParentKey) {
+                    const sectionItems = this.sections[sectionName] || []
+                    const prevRoot = sectionItems.find(it => it.type === 'deepertracks' && (!it.parentKey || it.parentKey === null))
+                    if (prevRoot && prevRoot.id !== trackData.id) {
+                        this.removeSubtree(sectionName, prevRoot.id, visibilityManager, 'deepertracks')
+                    }
+                } else {
+                    // We are opening a child deeper track under a parent branch, remove other children of that parent
+                    this.removeDescendantsOfParent(sectionName, effectiveParentKey, visibilityManager)
+                }
+
+                // Add to section
+                console.log('Adding track to section:', sectionName, 'Track ID:', trackData.id, 'parentKey:', effectiveParentKey)
+                this.addToSection(sectionName, trackData)
+
+                // Ensure the target component is visible now (re-clicks or replacements)
+                const targetKey = `deepertracks_${trackData.id}${effectiveParentKey ? `__p:${effectiveParentKey}__` : ''}`
+                visibilityManager.showComponent(targetKey)
+
+                console.log('Track added to section, component will show when registered')
+                return trackData
+            } finally {
+                // Clear loading state
+                this.setLoading('tracks', item.id, false)
+                this.setGlobalLoading(false)
             }
-
-            // Use explicit parentKey only; no auto-derivation.
-            const effectiveParentKey = parentKey || null
-            // Create a new object with parentKey to avoid modifying reactive properties
-            trackData = {...trackData, parentKey: effectiveParentKey}
-
-            // Initialize visibility manager before any usage
-            const visibilityManager = useVisibilityManager()
-
-            // If this is a new ROOT track, replace root and purge entire subtree of previous root
-            if (!effectiveParentKey) {
-                const sectionItems = this.sections[sectionName] || []
-                const prevRoot = sectionItems.find(it => it.type === 'deepertracks' && (!it.parentKey || it.parentKey === null))
-                if (prevRoot && prevRoot.id !== trackData.id) {
-                    this.removeSubtree(sectionName, prevRoot.id, visibilityManager, 'deepertracks')
-                }
-            } else {
-                // We are opening a child deeper track under a parent branch, remove other children of that parent
-                this.removeDescendantsOfParent(sectionName, effectiveParentKey, visibilityManager)
-            }
-
-            // Add to section
-            console.log('Adding track to section:', sectionName, 'Track ID:', trackData.id, 'parentKey:', effectiveParentKey)
-            this.addToSection(sectionName, trackData)
-
-            // Ensure the target component is visible now (re-clicks or replacements)
-            const targetKey = `deepertracks_${trackData.id}${effectiveParentKey ? `__p:${effectiveParentKey}__` : ''}`
-            visibilityManager.showComponent(targetKey)
-
-            console.log('Track added to section, component will show when registered')
-            return trackData
         },
 
         // Helper method to hide all components of a specific type
@@ -346,19 +409,25 @@ export const useDeeperStore = defineStore('deeper', {
         // Artist details
         async getArtistDetails(item, sectionName, parentKey = null) {
             console.log('getArtistDetails called with item:', item.id, 'sectionName:', sectionName)
-            let artistData = this.getCachedArtist(item.id)
+            
+            // Set loading state
+            this.setLoading('artists', item.id, true)
+            this.setGlobalLoading(true)
+            
+            try {
+                let artistData = this.getCachedArtist(item.id)
 
-            if (!artistData) {
-                console.log('Fetching new artist data for:', item.id)
-                // Fetch comprehensive artist data
-                const [artistInfo, topTracks, albums, singles, appearances, related] = await Promise.all([
-                    spotifyApi.getArtist(item.id),
-                    spotifyApi.getArtistTopTracks(item.id),
-                    spotifyApi.getArtistAlbums(item.id),
-                    spotifyApi.getArtistSingles(item.id),
-                    spotifyApi.getArtistAppearances(item.id),
-                    spotifyApi.getRelatedArtists(item.id)
-                ])
+                if (!artistData) {
+                    console.log('Fetching new artist data for:', item.id)
+                    // Fetch comprehensive artist data
+                    const [artistInfo, topTracks, albums, singles, appearances, related] = await Promise.all([
+                        spotifyApi.getArtist(item.id),
+                        spotifyApi.getArtistTopTracks(item.id),
+                        spotifyApi.getArtistAlbums(item.id),
+                        spotifyApi.getArtistSingles(item.id),
+                        spotifyApi.getArtistAppearances(item.id),
+                        spotifyApi.getRelatedArtists(item.id)
+                    ])
 
                 console.log('API responses:', {
                     artistInfo: artistInfo.data,
@@ -439,114 +508,134 @@ export const useDeeperStore = defineStore('deeper', {
                 console.log('Using cached artist data for:', item.id)
             }
 
-            // Attach explicit parent context (no derivation for artists)
-            const derivedParentKey = parentKey || null
-            // Create a new object with parentKey to avoid modifying reactive properties
-            artistData = {...artistData, parentKey: derivedParentKey}
+                // Attach explicit parent context (no derivation for artists)
+                const derivedParentKey = parentKey || null
+                // Create a new object with parentKey to avoid modifying reactive properties
+                artistData = {...artistData, parentKey: derivedParentKey}
 
-            const visibilityManager = useVisibilityManager()
+                const visibilityManager = useVisibilityManager()
 
-            if (derivedParentKey) {
-                this.removeDescendantsOfParent(sectionName, derivedParentKey, visibilityManager)
+                if (derivedParentKey) {
+                    this.removeDescendantsOfParent(sectionName, derivedParentKey, visibilityManager)
+                }
+
+                // Add to section
+                console.log('Adding artist data to section:', sectionName, 'parentKey:', derivedParentKey)
+                this.addToSection(sectionName, artistData)
+
+                // Hide the currently visible trackartist component within same parent context
+                this.hideVisibleComponentOfType('trackartist', visibilityManager, derivedParentKey)
+
+                // Ensure target is visible
+                const targetKey = `trackartist_${item.id}${derivedParentKey ? `__p:${derivedParentKey}__` : ''}`
+                visibilityManager.showComponent(targetKey)
+
+                // Don't call showComponent here - let the component show itself when it's registered
+                console.log('Artist added to section, component will show when registered')
+
+                return artistData
+            } finally {
+                // Clear loading state
+                this.setLoading('artists', item.id, false)
+                this.setGlobalLoading(false)
             }
-
-            // Add to section
-            console.log('Adding artist data to section:', sectionName, 'parentKey:', derivedParentKey)
-            this.addToSection(sectionName, artistData)
-
-            // Hide the currently visible trackartist component within same parent context
-            this.hideVisibleComponentOfType('trackartist', visibilityManager, derivedParentKey)
-
-            // Ensure target is visible
-            const targetKey = `trackartist_${item.id}${derivedParentKey ? `__p:${derivedParentKey}__` : ''}`
-            visibilityManager.showComponent(targetKey)
-
-            // Don't call showComponent here - let the component show itself when it's registered
-            console.log('Artist added to section, component will show when registered')
-
-            return artistData
         },
 
         // Album details
         async getAlbumDetails(item, sectionName, parentKey = null) {
-            let albumData = item
+            // Set loading state
+            this.setLoading('albums', item.id, true)
+            this.setGlobalLoading(true)
+            
+            try {
+                let albumData = item
 
-            // Check if we have cached data
-            const cached = this.getCachedAlbum(item.id)
-            if (cached) {
-                albumData = cached
-            } else {
-                // Create a new object to avoid modifying reactive properties
-                if (item.album) {
-                    albumData = {...item.album, album: true}
+                // Check if we have cached data
+                const cached = this.getCachedAlbum(item.id)
+                if (cached) {
+                    albumData = cached
                 } else {
-                    albumData = {...item}
+                    // Create a new object to avoid modifying reactive properties
+                    if (item.album) {
+                        albumData = {...item.album, album: true}
+                    } else {
+                        albumData = {...item}
+                    }
+                    albumData.type = 'deeperalbum'
+
+                    // Check if user follows this album
+                    try {
+                        const response = await spotifyApi.checkFollowingAlbum(albumData.id)
+                        albumData.followed = response.data[0]
+                    } catch (error) {
+                        albumData.followed = false
+                    }
+
+                    // Cache the album data
+                    this.cache.albums.set(albumData.id, albumData)
                 }
-                albumData.type = 'deeperalbum'
 
-                // Check if user follows this album
-                try {
-                    const response = await spotifyApi.checkFollowingAlbum(albumData.id)
-                    albumData.followed = response.data[0]
-                } catch (error) {
-                    albumData.followed = false
+                // Attach explicit parent context (no derivation for albums)
+                const derivedParentKey = parentKey || null
+                // Create a new object with parentKey to avoid modifying reactive properties
+                albumData = {...albumData, parentKey: derivedParentKey}
+
+                const visibilityManager = useVisibilityManager()
+
+                // Replace previous album under the same parent and purge its subtree only for same type
+                if (derivedParentKey) {
+                    this.removeDescendantsOfParent(sectionName, derivedParentKey, visibilityManager)
                 }
 
-                // Cache the album data
-                this.cache.albums.set(albumData.id, albumData)
+                // Add to section
+                this.addToSection(sectionName, albumData)
+
+                // Hide the currently visible deeperalbum component within same parent context
+                this.hideVisibleComponentOfType('deeperalbum', visibilityManager, derivedParentKey)
+
+                // Ensure target is visible
+                const targetKey = `deeperalbum_${item.id}${derivedParentKey ? `__p:${derivedParentKey}__` : ''}`
+                visibilityManager.showComponent(targetKey)
+
+                // Don't call showComponent here - let the component show itself when it's registered
+                console.log('Album added to section, component will show when registered')
+
+                return albumData
+            } finally {
+                // Clear loading state
+                this.setLoading('albums', item.id, false)
+                this.setGlobalLoading(false)
             }
-
-            // Attach explicit parent context (no derivation for albums)
-            const derivedParentKey = parentKey || null
-            // Create a new object with parentKey to avoid modifying reactive properties
-            albumData = {...albumData, parentKey: derivedParentKey}
-
-            const visibilityManager = useVisibilityManager()
-
-            // Replace previous album under the same parent and purge its subtree only for same type
-            if (derivedParentKey) {
-                this.removeDescendantsOfParent(sectionName, derivedParentKey, visibilityManager)
-            }
-
-            // Add to section
-            this.addToSection(sectionName, albumData)
-
-            // Hide the currently visible deeperalbum component within same parent context
-            this.hideVisibleComponentOfType('deeperalbum', visibilityManager, derivedParentKey)
-
-            // Ensure target is visible
-            const targetKey = `deeperalbum_${item.id}${derivedParentKey ? `__p:${derivedParentKey}__` : ''}`
-            visibilityManager.showComponent(targetKey)
-
-            // Don't call showComponent here - let the component show itself when it's registered
-            console.log('Album added to section, component will show when registered')
-
-            return albumData
         },
 
         // Playlist details
         async getPlaylistDetails(item, sectionName, parentKey = null) {
-            let playlistData = item
+            // Set loading state
+            this.setLoading('playlists', item.id, true)
+            this.setGlobalLoading(true)
+            
+            try {
+                let playlistData = item
 
-            // Check if we have cached data
-            const cached = this.getCachedPlaylist(item.id)
-            if (cached) {
-                playlistData = cached
-            } else {
-                playlistData = {...item}
-                playlistData.type = 'deeperplaylist'
+                // Check if we have cached data
+                const cached = this.getCachedPlaylist(item.id)
+                if (cached) {
+                    playlistData = cached
+                } else {
+                    playlistData = {...item}
+                    playlistData.type = 'deeperplaylist'
 
-                // Check if user follows this album
-                try {
-                    const response = await spotifyApi.checkFollowingPlaylist(playlistData.id)
-                    playlistData.followed = response.data[0]
-                } catch (error) {
-                    playlistData.followed = false
+                    // Check if user follows this album
+                    try {
+                        const response = await spotifyApi.checkFollowingPlaylist(playlistData.id)
+                        playlistData.followed = response.data[0]
+                    } catch (error) {
+                        playlistData.followed = false
+                    }
+
+                    // Cache the album data
+                    this.cache.playlists.set(playlistData.id, playlistData)
                 }
-
-                // Cache the album data
-                this.cache.playlists.set(playlistData.id, playlistData)
-            }
 
             // Ensure tracks are populated; fetch full playlist if missing/empty
             try {
@@ -560,133 +649,160 @@ export const useDeeperStore = defineStore('deeper', {
                 console.warn('Failed to ensure playlist tracks; proceeding with existing data', e)
             }
 
-            // Attach explicit parent context (no derivation for albums)
-            const derivedParentKey = parentKey || null
-            // Create a new object with parentKey to avoid modifying reactive properties
-            playlistData = {...playlistData, parentKey: derivedParentKey}
+                // Attach explicit parent context (no derivation for albums)
+                const derivedParentKey = parentKey || null
+                // Create a new object with parentKey to avoid modifying reactive properties
+                playlistData = {...playlistData, parentKey: derivedParentKey}
 
-            const visibilityManager = useVisibilityManager()
+                const visibilityManager = useVisibilityManager()
 
-            // Replace previous playlist under the same parent and purge its subtree only for same type
-            if (derivedParentKey) {
-                this.removeDescendantsOfParent(sectionName, derivedParentKey, visibilityManager)
+                // Replace previous playlist under the same parent and purge its subtree only for same type
+                if (derivedParentKey) {
+                    this.removeDescendantsOfParent(sectionName, derivedParentKey, visibilityManager)
+                }
+
+                // Add to section
+                this.addToSection(sectionName, playlistData)
+
+                // Hide the currently visible deeperplaylist component within same parent context
+                this.hideVisibleComponentOfType('deeperplaylist', visibilityManager, derivedParentKey)
+
+                // Ensure target is visible
+                const targetKey = `deeperplaylist_${item.id}${derivedParentKey ? `__p:${derivedParentKey}__` : ''}`
+                visibilityManager.showComponent(targetKey)
+
+                // Don't call showComponent here - let the component show itself when it's registered
+                console.log('Playlist added to section, component will show when registered')
+
+                return playlistData
+            } finally {
+                // Clear loading state
+                this.setLoading('playlists', item.id, false)
+                this.setGlobalLoading(false)
             }
-
-            // Add to section
-            this.addToSection(sectionName, playlistData)
-
-            // Hide the currently visible deeperplaylist component within same parent context
-            this.hideVisibleComponentOfType('deeperplaylist', visibilityManager, derivedParentKey)
-
-            // Ensure target is visible
-            const targetKey = `deeperplaylist_${item.id}${derivedParentKey ? `__p:${derivedParentKey}__` : ''}`
-            visibilityManager.showComponent(targetKey)
-
-            // Don't call showComponent here - let the component show itself when it's registered
-            console.log('Playlist added to section, component will show when registered')
-
-            return playlistData
         },
 
         // Seed artist recommendations
         async getSeedArtistRecommendations(item, sectionName, parentKey = null) {
             const seedId = `sa${item.id}`
-            let seedData = this.getCachedSeedArtist(seedId)
+            
+            // Set loading state
+            this.setLoading('seedArtists', seedId, true)
+            this.setGlobalLoading(true)
+            
+            try {
+                let seedData = this.getCachedSeedArtist(seedId)
 
-            if (!seedData) {
-                const response = await spotifyApi.getRecommendations({
-                    seed_artists: item.id,
-                    limit: 50,
-                    offset: 0,
-                    market: 'UA'
-                })
+                if (!seedData) {
+                    const response = await spotifyApi.getRecommendations({
+                        seed_artists: item.id,
+                        limit: 50,
+                        offset: 0,
+                        market: 'UA'
+                    })
 
-                seedData = {
-                    tracks: response.data.tracks,
-                    type: 'seed_artists',
-                    id: seedId,
-                    name: item.name,
-                    artists: item.artists
+                    seedData = {
+                        tracks: response.data.tracks,
+                        type: 'seed_artists',
+                        id: seedId,
+                        name: item.name,
+                        artists: item.artists
+                    }
+
+                    // Cache the seed data
+                    this.cache.seedArtists.set(seedId, seedData)
                 }
 
-                // Cache the seed data
-                this.cache.seedArtists.set(seedId, seedData)
+                // Add to section
+                // Create a new object with parentKey to avoid modifying reactive properties
+                seedData = {...seedData, parentKey: parentKey || null}
+                const visibilityManager = useVisibilityManager()
+
+                if (seedData.parentKey) {
+                    this.removeDescendantsOfParent(sectionName, seedData.parentKey, visibilityManager)
+                }
+
+                this.addToSection(sectionName, seedData)
+
+                // Hide the currently visible seed_artists component before showing the new one
+                this.hideVisibleComponentOfType('seed_artists', visibilityManager, seedData.parentKey)
+
+                // Ensure target is visible
+                const targetKey = `seed_artists_${seedId}${seedData.parentKey ? `__p:${seedData.parentKey}__` : ''}`
+                visibilityManager.showComponent(targetKey)
+
+                // Don't call showComponent here - let the component show itself when it's registered
+                console.log('Seed artists added to section, component will show when registered')
+
+                return seedData
+            } finally {
+                // Clear loading state
+                this.setLoading('seedArtists', seedId, false)
+                this.setGlobalLoading(false)
             }
-
-            // Add to section
-            // Create a new object with parentKey to avoid modifying reactive properties
-            seedData = {...seedData, parentKey: parentKey || null}
-            const visibilityManager = useVisibilityManager()
-
-            if (seedData.parentKey) {
-                this.removeDescendantsOfParent(sectionName, seedData.parentKey, visibilityManager)
-            }
-
-            this.addToSection(sectionName, seedData)
-
-            // Hide the currently visible seed_artists component before showing the new one
-            this.hideVisibleComponentOfType('seed_artists', visibilityManager, seedData.parentKey)
-
-            // Ensure target is visible
-            const targetKey = `seed_artists_${seedId}${seedData.parentKey ? `__p:${seedData.parentKey}__` : ''}`
-            visibilityManager.showComponent(targetKey)
-
-            // Don't call showComponent here - let the component show itself when it's registered
-            console.log('Seed artists added to section, component will show when registered')
-
-            return seedData
         },
 
         // Seed track recommendations
         async getSeedTrackRecommendations(item, sectionName, parentKey = null) {
             const seedId = `st${item.id}`
-            let seedData = this.getCachedSeedTrack(seedId)
+            
+            // Set loading state
+            this.setLoading('seedTracks', seedId, true)
+            this.setGlobalLoading(true)
+            
+            try {
+                let seedData = this.getCachedSeedTrack(seedId)
 
-            if (!seedData) {
-                const response = await spotifyApi.getRecommendations({
-                    seed_tracks: item.id,
-                    limit: 50,
-                    offset: 0,
-                    market: 'UA'
-                })
+                if (!seedData) {
+                    const response = await spotifyApi.getRecommendations({
+                        seed_tracks: item.id,
+                        limit: 50,
+                        offset: 0,
+                        market: 'UA'
+                    })
 
-                seedData = {
-                    tracks: response.data.tracks,
-                    type: 'seed_tracks',
-                    id: seedId,
-                    name: item.name,
-                    artists: item.artists
+                    seedData = {
+                        tracks: response.data.tracks,
+                        type: 'seed_tracks',
+                        id: seedId,
+                        name: item.name,
+                        artists: item.artists
+                    }
+
+                    // Cache the seed data
+                    this.cache.seedTracks.set(seedId, seedData)
                 }
 
-                // Cache the seed data
-                this.cache.seedTracks.set(seedId, seedData)
+                // Attach parent context so seed tracks are purged with their ancestor
+                // Create a new object with parentKey to avoid modifying reactive properties
+                seedData = {...seedData, parentKey: parentKey || null}
+
+                // Use visibility manager
+                const visibilityManager = useVisibilityManager()
+
+                if (seedData.parentKey) {
+                    this.removeDescendantsOfParent(sectionName, seedData.parentKey, visibilityManager)
+                }
+
+                // Now add the seed item to the section
+                this.addToSection(sectionName, seedData)
+
+                // Hide any currently visible seed_tracks in the same parent branch
+                this.hideVisibleComponentOfType('seed_tracks', visibilityManager, seedData.parentKey)
+
+                // Ensure target is visible
+                const targetKey = `seed_tracks_${seedId}${seedData.parentKey ? `__p:${seedData.parentKey}__` : ''}`
+                visibilityManager.showComponent(targetKey)
+
+                // Don't call showComponent here - component also shows itself on mount
+                console.log('Seed tracks added to section, component will show when registered')
+
+                return seedData
+            } finally {
+                // Clear loading state
+                this.setLoading('seedTracks', seedId, false)
+                this.setGlobalLoading(false)
             }
-
-            // Attach parent context so seed tracks are purged with their ancestor
-            // Create a new object with parentKey to avoid modifying reactive properties
-            seedData = {...seedData, parentKey: parentKey || null}
-
-            // Use visibility manager
-            const visibilityManager = useVisibilityManager()
-
-            if (seedData.parentKey) {
-                this.removeDescendantsOfParent(sectionName, seedData.parentKey, visibilityManager)
-            }
-
-            // Now add the seed item to the section
-            this.addToSection(sectionName, seedData)
-
-            // Hide any currently visible seed_tracks in the same parent branch
-            this.hideVisibleComponentOfType('seed_tracks', visibilityManager, seedData.parentKey)
-
-            // Ensure target is visible
-            const targetKey = `seed_tracks_${seedId}${seedData.parentKey ? `__p:${seedData.parentKey}__` : ''}`
-            visibilityManager.showComponent(targetKey)
-
-            // Don't call showComponent here - component also shows itself on mount
-            console.log('Seed tracks added to section, component will show when registered')
-
-            return seedData
         },
 
         // Legacy method for compatibility with existing components

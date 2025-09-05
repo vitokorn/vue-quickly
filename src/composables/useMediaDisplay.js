@@ -41,8 +41,15 @@ export function useMediaDisplay(item, cover = null) {
 
   // Get background image style if image exists
   const backgroundStyle = computed(() => {
-    if (hasImage.value) {
-      return { 'background-image': `url(${image.value.url})` }
+    if (hasImage.value && image.value?.url) {
+      try {
+        // Use encodeURI to properly encode the URL
+        const encodedUrl = encodeURI(image.value.url)
+        return { 'background-image': `url(${encodedUrl})` }
+      } catch (error) {
+        console.warn('Invalid image URL:', image.value.url, error)
+        return {}
+      }
     }
     return {}
   })
@@ -54,7 +61,16 @@ export function useMediaDisplay(item, cover = null) {
 
   // Get audio source
   const audioSrc = computed(() => {
-    return hasPreview.value ? item.value.preview_url : ''
+    if (hasPreview.value && item.value?.preview_url) {
+      try {
+        // Use encodeURI to properly encode the URL
+        return encodeURI(item.value.preview_url)
+      } catch (error) {
+        console.warn('Invalid audio URL:', item.value.preview_url, error)
+        return ''
+      }
+    }
+    return ''
   })
 
   return {
