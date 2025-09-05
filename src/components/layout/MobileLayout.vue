@@ -103,6 +103,16 @@
           <h3 class="sidebar-section-title">Discover</h3>
           <button
             class="sidebar-nav-item"
+            :class="{ active: currentTab === 0 }"
+            @click="setCurrentTab(0); closeSidebar()"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="sidebar-nav-icon">
+              <path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM2.25 10.5a8.25 8.25 0 1114.59 5.28l4.69 4.69a.75.75 0 11-1.06 1.06l-4.69-4.69A8.25 8.25 0 012.25 10.5z" clip-rule="evenodd" />
+            </svg>
+            <span class="sidebar-nav-label">Search</span>
+          </button>
+          <button
+            class="sidebar-nav-item"
             :class="{ active: currentTab === 7 }"
             @click="setCurrentTab(7); closeSidebar()"
           >
@@ -156,7 +166,11 @@
     <!-- Main Content Area -->
     <main class="mobile-main">
 
-      <div v-if="currentTab === 1">
+      <div v-if="currentTab === 0">
+        <MobileSearchPage />
+      </div>
+
+      <div v-else-if="currentTab === 1">
         <PlaylistsPage />
       </div>
 
@@ -218,10 +232,11 @@ import MobileTopTracks from "../Mob/MobileTopTracks.vue";
 import MobileSavedAlbums from "../Mob/MobileSavedAlbums.vue";
 import MobileFollowedArtists from "../Mob/MobileFollowedArtists.vue";
 import MobileSavedTracks from "../Mob/MobileSavedTracks.vue";
+import MobileSearchPage from "../Mob/MobileSearchPage.vue";
 import GlobalPreloader from "../common/GlobalPreloader.vue";
 
 // Reactive state
-const currentTab = ref('profile')
+const currentTab = ref(0)
 const searchQuery = ref('')
 const isSidebarOpen = ref(false)
 
@@ -256,5 +271,5 @@ const emit = defineEmits(['search'])
 </script>
 
 <style scoped>
-/* Styles moved to mobile.css */
+
 </style>
