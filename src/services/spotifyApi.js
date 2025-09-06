@@ -82,6 +82,10 @@ export class SpotifyApiService {
     return this.request(`/playlists/${id}`)
   }
 
+  async getPlaylistTracks(id, offset = 0, limit = 100) {
+    return this.request(`/playlists/${id}/tracks?offset=${offset}&limit=${limit}`)
+  }
+
   async getSpotifyPlaylists(offset = 0, limit = 50) {
     return this.request(`/users/spotify/playlists?fields=items(name,id,images,owner,public)&limit=${limit}&offset=${offset}`)
   }

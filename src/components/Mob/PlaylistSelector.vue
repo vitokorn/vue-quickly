@@ -1,6 +1,7 @@
 <script setup>
 import {ref, computed} from 'vue'
 import { usePreferencesStore } from '../../stores/preferences-store'
+import MobilePaginationContainer from './MobilePaginationContainer.vue'
 
 const preferencesStore = usePreferencesStore()
 
@@ -211,23 +212,12 @@ const resetPagination = () => {
         </div>
       </div>
       <!-- Pagination -->
-      <div class="pagination-container">
-        <button
-            @click="handlePageChange(currentPage - 1)"
-            :disabled="currentPage === 1"
-            class="pagination-button"
-        >
-          Previous
-        </button>
-        <span class="pagination-info">Page {{ currentPage }} of {{ totalPages }}</span>
-        <button
-            @click="handlePageChange(currentPage + 1)"
-            :disabled="currentPage === totalPages"
-            class="pagination-button"
-        >
-          Next
-        </button>
-      </div>
+      <MobilePaginationContainer
+        v-if="totalPages > 1"
+        :current-page="currentPage"
+        :total-pages="totalPages"
+        @page-change="handlePageChange"
+      />
     </div>
   </div>
 </template>

@@ -5,6 +5,7 @@ import {useDeeperStore} from '../../stores/deeper-store'
 import {usePreferencesStore} from '../../stores/preferences-store'
 import {useMediaDisplay} from "../../composables/useMediaDisplay.js"
 import {useVisibilityManager} from "../../composables/useVisibilityManager"
+import MobilePaginationContainer from './MobilePaginationContainer.vue'
 
 const props = defineProps({
   releases: {
@@ -269,23 +270,12 @@ const formatReleaseDate = (dateString) => {
           </div>
         </div>
       </div>
-      <div class="pagination-container">
-        <button
-            @click="handlePageChange(currentPage - 1)"
-            :disabled="currentPage === 1"
-            class="pagination-button"
-        >
-          Previous
-        </button>
-        <span class="pagination-info">Page {{ currentPage }} of {{ totalPages }}</span>
-        <button
-            @click="handlePageChange(currentPage + 1)"
-            :disabled="currentPage === totalPages"
-            class="pagination-button"
-        >
-          Next
-        </button>
-      </div>
+      <MobilePaginationContainer
+        v-if="totalPages > 1"
+        :current-page="currentPage"
+        :total-pages="totalPages"
+        @page-change="handlePageChange"
+      />
     </div>
   </div>
 </template>

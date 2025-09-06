@@ -10,6 +10,7 @@ import SortTracks from './SortTracks.vue'
 import TrackItem from './TrackItem.vue'
 import Loader from './Loader.vue'
 import RefreshButton from "./RefreshButton.vue";
+import PaginationContainer from './PaginationContainer.vue'
 
 // Props
 const props = defineProps({
@@ -32,14 +33,26 @@ const deeperStore = useDeeperStore()
 const { createTrackSorter } = useSorting()
 const { selectedItem, setSelectedItem } = useSelection()
 
-// Local state for sorting
+// Local state for sorting and pagination
 const selectedSTSortOption = ref("")
+const currentPage = ref(1)
+const itemsPerPage = 50
+const loadingMore = ref(false)
 
 // Computed sorted data
 const sortedSTItems = createTrackSorter(
   computed(() => spotifyStore.getSavedTracks || []),
   selectedSTSortOption
 )
+
+// Computed pagination data
+const totalItems = computed(() => spotifyStore.savedTracksTotal)
+const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage))
+const displayedItems = computed(() => {
+  // For API pagination, we show all loaded items up to current page
+  const maxItems = currentPage.value * itemsPerPage
+  return sortedSTItems.value.slice(0, maxItems)
+})
 
 // Event handlers
 const handleTrackClick = async (track, event) => {
@@ -62,6 +75,29 @@ const handleTrackLeave = (event) => {
 const handleRefresh = () => {
   spotifyStore.savedTracks = []
   spotifyStore.fetchSavedTracks(0)
+  currentPage.value = 1 // Reset to first page
+}
+
+const handlePageChange = async (page) => {
+  if (page > currentPage.value) {
+    // Moving to next page - need to fetch more data
+    const currentOffset = spotifyStore.savedTracks.length
+    const targetOffset = (page - 1) * itemsPerPage
+
+    if (targetOffset >= currentOffset) {
+      // Need to fetch more data
+      loadingMore.value = true
+      try {
+        await spotifyStore.fetchSavedTracks(currentOffset)
+      } catch (error) {
+        console.error('Failed to load more tracks:', error)
+      } finally {
+        loadingMore.value = false
+      }
+    }
+  }
+
+  currentPage.value = page
 }
 </script>
 
@@ -77,9 +113,13 @@ const handleRefresh = () => {
       <SortTracks v-model="selectedSTSortOption" />
     </div>
     <Loader v-if="spotifyStore.isLoading" />
+    <div v-if="loadingMore" class="loading-more">
+      <div class="loading-spinner"></div>
+      <span>Loading more tracks...</span>
+    </div>
       <div id="savedtrack" class="display-flex flex-wrap" v-show="selectedTopMenu === 5">
         <div class="display-flex flex-wrap py-2 gap-8">
-          <template v-for="(item, index) of sortedSTItems" :key="index">
+          <template v-for="(item, index) of displayedItems" :key="index">
             <TrackItem
               :track="item.track"
               :selected="selectedItem === '5' + item.track.id"
@@ -92,9 +132,39 @@ const handleRefresh = () => {
           </template>
         </div>
       </div>
+    <PaginationContainer
+        v-if="totalPages > 1"
+        :current-page="currentPage"
+        :total-pages="totalPages"
+        :items-per-page="itemsPerPage"
+        :total-items="totalItems"
+        @page-change="handlePageChange"
+    />
   </div>
 </template>
 
 <style scoped>
-/* Component-specific styles can be added here if needed */
+.loading-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  color: #777;
+  font-size: 0.9rem;
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #1db954;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 </style>

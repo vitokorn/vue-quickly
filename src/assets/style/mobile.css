@@ -1778,7 +1778,6 @@
     max-width: 300px;
 }
 
-.recommend-btn,
 .spotify-link {
     gap: 8px;
     border-radius: 8px;
@@ -1788,16 +1787,6 @@
     transition: all 0.2s ease;
     border: none;
     cursor: pointer;
-}
-
-.recommend-btn {
-    background: var(--active-tab);
-    color: white;
-}
-
-.recommend-btn:hover {
-    background: var(--active-tab-hover);
-    transform: translateY(-1px);
 }
 
 .spotify-link {
@@ -1909,7 +1898,7 @@
 .artist-placeholder {
     width: 60px;
     height: 60px;
-    color: #666;
+    color: #777;
 }
 
 .section {
@@ -2465,13 +2454,6 @@
     position: relative;
 }
 
-
-.mobile-search-page {
-    padding: 20px;
-    min-height: 100vh;
-    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-    color: white;
-}
 
 .search-input-container {
     position: relative;

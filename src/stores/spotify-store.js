@@ -20,6 +20,7 @@ export const useSpotifyStore = defineStore('spotify', {
         },
         savedAlbums: [],
         savedTracks: [],
+        savedTracksTotal: 0,
         followedArtists: [],
         playlists: [],
 
@@ -37,6 +38,7 @@ export const useSpotifyStore = defineStore('spotify', {
 
         // Spotify playlists
         spotifyPlaylists: [],
+        playlistTracksTotal: 0,
 
         // Cache for detailed data
         cache: {
@@ -178,6 +180,7 @@ export const useSpotifyStore = defineStore('spotify', {
 
                 const response = await spotifyApi.getSavedTracks(offset, 50)
                 this.savedTracks.push(...response.data.items)
+                this.savedTracksTotal = response.data.total
             } catch (error) {
                 console.error('Failed to fetch saved tracks:', error)
                 throw error
@@ -252,10 +255,30 @@ export const useSpotifyStore = defineStore('spotify', {
                     playlist.followed = false
                 }
 
+                // Store tracks total for pagination
+                if (playlist.tracks) {
+                    this.playlistTracksTotal = playlist.tracks.total
+                }
+
                 this.currentPlaylist = playlist
                 return playlist
             } catch (error) {
                 console.error('Failed to fetch playlist:', error)
+                throw error
+            }
+        },
+
+        async fetchPlaylistTracks(id, offset = 0) {
+            try {
+                const response = await spotifyApi.getPlaylistTracks(id, offset, 100)
+                const tracksData = response.data
+                
+                // Store tracks total for pagination
+                this.playlistTracksTotal = tracksData.total
+                
+                return tracksData
+            } catch (error) {
+                console.error('Failed to fetch playlist tracks:', error)
                 throw error
             }
         },
@@ -293,6 +316,12 @@ export const useSpotifyStore = defineStore('spotify', {
             try {
                 const response = await spotifyApi.getPlaylist(id)
                 const playlist = response.data
+                
+                // Store tracks total for pagination
+                if (playlist.tracks) {
+                    this.playlistTracksTotal = playlist.tracks.total
+                }
+                
                 this.currentSpotifyPlaylist = playlist
                 return playlist
             } catch (error) {

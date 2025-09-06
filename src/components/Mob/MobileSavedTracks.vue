@@ -7,6 +7,7 @@ import {useDeeperStore} from '../../stores/deeper-store'
 import {usePreferencesStore} from '../../stores/preferences-store'
 import {useSelection} from '../../composables/useSelection.js'
 import MobileTrackItem from './MobileTrackItem.vue'
+import MobilePaginationContainer from './MobilePaginationContainer.vue'
 
 const props = defineProps({
   num: {
@@ -27,6 +28,9 @@ const {selectedItem, setSelectedItem} = useSelection()
 // Local state
 const loading = ref(false)
 const savedTracks = ref([])
+const currentPage = ref(1)
+const itemsPerPage = 20 // Smaller page size for mobile
+const loadingMore = ref(false)
 
 // Methods
 const loadSavedTracks = async () => {
@@ -80,11 +84,45 @@ const handleInfoClick = async (track, event) => {
 const handleRefresh = async () => {
   // Clear existing data and fetch fresh
   spotifyStore.savedTracks = []
+  currentPage.value = 1 // Reset to first page
   await loadSavedTracks()
 }
 
 const toggleViewMode = () => {
   preferencesStore.toggleViewMode()
+}
+
+// Computed pagination data
+const totalItems = computed(() => spotifyStore.savedTracksTotal)
+const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage))
+const displayedTracks = computed(() => {
+  // For API pagination, we show all loaded items up to current page
+  const maxItems = currentPage.value * itemsPerPage
+  return savedTracks.value.slice(0, maxItems)
+})
+
+const handlePageChange = async (page) => {
+  if (page > currentPage.value) {
+    // Moving to next page - need to fetch more data
+    const currentOffset = spotifyStore.savedTracks.length
+    const targetOffset = (page - 1) * itemsPerPage
+
+    if (targetOffset >= currentOffset) {
+      // Need to fetch more data
+      loadingMore.value = true
+      try {
+        await spotifyStore.fetchSavedTracks(currentOffset)
+        // Update local savedTracks array
+        savedTracks.value = (spotifyStore.getSavedTracks || []).map(item => item.track)
+      } catch (error) {
+        console.error('Failed to load more tracks:', error)
+      } finally {
+        loadingMore.value = false
+      }
+    }
+  }
+
+  currentPage.value = page
 }
 
 // Load initial data
@@ -132,10 +170,16 @@ onMounted(async () => {
       <p>Loading saved tracks...</p>
     </div>
 
+    <!-- Loading More State -->
+    <div v-if="loadingMore" class="loading-more">
+      <div class="loading-spinner"></div>
+      <span>Loading more tracks...</span>
+    </div>
+
     <!-- Tracks List -->
     <div v-else-if="savedTracks.length > 0" :class="['releases-container', preferencesStore.viewMode]">
       <MobileTrackItem
-        v-for="track in savedTracks.slice(0, 10)"
+        v-for="track in displayedTracks"
         :key="track.id"
         :track="track"
         :num="props.num"
@@ -157,8 +201,39 @@ onMounted(async () => {
       <h4>No saved tracks</h4>
       <p>Start saving your favorite tracks to see them here</p>
     </div>
+
+    <!-- Pagination -->
+    <MobilePaginationContainer
+      v-if="totalPages > 1"
+      :current-page="currentPage"
+      :total-pages="totalPages"
+      @page-change="handlePageChange"
+    />
   </div>
 </template>
 
 <style scoped>
+.loading-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  color: #777;
+  font-size: 0.9rem;
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #1db954;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 </style>

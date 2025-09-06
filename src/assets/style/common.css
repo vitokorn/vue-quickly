@@ -32,7 +32,7 @@
     --menu-bg: rgba(255, 255, 255, 0.95);
     --queue-item-bg: rgba(255, 255, 255, 0.03);
     --item-border: rgba(240, 55, 165, 0.08);
-    --queue-item-border: rgba(255, 255, 255, 0.05);
+    --queue-item-border: rgba(0, 0, 0, 0.05);
     --item-border-border: rgba(240, 55, 165, 0.25);
     --action-bg: rgba(0, 0, 0, 0.05);
     --action-hover: rgba(240, 55, 165, 0.1);
@@ -482,7 +482,7 @@ h1 {
 }
 
 /* Button Components - Unified System */
-.modern-button, .action-button {
+.modern-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -535,35 +535,6 @@ h1 {
     opacity: 0.6;
     cursor: not-allowed;
     transform: none;
-}
-
-/* Action Button - Simple action buttons */
-.action-button {
-    width: 100%;
-    padding: 20px 24px;
-    background: var(--action-bg);
-    border: 1px solid var(--border-color);
-    color: var(--title-color);
-    font-size: 16px;
-    margin-bottom: 16px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.action-button:last-child {
-    margin-bottom: 0;
-}
-
-.action-button:hover {
-    background: var(--action-hover);
-    border-color: var(--active-tab);
-    color: var(--active-tab);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-}
-
-.action-button:active {
-    transform: translateY(0);
 }
 
 .action-icon {
@@ -1089,6 +1060,14 @@ h1 {
         flex-wrap: wrap;
         gap: 12px;
     }
+    .pagination-container {
+        gap: 0.5rem;
+        padding: 0.5rem;
+    }
+
+    .pagination-info {
+        font-size: 0.8rem;
+    }
 }
 
 /* Checkmark and Form Components */
@@ -1131,7 +1110,6 @@ h1 {
 .follow-section {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 8px;
     padding: 12px;
 }
@@ -1509,12 +1487,6 @@ h1 {
     line-height: 1.4;
 }
 
-.follow-section {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
 
 .follow-label {
     font-size: 14px;
@@ -1645,7 +1617,7 @@ h1 {
 }
 
 
-.recommend-btn {
+.recommend-btn, .action-button {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -1661,15 +1633,21 @@ h1 {
     box-shadow: 0 2px 8px var(--tab-box-shadow);
 }
 
-:root .recommend-btn:hover {
+.recommend-btn:hover,.action-button:hover {
+    background: var(--action-hover);
+    border-color: var(--active-tab);
+    color: var(--active-tab);
     transform: translateY(-2px);
     box-shadow: var(--tab-box-shadow);
-    color: var(--active-tab-hover);
 }
 
-.recommend-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--tab-box-shadow);
+.action-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.action-button:active {
+    transform: translateY(0);
 }
 
 .btn-icon {
@@ -2030,4 +2008,22 @@ h1 {
 
 .half-opacity {
     opacity: 0.6;
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.pagination-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.9rem;
+    color: #777;
 }

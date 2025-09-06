@@ -187,6 +187,7 @@ input[type="text"] {
     background-color: gray;
     position: relative;
     color: transparent;
+    text-align: center;
 }
 
 .media-card:hover {
@@ -2198,8 +2199,8 @@ audio {
 }
 
 .search-result-item:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.15);
+    background: var(--queue-item-border);
+    border-color: var(--settings-action-hover);
     transform: translateX(4px);
 }
 

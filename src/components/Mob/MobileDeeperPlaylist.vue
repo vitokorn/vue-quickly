@@ -9,6 +9,7 @@ import { ref, computed, onMounted, onUnmounted, nextTick } from "vue"
 import { useVisibilityManager } from "../../composables/useVisibilityManager"
 import { useMobileMediaDisplay } from "../../composables/useMobileMediaDisplay.js"
 import MobileTrackItem from './MobileTrackItem.vue'
+import MobilePaginationContainer from './MobilePaginationContainer.vue'
 
 const props = defineProps(['d', 'num'])
 const spotifyStore = useSpotifyStore()
@@ -19,6 +20,9 @@ const preferencesStore = usePreferencesStore()
 const selected = ref()
 const selectedDeeperPlaylistSortOption = ref("")
 const componentRef = ref(null)
+const currentPage = ref(1)
+const itemsPerPage = ref(20)
+const loadingMore = ref(false)
 
 // Get mobile media display for playlist
 const { displayClass, backgroundStyle, hasPreview, previewUrl, trackId } = useMobileMediaDisplay(computed(() => props.d))
@@ -51,6 +55,17 @@ const sortedDeeperPlaylistItems = computed(() => {
         return 0
     }
   })
+})
+
+// Computed pagination data
+const totalItems = computed(() => props.d.tracks?.total || 0)
+console.log(62, totalItems.value)
+console.log(itemsPerPage)
+const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage.value))
+const displayedItems = computed(() => {
+  // For API pagination, we show all loaded items up to current page
+  const maxItems = currentPage.value * itemsPerPage.value
+  return sortedDeeperPlaylistItems.value.slice(0, maxItems)
 })
 
 // Helper function to get section name from num
@@ -122,9 +137,36 @@ const handleRefresh = () => {
   // For now, we'll just re-trigger the sort to refresh the display
   const currentSort = selectedDeeperPlaylistSortOption.value
   selectedDeeperPlaylistSortOption.value = ''
+  currentPage.value = 1 // Reset to first page
   setTimeout(() => {
     selectedDeeperPlaylistSortOption.value = currentSort
   }, 100)
+}
+
+const handlePageChange = async (page) => {
+  if (page > currentPage.value) {
+    // Moving to next page - need to fetch more data
+    const currentOffset = props.d.tracks?.items?.length || 0
+    const targetOffset = (page - 1) * itemsPerPage.value
+
+    if (targetOffset >= currentOffset) {
+      // Need to fetch more data
+      loadingMore.value = true
+      try {
+        const tracksData = await spotifyStore.fetchPlaylistTracks(props.d.id, currentOffset)
+        // Append new tracks to existing tracks
+        if (props.d.tracks && tracksData.items) {
+          props.d.tracks.items.push(...tracksData.items)
+        }
+      } catch (error) {
+        console.error('Failed to load more tracks:', error)
+      } finally {
+        loadingMore.value = false
+      }
+    }
+  }
+
+  currentPage.value = page
 }
 
 onMounted(async () => {
@@ -209,7 +251,7 @@ onUnmounted(() => {
 
         <div class="playlist-meta">
           <span v-if="d.owner" class="playlist-owner">By {{ d.owner.display_name }}</span>
-          <span v-if="d.tracks && d.tracks.items" class="track-count">{{ d.tracks.items.length }} tracks</span>
+          <span v-if="d.tracks && d.tracks.total" class="track-count">{{ d.tracks.total }} tracks</span>
           <span v-if="d.public !== undefined" class="playlist-visibility">
             {{ d.public ? 'Public' : 'Private' }}
           </span>
@@ -222,9 +264,16 @@ onUnmounted(() => {
     <!-- Tracks Section -->
     <div class="tracks-section">
       <h3 class="section-title">Tracks</h3>
+
+      <!-- Loading More State -->
+      <div v-if="loadingMore" class="loading-more">
+        <div class="loading-spinner"></div>
+        <span>Loading more tracks...</span>
+      </div>
+
       <div :class="['releases-container', preferencesStore.viewMode]">
         <MobileTrackItem
-          v-for="item in sortedDeeperPlaylistItems"
+          v-for="item in displayedItems"
           :key="item.track.id"
           :track="item.track"
           :num="num"
@@ -234,10 +283,41 @@ onUnmounted(() => {
           @infoClick="handleInfoClick"
         />
       </div>
+
+      <!-- Pagination -->
+      <MobilePaginationContainer
+        v-if="totalPages > 1"
+        :current-page="currentPage"
+        :total-pages="totalPages"
+        @page-change="handlePageChange"
+      />
     </div>
 
   </div>
 </template>
 
 <style scoped>
+.loading-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  color: #777;
+  font-size: 0.9rem;
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #1db954;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 </style>
