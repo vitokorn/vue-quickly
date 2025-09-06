@@ -7,7 +7,6 @@ import { useDeeperStore } from '../../stores/deeper-store'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import { useSelection } from '../../composables/useSelection.js'
 import MobileTrackItem from './MobileTrackItem.vue'
-import MobileTrackDisplaySection from "./MobileTrackDisplaySection.vue";
 
 const spotifyStore = useSpotifyStore()
 const audioStore = useAudioStore()

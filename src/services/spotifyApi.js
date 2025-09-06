@@ -109,7 +109,13 @@ export class SpotifyApiService {
   }
 
   async getRelatedArtists(id) {
-    return this.request(`/artists/${id}/related-artists`)
+    try {
+      return await this.request(`/artists/${id}/related-artists`)
+    } catch (error) {
+      console.warn('Failed to fetch related artists:', error.message)
+      // Return empty array if related artists fail to load
+      return { data: { artists: [] } }
+    }
   }
 
   // Albums

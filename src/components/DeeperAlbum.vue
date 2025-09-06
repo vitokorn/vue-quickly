@@ -61,7 +61,7 @@ onMounted(async ()=> {
 <template>
 
   <div class="modern-album-card" ref="componentRef">
-    <div class="track-main">
+    <div class="deeper-header">
       <track-cover :d="d" :cover="d.images[0]"></track-cover>
 
       <div class="track-info">

@@ -169,7 +169,7 @@ onMounted(async () => {
         <h3 class="section-title">Top tracks</h3>
       </div>
 
-      <div v-if="topTracksData.length > 0" class="tracks-grid">
+      <div v-if="topTracksData.length > 0" class="albums-grid">
         <template v-for="(tt, ttIndex) in topTracksData" :key="ttIndex">
           <div :class="['track-card', getMediaDisplay(tt).displayClass.value, selected === tt.id ? 'selected' : '']"
                :style="getMediaDisplay(tt).backgroundStyle.value"
@@ -191,13 +191,13 @@ onMounted(async () => {
 
       <div v-if="albumsData.length > 0" class="albums-grid">
         <div v-for="(a, aIndex) in albumsData" :key="aIndex">
-          <div :class="['album-card', getMediaDisplay(a).displayClass.value, selected === a.id ? 'selected' : '']"
+          <div :class="['track-card', getMediaDisplay(a).displayClass.value, selected === a.id ? 'selected' : '']"
                :style="getMediaDisplay(a).backgroundStyle.value"
                @click="setActive(a.id);deeperStore.getAlbumDetails(a, getSectionName(num), d.id)"
                @mouseover="getMediaDisplay(a).hasPreview.value && audioStore.handleAudioHover($event)"
                @mouseleave="getMediaDisplay(a).hasPreview.value && audioStore.handleAudioLeave($event)">
-            <div class="album-overlay">
-              <div class="album-name">{{ a.name }}</div>
+            <div class="track-overlay">
+              <div class="track-name">{{ a.name }}</div>
             </div>
             <audio :preload="getMediaDisplay(a).audioPreload.value" :src="getMediaDisplay(a).audioSrc.value"></audio>
           </div>
@@ -211,13 +211,13 @@ onMounted(async () => {
 
       <div v-if="singlesData.length > 0" class="albums-grid">
         <div v-for="(s, sIndex) in singlesData" :key="sIndex">
-          <div :class="['album-card', getMediaDisplay(s).displayClass.value, selected === s.id ? 'selected' : '']"
+          <div :class="['track-card', getMediaDisplay(s).displayClass.value, selected === s.id ? 'selected' : '']"
                :style="getMediaDisplay(s).backgroundStyle.value"
                @click="setActive(s.id);deeperStore.getAlbumDetails(s, getSectionName(num), d.id)"
                @mouseover="getMediaDisplay(s).hasPreview.value && audioStore.handleAudioHover($event)"
                @mouseleave="getMediaDisplay(s).hasPreview.value && audioStore.handleAudioLeave($event)">
-            <div class="album-overlay">
-              <div class="album-name">{{ s.name }}</div>
+            <div class="track-overlay">
+              <div class="track-name">{{ s.name }}</div>
             </div>
             <audio :preload="getMediaDisplay(s).audioPreload.value" :src="getMediaDisplay(s).audioSrc.value"></audio>
           </div>
@@ -231,13 +231,13 @@ onMounted(async () => {
 
       <div v-if="appearsOnData.length > 0" class="albums-grid">
         <div v-for="(ao, aoIndex) in appearsOnData" :key="aoIndex">
-          <div :class="['album-card', getMediaDisplay(ao).displayClass.value, selected === ao.id ? 'selected' : '']"
+          <div :class="['track-card', getMediaDisplay(ao).displayClass.value, selected === ao.id ? 'selected' : '']"
                :style="getMediaDisplay(ao).backgroundStyle.value"
                @click="setActive(ao.id);deeperStore.getAlbumDetails(ao, getSectionName(num), d.id)"
                @mouseover="getMediaDisplay(ao).hasPreview.value && audioStore.handleAudioHover($event)"
                @mouseleave="getMediaDisplay(ao).hasPreview.value && audioStore.handleAudioLeave($event)">
-            <div class="album-overlay">
-              <div class="album-name">{{ ao.name }}</div>
+            <div class="track-overlay">
+              <div class="track-name">{{ ao.name }}</div>
             </div>
             <audio :preload="getMediaDisplay(ao).audioPreload.value" :src="getMediaDisplay(ao).audioSrc.value"></audio>
           </div>
@@ -249,20 +249,20 @@ onMounted(async () => {
         <h3 class="section-title">Related Artists</h3>
       </div>
 
-      <div v-if="relatedArtistsData.length > 0" class="related-artists-grid">
-        <div v-for="(r, rIndex) in relatedArtistsData" :key="rIndex">
+      <div v-if="relatedArtistsData.length > 0" class="albums-grid">
+        <template v-for="(r, rIndex) in relatedArtistsData" :key="rIndex">
           <div
-              :class="['related-artist-card', getMediaDisplay(r).displayClass.value, selected === r.id ? 'selected' : '']"
+              :class="['track-card', getMediaDisplay(r).displayClass.value, selected === r.id ? 'selected' : '']"
               :style="getMediaDisplay(r).backgroundStyle.value"
               @mouseover="getMediaDisplay(r).hasPreview.value && audioStore.handleAudioHover($event)"
               @mouseleave="getMediaDisplay(r).hasPreview.value && audioStore.handleAudioLeave($event)"
               @click="setActive(r.id);deeperStore.getArtistDetails(r, getSectionName(num), d.id)">
-            <div class="artist-overlay">
-              <div class="artist-name">{{ r.name }}</div>
+            <div class="track-overlay">
+              <div class="track-name">{{ r.name }}</div>
             </div>
             <audio :preload="getMediaDisplay(r).audioPreload.value" :src="getMediaDisplay(r).audioSrc.value"></audio>
           </div>
-        </div>
+        </template>
       </div>
     </div>
   </div>

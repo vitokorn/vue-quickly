@@ -2018,6 +2018,22 @@
 
 .mobile-deeper-track .artists-section {
     margin-top: 6px;
+    gap: 8px;
+}
+
+.mobile-deeper-track .artists-label {
+    font-size: 12px;
+    margin-top: 1px;
+}
+
+.mobile-deeper-track .artist-link {
+    padding: 4px 10px;
+    font-size: 12px;
+    border-radius: 16px;
+}
+
+.mobile-deeper-track .artists-list {
+    gap: 4px;
 }
 
 .mobile-deeper-track .track-meta {

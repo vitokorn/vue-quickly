@@ -4,7 +4,7 @@ module.exports = {
     db: process.env.db,
     host: process.env.host,
     dialect: "postgres",
-    ssl: true,
+    ssl: process.env.ssl === "true",
     pool: {
         max: 5,
         min: 0,
