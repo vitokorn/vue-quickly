@@ -9,6 +9,7 @@ import AlbumItem from './AlbumItem.vue'
 import Loader from './Loader.vue'
 import RefreshButton from "./RefreshButton.vue";
 import SortArtists from "./SortArtists.vue";
+import {useAudioStore} from "../stores/audio-store.js";
 
 // Props
 const props = defineProps({
@@ -22,6 +23,7 @@ const props = defineProps({
 const emit = defineEmits(['album-click'])
 
 // Stores
+const audioStore = useAudioStore()
 const spotifyStore = useSpotifyStore()
 const deeperStore = useDeeperStore()
 
@@ -49,6 +51,14 @@ const handleRefresh = () => {
   spotifyStore.savedAlbums = []
   spotifyStore.fetchSavedAlbums(0)
 }
+
+const handleAlbumHover = (event) => {
+  audioStore.handleAudioHover(event)
+}
+
+const handleAlbumLeave = (event) => {
+  audioStore.handleAudioLeave(event)
+}
 </script>
 
 <template>
@@ -71,6 +81,8 @@ const handleRefresh = () => {
               :selected="selectedItem === '4' + item.album.id"
               :album-prefix="'4'"
               @click="handleAlbumClick"
+              @hover="handleAlbumHover"
+              @leave="handleAlbumLeave"
             />
           </template>
         </div>

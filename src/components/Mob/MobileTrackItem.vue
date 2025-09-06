@@ -30,7 +30,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['click', 'hover', 'leave'])
+const emit = defineEmits(['click', 'coverClick', 'infoClick', 'hover', 'leave'])
 
 // Utility function for formatting artist names
 const formatArtistNames = (artists) => {
@@ -50,6 +50,16 @@ const {
 // Event handlers
 const handleClick = (event) => {
   emit('click', props.trackItem || props.track, event)
+}
+
+const handleCoverClick = (event) => {
+  event.stopPropagation()
+  emit('coverClick', props.trackItem || props.track, event)
+}
+
+const handleInfoClick = (event) => {
+  event.stopPropagation()
+  emit('infoClick', props.trackItem || props.track, event)
 }
 
 const handleHover = (event) => {
@@ -89,10 +99,10 @@ const getDisplayClass = (release) => {
 
 <template>
   <div
-      class="search-item"
+      class="song-item"
       @click="handleClick"
   >
-    <div class="item-cover">
+    <div class="item-cover" @click="handleCoverClick">
       <img
           v-if="track.album && track.album.images && track.album.images[0]"
           :src="track.album.images[0].url"
@@ -103,7 +113,7 @@ const getDisplayClass = (release) => {
         <span class="no-image-icon">🎵</span>
       </div>
     </div>
-    <div class="item-info">
+    <div class="item-info" @click="handleInfoClick">
       <div class="item-name">{{ track.name }}</div>
       <div class="item-artist" v-if="track.artists">
         {{ formatArtistNames(track.artists) }}

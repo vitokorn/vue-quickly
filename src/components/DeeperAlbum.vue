@@ -70,15 +70,17 @@ onMounted(async ()=> {
         <div class="artists-section">
           <span class="artists-label">By</span>
           <div class="artists-list">
-            <div v-for="(art, index) in d.artists" :key="index" class="artist-item">
-              <span v-if="d.artists.length > 1 && d.artists.length - 1 === index" class="separator">&</span>
-              <span v-if="d.artists.length >= 2 && d.artists.length - 1 !== index && index !== 0"
-                    class="separator">,</span>
-              <button class="artist-link"
-                      @click="deeperStore.getArtistDetails(art, getSectionName(num), d.id)">
-                {{ art.name }}
-              </button>
-            </div>
+            <template v-for="(art, index) in d.artists" :key="index">
+              <div v-if="d.artists.length > 1 && d.artists.length - 1 === index" class="separator">&</div>
+              <div v-if="d.artists.length >= 2 && d.artists.length - 1 !== index && index !== 0"
+                   class="separator">,</div>
+              <div class="artist-item">
+                <button class="artist-link"
+                        @click="deeperStore.getArtistDetails(art, getSectionName(num), d.id)">
+                  {{ art.name }}
+                </button>
+              </div>
+            </template>
           </div>
         </div>
         <div class="release-date">

@@ -3,11 +3,14 @@ import { ref, computed, onMounted } from 'vue'
 import { useSpotifyStore } from '../../stores/spotify-store'
 import { useDeeperStore } from '../../stores/deeper-store'
 import { usePreferencesStore } from '../../stores/preferences-store'
+import { useAudioStore } from '../../stores/audio-store'
 import { useSelection } from '../../composables/useSelection.js'
+import { useMobileMediaDisplay } from '../../composables/useMobileMediaDisplay.js'
 
 const spotifyStore = useSpotifyStore()
 const deeperStore = useDeeperStore()
 const preferencesStore = usePreferencesStore()
+const audioStore = useAudioStore()
 
 const props = defineProps({
   artists: {
@@ -20,7 +23,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['artist-click'])
+const emit = defineEmits(['artist-click', 'artist-cover-click', 'artist-info-click'])
 
 const loading = ref(false)
 
@@ -63,6 +66,44 @@ const formatGenres = (genres) => {
   ).join(', ')
 }
 
+// Click handlers
+const handleArtistClick = (artist, event) => {
+  emit('artist-click', artist, event)
+}
+
+const handleCoverClick = async (artist, event) => {
+  event.stopPropagation()
+  console.log('Artist cover clicked for:', artist.name)
+
+  // Check if artist has preview URL
+  const previewUrl = artist.preview_url || artist.previewUrl
+  if (previewUrl) {
+    console.log('Playing audio preview for artist:', artist.name)
+    await audioStore.mobileToggleTrack(artist.id, previewUrl)
+  } else {
+    console.log('No preview URL available for artist:', artist.name)
+  }
+
+  emit('artist-cover-click', artist, event)
+}
+
+const handleInfoClick = (artist, event) => {
+  event.stopPropagation()
+  console.log('Artist info clicked for:', artist.name)
+  emit('artist-info-click', artist, event)
+}
+
+// Helper function to get media display for an artist
+const getArtistMediaDisplay = (artist) => {
+  const mediaDisplay = useMobileMediaDisplay(computed(() => artist))
+  return {
+    hasPreview: mediaDisplay.hasPreview.value,
+    displayClass: mediaDisplay.displayClass.value,
+    previewUrl: mediaDisplay.previewUrl.value,
+    trackId: mediaDisplay.trackId.value
+  }
+}
+
 </script>
 
 <template>
@@ -94,30 +135,41 @@ const formatGenres = (genres) => {
       <div
           v-for="(artist, index) in artists"
           :key="index"
-          class="search-item"
-          @click="$emit('artist-click', artist, $event)"
+          class="song-item"
+          @click="handleArtistClick(artist, $event)"
       >
-        <div class="item-cover">
+        <div class="item-cover" @click="handleCoverClick(artist, $event)">
           <img
               v-if="artist.images && artist.images.length > 0"
               :src="artist.images[0].url"
               :alt="artist.name"
+              :class="getArtistMediaDisplay(artist).displayClass"
           />
           <div v-else class="artist-placeholder">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
               <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z" />
             </svg>
           </div>
+          <!-- Playing indicator for artists with previews -->
+          <div v-if="getArtistMediaDisplay(artist).hasPreview && audioStore.mobileIsTrackPlaying(artist.id)" class="playing-indicator">
+            <span class="playing-icon">▶️</span>
+          </div>
         </div>
-        <div class="item-info">
+        <div class="item-info" @click="handleInfoClick(artist, $event)">
           <div class="item-name">{{ artist.name }}</div>
           <div class="item-artist" v-if="artist.followers">
             {{ formatFollowers(artist.followers.total) }} followers
           </div>
-          <div class="item-artist" v-if="artist.genres && artist.genres.length > 0">
+          <div class="item-genres" v-if="artist.genres && artist.genres.length > 0">
             {{ formatGenres(artist.genres) }}
           </div>
         </div>
+        <!-- Audio element for artist preview -->
+        <audio
+          v-if="getArtistMediaDisplay(artist).hasPreview"
+          preload="none"
+          :src="getArtistMediaDisplay(artist).previewUrl"
+        ></audio>
       </div>
     </div>
 

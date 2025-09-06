@@ -59,6 +59,18 @@ const handleArtistClick = async (artist, event) => {
   }
 }
 
+const handleArtistCoverClick = async (artist, event) => {
+  console.log('Artist cover clicked for:', artist.name)
+  // The cover click is handled in MobileArtistDisplaySection for audio preview
+  // This handler can be used for additional cover-specific actions if needed
+}
+
+const handleArtistInfoClick = async (artist, event) => {
+  console.log('Artist info clicked for:', artist.name)
+  // Info click should show artist details (same as regular click)
+  await handleArtistClick(artist, event)
+}
+
 const toggleViewMode = () => {
   preferencesStore.toggleViewMode()
 }
@@ -108,6 +120,8 @@ onMounted(async () => {
         :artists="sortedFAItems"
         :view-mode="preferencesStore.viewMode"
         @artist-click="handleArtistClick"
+        @artist-cover-click="handleArtistCoverClick"
+        @artist-info-click="handleArtistInfoClick"
     />
   </div>
 </template>

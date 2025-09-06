@@ -6,7 +6,7 @@ import { useDeeperStore } from '../stores/deeper-store'
 import { useSorting } from '../composables/useSorting.js'
 import { useSelection } from '../composables/useSelection.js'
 import SortAlbums from './SortAlbums.vue'
-import NewReleaseItem from './NewReleaseItem.vue'
+import AlbumItem from './AlbumItem.vue'
 import Loader from './Loader.vue'
 import RefreshButton from "./RefreshButton.vue";
 import SortArtists from "./SortArtists.vue";
@@ -78,7 +78,7 @@ const handleRefresh = () => {
       <div id="newrelease" class="display-flex flex-wrap" v-show="selectedTopMenu === 7">
         <div class="display-flex flex-wrap py-2 gap-8">
           <template v-for="(item, index) of sortedNRItems" :key="index">
-            <NewReleaseItem
+            <AlbumItem
               :album="item"
               :selected="selectedItem === '7' + item.id"
               :album-prefix="'7'"

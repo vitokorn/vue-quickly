@@ -52,8 +52,7 @@ const handleBackClick = () => {
 const handleTrackClick = async (track, event) => {
   if (deeperStore.getIsGloballyLoading) return
   setActive(track.id)
-
-  await deeperStore.getTrackDetails(track, 'albumTracks')
+  await deeperStore.getTrackDetails(track, getSectionName(props.num), props.d.id);
 
   queueStore.addToQueue(track)
 
@@ -62,6 +61,27 @@ const handleTrackClick = async (track, event) => {
   if (previewUrl) {
     await audioStore.mobileToggleTrack(track.id, previewUrl)
   }
+}
+
+const handleCoverClick = async (track, event) => {
+  console.log('Cover clicked for:', track.name)
+  const previewUrl = track.preview_url || track.previewUrl
+  if (previewUrl) {
+    console.log('Playing audio preview for:', track.name)
+    await audioStore.mobileToggleTrack(track.id, previewUrl)
+  } else {
+    console.log('No preview URL available for:', track.name)
+  }
+}
+
+const handleInfoClick = async (track, event) => {
+  console.log('Info clicked for:', track.name)
+  if (deeperStore.getIsGloballyLoading) return
+  setActive(track.id)
+
+  await deeperStore.getTrackDetails(track, 'albumTracks')
+
+  queueStore.addToQueue(track)
 }
 
 const handleArtistClick = async (artist, event) => {
@@ -118,8 +138,7 @@ onUnmounted(() => {
           <path fill-rule="evenodd" d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z" clip-rule="evenodd" />
         </svg>
       </button>
-      <h2 class="header-title">Album Details</h2>
-      <div class="header-spacer"></div>
+      <h2 class="mobile-deeper-header">Album Details</h2>
     </div>
 
     <!-- Modern Album Info Section -->
@@ -149,13 +168,16 @@ onUnmounted(() => {
         <div class="artists-section">
           <span class="artists-label">By</span>
           <div class="artists-list">
-            <div v-for="(art, index) in d.artists" :key="index" class="artist-item">
-              <span v-if="d.artists.length > 1 && d.artists.length - 1 === index" class="separator">&</span>
-              <span v-if="d.artists.length >= 2 && d.artists.length - 1 !== index && index !== 0" class="separator">,</span>
-              <button class="artist-link" @click="handleArtistClick(art, $event)">
-                {{ art.name }}
-              </button>
-            </div>
+            <template v-for="(art, index) in d.artists" :key="index">
+              <div v-if="d.artists.length > 1 && d.artists.length - 1 === index" class="separator">&</div>
+              <div v-if="d.artists.length >= 2 && d.artists.length - 1 !== index && index !== 0"
+                   class="separator">,</div>
+              <div class="artist-item">
+                <button class="artist-link" @click="handleArtistClick(art, $event)">
+                  {{ art.name }}
+                </button>
+              </div>
+            </template>
           </div>
         </div>
       </div>
@@ -184,6 +206,8 @@ onUnmounted(() => {
           :track="track"
           :num="num"
           @click="handleTrackClick"
+          @coverClick="handleCoverClick"
+          @infoClick="handleInfoClick"
         />
       </div>
     </div>

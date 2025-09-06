@@ -138,8 +138,7 @@ onUnmounted(() => {
           <path fill-rule="evenodd" d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z" clip-rule="evenodd" />
         </svg>
       </button>
-      <h2 class="header-title">Track Details</h2>
-      <div class="header-spacer"></div>
+      <h2 class="mobile-deeper-header">Track Details</h2>
     </div>
 
     <!-- Modern Track Info Section -->
@@ -172,15 +171,16 @@ onUnmounted(() => {
         <div class="artists-section">
           <span class="meta-icon">💿</span>
           <span class="artists-label">By</span>
-          <div class="artists-list">
-            <div v-for="(art, index) in d.artists" :key="index" class="artist-item">
-              <span v-if="d.artists.length > 1 && d.artists.length - 1 === index" class="separator">&</span>
-              <span v-if="d.artists.length >= 2 && d.artists.length - 1 !== index && index !== 0" class="separator">,</span>
+          <template v-for="(art, index) in d.artists" :key="index">
+            <div v-if="d.artists.length > 1 && d.artists.length - 1 === index" class="separator">&</div>
+            <div v-if="d.artists.length >= 2 && d.artists.length - 1 !== index && index !== 0"
+                 class="separator">,</div>
+            <div class="artist-item">
               <button class="artist-link" @click="handleArtistClick(art, $event)">
                 {{ art.name }}
               </button>
             </div>
-          </div>
+          </template>
         </div>
 
 

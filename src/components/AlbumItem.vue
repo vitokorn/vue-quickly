@@ -1,7 +1,7 @@
 <script setup>
-import { computed } from 'vue'
-import { useMediaDisplay } from '../composables/useMediaDisplay.js'
-import { artistUtils } from '../utils/artistUtils.js'
+import {computed} from 'vue'
+import {useMediaDisplay} from '../composables/useMediaDisplay.js'
+import {artistUtils} from '../utils/artistUtils.js'
 
 const props = defineProps({
   album: {
@@ -18,7 +18,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['click'])
+const emit = defineEmits(['click', 'hover', 'leave'])
 
 // Utility function for formatting artist names
 const formatArtistNames = (artists) => {
@@ -29,12 +29,22 @@ const formatArtistNames = (artists) => {
 const {
   hasImage,
   displayClass,
-  backgroundStyle
+  backgroundStyle,
+  audioPreload,
+  audioSrc
 } = useMediaDisplay(computed(() => props.album))
 
 // Event handlers
 const handleClick = (event) => {
   emit('click', props.album, event)
+}
+
+const handleHover = (event) => {
+  emit('hover', event)
+}
+
+const handleLeave = (event) => {
+  emit('leave', event)
 }
 
 // Computed class for the album item
@@ -49,12 +59,15 @@ const albumClass = computed(() => {
   <div tabindex="0"
        :class="albumClass"
        :style="backgroundStyle"
-       @click.stop="handleClick">
+       @click.stop="handleClick"
+       @mouseover="handleHover"
+       @mouseleave="handleLeave">
     <div class="track-overlay">
       <div class="track-info">
         <div class="track-artists">{{ formatArtistNames(album.artists) }}</div>
         <div class="track-name">{{ album.name }}</div>
       </div>
     </div>
+    <audio :preload="audioPreload" :src="audioSrc"></audio>
   </div>
 </template>

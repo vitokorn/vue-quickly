@@ -74,7 +74,7 @@ const sortedSpotPlaylistItems = createPlaylistTrackSorter(
       console.log('Track click blocked - global loading in progress')
       return
     }
-    
+
     setSelectedItem(track.id)
     const sectionName = getSectionName(selectedTopMenu.value)
     await deeperStore.getTrackDetails(track, sectionName)
@@ -99,7 +99,7 @@ const handleTrackLeave = (event) => {
       console.log('Artist click blocked - global loading in progress')
       return
     }
-    
+
     setSelectedItem(artist.id)
     const sectionName = getSectionName(selectedTopMenu.value)
     await deeperStore.getArtistDetails(artist, sectionName)
@@ -461,190 +461,6 @@ const handleCloseWelcomeModal = () => {
 </template>
 
 <style scoped>
-/* Search Section Styles */
-.search-section {
-  padding: 2rem 0;
-  max-width: 100%;
-}
 
-.search-header {
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-.search-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: var(--search-color, #ffffff);
-  margin: 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  letter-spacing: -0.5px;
-}
-
-.search-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  margin-top: 1rem;
-}
-
-/* Search Category Styles */
-.search-category {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
-  padding: 1.5rem;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
-}
-
-.search-category:hover {
-  background: rgba(255, 255, 255, 0.08);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-.search-category-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--search-color, #ffffff);
-  margin: 0 0 1rem 0;
-  padding-bottom: 0.75rem;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.search-category-items {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.search-item-wrapper {
-  transition: transform 0.2s ease;
-}
-
-.search-item-wrapper:hover {
-  transform: scale(1.02);
-}
-
-/* Search Result Item Styles */
-.search-result-container {
-  width: 100%;
-}
-
-.search-result-item {
-  display: flex;
-  align-items: center;
-  padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.search-result-item:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
-  transform: translateX(4px);
-}
-
-.search-result-item--selected {
-  background: linear-gradient(135deg, rgba(29, 185, 84, 0.2), rgba(29, 185, 84, 0.1));
-  border-color: rgba(29, 185, 84, 0.3);
-  box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.2);
-}
-
-.search-result-item--disabled {
-  opacity: 0.6;
-  filter: grayscale(0.3);
-}
-
-.search-result-content {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  width: 100%;
-}
-
-.search-result-image {
-  width: 48px;
-  height: 48px;
-  border-radius: 8px;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.search-result-image--placeholder {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 1.2rem;
-  font-weight: bold;
-}
-
-.search-result-text {
-  flex: 1;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: var(--search-color, #ffffff);
-  line-height: 1.4;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .search-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
-  .search-title {
-    font-size: 2rem;
-  }
-
-  .search-category {
-    padding: 1rem;
-  }
-
-  .search-result-image {
-    width: 40px;
-    height: 40px;
-  }
-
-  .search-result-text {
-    font-size: 0.9rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .search-section {
-    padding: 1rem 0;
-  }
-
-  .search-title {
-    font-size: 1.75rem;
-  }
-
-  .search-result-content {
-    gap: 0.75rem;
-  }
-
-  .search-result-image {
-    width: 36px;
-    height: 36px;
-  }
-}
 </style>
 

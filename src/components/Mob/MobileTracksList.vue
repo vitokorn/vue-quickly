@@ -2,6 +2,10 @@
 import { ref, onMounted } from 'vue'
 import { useSpotifyStore } from "../../stores/spotify-store"
 import { usePreferencesStore } from "../../stores/preferences-store"
+import { useAudioStore } from "../../stores/audio-store"
+import { useQueueStore } from "../../stores/queue-store"
+import { useDeeperStore } from "../../stores/deeper-store"
+import { useSelection } from "../../composables/useSelection.js"
 import MobileTrackItem from './MobileTrackItem.vue'
 
 const props = defineProps({
@@ -13,6 +17,10 @@ const props = defineProps({
 
 const spotifyStore = useSpotifyStore()
 const preferencesStore = usePreferencesStore()
+const audioStore = useAudioStore()
+const queueStore = useQueueStore()
+const deeperStore = useDeeperStore()
+const { selectedItem, setSelectedItem } = useSelection()
 const tracks = ref([])
 const loading = ref(false)
 
@@ -41,6 +49,44 @@ const loadSampleTracks = async () => {
 
 const toggleViewMode = () => {
   preferencesStore.toggleViewMode()
+}
+
+const handleTrackClick = async (track, event) => {
+  console.log('Track clicked:', track.name)
+  setSelectedItem(track.id)
+
+  await deeperStore.getTrackDetails(track, 'topTracks')
+
+  queueStore.addToQueue(track)
+
+  // Also play audio preview if available
+  const previewUrl = track.preview_url || track.previewUrl
+  if (previewUrl) {
+    console.log('Playing audio preview for:', track.name)
+    await audioStore.mobileToggleTrack(track.id, previewUrl)
+  } else {
+    console.log('No preview URL available for:', track.name)
+  }
+}
+
+const handleCoverClick = async (track, event) => {
+  console.log('Cover clicked for:', track.name)
+  const previewUrl = track.preview_url || track.previewUrl
+  if (previewUrl) {
+    console.log('Playing audio preview for:', track.name)
+    await audioStore.mobileToggleTrack(track.id, previewUrl)
+  } else {
+    console.log('No preview URL available for:', track.name)
+  }
+}
+
+const handleInfoClick = async (track, event) => {
+  console.log('Info clicked for:', track.name)
+  setSelectedItem(track.id)
+
+  await deeperStore.getTrackDetails(track, 'topTracks')
+
+  queueStore.addToQueue(track)
 }
 </script>
 
@@ -76,6 +122,9 @@ const toggleViewMode = () => {
         :key="track.id"
         :track="track"
         :num="props.num"
+        @click="handleTrackClick"
+        @coverClick="handleCoverClick"
+        @infoClick="handleInfoClick"
       />
     </div>
 

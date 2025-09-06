@@ -185,7 +185,7 @@ const resetPagination = () => {
         <div
             v-for="(playlist, index) in displayedPlaylists"
             :key="index"
-            class="search-item"
+            class="song-item"
             @click="handlePlaylistArrowClick(playlist)"
             :class="{ 'selected': selectedPlaylist === playlist.id }"
         >

@@ -2,7 +2,9 @@
   <div v-if="isVisible" class="global-preloader">
     <div class="global-preloader-content">
       <div class="global-preloader-spinner"></div>
-      <div class="global-preloader-text">Loading...</div>
+      <div class="global-preloader-text">
+        <span class='loading waitingForConnection'>Loading<span>.</span><span>.</span><span>.</span></span>
+      </div>
     </div>
   </div>
 </template>

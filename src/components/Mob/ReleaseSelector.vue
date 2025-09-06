@@ -249,7 +249,7 @@ const formatReleaseDate = (dateString) => {
           <div
               v-for="(release, index) in displayedReleases"
               :key="index"
-              class="search-item"
+              class="song-item"
               @click="handleReleaseClick(release, $event);handleReleaseSelect(release.id, $event)"
           >
             <div class="item-cover" v-if="release.images && release.images[0]">
@@ -264,6 +264,7 @@ const formatReleaseDate = (dateString) => {
               <div class="item-name">{{ release.name }}</div>
               <span v-if="release.release_date">{{ formatReleaseDate(release.release_date) }}</span>
               <div class="item-artist">{{ formatArtistNames(release.artists) }}</div>
+              <div class="album-type-badge">{{release.type}}</div>
             </div>
           </div>
         </div>

@@ -93,6 +93,16 @@ const handleArtistClick = async (artist, event) => {
   console.log('Showing deeper artist for:', artist.name, 'with key:', artistKey)
 }
 
+const handleArtistCoverClick = async (artist, event) => {
+  console.log('Artist cover clicked for:', artist.name)
+}
+
+const handleArtistInfoClick = async (artist, event) => {
+  console.log('Artist info clicked for:', artist.name)
+  // Info click should show artist details (same as regular click)
+  await handleArtistClick(artist, event)
+}
+
 const handleArtistHover = (event) => {
   audioStore.handleAudioHover(event)
 }
@@ -175,6 +185,8 @@ onMounted(async () => {
         :artists="topArtists"
         :view-mode="preferencesStore.viewMode"
         @artist-click="handleArtistClick"
+        @artist-cover-click="handleArtistCoverClick"
+        @artist-info-click="handleArtistInfoClick"
     />
   </div>
 </template>

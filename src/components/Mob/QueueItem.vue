@@ -100,7 +100,7 @@ const isPlaying = computed(() => {
 
 <template>
   <div
-      class="search-item"
+      class="song-item"
       @click="handleClick"
   >
     <div class="item-cover" style="position: relative">

@@ -63,4 +63,5 @@ const handleItemLeave = (event) => {
 </template>
 
 <style scoped>
+
 </style>

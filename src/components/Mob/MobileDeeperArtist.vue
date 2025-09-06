@@ -9,6 +9,7 @@ import { useVisibilityManager } from '../../composables/useVisibilityManager'
 import { useMobileMediaDisplay } from '../../composables/useMobileMediaDisplay.js'
 import {spotifyApi} from "../../services/spotifyApi.js";
 import { getSectionName } from '../../utils/sectionUtils';
+import MobileTrackItem from './MobileTrackItem.vue';
 
 const props = defineProps(['d', 'num'])
 
@@ -98,6 +99,25 @@ const handleTrackClick = async (track, event) => {
   queueStore.addToQueue(track)
 }
 
+const handleCoverClick = async (track, event) => {
+  console.log('Cover clicked for:', track.name)
+  const previewUrl = track.preview_url || track.previewUrl
+  if (previewUrl) {
+    console.log('Playing audio preview for:', track.name)
+    await audioStore.mobileToggleTrack(track.id, previewUrl)
+  } else {
+    console.log('No preview URL available for:', track.name)
+  }
+}
+
+const handleInfoClick = async (track, event) => {
+  console.log('Info clicked for:', track.name)
+  if (deeperStore.getIsGloballyLoading) return
+  const sectionName = getSectionName(props.num)
+  await deeperStore.getTrackDetails(track, sectionName)
+  queueStore.addToQueue(track)
+}
+
 const handleAlbumClick = async (album, event) => {
   if (deeperStore.getIsGloballyLoading) return
   const sectionName = getSectionName(props.num)
@@ -124,11 +144,11 @@ const handleRecommendClick = () => {
   deeperStore.getSeedArtistRecommendations(artistData.value, getSectionName(props.num), props.d.id)
 }
 
-const handleAudioPreview = (event) => {
+const handleArtistCoverClick = (event) => {
   event.stopPropagation()
-  if (hasPreview.value && previewUrl.value) {
-    audioStore.mobileToggleTrack(trackId.value, previewUrl.value)
-  }
+  // Artists don't have preview URLs, so we don't play audio
+  // This could be used for other artist-specific actions in the future
+  console.log('Artist cover clicked for:', artistData.value.name)
 }
 
 const toggleViewMode = () => {
@@ -236,7 +256,7 @@ onUnmounted(() => {
           <path fill-rule="evenodd" d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z" clip-rule="evenodd" />
         </svg>
       </button>
-      <h2 class="header-title">Artist</h2>
+      <h2 class="mobile-deeper-header">Artist</h2>
       <div class="header-actions">
         <button class="view-toggle-btn" @click="toggleViewMode" :title="preferencesStore.viewMode === 'list' ? 'Grid view' : 'List view'">
           <svg v-if="preferencesStore.viewMode === 'list'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -257,7 +277,7 @@ onUnmounted(() => {
           class="artist-cover"
           :class="displayClass"
           :style="backgroundStyle"
-          @click="handleAudioPreview"
+          @click="handleArtistCoverClick"
           :src="artistData.images[0].url"
           :alt="artistData.name"
           @error="$event.target.style.display = 'none'"
@@ -324,31 +344,16 @@ onUnmounted(() => {
         <h3 class="section-title">Top Tracks</h3>
       </div>
       <div :class="['releases-container', preferencesStore.viewMode]">
-        <div
+        <MobileTrackItem
           v-for="track in topTracksData"
           :key="track.id"
-          class="search-item"
-          @click="handleTrackClick(track, $event)"
-        >
-          <div class="item-cover">
-            <img
-              v-if="track.album && track.album.images && track.album.images[0]"
-              :src="track.album.images[0].url"
-              :alt="track.name"
-              @error="$event.target.style.display = 'none'"
-            />
-            <div v-else class="album-placeholder">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M11.584 2.376a.75.75 0 01.832 0l9 6a.75.75 0 11-.832 1.248L12 3.901 3.416 9.624a.75.75 0 01-.832-1.248l9-6z" />
-                <path d="M20.25 11.25v5.533c0 1.036-.84 1.875-1.875 1.875H5.625A1.875 1.875 0 013.75 16.783V11.25H2.25a.75.75 0 010-1.5h1.5V6.75c0-1.036.84-1.875 1.875-1.875h.75a.75.75 0 010 1.5h-.75a.375.375 0 00-.375.375v3.375h1.5a.75.75 0 010 1.5H3.75v5.533a.375.375 0 00.375.375h12.75a.375.375 0 00.375-.375V11.25h1.5a.75.75 0 010-1.5h-1.5V6.75a.375.375 0 00-.375-.375h-.75a.75.75 0 010-1.5h.75c1.036 0 1.875.84 1.875 1.875v3.375h1.5a.75.75 0 010 1.5z" />
-              </svg>
-            </div>
-          </div>
-          <div class="item-info">
-            <div class="item-name">{{ track.name }}</div>
-            <div class="item-artist">{{ track.artists?.[0]?.name || 'Unknown Artist' }}</div>
-          </div>
-        </div>
+          :track="track"
+          :num="num"
+          :view-mode="preferencesStore.viewMode"
+          @click="handleTrackClick"
+          @coverClick="handleCoverClick"
+          @infoClick="handleInfoClick"
+        />
       </div>
     </div>
 
@@ -361,7 +366,7 @@ onUnmounted(() => {
         <div
           v-for="album in albumsData"
           :key="album.id"
-          class="search-item"
+          class="song-item"
           @click="handleAlbumClick(album, $event)"
         >
           <div class="item-cover">
@@ -395,7 +400,7 @@ onUnmounted(() => {
         <div
           v-for="single in singlesData"
           :key="single.id"
-          class="search-item"
+          class="song-item"
           @click="handleAlbumClick(single, $event)"
         >
           <div class="item-cover">
@@ -429,7 +434,7 @@ onUnmounted(() => {
         <div
           v-for="appearsOn in appearsOnData"
           :key="appearsOn.id"
-          class="search-item"
+          class="song-item"
           @click="handleAlbumClick(appearsOn, $event)"
         >
           <div class="item-cover">
@@ -463,7 +468,7 @@ onUnmounted(() => {
         <div
           v-for="artist in relatedArtistsData"
           :key="artist.id"
-          class="search-item"
+          class="song-item"
           @click="handleRelatedArtistClick(artist, $event)"
         >
           <div class="item-cover">

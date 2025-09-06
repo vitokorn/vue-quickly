@@ -56,6 +56,25 @@ const handleTrackClick = async (track, event) => {
   queueStore.addToQueue(track)
 }
 
+const handleCoverClick = async (track, event) => {
+  console.log('Cover clicked for:', track.name)
+  const previewUrl = track.preview_url || track.previewUrl
+  if (previewUrl) {
+    console.log('Playing audio preview for:', track.name)
+    await audioStore.mobileToggleTrack(track.id, previewUrl)
+  } else {
+    console.log('No preview URL available for:', track.name)
+  }
+}
+
+const handleInfoClick = async (track, event) => {
+  console.log('Info clicked for:', track.name)
+  if (deeperStore.getIsGloballyLoading) return
+  const sectionName = getSectionName(props.num)
+  await deeperStore.getTrackDetails(track, sectionName, props.d.id)
+  queueStore.addToQueue(track)
+}
+
 const handleRefresh = () => {
   spotifyStore.reloadST({num: props.num, id: props.d.id, name: props.d.name})
 }
@@ -154,6 +173,8 @@ onUnmounted(() => {
             :num="num"
             :view-mode="preferencesStore.viewMode"
             @click="handleTrackClick(track, $event)"
+            @coverClick="handleCoverClick(track, $event)"
+            @infoClick="handleInfoClick(track, $event)"
           />
         </div>
       </div>

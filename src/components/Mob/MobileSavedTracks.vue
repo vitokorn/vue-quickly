@@ -57,6 +57,26 @@ const handleTrackClick = async (track, event) => {
   queueStore.addToQueue(track)
 }
 
+const handleCoverClick = async (track, event) => {
+  console.log('Cover clicked for:', track.name)
+  const previewUrl = track.preview_url || track.previewUrl
+  if (previewUrl) {
+    console.log('Playing audio preview for:', track.name)
+    await audioStore.mobileToggleTrack(track.id, previewUrl)
+  } else {
+    console.log('No preview URL available for:', track.name)
+  }
+}
+
+const handleInfoClick = async (track, event) => {
+  console.log('Info clicked for:', track.name)
+  setSelectedItem(track.id)
+
+  await deeperStore.getTrackDetails(track, 'savedTracks')
+
+  queueStore.addToQueue(track)
+}
+
 const handleRefresh = async () => {
   // Clear existing data and fetch fresh
   spotifyStore.savedTracks = []
@@ -120,6 +140,8 @@ onMounted(async () => {
         :track="track"
         :num="props.num"
         @click="handleTrackClick"
+        @coverClick="handleCoverClick"
+        @infoClick="handleInfoClick"
       />
     </div>
 

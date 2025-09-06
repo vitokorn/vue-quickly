@@ -51,24 +51,16 @@
       <div v-if="spotifyStore.getSearchTracks.length > 0" class="mobile-search-section">
         <h3 class="section-title">Songs</h3>
         <div :class="['releases-container', preferencesStore.viewMode]">
-          <div
+          <MobileTrackItem
             v-for="(track, index) in spotifyStore.getSearchTracks"
             :key="index"
-            class="search-item"
-            @click="handleTrackClick(track, $event)"
-          >
-            <div class="item-cover">
-              <img
-                :src="track.album?.images?.[0]?.url || '/default-album.png'"
-                :alt="track.name"
-                class="cover-image"
-              />
-            </div>
-            <div class="item-info">
-              <div class="item-name">{{ track.name }}</div>
-              <div class="item-artist">{{ track.artists.map(a => a.name).join(', ') }}</div>
-            </div>
-          </div>
+            :track="track"
+            :num="0"
+            :view-mode="preferencesStore.viewMode"
+            @click="handleTrackClick"
+            @coverClick="handleCoverClick"
+            @infoClick="handleInfoClick"
+          />
         </div>
       </div>
 
@@ -79,7 +71,7 @@
           <div
             v-for="(artist, index) in spotifyStore.getSearchArtists"
             :key="index"
-            class="search-item"
+            class="song-item"
             @click="handleArtistClick(artist, $event)"
           >
             <div class="item-cover">
@@ -104,7 +96,7 @@
           <div
             v-for="(album, index) in spotifyStore.getSearchAlbums"
             :key="index"
-            class="search-item"
+            class="song-item"
             @click="handleAlbumClick(album, $event)"
           >
             <div class="item-cover">
@@ -129,7 +121,7 @@
           <div
             v-for="(playlist, index) in spotifyStore.getSearchPlaylists"
             :key="index"
-            class="search-item"
+            class="song-item"
             @click="handlePlaylistClick(playlist, $event)"
           >
             <div class="item-cover">
@@ -170,12 +162,15 @@ import { useSpotifyStore } from '../../stores/spotify-store'
 import { useDeeperStore } from '../../stores/deeper-store'
 import { useQueueStore } from '../../stores/queue-store'
 import { usePreferencesStore } from '../../stores/preferences-store'
+import { useAudioStore } from '../../stores/audio-store'
+import MobileTrackItem from './MobileTrackItem.vue'
 
 // Stores
 const spotifyStore = useSpotifyStore()
 const deeperStore = useDeeperStore()
 const queueStore = useQueueStore()
 const preferencesStore = usePreferencesStore()
+const audioStore = useAudioStore()
 
 // Local state
 const searchQuery = ref('')
@@ -212,6 +207,24 @@ const toggleViewMode = () => {
 }
 
 const handleTrackClick = async (track, event) => {
+  if (deeperStore.getIsGloballyLoading) return
+  await deeperStore.getTrackDetails(track, 'search')
+  queueStore.addToQueue(track)
+}
+
+const handleCoverClick = async (track, event) => {
+  console.log('Cover clicked for:', track.name)
+  const previewUrl = track.preview_url || track.previewUrl
+  if (previewUrl) {
+    console.log('Playing audio preview for:', track.name)
+    await audioStore.mobileToggleTrack(track.id, previewUrl)
+  } else {
+    console.log('No preview URL available for:', track.name)
+  }
+}
+
+const handleInfoClick = async (track, event) => {
+  console.log('Info clicked for:', track.name)
   if (deeperStore.getIsGloballyLoading) return
   await deeperStore.getTrackDetails(track, 'search')
   queueStore.addToQueue(track)

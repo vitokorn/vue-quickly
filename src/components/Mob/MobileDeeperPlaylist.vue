@@ -86,6 +86,28 @@ const handleTrackClick = async (track, event) => {
   }
 }
 
+const handleCoverClick = async (track, event) => {
+  console.log('Cover clicked for:', track.name)
+  const previewUrl = track.preview_url || track.previewUrl
+  if (previewUrl) {
+    console.log('Playing audio preview for:', track.name)
+    await audioStore.mobileToggleTrack(track.id, previewUrl)
+  } else {
+    console.log('No preview URL available for:', track.name)
+  }
+}
+
+const handleInfoClick = async (track, event) => {
+  console.log('Info clicked for:', track.name)
+  if (deeperStore.getIsGloballyLoading) return
+  setActive(track.id)
+
+  const sectionName = getSectionName(props.num)
+  await deeperStore.getTrackDetails(track, sectionName, props.d.id)
+
+  queueStore.addToQueue(track)
+}
+
 const handleSortChange = (option) => {
   selectedDeeperPlaylistSortOption.value = option
 }
@@ -138,7 +160,7 @@ onUnmounted(() => {
           <path fill-rule="evenodd" d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z" clip-rule="evenodd" />
         </svg>
       </button>
-      <h2 class="header-title" style="flex: 1;">Playlist</h2>
+      <h2 class="mobile-deeper-header">Playlist</h2>
       <div class="header-actions">
         <button class="refresh-btn" @click="handleRefresh" title="Refresh">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -208,6 +230,8 @@ onUnmounted(() => {
           :num="num"
           :view-mode="preferencesStore.viewMode"
           @click="handleTrackClick"
+          @coverClick="handleCoverClick"
+          @infoClick="handleInfoClick"
         />
       </div>
     </div>
