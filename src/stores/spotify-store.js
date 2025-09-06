@@ -48,10 +48,6 @@ export const useSpotifyStore = defineStore('spotify', {
             playlists: new Map()
         },
 
-        // Current selections
-        currentPlaylist: null,
-        currentSpotifyPlaylist: null,
-
         // UI state
         selectedArtistsRange: 1,
         selectedTracksRange: 1,
@@ -78,8 +74,6 @@ export const useSpotifyStore = defineStore('spotify', {
         getPlaylists: (state) => state.playlists,
         getNewReleases: (state) => state.newReleases,
         getSpotifyPlaylists: (state) => state.spotifyPlaylists,
-        getCurrentPlaylist: (state) => state.currentPlaylist,
-        getCurrentSpotifyPlaylist: (state) => state.currentSpotifyPlaylist,
 
         // Search results getters
         getSearchTracks: (state) => state.searchResults.tracks,
@@ -242,40 +236,14 @@ export const useSpotifyStore = defineStore('spotify', {
             }
         },
 
-        async fetchPlaylist(id) {
-            try {
-                const response = await spotifyApi.getPlaylist(id)
-                const playlist = response.data
-
-                // Check if user follows this playlist
-                try {
-                    const followResponse = await spotifyApi.checkFollowingPlaylist(id)
-                    playlist.followed = followResponse.data[0]
-                } catch (error) {
-                    playlist.followed = false
-                }
-
-                // Store tracks total for pagination
-                if (playlist.tracks) {
-                    this.playlistTracksTotal = playlist.tracks.total
-                }
-
-                this.currentPlaylist = playlist
-                return playlist
-            } catch (error) {
-                console.error('Failed to fetch playlist:', error)
-                throw error
-            }
-        },
-
         async fetchPlaylistTracks(id, offset = 0) {
             try {
                 const response = await spotifyApi.getPlaylistTracks(id, offset, 100)
                 const tracksData = response.data
-                
+
                 // Store tracks total for pagination
                 this.playlistTracksTotal = tracksData.total
-                
+
                 return tracksData
             } catch (error) {
                 console.error('Failed to fetch playlist tracks:', error)
@@ -309,24 +277,6 @@ export const useSpotifyStore = defineStore('spotify', {
                 throw error
             } finally {
                 this.setLoading(false)
-            }
-        },
-
-        async fetchSpotifyPlaylist(id) {
-            try {
-                const response = await spotifyApi.getPlaylist(id)
-                const playlist = response.data
-                
-                // Store tracks total for pagination
-                if (playlist.tracks) {
-                    this.playlistTracksTotal = playlist.tracks.total
-                }
-                
-                this.currentSpotifyPlaylist = playlist
-                return playlist
-            } catch (error) {
-                console.error('Failed to fetch Spotify playlist:', error)
-                throw error
             }
         },
 
@@ -555,8 +505,6 @@ export const useSpotifyStore = defineStore('spotify', {
             this.followedArtists = []
             this.newReleases = []
             this.playlists = []
-            this.currentPlaylist = null
-            this.currentSpotifyPlaylist = null
             this.isLoading = false
         },
 

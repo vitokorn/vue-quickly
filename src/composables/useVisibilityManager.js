@@ -44,7 +44,7 @@ export function useVisibilityManager() {
           if (componentRef.value.classList.contains('row')) {
               componentRef.value.style.display = 'flex'
           } else {
-              componentRef.value.style.display = 'block'
+              componentRef.value.style.display = ''
           }
         visibilityState.visibleElements.set(key, true)
 
@@ -119,7 +119,7 @@ export function useVisibilityManager() {
     const componentRef = visibilityState.componentRefs.get(key)
     if (componentRef && componentRef.value) {
       console.log('Component found, showing:', key)
-      componentRef.value.style.display = 'block'
+      componentRef.value.style.display = ''
       visibilityState.visibleElements.set(key, true)
 
       // Scroll to the component after a short delay to ensure it's rendered
@@ -210,7 +210,7 @@ export function useVisibilityManager() {
         }
 
         if (componentRef && componentRef.value) {
-          componentRef.value.style.display = 'block'
+          componentRef.value.style.display = ''
           visibilityState.visibleElements.set(key, true)
         }
       }

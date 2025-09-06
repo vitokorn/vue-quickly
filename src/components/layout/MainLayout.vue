@@ -12,14 +12,9 @@ import RecTrack from '../RecTrack.vue'
 import Loader from '../Loader.vue'
 import Footer from '../Footer.vue'
 import ModernTabs from '../common/ModernTabs.vue'
-import TrackCover from "../TrackCover.vue"
-import Playlist from '../Playlist.vue'
 import GlobalPreloader from '../common/GlobalPreloader.vue'
 import PlaylistSelector from '../PlaylistSelector.vue'
-import TrackItem from '../TrackItem.vue'
-import ArtistItem from '../ArtistItem.vue'
 import SearchCategory from '../SearchCategory.vue'
-import RefreshButton from '../RefreshButton.vue'
 import WelcomeModal from '../WelcomeModal.vue'
 import Header from "../Header.vue";
 import QueueModal from "../QueueModal.vue";
@@ -53,37 +48,24 @@ const {search} = useFiltering()
 // Local state
 const showWelcomeModal = ref(localStorage.getItem('welcome-modal-seen') !== 'true')
 const expandedTabs = ref(new Set())
-const selectedPlaylistSortOption = ref("")
-const selectedSpotPlaylistSortOption = ref("")
 
-// Computed sorted data using composables
-const sortedPlaylistItems = createPlaylistTrackSorter(
-    computed(() => spotifyStore.getCurrentPlaylist?.tracks?.items || []),
-    selectedPlaylistSortOption
-)
-
-const sortedSpotPlaylistItems = createPlaylistTrackSorter(
-    computed(() => spotifyStore.getCurrentSpotifyPlaylist?.tracks?.items || []),
-    selectedSpotPlaylistSortOption
-)
-
-  // Event handlers
-  const handleTrackClick = async (track, event) => {
-    // Prevent multiple clicks when globally loading
-    if (deeperStore.getIsGloballyLoading) {
-      console.log('Track click blocked - global loading in progress')
-      return
-    }
-
-    setSelectedItem(track.id)
-    const sectionName = getSectionName(selectedTopMenu.value)
-    await deeperStore.getTrackDetails(track, sectionName)
-    if (selectedTopMenu.value in [1,8]) {
-      queueStore.addToQueue(track.track)
-    } else {
-      queueStore.addToQueue(track)
-    }
+// Event handlers
+const handleTrackClick = async (track, event) => {
+  // Prevent multiple clicks when globally loading
+  if (deeperStore.getIsGloballyLoading) {
+    console.log('Track click blocked - global loading in progress')
+    return
   }
+
+  setSelectedItem(track.id)
+  const sectionName = getSectionName(selectedTopMenu.value)
+  await deeperStore.getTrackDetails(track, sectionName)
+  if (selectedTopMenu.value in [1, 8]) {
+    queueStore.addToQueue(track.track)
+  } else {
+    queueStore.addToQueue(track)
+  }
+}
 
 const handleTrackHover = (event) => {
   audioStore.handleAudioHover(event)
@@ -93,17 +75,17 @@ const handleTrackLeave = (event) => {
   audioStore.handleAudioLeave(event)
 }
 
-  const handleArtistClick = async (artist, event) => {
-    // Prevent multiple clicks when globally loading
-    if (deeperStore.getIsGloballyLoading) {
-      console.log('Artist click blocked - global loading in progress')
-      return
-    }
-
-    setSelectedItem(artist.id)
-    const sectionName = getSectionName(selectedTopMenu.value)
-    await deeperStore.getArtistDetails(artist, sectionName)
+const handleArtistClick = async (artist, event) => {
+  // Prevent multiple clicks when globally loading
+  if (deeperStore.getIsGloballyLoading) {
+    console.log('Artist click blocked - global loading in progress')
+    return
   }
+
+  setSelectedItem(artist.id)
+  const sectionName = getSectionName(selectedTopMenu.value)
+  await deeperStore.getArtistDetails(artist, sectionName)
+}
 
 const handleArtistHover = (event) => {
   audioStore.handleAudioHover(event)
@@ -111,6 +93,11 @@ const handleArtistHover = (event) => {
 
 const handleArtistLeave = (event) => {
   audioStore.handleAudioLeave(event)
+}
+
+async function handlePlaylistClick(playlist, event) {
+  const sectionName = getSectionName(selectedTopMenu.value)
+  await deeperStore.getPlaylistDetails(playlist, sectionName)
 }
 
 const handleGenreClick = (genre, event) => {
@@ -142,16 +129,26 @@ const formatArtistNames = (artists) => {
 
 const getSectionName = (num) => {
   switch (num) {
-    case 1: return 'yourPlaylists'
-    case 2: return 'topArtists'
-    case 3: return 'topTracks'
-    case 4: return 'savedAlbums'
-    case 5: return 'savedTracks'
-    case 6: return 'followedArtists'
-    case 7: return 'newReleases'
-    case 8: return 'spotifyPlaylists'
-    case 10: return 'search'
-    default: return 'search'
+    case 1:
+      return 'yourPlaylists'
+    case 2:
+      return 'topArtists'
+    case 3:
+      return 'topTracks'
+    case 4:
+      return 'savedAlbums'
+    case 5:
+      return 'savedTracks'
+    case 6:
+      return 'followedArtists'
+    case 7:
+      return 'newReleases'
+    case 8:
+      return 'spotifyPlaylists'
+    case 10:
+      return 'search'
+    default:
+      return 'search'
   }
 }
 
@@ -266,8 +263,8 @@ const handleCloseWelcomeModal = () => {
   <div class="main-layout">
     <!-- Welcome Modal -->
     <WelcomeModal
-      :is-visible="showWelcomeModal"
-      @close="handleCloseWelcomeModal"
+        :is-visible="showWelcomeModal"
+        @close="handleCloseWelcomeModal"
     />
 
     <!-- Main content -->
@@ -288,24 +285,11 @@ const handleCloseWelcomeModal = () => {
             <div id="yourplaylists" class="flex-stretch">
               <Loader v-if="spotifyStore.isLoading"/>
               <PlaylistSelector
-                :playlists="spotifyStore.getPlaylists"
-                :selected-playlist="selectedPersonalPlaylist"
-                title="Your Personal Playlists"
-                placeholder="Search personal playlists..."
-                @playlist-select="(playlistId, event) => { setSelectedPersonalPlaylist(playlistId); spotifyStore.fetchPlaylist(playlistId) }"
-              />
-              <Playlist
-                  v-if="spotifyStore.getCurrentPlaylist"
-                  :playlist="spotifyStore.getCurrentPlaylist"
-                  :sorted-tracks="sortedPlaylistItems"
-                  :selected-item="selectedItem"
-                  :selected-sort-option="selectedPlaylistSortOption"
-                  :unplayable-tracks="audioStore.unplayableTracks"
-                  @refresh="spotifyStore.fetchPlaylists(0)"
-                  @track-click="handleTrackClick"
-                  @track-hover="handleTrackHover"
-                  @track-leave="handleTrackLeave"
-                  @sort-change="selectedPlaylistSortOption = $event"
+                  :playlists="spotifyStore.getPlaylists"
+                  :selected-playlist="selectedPersonalPlaylist"
+                  title="Your Personal Playlists"
+                  placeholder="Search personal playlists..."
+                  @playlist-select="handlePlaylistClick"
               />
             </div>
           </div>
@@ -313,87 +297,73 @@ const handleCloseWelcomeModal = () => {
           <!-- Top Artists Section -->
           <div v-if="selectedTopMenu === 2">
             <TopArtists
-              :selected-top-menu="selectedTopMenu"
-              @artist-click="handleArtistClick"
-              @artist-hover="handleArtistHover"
-              @artist-leave="handleArtistLeave"
+                :selected-top-menu="selectedTopMenu"
+                @artist-click="handleArtistClick"
+                @artist-hover="handleArtistHover"
+                @artist-leave="handleArtistLeave"
             />
           </div>
 
           <!-- Top Tracks Section -->
           <div v-if="selectedTopMenu === 3">
             <TopTracks
-              :selected-top-menu="selectedTopMenu"
-              @track-click="handleTrackClick"
-              @track-hover="handleTrackHover"
-              @track-leave="handleTrackLeave"
+                :selected-top-menu="selectedTopMenu"
+                @track-click="handleTrackClick"
+                @track-hover="handleTrackHover"
+                @track-leave="handleTrackLeave"
             />
           </div>
 
           <!-- Saved Albums Section -->
           <div v-if="selectedTopMenu === 4">
-                          <SavedAlbums
+            <SavedAlbums
                 :selected-top-menu="selectedTopMenu"
                 @album-click="async (album, event) => { if (deeperStore.getIsGloballyLoading) return; setSelectedItem('4' + album.id); await deeperStore.getAlbumDetails(album, 'savedAlbums') }"
-              />
+            />
           </div>
 
           <!-- Saved Tracks Section -->
           <div v-if="selectedTopMenu === 5">
-                          <SavedTracks
+            <SavedTracks
                 :selected-top-menu="selectedTopMenu"
                 @track-click="async (track, event) => { if (deeperStore.getIsGloballyLoading) return; setSelectedItem('5' + track.id); await deeperStore.getTrackDetails(track, 'savedTracks'); queueStore.addToQueue(track) }"
-              @track-hover="handleTrackHover"
-              @track-leave="handleTrackLeave"
+                @track-hover="handleTrackHover"
+                @track-leave="handleTrackLeave"
             />
           </div>
 
           <!-- Followed Artists Section -->
           <div v-if="selectedTopMenu === 6">
             <FollowedArtists
-              :selected-top-menu="selectedTopMenu"
-              @artist-click="handleArtistClick"
-              @artist-hover="handleArtistHover"
-              @artist-leave="handleArtistLeave"
+                :selected-top-menu="selectedTopMenu"
+                @artist-click="handleArtistClick"
+                @artist-hover="handleArtistHover"
+                @artist-leave="handleArtistLeave"
             />
           </div>
 
           <!-- New Releases Section -->
           <div v-if="selectedTopMenu === 7">
-                          <NewReleases
+            <NewReleases
                 :selected-top-menu="selectedTopMenu"
                 @album-click="async (album, event) => { if (deeperStore.getIsGloballyLoading) return; setSelectedItem('7' + album.id); await deeperStore.getAlbumDetails(album, 'newReleases') }"
-              @album-hover="handleTrackHover"
-              @album-leave="handleTrackLeave"
+                @album-hover="handleTrackHover"
+                @album-leave="handleTrackLeave"
             />
           </div>
 
           <!-- Spotify Playlists Section -->
           <div v-if="selectedTopMenu === 8">
             <Loader v-if="spotifyStore.isLoading"/>
-              <div id="sptplaylists" class="flex-stretch" v-show="selectedTopMenu===8">
-                <PlaylistSelector
+            <div id="sptplaylists" class="flex-stretch" v-show="selectedTopMenu===8">
+              <PlaylistSelector
                   :playlists="spotifyStore.getSpotifyPlaylists"
                   :selected-playlist="selectedSpotifyPlaylist"
                   title="Spotify Playlists"
                   placeholder="Search Spotify playlists..."
-                  @playlist-select="(playlistId, event) => { setSelectedSpotifyPlaylist(playlistId); spotifyStore.fetchSpotifyPlaylist(playlistId) }"
-                />
-                <Playlist
-                    v-if="spotifyStore.getCurrentSpotifyPlaylist"
-                    :playlist="spotifyStore.getCurrentSpotifyPlaylist"
-                    :sorted-tracks="sortedSpotPlaylistItems"
-                    :selected-item="selectedItem"
-                    :selected-sort-option="selectedSpotPlaylistSortOption"
-                    :unplayable-tracks="audioStore.unplayableTracks"
-                    :track-prefix="'8'"
-                    @refresh="spotifyStore.fetchSpotifyPlaylists(0)"
-                    @track-click="handleTrackClick"
-                    @track-hover="handleTrackHover"
-                    @track-leave="handleTrackLeave"
-                    @sort-change="selectedSpotPlaylistSortOption = $event"
-                />
-              </div>
+                  @playlist-select="handlePlaylistClick"
+              />
+            </div>
           </div>
 
           <!-- Search Section -->
@@ -457,7 +427,7 @@ const handleCloseWelcomeModal = () => {
   </div>
 
   <!-- Global Preloader -->
-  <GlobalPreloader />
+  <GlobalPreloader/>
 </template>
 
 <style scoped>

@@ -98,10 +98,8 @@ window.addEventListener('resize', () => {
     />
 
     <div v-else class="deeper-header p-4">
-      <div :class="{'col-6': mobileClass}">
-        <track-cover :d="d" :cover="cover"></track-cover>
-      </div>
-      <div class="track-info" :class="{'col-6': mobileClass}">
+      <track-cover :d="d" :cover="cover"></track-cover>
+      <div class="track-info">
         <h3 class="track-title">{{ d.name }}</h3>
         <div class="artists-section">
           <span class="artists-label">By</span>
@@ -120,7 +118,7 @@ window.addEventListener('resize', () => {
           </div>
         </div>
       </div>
-      <div class="artist-actions">
+      <div class="artist-actions" :class="{'grid-column-2': mobileClass}">
         <button class="recommend-btn"
                 @click="handleRecommendClick">
           <span class="btn-icon">🎵</span>

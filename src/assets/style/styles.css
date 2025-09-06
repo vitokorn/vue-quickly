@@ -147,6 +147,11 @@ input[type="text"] {
     .search-result-text {
         font-size: 0.9rem;
     }
+
+    .deeper-header {
+        display: grid;
+        grid-template-columns: 1fr 1fr!important;
+    }
 }
 
 /* Large tablets and small desktops */
@@ -415,7 +420,8 @@ input[type=checkbox] {
 }
 
 .seed-header {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     align-items: center;
     justify-content: space-between;
     padding: 20px 24px;
@@ -1912,6 +1918,10 @@ input[type=checkbox] {
         width: 36px;
         height: 36px;
     }
+    .deeper-header {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
 }
 
 .itemImg {
@@ -2252,4 +2262,8 @@ audio {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.grid-column-2 {
+    grid-column: span 2
 }

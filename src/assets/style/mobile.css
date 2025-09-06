@@ -2391,9 +2391,6 @@
 
 /* Responsive design for seed components */
 @media (max-width: 480px) {
-    .seed-header {
-        padding: 16px 16px 0;
-    }
 
     .title-text {
         font-size: 18px;
@@ -2421,9 +2418,6 @@
 }
 
 @media (max-width: 360px) {
-    .seed-header {
-        padding: 12px 12px 0;
-    }
 
     .title-text {
         font-size: 16px;

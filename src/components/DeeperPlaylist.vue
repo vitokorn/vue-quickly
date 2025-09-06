@@ -9,6 +9,7 @@ import SortTracks from "./SortTracks.vue";
 import {useMediaDisplay} from "../composables/useMediaDisplay";
 import { useVisibilityManager } from "../composables/useVisibilityManager";
 import TrackCover from "./TrackCover.vue";
+import PlaylistTrackItem from "./PlaylistTrackItem.vue";
 
 const props = defineProps(['d', 'num'])
 const spotifyStore = useSpotifyStore()
@@ -18,7 +19,6 @@ const deeperStore = useDeeperStore()
 const selected = ref()
 const selectedDeeperPlaylistSortOption = ref("")
 const componentRef = ref(null)
-const mobileClass = ref(false)
 
 // Get visibility manager
 const visibilityManager = useVisibilityManager()
@@ -51,9 +51,6 @@ const sortedDeeperPlaylistItems = computed(() => {
 })
 
 // Helper function to get media display for a track
-function getTrackMediaDisplay(track) {
-  return useMediaDisplay(computed(() => track))
-}
 
 const {image: coverImage, hasImage: hasCover} = useMediaDisplay(
     computed(() => props.d),
@@ -74,10 +71,11 @@ const handleSortChange = (value) => {
   emit('sort-change', value)
 }
 
-mobileClass.value = window.innerWidth < 768;
-window.addEventListener('resize', () => {
-  mobileClass.value = window.innerWidth < 768;
-})
+function handleTrackClick(item, event) {
+  setActive(item.track.id);
+  deeperStore.getTrackDetails(item, getSectionName(props.num), props.d.id);
+  queueStore.addToQueue(item.track)
+}
 
 onMounted(() => {
   // Register this component with the visibility manager
@@ -92,15 +90,15 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="modern-playlist-header row" ref="componentRef">
-    <div class="col-sm-6 col-md-6 col-lg-3" :class="{'col-6': mobileClass}">
+  <div class="deeper-header" ref="componentRef">
+    <div >
       <TrackCover
           :d="d"
           :cover="coverImage"
           v-if="hasCover"
       />
     </div>
-    <div class="playlist-info col-sm-6 col-md-6 col-lg-6" :class="{'col-6': mobileClass}">
+    <div class="playlist-info">
       <div class="playlist-title-section">
         <h2 class="playlist-title">{{ d.name }}</h2>
         <button class="refresh-button" @click="handleRefresh">
@@ -117,9 +115,9 @@ onMounted(() => {
         </label>
       </div>
     </div>
-    <div class="col-sm-12 col-md-12 col-lg-3" :class="{'col-12': mobileClass}">
+    <div>
       <a class="spotify-link"
-         :href="d['external_urls']['spotify']"
+         :href="d.external_urls?.spotify"
          target="_blank"
          rel="noopener">
         <span class="link-icon">🎧</span>
@@ -131,19 +129,15 @@ onMounted(() => {
 
     <div class="tracks-container">
       <template v-for="(item, index) in sortedDeeperPlaylistItems" :key="index">
-        <div :class="['media-card', getTrackMediaDisplay(item.track).displayClass.value, selected === item.track.id ? 'selected' : '']"
-             :style="getTrackMediaDisplay(item.track).backgroundStyle.value"
-             @mouseover="getTrackMediaDisplay(item.track).hasPreview.value && audioStore.handleAudioHover($event)"
-             @mouseleave="getTrackMediaDisplay(item.track).hasPreview.value && audioStore.handleAudioLeave($event)"
-             @click="setActive(item.track.id);deeperStore.getTrackDetails(item, getSectionName(num), d.id); queueStore.addToQueue(item.track)">
-          <div class="track-overlay">
-            <div class="track-info">
-              <div class="track-artists">{{ item.track.artists.map(a => a.name).join(', ') }}</div>
-              <div class="track-name">{{ item.track.name }}</div>
-            </div>
-          </div>
-          <audio :preload="getTrackMediaDisplay(item.track).audioPreload.value" :src="getTrackMediaDisplay(item.track).audioSrc.value"></audio>
-        </div>
+        <template v-if="item.track">
+          <PlaylistTrackItem
+              :track="item.track"
+              :track-item="item"
+              @click="handleTrackClick"
+              @hover="audioStore.handleAudioHover($event)"
+              @leave="audioStore.handleAudioLeave($event)"
+          />
+        </template>
       </template>
     </div>
 </template>

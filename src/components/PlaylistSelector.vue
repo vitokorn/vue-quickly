@@ -36,8 +36,8 @@ const filteredPlaylists = computed(() => {
   )
 })
 
-const handlePlaylistSelect = (playlistId, event) => {
-  emit('playlist-select', playlistId, event)
+const handlePlaylistSelect = (playlist, event) => {
+  emit('playlist-select', playlist, event)
 }
 
 const handleSearch = (event) => {
@@ -68,7 +68,7 @@ const handleSearch = (event) => {
     <div class="playlists grid-auto-columns py-2 my-2">
       <template v-for="item of filteredPlaylists" :key="item.id">
         <div :id="item.id"
-             @click="handlePlaylistSelect(item.id, $event)"
+             @click="handlePlaylistSelect(item, $event)"
              class="hr-line-dashed flex-center p-3"
              :class="selectedPlaylist === item.id ? 'active_tab' : ''">
           {{ item.name }}
