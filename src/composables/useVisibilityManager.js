@@ -24,13 +24,16 @@ export function useVisibilityManager() {
         console.log('registerComponent called for:', key)
         console.log('Current pending requests:', Array.from(visibilityState.pendingVisibility.keys()))
 
-        // Check if component is already registered
-        if (visibilityState.componentRefs.has(key)) {
-            console.log('Component already registered, skipping:', key)
-            return
-        }
-
+        // Always update the component ref, even if already registered
+        // This handles cases where the component is recreated and the ref becomes stale
+        const wasAlreadyRegistered = visibilityState.componentRefs.has(key)
         visibilityState.componentRefs.set(key, componentRef)
+        
+        if (wasAlreadyRegistered) {
+            console.log('Component already registered, updating ref:', key)
+        } else {
+            console.log('Component newly registered:', key)
+        }
 
         // Add a small delay to ensure pending requests are processed
         setTimeout(() => {
@@ -119,6 +122,7 @@ export function useVisibilityManager() {
         console.log('showComponent called for:', key)
         console.log('Registered components at showComponent time:', Array.from(visibilityState.componentRefs.keys()))
         const componentRef = visibilityState.componentRefs.get(key)
+        console.log('Component ref found:', !!componentRef, 'Component ref value:', !!componentRef?.value)
         if (componentRef && componentRef.value) {
             console.log('Component found, showing:', key)
             if (componentRef.value.classList.contains('row')) {

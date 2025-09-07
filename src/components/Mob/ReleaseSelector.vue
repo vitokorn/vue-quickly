@@ -70,6 +70,11 @@ const isReleasePlaying = (release) => {
   return false
 }
 
+const hasPreview = (release) => {
+  let test = getReleasePreviewUrl(release)
+  return !!test
+}
+
 // Helper function to get preview URL for a release
 const getReleasePreviewUrl = (release) => {
   if (release.tracks && release.tracks.items && release.tracks.items.length > 0) {
@@ -251,17 +256,20 @@ const formatReleaseDate = (dateString) => {
               v-for="(release, index) in displayedReleases"
               :key="index"
               class="song-item"
-              @click="handleReleaseClick(release, $event);handleReleaseSelect(release.id, $event)"
+              @click="handleReleaseClick(release, $event)"
           >
-            <div class="item-cover" v-if="release.images && release.images[0]">
-              <img :src="release.images[0].url" :alt="release.name"/>
-            </div>
-            <div v-else class="release-cover">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="release-icon">
-                <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clip-rule="evenodd" />
-              </svg>
-            </div>
-            <div class="item-info">
+              <div class="item-cover" style="position: relative;">
+                <img v-if="release.images && release.images[0]" :src="release.images[0].url" :alt="release.name"/>
+                <div v-else class="release-cover">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="release-icon">
+                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <div v-if="hasPreview(release) && isReleasePlaying(release)" class="playing-indicator">
+                  <span class="playing-icon">▶️</span>
+                </div>
+              </div>
+            <div class="item-info" @click="handleReleaseSelect(release.id, $event)">
               <div class="item-name">{{ release.name }}</div>
               <span v-if="release.release_date">{{ formatReleaseDate(release.release_date) }}</span>
               <div class="item-artist">{{ formatArtistNames(release.artists) }}</div>

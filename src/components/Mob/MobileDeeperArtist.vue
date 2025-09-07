@@ -248,7 +248,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="mobile-deeper-artist" ref="componentRef">
+  <div class="mobile-deeper-item" ref="componentRef">
     <!-- Mobile Header with Back Button -->
     <div class="mobile-header">
       <button class="back-button" @click="handleBackClick">

@@ -2,6 +2,7 @@
 import {computed} from 'vue'
 import {useMobileMediaDisplay} from '../../composables/useMobileMediaDisplay.js'
 import {artistUtils} from '../../utils/artistUtils.js'
+import {useAudioStore} from "../../stores/audio-store.js";
 
 const props = defineProps({
   track: {
@@ -31,6 +32,8 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['click', 'coverClick', 'infoClick', 'hover', 'leave'])
+
+const audioStore = useAudioStore()
 
 // Utility function for formatting artist names
 const formatArtistNames = (artists) => {
@@ -102,7 +105,7 @@ const getDisplayClass = (release) => {
       class="song-item"
       @click="handleClick"
   >
-    <div class="item-cover" @click="handleCoverClick">
+    <div class="item-cover" @click="handleCoverClick" style="position: relative;">
       <img
           v-if="track.album && track.album.images && track.album.images[0]"
           :src="track.album.images[0].url"
@@ -111,6 +114,10 @@ const getDisplayClass = (release) => {
       />
       <div v-else class="no-image">
         <span class="no-image-icon">🎵</span>
+      </div>
+      <!-- Playing indicator for artists with previews -->
+      <div v-if="hasPreview && audioStore.mobileIsTrackPlaying(track.id)" class="playing-indicator">
+        <span class="playing-icon">▶️</span>
       </div>
     </div>
     <div class="item-info" @click="handleInfoClick">

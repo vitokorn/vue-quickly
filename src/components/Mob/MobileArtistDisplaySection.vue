@@ -138,7 +138,7 @@ const getArtistMediaDisplay = (artist) => {
           class="song-item"
           @click="handleArtistClick(artist, $event)"
       >
-        <div class="item-cover" @click="handleCoverClick(artist, $event)">
+        <div class="item-cover" @click="handleCoverClick(artist, $event)" style="position: relative;">
           <img
               v-if="artist.images && artist.images.length > 0"
               :src="artist.images[0].url"

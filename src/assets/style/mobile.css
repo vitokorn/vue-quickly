@@ -1630,10 +1630,8 @@
 }
 /*stopped here*/
 /* Mobile Deeper Album, Playlist, Track Containers - match artist deeper look */
-.mobile-deeper-artist,
-.mobile-deeper-album,
-.mobile-deeper-playlist,
-.mobile-deeper-track {
+.mobile-deeper-item,
+.mobile-deeper-track{
     position: fixed;
     top: 0;
     left: 0;
@@ -1661,12 +1659,8 @@
 }
 
 /* Make back button consistent across all mobile deeper components */
-.mobile-deeper-artist .back-button,
-.mobile-deeper-album .back-button,
-.mobile-deeper-playlist .back-button,
-.mobile-deeper-track .back-button,
-.mobile-seed-artists .back-button,
-.mobile-seed-tracks .back-button {
+.mobile-deeper-item .back-button,
+.mobile-deeper-track .back-button {
     background: none;
     border: none;
     color: var(--title-color);
@@ -1679,22 +1673,13 @@
     justify-content: center;
     margin-right: 12px;
 }
-
-.mobile-deeper-artist .back-button:hover,
-.mobile-deeper-album .back-button:hover,
-.mobile-deeper-playlist .back-button:hover,
 .mobile-deeper-track .back-button:hover,
-.mobile-seed-artists .back-button:hover,
-.mobile-seed-tracks .back-button:hover {
+.mobile-deeper-item .back-button:hover{
     background: rgba(255, 255, 255, 0.1);
 }
 
-.mobile-deeper-artist .back-button svg,
-.mobile-deeper-album .back-button svg,
-.mobile-deeper-playlist .back-button svg,
 .mobile-deeper-track .back-button svg,
-.mobile-seed-tracks .back-button svg,
-.mobile-seed-tracks .back-button svg {
+.mobile-deeper-item .back-button svg{
     width: 24px;
     height: 24px;
 }
@@ -2244,48 +2229,7 @@
    Mobile Seed Components Styles
    ========================== */
 
-.mobile-seed-tracks,
-.mobile-seed-artists {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: var(--theme-mobile-bg);
-    z-index: 1000;
-    overflow-y: auto;
-    display: none;
-}
-
-.mobile-seed-tracks .seed-title,
-.mobile-seed-artists .seed-title {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.mobile-seed-tracks .title-icon,
-.mobile-seed-artists .title-icon {
-    font-size: 24px;
-}
-
-.mobile-seed-tracks .title-text,
-.mobile-seed-artists .title-text {
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--title-color);
-    line-height: 1.3;
-}
-
-.mobile-seed-tracks .seed-actions,
-.mobile-seed-artists .seed-actions {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-}
-
-.mobile-seed-tracks .refresh-button,
-.mobile-seed-artists .refresh-button {
+.mobile-deeper-item .refresh-button{
     background: var(--action-btn-bg);
     border: none;
     color: var(--title-color);
@@ -2300,16 +2244,9 @@
     height: 40px;
 }
 
-.mobile-seed-tracks .refresh-button:hover,
-.mobile-seed-artists .refresh-button:hover {
+.mobile-deeper-item .refresh-button:hover{
     background: var(--action-btn-hover-bg);
     transform: translateY(-1px);
-}
-
-.mobile-seed-tracks .refresh-icon,
-.mobile-seed-artists .refresh-icon {
-    width: 20px;
-    height: 20px;
 }
 
 .sort-select {
@@ -2374,11 +2311,6 @@
 
     .title-text {
         font-size: 18px;
-    }
-
-    .seed-actions {
-        flex-direction: column;
-        gap: 8px;
     }
 
     .refresh-button {

@@ -1532,7 +1532,7 @@ h1 {
 
 .artist-link:hover {
     background: linear-gradient(135deg, rgba(240, 55, 165, 0.15), rgba(240, 55, 165, 0.25));
-    border-color: rgba(240, 55, 165, 0.4);
+    border-color: var(--active-tab);
     transform: translateY(-2px) scale(1.02);
     box-shadow: var(--tab-box-shadow);
     color: var(--active-tab-hover);
@@ -1588,6 +1588,7 @@ h1 {
 }
 
 .spotify-link {
+    text-decoration: none;
     background: var(--spotify-green);
     color: var(--title-color);
     border: 1px solid var(--item-border);
