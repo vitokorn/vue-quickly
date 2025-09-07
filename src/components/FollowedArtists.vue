@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
-import { useSpotifyStore } from '../stores/spotify-store'
+import { useMusicStore } from '../stores/music-store'
 import { useAudioStore } from '../stores/audio-store'
 import { useDeeperStore } from '../stores/deeper-store'
 import { useSorting } from '../composables/useSorting.js'
@@ -22,7 +22,7 @@ const props = defineProps({
 const emit = defineEmits(['artist-click', 'artist-hover', 'artist-leave'])
 
 // Stores
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 const audioStore = useAudioStore()
 const deeperStore = useDeeperStore()
 
@@ -35,7 +35,7 @@ const selectedFASortOption = ref("")
 
 // Computed sorted data
 const sortedFAItems = createArtistSorter(
-  computed(() => spotifyStore.getFollowedArtists || []),
+  computed(() => musicStore.getFollowedArtists || []),
   selectedFASortOption
 )
 
@@ -57,8 +57,8 @@ const handleArtistLeave = (event) => {
 }
 
 const handleRefresh = () => {
-  spotifyStore.followedArtists = []
-  spotifyStore.fetchFollowedArtists()
+  musicStore.followedArtists = []
+  musicStore.fetchFollowedArtists()
 }
 
 </script>
@@ -74,7 +74,7 @@ const handleRefresh = () => {
       </div>
       <SortArtists v-model="selectedFASortOption" />
     </div>
-    <Loader v-if="spotifyStore.isLoading" />
+    <Loader v-if="musicStore.isLoading" />
       <div id="followedartist" class="display-flex flex-wrap" v-show="selectedTopMenu === 6">
         <div class="display-flex flex-wrap py-2 gap-8">
           <template v-for="(item, index) of sortedFAItems" :key="index">

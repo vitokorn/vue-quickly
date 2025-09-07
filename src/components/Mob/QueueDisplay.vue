@@ -1,14 +1,14 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useQueueStore } from "../../stores/queue-store"
-import { useSpotifyStore } from "../../stores/spotify-store"
+import { useMusicStore } from "../../stores/music-store"
 import { usePreferencesStore } from "../../stores/preferences-store"
 import MobileTrackItem from './MobileTrackItem.vue'
 import MobileTracksList from "./MobileTracksList.vue";
 import QueueItem from "./QueueItem.vue";
 
 const queueStore = useQueueStore()
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 const preferencesStore = usePreferencesStore()
 
 onMounted(() => {
@@ -16,8 +16,8 @@ onMounted(() => {
   queueStore.loadQueue()
 
   // Load playlists if not already loaded
-  if (spotifyStore.getPlaylists.length === 0) {
-    spotifyStore.fetchPlaylists(0)
+  if (musicStore.getPlaylists.length === 0) {
+    musicStore.fetchPlaylists(0)
   }
 })
 
@@ -34,8 +34,8 @@ const handleSaveToPlaylist = async (playlistId) => {
     const name = prompt('Name for your playlist:', 'Discovered')
     if (name) {
       try {
-        await spotifyStore.createPlaylist(name)
-        await spotifyStore.fetchPlaylists(0)
+        await musicStore.createPlaylist(name)
+        await musicStore.fetchPlaylists(0)
       } catch (error) {
         console.error('Failed to create playlist:', error)
       }
@@ -90,7 +90,7 @@ const toggleViewMode = () => {
         <select class="playlist-select" @change="handleSaveToPlaylist($event.target.value)">
           <option value="default" selected disabled>Add to Playlist</option>
           <option value="new">New Playlist</option>
-          <template v-for="(playlist, index) of spotifyStore.getPlaylists" :key="index">
+          <template v-for="(playlist, index) of musicStore.getPlaylists" :key="index">
             <option :value="playlist.id">{{ playlist.name }}</option>
           </template>
         </select>

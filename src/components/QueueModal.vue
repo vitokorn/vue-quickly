@@ -1,9 +1,9 @@
 <script setup>
 import {useQueueStore} from "../stores/queue-store";
-import {useSpotifyStore} from "../stores/spotify-store";
+import {useMusicStore} from "../stores/music-store";
 
 const queueStore = useQueueStore()
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 
 const handleSaveQueue = async () => {
   try {
@@ -25,9 +25,9 @@ const handleCreatePlaylist = async () => {
   const name = prompt('Name for your playlist:', 'Discovered')
   if (name) {
     try {
-      await spotifyStore.createPlaylist(name)
+      await musicStore.createPlaylist(name)
       // Refresh playlists
-      await spotifyStore.fetchPlaylists(0)
+      await musicStore.fetchPlaylists(0)
     } catch (error) {
       console.error('Failed to create playlist:', error)
     }
@@ -57,7 +57,7 @@ const handleCreatePlaylist = async () => {
           <select class="playlist-select" @change="handleSaveToPlaylist($event.target.value)">
             <option selected disabled>Add all to playlist</option>
             <option value="new" @click="handleCreatePlaylist">New playlist</option>
-            <template v-for="(playlist, index) of spotifyStore.getPlaylists" :key="index">
+            <template v-for="(playlist, index) of musicStore.getPlaylists" :key="index">
               <option :value="playlist.id">{{ playlist.name }}</option>
             </template>
           </select>

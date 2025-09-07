@@ -28,8 +28,13 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useMusicStore } from '../../stores/music-store'
+import { storeToRefs } from 'pinia'
+
 const searchQuery = ref('')
 
+const musicStore = useMusicStore()
+const { currentServiceType } = storeToRefs(musicStore)
 
 const props = defineProps({
   selectedTab: {
@@ -40,7 +45,7 @@ const props = defineProps({
 
 const emit = defineEmits(['tab-click', 'search'])
 
-const tabs = [
+const allTabs = computed(() => [
   { id: 'option1', value: 1, icon: '📁', text: 'Your Playlists' },
   { id: 'option2', value: 2, icon: '👤', text: 'Top Artists' },
   { id: 'option3', value: 3, icon: '🎵', text: 'Top Tracks' },
@@ -48,8 +53,23 @@ const tabs = [
   { id: 'option5', value: 5, icon: '❤️', text: 'Saved Tracks' },
   { id: 'option6', value: 6, icon: '⭐', text: 'Followed Artists' },
   { id: 'option7', value: 7, icon: '🆕', text: 'New Releases' },
-  { id: 'option8', value: 8, icon: '🎧', text: 'Spotify Playlists' }
-]
+  {
+    id: 'option8',
+    value: 8,
+    icon: '🎧',
+    text: `${currentServiceType.value.charAt(0).toUpperCase()}${currentServiceType.value.slice(1)} Playlists`
+  }
+])
+
+
+// Filter tabs based on current service
+const tabs = computed(() => {
+  const base = allTabs.value
+  if (currentServiceType.value === 'deezer') {
+    return base.filter(t => t.value !== 2 && t.value !== 3)
+  }
+  return base
+})
 
 const handleTabClick = (tabValue, event) => {
   event.stopPropagation()

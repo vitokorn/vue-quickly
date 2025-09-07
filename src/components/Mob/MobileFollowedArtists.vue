@@ -1,13 +1,13 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useSpotifyStore } from '../../stores/spotify-store'
+import { useMusicStore } from '../../stores/music-store'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import { useDeeperStore } from '../../stores/deeper-store'
 import { useSelection } from '../../composables/useSelection.js'
 import MobileArtistDisplaySection from "./MobileArtistDisplaySection.vue";
 import {useSorting} from "../../composables/useSorting.js";
 
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 const deeperStore = useDeeperStore()
 const preferencesStore = usePreferencesStore()
 
@@ -24,17 +24,17 @@ const followedArtists = ref([])
 
 // Methods
 const loadFollowedArtists = async () => {
-  if (spotifyStore.getFollowedArtists && spotifyStore.getFollowedArtists.length > 0) {
+  if (musicStore.getFollowedArtists && musicStore.getFollowedArtists.length > 0) {
     console.log('Using cached followed artists data')
-    followedArtists.value = spotifyStore.getFollowedArtists
+    followedArtists.value = musicStore.getFollowedArtists
     return
   }
 
   loading.value = true
   try {
     // Load followed artists from Spotify API
-    await spotifyStore.fetchFollowedArtists()
-    followedArtists.value = spotifyStore.getFollowedArtists || []
+    await musicStore.fetchFollowedArtists()
+    followedArtists.value = musicStore.getFollowedArtists || []
   } catch (error) {
     console.error('Failed to load followed artists:', error)
   } finally {
@@ -77,7 +77,7 @@ const toggleViewMode = () => {
 
 const handleRefresh = async () => {
   // Clear existing data and fetch fresh
-  spotifyStore.followedArtists = []
+  musicStore.followedArtists = []
   await loadFollowedArtists()
 }
 
@@ -100,7 +100,7 @@ const formatGenres = (genres) => {
 }
 const sortedFAItems = createArtistSorter(
     computed(() => {
-      const artists = spotifyStore.getFollowedArtists || []
+      const artists = musicStore.getFollowedArtists || []
       console.log('Creating sorted items from:', artists.length, 'artists')
       return artists
     }),

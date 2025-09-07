@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useSpotifyStore } from '../../stores/spotify-store'
+import { useMusicStore } from '../../stores/music-store'
 import { useAudioStore } from '../../stores/audio-store'
 import { useQueueStore } from '../../stores/queue-store'
 import { useDeeperStore } from '../../stores/deeper-store'
@@ -8,7 +8,7 @@ import { usePreferencesStore } from '../../stores/preferences-store'
 import { useSelection } from '../../composables/useSelection.js'
 import MobileTrackItem from './MobileTrackItem.vue'
 
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 const audioStore = useAudioStore()
 const queueStore = useQueueStore()
 const deeperStore = useDeeperStore()
@@ -25,13 +25,13 @@ const loading = ref(false)
 const topTracks = computed(() => {
   switch (selectedTimeRange.value) {
     case 1:
-      return spotifyStore.getTopTracksShort || []
+      return musicStore.getTopTracksShort || []
     case 2:
-      return spotifyStore.getTopTracksMedium || []
+      return musicStore.getTopTracksMedium || []
     case 3:
-      return spotifyStore.getTopTracksLong || []
+      return musicStore.getTopTracksLong || []
     default:
-      return spotifyStore.getTopTracksShort || []
+      return musicStore.getTopTracksShort || []
   }
 })
 
@@ -53,7 +53,7 @@ const loadTopTracks = async (timeRange) => {
   const rangeString = timeRange === 1 ? 'short_term' : timeRange === 2 ? 'medium_term' : 'long_term'
   const timeRangeKey = rangeString === 'short_term' ? 'short' :
                       rangeString === 'medium_term' ? 'medium' : 'long'
-  const existingData = spotifyStore[`getTopTracks${timeRangeKey.charAt(0).toUpperCase() + timeRangeKey.slice(1)}`]
+  const existingData = musicStore[`getTopTracks${timeRangeKey.charAt(0).toUpperCase() + timeRangeKey.slice(1)}`]
 
   if (existingData && existingData.length > 0) {
     console.log('Using cached top tracks data for', rangeString)
@@ -62,7 +62,7 @@ const loadTopTracks = async (timeRange) => {
 
   loading.value = true
   try {
-    await spotifyStore.fetchTopTracks(rangeString)
+    await musicStore.fetchTopTracks(rangeString)
   } catch (error) {
     console.error('Failed to load top tracks:', error)
   } finally {
@@ -118,7 +118,7 @@ const handleRefresh = async () => {
   const rangeString = selectedTimeRange.value === 1 ? 'short_term' : selectedTimeRange.value === 2 ? 'medium_term' : 'long_term'
   const timeRangeKey = rangeString === 'short_term' ? 'short' :
                       rangeString === 'medium_term' ? 'medium' : 'long'
-  spotifyStore[`topTracks.${timeRangeKey}`] = []
+  musicStore[`topTracks.${timeRangeKey}`] = []
   await loadTopTracks(selectedTimeRange.value)
 }
 

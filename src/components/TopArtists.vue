@@ -1,6 +1,6 @@
 <script setup>
 import {computed, ref} from 'vue'
-import {useSpotifyStore} from '../stores/spotify-store'
+import {useMusicStore} from '../stores/music-store'
 import {useAudioStore} from '../stores/audio-store'
 import {useDeeperStore} from '../stores/deeper-store'
 import {useSorting} from '../composables/useSorting.js'
@@ -23,7 +23,7 @@ const props = defineProps({
 const emit = defineEmits(['artist-click', 'artist-hover', 'artist-leave'])
 
 // Stores
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 const audioStore = useAudioStore()
 const deeperStore = useDeeperStore()
 
@@ -38,17 +38,17 @@ const selectedTALLSortOption = ref("")
 
 // Computed sorted data
 const sortedTAItems = createArtistSorter(
-    computed(() => spotifyStore.getTopArtistsShort || []),
+    computed(() => musicStore.getTopArtistsShort || []),
     selectedTASortOption
 )
 
 const sortedTA6Items = createArtistSorter(
-    computed(() => spotifyStore.getTopArtistsMedium || []),
+    computed(() => musicStore.getTopArtistsMedium || []),
     selectedTA6SortOption
 )
 
 const sortedTALLItems = createArtistSorter(
-    computed(() => spotifyStore.getTopArtistsLong || []),
+    computed(() => musicStore.getTopArtistsLong || []),
     selectedTALLSortOption
 )
 
@@ -71,16 +71,16 @@ const handleArtistLeave = (event) => {
 }
 
 const handleRangeChange = async (rangeId, event) => {
-  spotifyStore.setSelectedArtistsRange(rangeId)
+  musicStore.setSelectedArtistsRange(rangeId)
   const timeRange = rangeId === 1 ? 'short_term' : rangeId === 2 ? 'medium_term' : 'long_term'
-  if ((rangeId === 1 && !spotifyStore.getTopArtistsShort.length) || (rangeId === 2 && !spotifyStore.getTopArtistsMedium.length) || (rangeId === 3 && !spotifyStore.getTopArtistsLong.length)) {
-    await spotifyStore.fetchTopArtists(timeRange)
+  if ((rangeId === 1 && !musicStore.getTopArtistsShort.length) || (rangeId === 2 && !musicStore.getTopArtistsMedium.length) || (rangeId === 3 && !musicStore.getTopArtistsLong.length)) {
+    await musicStore.fetchTopArtists(timeRange)
   }
 }
 
 const handleRefresh = async (rangeId, event) => {
   const timeRange = rangeId === 1 ? 'short_term' : rangeId === 2 ? 'medium_term' : 'long_term'
-  await spotifyStore.fetchTopArtists(timeRange)
+  await musicStore.fetchTopArtists(timeRange)
 }
 </script>
 
@@ -90,28 +90,28 @@ const handleRefresh = async (rangeId, event) => {
       <div class="grid-2-1">
         <h4>Top Artists</h4>
         <div class="ps-2">
-          <RefreshButton :on-click="() => handleRefresh(spotifyStore.selectedArtistsRange)"/>
+          <RefreshButton :on-click="() => handleRefresh(musicStore.selectedArtistsRange)"/>
         </div>
       </div>
       <SortArtists
-          v-if="spotifyStore.selectedArtistsRange === 1"
+          v-if="musicStore.selectedArtistsRange === 1"
           :model-value="selectedTASortOption"
           @update:model-value="selectedTASortOption = $event"
       />
       <SortArtists
-          v-if="spotifyStore.selectedArtistsRange === 2"
+          v-if="musicStore.selectedArtistsRange === 2"
           :model-value="selectedTA6SortOption"
           @update:model-value="selectedTA6SortOption = $event"
       />
       <SortArtists
-          v-if="spotifyStore.selectedArtistsRange === 3"
+          v-if="musicStore.selectedArtistsRange === 3"
           :model-value="selectedTALLSortOption"
           @update:model-value="selectedTALLSortOption = $event"
       />
     </div>
     <TimeRangeSelector
         v-show="selectedTopMenu === 2"
-        :selected-range="spotifyStore.selectedArtistsRange"
+        :selected-range="musicStore.selectedArtistsRange"
         :section-type="'artists'"
         :ranges="[
           { id: 1, label: 'Last month', fetchMethod: 'fetchTopArtists', reloadMethod: 'fetchTopArtists' },
@@ -123,10 +123,10 @@ const handleRefresh = async (rangeId, event) => {
 
     <!-- Artist Display Sections -->
     <ArtistDisplaySection
-        v-if="spotifyStore.selectedArtistsRange === 1"
+        v-if="musicStore.selectedArtistsRange === 1"
         :artists="sortedTAItems"
         section-id="topartist"
-        :is-visible="spotifyStore.selectedArtistsRange === 1"
+        :is-visible="musicStore.selectedArtistsRange === 1"
         artist-prefix="2"
         :selected-sort-option="selectedTASortOption"
         @artist-click="handleArtistClick"
@@ -135,10 +135,10 @@ const handleRefresh = async (rangeId, event) => {
     />
 
     <ArtistDisplaySection
-        v-if="spotifyStore.selectedArtistsRange === 2"
+        v-if="musicStore.selectedArtistsRange === 2"
         :artists="sortedTA6Items"
         section-id="topartist6"
-        :is-visible="spotifyStore.selectedArtistsRange === 2"
+        :is-visible="musicStore.selectedArtistsRange === 2"
         artist-prefix="2"
         :selected-sort-option="selectedTA6SortOption"
         @artist-click="handleArtistClick"
@@ -147,10 +147,10 @@ const handleRefresh = async (rangeId, event) => {
     />
 
     <ArtistDisplaySection
-        v-if="spotifyStore.selectedArtistsRange === 3"
+        v-if="musicStore.selectedArtistsRange === 3"
         :artists="sortedTALLItems"
         section-id="topartista"
-        :is-visible="spotifyStore.selectedArtistsRange === 3"
+        :is-visible="musicStore.selectedArtistsRange === 3"
         artist-prefix="2"
         :selected-sort-option="selectedTALLSortOption"
         @artist-click="handleArtistClick"

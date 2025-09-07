@@ -1,5 +1,5 @@
 <script setup>
-import {useSpotifyStore} from "../stores/spotify-store";
+import {useMusicStore} from "../stores/music-store";
 import { getSectionName } from '../utils/sectionUtils';
 import {useAudioStore} from "../stores/audio-store";
 import {useQueueStore} from "../stores/queue-store";
@@ -12,7 +12,7 @@ import TrackCover from "./TrackCover.vue";
 import PlaylistTrackItem from "./PlaylistTrackItem.vue";
 
 const props = defineProps(['d', 'num'])
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 const audioStore = useAudioStore()
 const queueStore = useQueueStore()
 const deeperStore = useDeeperStore()
@@ -24,12 +24,15 @@ const componentRef = ref(null)
 const visibilityManager = useVisibilityManager()
 
 const sortedDeeperPlaylistItems = computed(() => {
-  const items = props.d.tracks?.items || []
+  // Handle both old structure (tracks.items) and new structure (tracks)
+  const items = props.d.tracks?.items || props.d.tracks || []
+  console.log('DeeperPlaylist items:', items, 'props.d:', props.d)
   if (!selectedDeeperPlaylistSortOption.value) return items
 
   return [...items].sort((a, b) => {
-    const trackA = a.track
-    const trackB = b.track
+    // Handle both old structure (item.track) and new structure (item directly)
+    const trackA = a.track || a
+    const trackB = b.track || b
 
     switch (selectedDeeperPlaylistSortOption.value) {
       case 'track':
@@ -72,9 +75,10 @@ const handleSortChange = (value) => {
 }
 
 function handleTrackClick(item, event) {
-  setActive(item.track.id);
+  const track = item.track || item
+  setActive(track.id);
   deeperStore.getTrackDetails(item, getSectionName(props.num), props.d.id);
-  queueStore.addToQueue(item.track)
+  queueStore.addToQueue(track)
 }
 
 onMounted(() => {
@@ -129,9 +133,9 @@ onMounted(() => {
 
     <div class="tracks-container">
       <template v-for="(item, index) in sortedDeeperPlaylistItems" :key="index">
-        <template v-if="item.track">
+        <template v-if="item.track || item.id">
           <PlaylistTrackItem
-              :track="item.track"
+              :track="item.track || item"
               :track-item="item"
               @click="handleTrackClick"
               @hover="audioStore.handleAudioHover($event)"

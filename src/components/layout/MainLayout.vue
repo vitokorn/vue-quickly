@@ -1,9 +1,11 @@
 <script setup>
-import {computed, ref} from 'vue'
-import {useSpotifyStore} from '../../stores/spotify-store'
+import {computed, ref, watch, onMounted} from 'vue'
+import {useMusicStore} from '../../stores/music-store'
 import {useAudioStore} from '../../stores/audio-store'
 import {useQueueStore} from '../../stores/queue-store'
 import {useDeeperStore} from '../../stores/deeper-store'
+import {musicServiceManager} from '../../services/MusicServiceManager'
+import {storeToRefs} from 'pinia'
 import {useSorting} from '../../composables/useSorting.js'
 import {useSelection} from '../../composables/useSelection.js'
 import {useFiltering} from '../../composables/useFiltering.js'
@@ -16,6 +18,7 @@ import GlobalPreloader from '../common/GlobalPreloader.vue'
 import PlaylistSelector from '../PlaylistSelector.vue'
 import SearchCategory from '../SearchCategory.vue'
 import WelcomeModal from '../WelcomeModal.vue'
+import DeezerWelcomeModal from '../DeezerWelcomeModal.vue'
 import Header from "../Header.vue";
 import QueueModal from "../QueueModal.vue";
 import TopTracks from '../TopTracks.vue'
@@ -24,12 +27,14 @@ import SavedAlbums from '../SavedAlbums.vue'
 import SavedTracks from '../SavedTracks.vue'
 import FollowedArtists from '../FollowedArtists.vue'
 import NewReleases from '../NewReleases.vue'
-
 // Stores
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 const audioStore = useAudioStore()
 const queueStore = useQueueStore()
 const deeperStore = useDeeperStore()
+
+// Reactive store properties
+const { currentServiceType } = storeToRefs(musicStore)
 
 // Composables
 const {
@@ -44,6 +49,32 @@ const {search} = useFiltering()
 
 // Local state
 const showWelcomeModal = ref(localStorage.getItem('welcome-modal-seen') !== 'true')
+const showDeezerWelcomeModal = ref(false)
+
+// For testing - you can temporarily set this to true to see the modal
+// const showDeezerWelcomeModal = ref(true)
+
+// Watch for service changes to show Deezer welcome modal
+watch(currentServiceType, (newService) => {
+  console.log('Service changed to:', newService)
+  if (newService === 'deezer') {
+    const deezerUserId = localStorage.getItem('deezer-user-id')
+    console.log('Deezer User ID in localStorage:', deezerUserId)
+    if (!deezerUserId) {
+      console.log('Showing Deezer welcome modal')
+      showDeezerWelcomeModal.value = true
+    } else {
+      console.log('Deezer User ID found, not showing modal')
+    }
+
+    // Redirect from Top Artists (2) or Top Tracks (3) to Your Playlists (1) when switching to Deezer
+    if (selectedTopMenu.value === 2 || selectedTopMenu.value === 3) {
+      console.log('Redirecting from Top Artists/Tracks to Your Playlists for Deezer')
+      setSelectedTopMenu(1)
+    }
+  }
+}, { immediate: true })
+
 
 // Event handlers
 const handleTrackClick = async (track, event) => {
@@ -164,52 +195,52 @@ const handleTabClick = async (tabNumber, event) => {
     switch (tabNumber) {
       case 1:
         deeperStore.clearSection('yourPlaylists')
-        if (!spotifyStore.getPlaylists || spotifyStore.getPlaylists.length === 0) {
-          await spotifyStore.fetchPlaylists(0)
+        if (!musicStore.getPlaylists || musicStore.getPlaylists.length === 0) {
+          await musicStore.fetchPlaylists(0)
         }
         break
       case 2:
         deeperStore.clearSection('topArtists')
-        spotifyStore.setSelectedArtistsRange(1)
-        if (!spotifyStore.getTopArtistsShort || spotifyStore.getTopArtistsShort.length === 0) {
-          await spotifyStore.fetchTopArtists('short_term')
+        musicStore.setSelectedArtistsRange(1)
+        if (!musicStore.getTopArtistsShort || musicStore.getTopArtistsShort.length === 0) {
+          await musicStore.fetchTopArtists('short_term')
         }
         break
       case 3:
         deeperStore.clearSection('topTracks')
-        spotifyStore.setSelectedTracksRange(1)
-        if (!spotifyStore.getTopTracksShort || spotifyStore.getTopTracksShort.length === 0) {
-          await spotifyStore.fetchTopTracks('short_term')
+        musicStore.setSelectedTracksRange(1)
+        if (!musicStore.getTopTracksShort || musicStore.getTopTracksShort.length === 0) {
+          await musicStore.fetchTopTracks('short_term')
         }
         break
       case 4:
         deeperStore.clearSection('savedAlbums')
-        if (!spotifyStore.getSavedAlbums || spotifyStore.getSavedAlbums.length === 0) {
-          await spotifyStore.fetchSavedAlbums(0)
+        if (!musicStore.getSavedAlbums || musicStore.getSavedAlbums.length === 0) {
+          await musicStore.fetchSavedAlbums(0)
         }
         break
       case 5:
         deeperStore.clearSection('savedTracks')
-        if (!spotifyStore.getSavedTracks || spotifyStore.getSavedTracks.length === 0) {
-          await spotifyStore.fetchSavedTracks(0)
+        if (!musicStore.getSavedTracks || musicStore.getSavedTracks.length === 0) {
+          await musicStore.fetchSavedTracks(0)
         }
         break
       case 6:
         deeperStore.clearSection('followedArtists')
-        if (!spotifyStore.getFollowedArtists || spotifyStore.getFollowedArtists.length === 0) {
-          await spotifyStore.fetchFollowedArtists()
+        if (!musicStore.getFollowedArtists || musicStore.getFollowedArtists.length === 0) {
+          await musicStore.fetchFollowedArtists()
         }
         break
       case 7:
         deeperStore.clearSection('newReleases')
-        if (!spotifyStore.getNewReleases || spotifyStore.getNewReleases.length === 0) {
-          await spotifyStore.fetchNewReleases(0)
+        if (!musicStore.getNewReleases || musicStore.getNewReleases.length === 0) {
+          await musicStore.fetchNewReleases(0)
         }
         break
       case 8:
         deeperStore.clearSection('spotifyPlaylists')
-        if (!spotifyStore.getSpotifyPlaylists || spotifyStore.getSpotifyPlaylists.length === 0) {
-          await spotifyStore.fetchSpotifyPlaylists(0)
+        if (!musicStore.getSpotifyPlaylists || musicStore.getSpotifyPlaylists.length === 0) {
+          await musicStore.fetchSpotifyPlaylists(0)
         }
         break
     }
@@ -221,7 +252,7 @@ const handleTabClick = async (tabNumber, event) => {
 // Search handler
 const handleSearch = (event) => {
   selectedTopMenu.value = 10
-  spotifyStore.search(event.target.value)
+  musicStore.search(event.target.value)
 }
 
 const handleSearchClick = async (item, type) => {
@@ -246,6 +277,15 @@ const handleCloseWelcomeModal = () => {
   showWelcomeModal.value = false
   localStorage.setItem('welcome-modal-seen', 'true')
 }
+
+const handleCloseDeezerWelcomeModal = () => {
+  showDeezerWelcomeModal.value = false
+}
+
+const handleDeezerUserSaved = (userData) => {
+  console.log('Deezer user saved:', userData)
+  // The modal will close automatically after success
+}
 </script>
 
 <template>
@@ -256,6 +296,13 @@ const handleCloseWelcomeModal = () => {
     <WelcomeModal
         :is-visible="showWelcomeModal"
         @close="handleCloseWelcomeModal"
+    />
+
+    <!-- Deezer Welcome Modal -->
+    <DeezerWelcomeModal
+        :is-visible="showDeezerWelcomeModal"
+        @close="handleCloseDeezerWelcomeModal"
+        @user-saved="handleDeezerUserSaved"
     />
 
     <!-- Main content -->
@@ -274,9 +321,9 @@ const handleCloseWelcomeModal = () => {
           <!-- Personal Playlists Section -->
           <div v-if="selectedTopMenu === 1">
             <div id="yourplaylists" class="flex-stretch">
-              <Loader v-if="spotifyStore.isLoading"/>
+              <Loader v-if="musicStore.isLoading"/>
               <PlaylistSelector
-                  :playlists="spotifyStore.getPlaylists"
+                  :playlists="musicStore.getPlaylists"
                   :selected-playlist="selectedPersonalPlaylist"
                   title="Your Personal Playlists"
                   placeholder="Search personal playlists..."
@@ -286,7 +333,7 @@ const handleCloseWelcomeModal = () => {
           </div>
 
           <!-- Top Artists Section -->
-          <div v-if="selectedTopMenu === 2">
+          <div v-if="selectedTopMenu === 2 && currentServiceType !== 'deezer'">
             <TopArtists
                 :selected-top-menu="selectedTopMenu"
                 @artist-click="handleArtistClick"
@@ -296,7 +343,7 @@ const handleCloseWelcomeModal = () => {
           </div>
 
           <!-- Top Tracks Section -->
-          <div v-if="selectedTopMenu === 3">
+          <div v-if="selectedTopMenu === 3 && currentServiceType !== 'deezer'">
             <TopTracks
                 :selected-top-menu="selectedTopMenu"
                 @track-click="handleTrackClick"
@@ -345,12 +392,12 @@ const handleCloseWelcomeModal = () => {
 
           <!-- Spotify Playlists Section -->
           <div v-if="selectedTopMenu === 8">
-            <Loader v-if="spotifyStore.isLoading"/>
+            <Loader v-if="musicStore.isLoading"/>
             <div id="sptplaylists" class="flex-stretch" v-show="selectedTopMenu===8">
               <PlaylistSelector
-                  :playlists="spotifyStore.getSpotifyPlaylists"
+                  :playlists="musicStore.getSpotifyPlaylists"
                   :selected-playlist="selectedSpotifyPlaylist"
-                  title="Spotify Playlists"
+                  :title="currentServiceType.toLowerCase(0) + 'Playlists'"
                   placeholder="Search Spotify playlists..."
                   @playlist-select="handlePlaylistClick"
               />
@@ -359,14 +406,14 @@ const handleCloseWelcomeModal = () => {
 
           <!-- Search Section -->
           <div v-if="selectedTopMenu === 10" class="search-section">
-            <Loader v-if="spotifyStore.isLoading"/>
+            <Loader v-if="musicStore.isLoading"/>
             <div class="search-header">
-              <h2 class="search-title">{{ spotifyStore.searchInput }}</h2>
+              <h2 class="search-title">{{ musicStore.searchInput }}</h2>
             </div>
             <div class="search-grid">
               <SearchCategory
                   title="Songs"
-                  :items="spotifyStore.getSearchTracks"
+                  :items="musicStore.getSearchTracks"
                   type="song"
                   :selected-item="selectedItem"
                   :unplayable-tracks="audioStore.unplayableTracks"
@@ -376,17 +423,17 @@ const handleCloseWelcomeModal = () => {
               />
               <SearchCategory
                   title="Artists"
-                  :items="spotifyStore.getSearchArtists"
+                  :items="musicStore.getSearchArtists"
                   type="artist"
                   :selected-item="selectedItem"
                   :unplayable-tracks="audioStore.unplayableTracks"
-                  @item-click="async (item, event) => { if (deeperStore.getIsGloballyLoading) return; await handleSearchClick(item, 'album') }"
+                  @item-click="async (item, event) => { if (deeperStore.getIsGloballyLoading) return; await handleSearchClick(item, 'artist') }"
                   @item-hover="audioStore.handleParentAudioHover"
                   @item-leave="audioStore.handleParentAudioLeave"
               />
               <SearchCategory
                   title="Albums"
-                  :items="spotifyStore.getSearchAlbums"
+                  :items="musicStore.getSearchAlbums"
                   type="album"
                   :selected-item="selectedItem"
                   :unplayable-tracks="audioStore.unplayableTracks"
@@ -396,7 +443,7 @@ const handleCloseWelcomeModal = () => {
               />
               <SearchCategory
                   title="Playlists"
-                  :items="spotifyStore.getSearchPlaylists"
+                  :items="musicStore.getSearchPlaylists"
                   type="playlist"
                   :selected-item="selectedItem"
                   :unplayable-tracks="audioStore.unplayableTracks"

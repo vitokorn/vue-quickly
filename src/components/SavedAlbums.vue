@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
-import { useSpotifyStore } from '../stores/spotify-store'
+import { useMusicStore } from '../stores/music-store'
 import { useDeeperStore } from '../stores/deeper-store'
 import { useSorting } from '../composables/useSorting.js'
 import { useSelection } from '../composables/useSelection.js'
@@ -24,7 +24,7 @@ const emit = defineEmits(['album-click'])
 
 // Stores
 const audioStore = useAudioStore()
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 const deeperStore = useDeeperStore()
 
 // Composables
@@ -36,7 +36,7 @@ const selectedSASortOption = ref("")
 
 // Computed sorted data
 const sortedSAItems = createAlbumSorter(
-  computed(() => spotifyStore.getSavedAlbums || []),
+  computed(() => musicStore.getSavedAlbums || []),
   selectedSASortOption
 )
 
@@ -48,8 +48,8 @@ const handleAlbumClick = async (album, event) => {
 }
 
 const handleRefresh = () => {
-  spotifyStore.savedAlbums = []
-  spotifyStore.fetchSavedAlbums(0)
+  musicStore.savedAlbums = []
+  musicStore.fetchSavedAlbums(0)
 }
 
 const handleAlbumHover = (event) => {
@@ -72,7 +72,7 @@ const handleAlbumLeave = (event) => {
       </div>
       <SortAlbums v-model="selectedSASortOption" />
     </div>
-    <Loader v-if="spotifyStore.isLoading" />
+    <Loader v-if="musicStore.isLoading" />
       <div id="savedalbum" class="display-flex flex-wrap" v-show="selectedTopMenu === 4">
         <div class="display-flex flex-wrap py-2 gap-8">
           <template v-for="(item, index) of sortedSAItems" :key="index">

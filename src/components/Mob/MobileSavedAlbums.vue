@@ -1,11 +1,11 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useSpotifyStore } from '../../stores/spotify-store'
+import { useMusicStore } from '../../stores/music-store'
 import { useDeeperStore } from '../../stores/deeper-store'
 import { useSelection } from '../../composables/useSelection.js'
 import ReleaseSelector from "./ReleaseSelector.vue";
 
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 const deeperStore = useDeeperStore()
 
 // Composables
@@ -18,18 +18,18 @@ const savedAlbums = ref([])
 
 // Methods
 const loadSavedAlbums = async () => {
-  if (spotifyStore.getSavedAlbums && spotifyStore.getSavedAlbums.length > 0) {
+  if (musicStore.getSavedAlbums && musicStore.getSavedAlbums.length > 0) {
     console.log('Using cached saved albums data')
-    savedAlbums.value = spotifyStore.getSavedAlbums.map(item => item.album)
+    savedAlbums.value = musicStore.getSavedAlbums.map(item => item.album)
     return
   }
 
   loading.value = true
   try {
     // Load saved albums from Spotify API
-    await spotifyStore.fetchSavedAlbums(0)
+    await musicStore.fetchSavedAlbums(0)
     // Spotify returns saved albums in format: { added_at: "...", album: {...} }
-    savedAlbums.value = (spotifyStore.getSavedAlbums || []).map(item => item.album)
+    savedAlbums.value = (musicStore.getSavedAlbums || []).map(item => item.album)
   } catch (error) {
     console.error('Failed to load saved albums:', error)
   } finally {
@@ -74,7 +74,7 @@ const toggleViewMode = () => {
 
 const handleRefresh = async () => {
   // Clear existing data and fetch fresh
-  spotifyStore.savedAlbums = []
+  musicStore.savedAlbums = []
   await loadSavedAlbums()
 }
 

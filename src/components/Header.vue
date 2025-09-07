@@ -3,10 +3,12 @@ import Logout from "./Logout.vue";
 import Auth from "./Auth.vue";
 import {isAuth} from '../mixins/authMixin'
 import {preferred} from "../mixins/prefMixin";
-import {ref} from "vue";
+import {ref, computed} from "vue";
 import {useQueueStore} from "../stores/queue-store";
 import Settings from "./Settings.vue";
 import {isMobile} from "../mixins/detectingMobileMixin";
+import ServiceIndicator from "./ServiceIndicator.vue";
+import {musicServiceManager} from "../services/MusicServiceManager";
 
 const queueStore = useQueueStore()
 const initUserTheme = preferred();
@@ -14,6 +16,19 @@ let username = document.cookie.replace(/(?:(?:^|.*;\s*)nickname\s*\=\s*([^;]*).*
 let userTheme = ref(localStorage.getItem('user-theme'))
 const mobileVersion = ref(false)
 setTheme(initUserTheme)
+
+// Computed username that shows different values based on service
+const displayUsername = computed(() => {
+  const currentService = musicServiceManager.getCurrentServiceType()
+
+  if (currentService === 'deezer') {
+    const deezerUsername = localStorage.getItem('deezer-username')
+    return deezerUsername || 'Deezer User'
+  }
+
+  // Default to Spotify username
+  return username
+})
 
 function setTheme(theme) {
   localStorage.setItem("user-theme", theme);
@@ -78,7 +93,7 @@ window.addEventListener('resize', () => {
       <div class="user-section">
         <div v-if="isAuth()" class="user-greeting">
           <span class="greeting-text">Hello,</span>
-          <span class="username">{{ username }}</span>
+          <span class="username">{{ displayUsername }}</span>
         </div>
 
         <div class="user-actions">
@@ -101,4 +116,5 @@ window.addEventListener('resize', () => {
 </template>
 
 <style scoped>
+
 </style>

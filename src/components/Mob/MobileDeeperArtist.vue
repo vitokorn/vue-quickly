@@ -1,17 +1,19 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
-import { useSpotifyStore } from '../../stores/spotify-store'
+import { useMusicStore } from '../../stores/music-store'
 import { useDeeperStore } from '../../stores/deeper-store'
 import { useQueueStore } from '../../stores/queue-store'
 import { useAudioStore } from '../../stores/audio-store'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import { useVisibilityManager } from '../../composables/useVisibilityManager'
 import { useMobileMediaDisplay } from '../../composables/useMobileMediaDisplay.js'
-import {spotifyApi} from "../../services/spotifyApi.js";
 import { getSectionName } from '../../utils/sectionUtils';
 import MobileTrackItem from './MobileTrackItem.vue';
 
 const props = defineProps(['d', 'num'])
+
+// Stores
+const musicStore = useMusicStore()
 
 // Extract artist data from trackartist structure
 const artistData = computed(() => {
@@ -136,8 +138,26 @@ const handleRelatedArtistClick = async (artist, event) => {
   console.log('Showing MobileDeeperArtist for related artist:', artist.name, 'with key:', relatedArtistKey)
 }
 
-const handleGenreClick = (genre) => {
-  spotifyStore.getTheSoundOf({ name: genre, num: props.num, sib: 'trackartist', child: false })
+const handleGenreClick = async (genre) => {
+  try {
+    console.log('Getting the sound of:', genre)
+    // Call the deeper store to get genre-based recommendations
+    await deeperStore.getGenreRecommendations(genre, getSectionName(props.num))
+  } catch (error) {
+    console.error('Failed to get genre recommendations:', error)
+  }
+}
+
+async function followArtist(artist) {
+  try {
+    console.log('Following/unfollowing artist:', artist.name)
+    // Call the deeper store to handle the follow/unfollow action
+    await deeperStore.followArtist(artist.id, !artist.followed)
+    // Update the local state
+    artist.followed = !artist.followed
+  } catch (error) {
+    console.error('Failed to follow/unfollow artist:', error)
+  }
 }
 
 const handleRecommendClick = () => {
@@ -158,27 +178,7 @@ const toggleViewMode = () => {
 // Fetch artist details including top tracks, albums, singles, appears on, and related artists
 const fetchArtistDetails = async () => {
   try {
-    // Fetch top tracks
-    const topTracksResponse = await spotifyApi.getArtistTopTracks(props.d.id)
-    const topTracks = topTracksResponse.data.tracks || []
-
-    // Fetch albums
-    const albumsResponse = await spotifyApi.getArtistAlbums(props.d.id, 'album', 20)
-    const albums = albumsResponse.data.items || []
-
-    // Fetch singles
-    const singlesResponse = await spotifyApi.getArtistAlbums(props.d.id, 'single', 20)
-    const singles = singlesResponse.data.items || []
-
-    // Fetch appears on
-    const appearsOnResponse = await spotifyApi.getArtistAlbums(props.d.id, 'appears_on', 20)
-    const appearsOn = appearsOnResponse.data.items || []
-
-    // Fetch related artists
-    const relatedArtistsResponse = await spotifyApi.getRelatedArtists(props.d.id)
-    const relatedArtists = relatedArtistsResponse.data.artists || []
-
-    // Update the deeper store with the complete artist data
+    // Use the deeper store to get artist details
     await deeperStore.getArtistDetails(props.d, getSectionName(props.num), props.d.id)
 
     console.log('Artist details fetched:', {
@@ -323,7 +323,7 @@ onUnmounted(() => {
         <div class="follow-section">
           <span class="follow-label">Follow</span>
           <label class="follow-checkbox">
-            <input type="checkbox" v-model="d.followed" @click="spotifyStore.followArtist(d)">
+            <input type="checkbox" v-model="d.followed" @click="followArtist(d)">
             <span class="checkmark"></span>
           </label>
         </div>

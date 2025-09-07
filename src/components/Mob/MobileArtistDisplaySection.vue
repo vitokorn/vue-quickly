@@ -1,13 +1,13 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useSpotifyStore } from '../../stores/spotify-store'
+import { useMusicStore } from '../../stores/music-store'
 import { useDeeperStore } from '../../stores/deeper-store'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import { useAudioStore } from '../../stores/audio-store'
 import { useSelection } from '../../composables/useSelection.js'
 import { useMobileMediaDisplay } from '../../composables/useMobileMediaDisplay.js'
 
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 const deeperStore = useDeeperStore()
 const preferencesStore = usePreferencesStore()
 const audioStore = useAudioStore()
@@ -44,7 +44,7 @@ const toggleViewMode = () => {
 
 const handleRefresh = async () => {
   // Clear existing data and fetch fresh
-  spotifyStore.followedArtists = []
+  musicStore.followedArtists = []
   await loadFollowedArtists()
 }
 

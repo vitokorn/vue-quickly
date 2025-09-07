@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
-import { useSpotifyStore } from '../stores/spotify-store'
+import { useMusicStore } from '../stores/music-store'
 import { useAudioStore } from '../stores/audio-store'
 import { useDeeperStore } from '../stores/deeper-store'
 import { useSorting } from '../composables/useSorting.js'
@@ -23,7 +23,7 @@ const props = defineProps({
 const emit = defineEmits(['album-click', 'album-hover', 'album-leave'])
 
 // Stores
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 const audioStore = useAudioStore()
 const deeperStore = useDeeperStore()
 
@@ -36,7 +36,7 @@ const selectedNRSortOption = ref("")
 
 // Computed sorted data
 const sortedNRItems = createNewReleaseSorter(
-  computed(() => spotifyStore.getNewReleases || []),
+  computed(() => musicStore.getNewReleases || []),
   selectedNRSortOption
 )
 
@@ -58,8 +58,8 @@ const handleAlbumLeave = (event) => {
 }
 
 const handleRefresh = () => {
-  spotifyStore.newReleases = []
-  spotifyStore.fetchNewReleases(0)
+  musicStore.newReleases = []
+  musicStore.fetchNewReleases(0)
 }
 </script>
 
@@ -74,7 +74,7 @@ const handleRefresh = () => {
       </div>
       <SortAlbums v-model="selectedNRSortOption" />
     </div>
-    <Loader v-if="spotifyStore.isLoading" />
+    <Loader v-if="musicStore.isLoading" />
       <div id="newrelease" class="display-flex flex-wrap" v-show="selectedTopMenu === 7">
         <div class="display-flex flex-wrap py-2 gap-8">
           <template v-for="(item, index) of sortedNRItems" :key="index">

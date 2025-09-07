@@ -1,5 +1,5 @@
 <script setup>
-import { useSpotifyStore } from "../../stores/spotify-store"
+import { useMusicStore } from "../../stores/music-store"
 import { useAudioStore } from "../../stores/audio-store"
 import { useQueueStore } from "../../stores/queue-store"
 import { useDeeperStore } from "../../stores/deeper-store"
@@ -10,7 +10,7 @@ import { getSectionName } from '../../utils/sectionUtils';
 import MobileTrackItem from './MobileTrackItem.vue'
 
 const props = defineProps(['d', 'num'])
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 const audioStore = useAudioStore()
 const queueStore = useQueueStore()
 const deeperStore = useDeeperStore()

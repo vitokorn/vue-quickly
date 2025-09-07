@@ -1,4 +1,6 @@
 <script setup>
+import ServiceIndicator from "./ServiceIndicator.vue";
+
 const currentYear = new Date().getFullYear()
 </script>
 
@@ -7,9 +9,9 @@ const currentYear = new Date().getFullYear()
     <div class="footer-container">
       <div class="footer-content">
         <div class="footer-section">
-          <span class="copyright">© 2021-{{ currentYear }} Discover Mobily</span>
+          <span class="copyright"> 2021-{{ currentYear }} Discover Mobily</span>
         </div>
-        
+
         <div class="footer-section">
           <div class="footer-links">
             <span class="inspired-text">Inspired by</span>
@@ -18,11 +20,16 @@ const currentYear = new Date().getFullYear()
             </a>
           </div>
         </div>
-        
+
+        <!-- Service Selection -->
+        <div class="service-section">
+          <ServiceIndicator />
+        </div>
+
         <div class="footer-section">
-          <a href="https://github.com/vitokorn/vue-quickly" 
-             class="github-link" 
-             target="_blank" 
+          <a href="https://github.com/vitokorn/vue-quickly"
+             class="github-link"
+             target="_blank"
              rel="noopener"
              aria-label="View source code on GitHub">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" fill="currentColor">
@@ -36,4 +43,25 @@ const currentYear = new Date().getFullYear()
 </template>
 
 <style scoped>
+.service-section {
+  display: flex;
+  align-items: center;
+  margin: 0 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1076px) {
+  .service-section {
+    margin: 0 0.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .service-section {
+    order: -1;
+    margin: 0.5rem 0;
+    width: 100%;
+    justify-content: center;
+  }
+}
 </style>

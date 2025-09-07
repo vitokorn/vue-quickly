@@ -1,7 +1,7 @@
 <script setup>
 import {ref, computed} from 'vue'
 import RefreshButton from "./RefreshButton.vue";
-import {useSpotifyStore} from "../stores/spotify-store.js";
+import {useMusicStore} from "../stores/music-store.js";
 
 const props = defineProps({
   playlists: {
@@ -25,7 +25,7 @@ const props = defineProps({
 const emit = defineEmits(['playlist-select', 'search'])
 
 const searchTerm = ref('')
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 
 const filteredPlaylists = computed(() => {
   if (!searchTerm.value) {
@@ -53,7 +53,7 @@ const handleSearch = (event) => {
       <div class="grid-2-1">
         <h4>{{title}}</h4>
         <div class="ps-2">
-          <RefreshButton :on-click="() => spotifyStore.fetchPlaylists(0)"/>
+          <RefreshButton :on-click="() => musicStore.fetchPlaylists(0)"/>
         </div>
       </div>
       <input class="playlist-search py-2 me-2"

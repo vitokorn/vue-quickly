@@ -4,7 +4,7 @@ import {useAudioStore} from '../stores/audio-store'
 import {useSelection} from '../composables/useSelection.js'
 import TrackItem from './TrackItem.vue'
 import Loader from "./Loader.vue";
-import {useSpotifyStore} from "../stores/spotify-store.js";
+import {useMusicStore} from "../stores/music-store.js";
 
 // Props
 const props = defineProps({
@@ -31,7 +31,7 @@ const emit = defineEmits(['track-click', 'track-hover', 'track-leave'])
 
 // Stores
 const audioStore = useAudioStore()
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 
 // Composables
 const {selectedItem} = useSelection()
@@ -58,7 +58,7 @@ const handleTrackLeave = (event) => {
 </script>
 
 <template>
-  <Loader v-if="spotifyStore.isLoading"/>
+  <Loader v-if="musicStore.isLoading"/>
   <div
       :id="sectionId"
       class="display-flex flex-wrap"

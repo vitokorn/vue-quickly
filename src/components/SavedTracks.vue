@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
-import { useSpotifyStore } from '../stores/spotify-store'
+import { useMusicStore } from '../stores/music-store'
 import { useAudioStore } from '../stores/audio-store'
 import { useQueueStore } from '../stores/queue-store'
 import { useDeeperStore } from '../stores/deeper-store'
@@ -24,7 +24,7 @@ const props = defineProps({
 const emit = defineEmits(['track-click', 'track-hover', 'track-leave'])
 
 // Stores
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 const audioStore = useAudioStore()
 const queueStore = useQueueStore()
 const deeperStore = useDeeperStore()
@@ -41,12 +41,12 @@ const loadingMore = ref(false)
 
 // Computed sorted data
 const sortedSTItems = createTrackSorter(
-  computed(() => spotifyStore.getSavedTracks || []),
+  computed(() => musicStore.getSavedTracks || []),
   selectedSTSortOption
 )
 
 // Computed pagination data
-const totalItems = computed(() => spotifyStore.savedTracksTotal)
+const totalItems = computed(() => musicStore.savedTracksTotal)
 const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage))
 const displayedItems = computed(() => {
   // For API pagination, we show all loaded items up to current page
@@ -73,22 +73,22 @@ const handleTrackLeave = (event) => {
 }
 
 const handleRefresh = () => {
-  spotifyStore.savedTracks = []
-  spotifyStore.fetchSavedTracks(0)
+  musicStore.savedTracks = []
+  musicStore.fetchSavedTracks(0)
   currentPage.value = 1 // Reset to first page
 }
 
 const handlePageChange = async (page) => {
   if (page > currentPage.value) {
     // Moving to next page - need to fetch more data
-    const currentOffset = spotifyStore.savedTracks.length
+    const currentOffset = musicStore.savedTracks.length
     const targetOffset = (page - 1) * itemsPerPage
 
     if (targetOffset >= currentOffset) {
       // Need to fetch more data
       loadingMore.value = true
       try {
-        await spotifyStore.fetchSavedTracks(currentOffset)
+        await musicStore.fetchSavedTracks(currentOffset)
       } catch (error) {
         console.error('Failed to load more tracks:', error)
       } finally {
@@ -112,7 +112,7 @@ const handlePageChange = async (page) => {
       </div>
       <SortTracks v-model="selectedSTSortOption" />
     </div>
-    <Loader v-if="spotifyStore.isLoading" />
+    <Loader v-if="musicStore.isLoading" />
     <div v-if="loadingMore" class="loading-more">
       <div class="loading-spinner"></div>
       <span>Loading more tracks...</span>

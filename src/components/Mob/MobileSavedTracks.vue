@@ -1,6 +1,6 @@
 <script setup>
 import {ref, computed, onMounted} from 'vue'
-import {useSpotifyStore} from '../../stores/spotify-store'
+import {useMusicStore} from '../../stores/music-store'
 import {useAudioStore} from '../../stores/audio-store'
 import {useQueueStore} from '../../stores/queue-store'
 import {useDeeperStore} from '../../stores/deeper-store'
@@ -16,7 +16,7 @@ const props = defineProps({
   }
 })
 
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 const audioStore = useAudioStore()
 const queueStore = useQueueStore()
 const deeperStore = useDeeperStore()
@@ -34,18 +34,18 @@ const loadingMore = ref(false)
 
 // Methods
 const loadSavedTracks = async () => {
-  if (spotifyStore.getSavedTracks && spotifyStore.getSavedTracks.length > 0) {
+  if (musicStore.getSavedTracks && musicStore.getSavedTracks.length > 0) {
     console.log('Using cached saved tracks data')
-    savedTracks.value = spotifyStore.getSavedTracks.map(item => item.track)
+    savedTracks.value = musicStore.getSavedTracks.map(item => item.track)
     return
   }
 
   loading.value = true
   try {
     // Load saved tracks from Spotify API
-    await spotifyStore.fetchSavedTracks(0)
+    await musicStore.fetchSavedTracks(0)
     // Spotify returns saved tracks in format: { added_at: "...", track: {...} }
-    savedTracks.value = (spotifyStore.getSavedTracks || []).map(item => item.track)
+    savedTracks.value = (musicStore.getSavedTracks || []).map(item => item.track)
   } catch (error) {
     console.error('Failed to load saved tracks:', error)
   } finally {
@@ -83,7 +83,7 @@ const handleInfoClick = async (track, event) => {
 
 const handleRefresh = async () => {
   // Clear existing data and fetch fresh
-  spotifyStore.savedTracks = []
+  musicStore.savedTracks = []
   currentPage.value = 1 // Reset to first page
   await loadSavedTracks()
 }
@@ -93,7 +93,7 @@ const toggleViewMode = () => {
 }
 
 // Computed pagination data
-const totalItems = computed(() => spotifyStore.savedTracksTotal)
+const totalItems = computed(() => musicStore.savedTracksTotal)
 const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage))
 const displayedTracks = computed(() => {
   // For API pagination, we show all loaded items up to current page
@@ -104,16 +104,16 @@ const displayedTracks = computed(() => {
 const handlePageChange = async (page) => {
   if (page > currentPage.value) {
     // Moving to next page - need to fetch more data
-    const currentOffset = spotifyStore.savedTracks.length
+    const currentOffset = musicStore.savedTracks.length
     const targetOffset = (page - 1) * itemsPerPage
 
     if (targetOffset >= currentOffset) {
       // Need to fetch more data
       loadingMore.value = true
       try {
-        await spotifyStore.fetchSavedTracks(currentOffset)
+        await musicStore.fetchSavedTracks(currentOffset)
         // Update local savedTracks array
-        savedTracks.value = (spotifyStore.getSavedTracks || []).map(item => item.track)
+        savedTracks.value = (musicStore.getSavedTracks || []).map(item => item.track)
       } catch (error) {
         console.error('Failed to load more tracks:', error)
       } finally {

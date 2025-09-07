@@ -1,6 +1,6 @@
 <script setup>
 import {computed, ref} from 'vue'
-import {useSpotifyStore} from '../stores/spotify-store'
+import {useMusicStore} from '../stores/music-store'
 import {useAudioStore} from '../stores/audio-store'
 import {useQueueStore} from '../stores/queue-store'
 import {useDeeperStore} from '../stores/deeper-store'
@@ -23,7 +23,7 @@ const props = defineProps({
 const emit = defineEmits(['track-click', 'track-hover', 'track-leave'])
 
 // Stores
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 const audioStore = useAudioStore()
 const queueStore = useQueueStore()
 const deeperStore = useDeeperStore()
@@ -39,17 +39,17 @@ const selectedTTLSortOption = ref("")
 
 // Computed sorted data
 const sortedTTItems = createTrackSorter(
-    computed(() => spotifyStore.getTopTracksShort || []),
+    computed(() => musicStore.getTopTracksShort || []),
     selectedTTSortOption
 )
 
 const sortedTTMItems = createTrackSorter(
-    computed(() => spotifyStore.getTopTracksMedium || []),
+    computed(() => musicStore.getTopTracksMedium || []),
     selectedTTMSortOption
 )
 
 const sortedTTLItems = createTrackSorter(
-    computed(() => spotifyStore.getTopTracksLong || []),
+    computed(() => musicStore.getTopTracksLong || []),
     selectedTTLSortOption
 )
 
@@ -73,16 +73,16 @@ const handleTrackLeave = (event) => {
 }
 
 const handleRangeChange = async (rangeId, event) => {
-  spotifyStore.setSelectedTracksRange(rangeId)
+  musicStore.setSelectedTracksRange(rangeId)
   const timeRange = rangeId === 1 ? 'short_term' : rangeId === 2 ? 'medium_term' : 'long_term'
-  if ((rangeId === 1 && !spotifyStore.getTopTracksShort.length) || (rangeId === 2 && !spotifyStore.getTopTracksMedium.length) || (rangeId === 3 && !spotifyStore.getTopTracksLong.length)) {
-    await spotifyStore.fetchTopTracks(timeRange)
+  if ((rangeId === 1 && !musicStore.getTopTracksShort.length) || (rangeId === 2 && !musicStore.getTopTracksMedium.length) || (rangeId === 3 && !musicStore.getTopTracksLong.length)) {
+    await musicStore.fetchTopTracks(timeRange)
   }
 }
 
 const handleRefresh = async (rangeId, event) => {
   const timeRange = rangeId === 1 ? 'short_term' : rangeId === 2 ? 'medium_term' : 'long_term'
-  await spotifyStore.fetchTopTracks(timeRange)
+  await musicStore.fetchTopTracks(timeRange)
 }
 </script>
 
@@ -92,28 +92,28 @@ const handleRefresh = async (rangeId, event) => {
       <div class="grid-2-1">
         <h4>Top Tracks</h4>
         <div class="ps-2">
-          <RefreshButton :on-click="() => handleRefresh(spotifyStore.selectedTracksRange)"/>
+          <RefreshButton :on-click="() => handleRefresh(musicStore.selectedTracksRange)"/>
         </div>
       </div>
       <SortTracks
-          v-if="spotifyStore.selectedTracksRange === 1"
+          v-if="musicStore.selectedTracksRange === 1"
           :model-value="selectedTTSortOption"
           @update:model-value="selectedTTSortOption = $event"
       />
       <SortTracks
-          v-if="spotifyStore.selectedTracksRange === 2"
+          v-if="musicStore.selectedTracksRange === 2"
           :model-value="selectedTTMSortOption"
           @update:model-value="selectedTTMSortOption = $event"
       />
       <SortTracks
-          v-if="spotifyStore.selectedTracksRange === 3"
+          v-if="musicStore.selectedTracksRange === 3"
           :model-value="selectedTTLSortOption"
           @update:model-value="selectedTTLSortOption = $event"
       />
     </div>
     <TimeRangeSelector
         v-show="selectedTopMenu === 3"
-        :selected-range="spotifyStore.selectedTracksRange"
+        :selected-range="musicStore.selectedTracksRange"
         :section-type="'tracks'"
         :ranges="[
           { id: 1, label: 'Last month', fetchMethod: 'fetchTopTracks', reloadMethod: 'fetchTopTracks' },
@@ -126,10 +126,10 @@ const handleRefresh = async (rangeId, event) => {
 
     <!-- Track Display Sections -->
     <TrackDisplaySection
-        v-if="spotifyStore.selectedTracksRange === 1"
+        v-if="musicStore.selectedTracksRange === 1"
         :tracks="sortedTTItems"
         section-id="toptracks"
-        :is-visible="spotifyStore.selectedTracksRange === 1"
+        :is-visible="musicStore.selectedTracksRange === 1"
         track-prefix="3"
         :selected-sort-option="selectedTTSortOption"
         @track-click="handleTrackClick"
@@ -138,10 +138,10 @@ const handleRefresh = async (rangeId, event) => {
     />
 
     <TrackDisplaySection
-        v-if="spotifyStore.selectedTracksRange === 2"
+        v-if="musicStore.selectedTracksRange === 2"
         :tracks="sortedTTMItems"
         section-id="toptracks6"
-        :is-visible="spotifyStore.selectedTracksRange === 2"
+        :is-visible="musicStore.selectedTracksRange === 2"
         track-prefix="3"
         :selected-sort-option="selectedTTMSortOption"
         @track-click="handleTrackClick"
@@ -150,10 +150,10 @@ const handleRefresh = async (rangeId, event) => {
     />
 
     <TrackDisplaySection
-        v-if="spotifyStore.selectedTracksRange === 3"
+        v-if="musicStore.selectedTracksRange === 3"
         :tracks="sortedTTLItems"
         section-id="toptracksall"
-        :is-visible="spotifyStore.selectedTracksRange === 3"
+        :is-visible="musicStore.selectedTracksRange === 3"
         track-prefix="3"
         :selected-sort-option="selectedTTLSortOption"
         @track-click="handleTrackClick"

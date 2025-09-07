@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { spotifyApi } from '../services/spotifyApi'
+import { spotifyApi } from '../services/spotifyApi.js'
 import {artistUtils} from "../utils/artistUtils.js";
 
 export const useQueueStore = defineStore('queue', {
@@ -38,7 +38,7 @@ export const useQueueStore = defineStore('queue', {
         image: track.album?.images?.[0] || track.images?.[0],
         preview_url: track.preview_url || track.previewUrl || track?.track?.preview_url || track?.items?.[0].preview_url
       }
-      
+
       // Only format artist names if artists array exists and is not empty
       if (newQue.artists && newQue.artists.length > 0) {
         newQue.artists = this.formatArtistNames(newQue.artists)

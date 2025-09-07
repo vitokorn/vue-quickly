@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-import {spotifyApi} from '../services/spotifyApi'
+import {spotifyApi} from '../services/spotifyApi.js'
 import {useVisibilityManager} from '../composables/useVisibilityManager'
 
 export const useSpotifyStore = defineStore('spotify', {

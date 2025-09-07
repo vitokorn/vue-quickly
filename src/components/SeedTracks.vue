@@ -1,5 +1,5 @@
 <script setup>
-import {useSpotifyStore} from "../stores/spotify-store";
+import {useMusicStore} from "../stores/music-store";
 import {useAudioStore} from "../stores/audio-store";
 import {useQueueStore} from "../stores/queue-store";
 import {useDeeperStore} from "../stores/deeper-store";
@@ -10,7 +10,7 @@ import { useVisibilityManager } from "../composables/useVisibilityManager";
 import { getSectionName } from '../utils/sectionUtils';
 
 const props = defineProps(['d', 'num'])
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 const audioStore = useAudioStore()
 const queueStore = useQueueStore()
 const deeperStore = useDeeperStore()
@@ -56,6 +56,16 @@ function setActive(id) {
   selected.value = id
 }
 
+async function refreshSeedTracks() {
+  try {
+    console.log('Refreshing seed tracks for:', props.d.id)
+    // Call the deeper store to refresh the seed tracks data
+    await deeperStore.getSeedTrackRecommendations(props.d, getSectionName(props.num), props.d.parentKey)
+  } catch (error) {
+    console.error('Failed to refresh seed tracks:', error)
+  }
+}
+
 onMounted(async () => {
   // Wait for the next tick to ensure the ref is available
   await nextTick()
@@ -78,7 +88,7 @@ onMounted(async () => {
         <span class="title-text">Recommended songs based on {{ d.name }}</span>
       </div>
       <div class="seed-actions">
-        <button class="refresh-button" @click="spotifyStore.reloadST({num:num,id:d.id,name:d.name })">
+        <button class="refresh-button" @click="refreshSeedTracks">
           <img class="refresh-icon" src="../assets/refresh-icon.png" alt="Refresh">
         </button>
         <sort-tracks v-model="selectedSTSortOption"/>

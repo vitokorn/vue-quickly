@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useSpotifyStore } from "../../stores/spotify-store"
+import { useMusicStore } from "../../stores/music-store"
 import { usePreferencesStore } from "../../stores/preferences-store"
 import { useAudioStore } from "../../stores/audio-store"
 import { useQueueStore } from "../../stores/queue-store"
@@ -15,7 +15,7 @@ const props = defineProps({
   }
 })
 
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 const preferencesStore = usePreferencesStore()
 const audioStore = useAudioStore()
 const queueStore = useQueueStore()
@@ -29,17 +29,17 @@ onMounted(async () => {
 })
 
 const loadSampleTracks = async () => {
-  if (spotifyStore.getTopTracksShort && spotifyStore.getTopTracksShort.length > 0) {
+  if (musicStore.getTopTracksShort && musicStore.getTopTracksShort.length > 0) {
     console.log('Using cached top tracks data for sample tracks')
-    tracks.value = spotifyStore.getTopTracksShort.slice(0, 10) // Show first 10 tracks
+    tracks.value = musicStore.getTopTracksShort.slice(0, 10) // Show first 10 tracks
     return
   }
 
   loading.value = true
   try {
     // Load top tracks as sample data
-    await spotifyStore.fetchTopTracks('short_term')
-    tracks.value = spotifyStore.getTopTracksShort.slice(0, 10) // Show first 10 tracks
+    await musicStore.fetchTopTracks('short_term')
+    tracks.value = musicStore.getTopTracksShort.slice(0, 10) // Show first 10 tracks
   } catch (error) {
     console.error('Failed to load tracks:', error)
   } finally {

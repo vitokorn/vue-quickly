@@ -1,9 +1,10 @@
 <script setup>
-import {useSpotifyStore} from "../stores/spotify-store";
+import {useMusicStore} from "../stores/music-store";
 import {useAudioStore} from "../stores/audio-store";
 import {useQueueStore} from "../stores/queue-store";
 import {useDeeperStore} from "../stores/deeper-store";
 import {onMounted, ref, computed, nextTick, watch} from "vue";
+import {storeToRefs} from "pinia";
 import TrackCover from "./TrackCover.vue";
 import {useMediaDisplay} from "../composables/useMediaDisplay";
 import {useVisibilityManager} from "../composables/useVisibilityManager";
@@ -11,10 +12,19 @@ import {useLoading} from "../composables/useLoading";
 import { getSectionName } from '../utils/sectionUtils';
 import LoadingState from "./common/LoadingState.vue";
 const props = defineProps(['d', 'num'])
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 const audioStore = useAudioStore()
 const queueStore = useQueueStore()
 const deeperStore = useDeeperStore()
+
+// Get current service type
+const { currentServiceType } = storeToRefs(musicStore)
+
+// Check if track recommendations are supported for current service
+const supportsTrackRecommendations = computed(() => {
+  return currentServiceType.value !== 'deezer'
+})
+
 const selected = ref()
 const cover = ref(null)
 const componentRef = ref(null)
@@ -119,7 +129,8 @@ window.addEventListener('resize', () => {
         </div>
       </div>
       <div class="artist-actions" :class="{'grid-column-2': mobileClass}">
-        <button class="action-button"
+        <button v-if="supportsTrackRecommendations" 
+                class="action-button"
                 @click="handleRecommendClick">
           <span class="btn-icon">🎵</span>
           Recommended songs based on this

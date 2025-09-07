@@ -25,7 +25,7 @@ export const artistUtils = {
 
   // Check if artist has preview URL
   hasPreview: (artist) => {
-    return !!artist.preview_url
+    return !!(artist.preview_url || artist.previewUrl)
   },
 
   // Check if artist has image

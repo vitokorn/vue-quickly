@@ -1,5 +1,5 @@
 <script setup>
-import {useSpotifyStore} from "../stores/spotify-store";
+import {useMusicStore} from "../stores/music-store";
 import {useAudioStore} from "../stores/audio-store";
 import {useQueueStore} from "../stores/queue-store";
 import {useDeeperStore} from "../stores/deeper-store";
@@ -9,7 +9,7 @@ import {useVisibilityManager} from "../composables/useVisibilityManager";
 import {getSectionName} from "../utils/sectionUtils";
 
 const props = defineProps(['d', 'num'])
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 const audioStore = useAudioStore()
 const queueStore = useQueueStore()
 const deeperStore = useDeeperStore()
@@ -78,6 +78,28 @@ function setActive(id) {
   selected.value = id
 }
 
+async function followArtist(artist) {
+  try {
+    console.log('Following/unfollowing artist:', artist.name)
+    // Call the deeper store to handle the follow/unfollow action
+    await deeperStore.followArtist(artist.id, !artist.followed)
+    // Update the local state
+    artist.followed = !artist.followed
+  } catch (error) {
+    console.error('Failed to follow/unfollow artist:', error)
+  }
+}
+
+async function getTheSoundOf(genreData) {
+  try {
+    console.log('Getting the sound of:', genreData.name)
+    // Call the deeper store to get genre-based recommendations
+    await deeperStore.getGenreRecommendations(genreData.name, getSectionName(genreData.num))
+  } catch (error) {
+    console.error('Failed to get genre recommendations:', error)
+  }
+}
+
 onMounted(async () => {
   await nextTick()
   console.log('TrackArtist component mounted with props:', props.d)
@@ -122,7 +144,7 @@ onMounted(async () => {
                 <span v-if="artistData.genres.length >= 2 && artistData.genres.length - 1 !== gIndex && gIndex !== 0"
                       class="separator">,</span>
                 <button class="genre-tag"
-                        @click="spotifyStore.getTheSoundOf({name:g,num:num,sib:'trackartist',child:false})">
+                        @click="getTheSoundOf({name:g,num:num,sib:'trackartist',child:false})">
                   {{ g }}
                 </button>
               </template>
@@ -150,12 +172,12 @@ onMounted(async () => {
             <label class="follow-checkbox">
               <input type="checkbox"
                      v-if="artistData.followed"
-                     @click.once="spotifyStore.followArtist(artistData)"
+                     @click.once="followArtist(artistData)"
                      checked
                      v-model="artistData.followed">
               <input type="checkbox"
                      v-else
-                     @click.once="spotifyStore.followArtist(artistData)"
+                     @click.once="followArtist(artistData)"
                      v-model="artistData.followed">
               <span class="checkmark"></span>
             </label>

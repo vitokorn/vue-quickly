@@ -18,10 +18,11 @@ export function useMediaDisplay(item, cover = null) {
 
     // Check if item has preview URL
     const hasPreview = computed(() => {
-        if (item.value?.tracks?.items) {
-            return item.value?.tracks?.items[0].preview_url
+        if (item.value?.tracks?.items && item.value.tracks.items.length > 0) {
+            const firstTrack = item.value.tracks.items[0]
+            return !!(firstTrack?.preview_url || firstTrack?.previewUrl)
         }
-        return !!item.value?.preview_url
+        return !!(item.value?.preview_url || item.value?.previewUrl)
     })
 
     // Check if item has an image
@@ -64,21 +65,26 @@ export function useMediaDisplay(item, cover = null) {
 
     // Get audio source
     const audioSrc = computed(() => {
-        if (hasPreview.value && item.value?.preview_url) {
+        const previewUrl = item.value?.preview_url || item.value?.previewUrl
+        if (hasPreview.value && previewUrl) {
             try {
                 // Use encodeURI to properly encode the URL
-                return encodeURI(item.value.preview_url)
+                return encodeURI(previewUrl)
             } catch (error) {
-                console.warn('Invalid audio URL:', item.value.preview_url, error)
+                console.warn('Invalid audio URL:', previewUrl, error)
                 return ''
             }
-        } else if (item.value?.tracks?.items) {
-            try {
-                // Use encodeURI to properly encode the URL
-                return encodeURI(item.value.tracks.items[0].preview_url)
-            } catch (error) {
-                console.warn('Invalid audio URL:', item.value.preview_url, error)
-                return ''
+        } else if (item.value?.tracks?.items && item.value.tracks.items.length > 0) {
+            const firstTrack = item.value.tracks.items[0]
+            const trackPreviewUrl = firstTrack?.preview_url || firstTrack?.previewUrl
+            if (trackPreviewUrl) {
+                try {
+                    // Use encodeURI to properly encode the URL
+                    return encodeURI(trackPreviewUrl)
+                } catch (error) {
+                    console.warn('Invalid audio URL:', trackPreviewUrl, error)
+                    return ''
+                }
             }
         }
         return ''

@@ -26,11 +26,11 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useSpotifyStore } from '../../stores/spotify-store'
+import { useMusicStore } from '../../stores/music-store'
 import { useDeeperStore } from '../../stores/deeper-store'
 import ReleaseSelector from './ReleaseSelector.vue'
 
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 const deeperStore = useDeeperStore()
 
 // Reactive state
@@ -39,19 +39,19 @@ const selectedRelease = ref(null)
 const loadingMoreReleases = ref(false)
 
 // Computed properties
-const newReleases = computed(() => spotifyStore.getNewReleases || [])
+const newReleases = computed(() => musicStore.getNewReleases || [])
 
 // Methods
 const loadNewReleasesContent = async () => {
   // Check if data already exists in store
-  if (spotifyStore.getNewReleases && spotifyStore.getNewReleases.length > 0) {
+  if (musicStore.getNewReleases && musicStore.getNewReleases.length > 0) {
     console.log('Using cached new releases data')
     return
   }
 
   loading.value = true
   try {
-    await spotifyStore.fetchNewReleases(0)
+    await musicStore.fetchNewReleases(0)
   } catch (error) {
     console.error('Failed to load new releases:', error)
   } finally {
@@ -79,7 +79,7 @@ const handleLoadMoreReleases = async () => {
   try {
     loadingMoreReleases.value = true
     const currentCount = newReleases.value.length
-    await spotifyStore.fetchNewReleases(currentCount)
+    await musicStore.fetchNewReleases(currentCount)
   } catch (error) {
     console.error('Failed to load more releases:', error)
   } finally {
@@ -89,8 +89,8 @@ const handleLoadMoreReleases = async () => {
 
 const handleRefreshReleases = () => {
   // Clear existing data and fetch fresh
-  spotifyStore.newReleases = []
-  spotifyStore.fetchNewReleases(0)
+  musicStore.newReleases = []
+  musicStore.fetchNewReleases(0)
 }
 
 // Load content on mount

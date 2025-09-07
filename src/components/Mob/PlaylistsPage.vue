@@ -11,7 +11,7 @@
       <!-- Personal Playlists Section -->
       <div class="playlists-section">
         <PlaylistSelector
-          :playlists="spotifyStore.getPlaylists"
+          :playlists="musicStore.getPlaylists"
           :selected-playlist="selectedPersonalPlaylist"
           title="Your Playlists"
           placeholder="Search personal playlists..."
@@ -27,13 +27,13 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useSpotifyStore } from '../../stores/spotify-store'
+import { useMusicStore } from '../../stores/music-store'
 import { useDeeperStore } from '../../stores/deeper-store'
 import PlaylistSelector from './PlaylistSelector.vue'
 import MobileDeeperPlaylist from './MobileDeeperPlaylist.vue'
 import { useSelection } from '../../composables/useSelection.js'
 
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 const deeperStore = useDeeperStore()
 
 // Reactive state
@@ -49,8 +49,8 @@ const {
 
 // Methods
 const loadPlaylistsContent = async () => {
-  const hasPersonalPlaylists = spotifyStore.getPlaylists && spotifyStore.getPlaylists.length > 0
-  const hasSpotifyPlaylists = spotifyStore.getSpotifyPlaylists && spotifyStore.getSpotifyPlaylists.length > 0
+  const hasPersonalPlaylists = musicStore.getPlaylists && musicStore.getPlaylists.length > 0
+  const hasSpotifyPlaylists = musicStore.getSpotifyPlaylists && musicStore.getSpotifyPlaylists.length > 0
 
   if (hasPersonalPlaylists && hasSpotifyPlaylists) {
     console.log('Using cached playlists data')
@@ -63,8 +63,8 @@ const loadPlaylistsContent = async () => {
   try {
     // Load both personal and Spotify playlists
     await Promise.all([
-      hasPersonalPlaylists ? Promise.resolve() : spotifyStore.fetchPlaylists(0),
-      hasSpotifyPlaylists ? Promise.resolve() : spotifyStore.fetchSpotifyPlaylists(0)
+      hasPersonalPlaylists ? Promise.resolve() : musicStore.fetchPlaylists(0),
+      hasSpotifyPlaylists ? Promise.resolve() : musicStore.fetchSpotifyPlaylists(0)
     ])
   } catch (err) {
     error.value = 'Failed to load playlists'
@@ -76,8 +76,8 @@ const loadPlaylistsContent = async () => {
 
 const handleLoadMorePersonalPlaylists = async () => {
   try {
-    const currentCount = spotifyStore.getPlaylists.length
-    await spotifyStore.fetchPlaylists(currentCount)
+    const currentCount = musicStore.getPlaylists.length
+    await musicStore.fetchPlaylists(currentCount)
   } catch (error) {
     console.error('Failed to load more personal playlists:', error)
   }
@@ -98,7 +98,7 @@ const handlePersonalPlaylistArrowClick = async (playlist) => {
 
 const handleSpotifyPlaylistSelect = async (playlistId, event) => {
   selectedSpotifyPlaylist.value = playlistId
-  const playlist = spotifyStore.getSpotifyPlaylists.find(p => p.id === playlistId)
+  const playlist = musicStore.getSpotifyPlaylists.find(p => p.id === playlistId)
   console.log('Spotify playlist selected:', playlist)
 
   if (playlist) {

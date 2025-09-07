@@ -1,6 +1,6 @@
 <script setup>
 import {ref, computed, onMounted} from 'vue'
-import {useSpotifyStore} from '../../stores/spotify-store'
+import {useMusicStore} from '../../stores/music-store'
 import {useAudioStore} from '../../stores/audio-store'
 import {useDeeperStore} from '../../stores/deeper-store'
 import {usePreferencesStore} from '../../stores/preferences-store'
@@ -10,7 +10,7 @@ import { getSectionName } from '../../utils/sectionUtils'
 import MobileArtistDisplaySection from "./MobileArtistDisplaySection.vue";
 import LoadingState from "../common/LoadingState.vue";
 
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 const audioStore = useAudioStore()
 const deeperStore = useDeeperStore()
 const preferencesStore = usePreferencesStore()
@@ -28,13 +28,13 @@ const selectedTimeRange = ref(1) // 1 = short_term, 2 = medium_term, 3 = long_te
 const topArtists = computed(() => {
   switch (selectedTimeRange.value) {
     case 1:
-      return spotifyStore.getTopArtistsShort || []
+      return musicStore.getTopArtistsShort || []
     case 2:
-      return spotifyStore.getTopArtistsMedium || []
+      return musicStore.getTopArtistsMedium || []
     case 3:
-      return spotifyStore.getTopArtistsLong || []
+      return musicStore.getTopArtistsLong || []
     default:
-      return spotifyStore.getTopArtistsShort || []
+      return musicStore.getTopArtistsShort || []
   }
 })
 
@@ -56,7 +56,7 @@ const loadTopArtists = async (timeRange) => {
   const rangeString = timeRange === 1 ? 'short_term' : timeRange === 2 ? 'medium_term' : 'long_term'
   const timeRangeKey = rangeString === 'short_term' ? 'short' :
                       rangeString === 'medium_term' ? 'medium' : 'long'
-  const existingData = spotifyStore[`getTopArtists${timeRangeKey.charAt(0).toUpperCase() + timeRangeKey.slice(1)}`]
+  const existingData = musicStore[`getTopArtists${timeRangeKey.charAt(0).toUpperCase() + timeRangeKey.slice(1)}`]
 
   if (existingData && existingData.length > 0) {
     console.log('Using cached top artists data for', rangeString)
@@ -64,7 +64,7 @@ const loadTopArtists = async (timeRange) => {
   }
 
   try {
-    await spotifyStore.fetchTopArtists(rangeString)
+    await musicStore.fetchTopArtists(rangeString)
   } catch (error) {
     console.error('Failed to load top artists:', error)
   }
@@ -116,7 +116,7 @@ const handleRefresh = async () => {
   const rangeString = selectedTimeRange.value === 1 ? 'short_term' : selectedTimeRange.value === 2 ? 'medium_term' : 'long_term'
   const timeRangeKey = rangeString === 'short_term' ? 'short' :
                       rangeString === 'medium_term' ? 'medium' : 'long'
-  spotifyStore[`topArtists.${timeRangeKey}`] = []
+  musicStore[`topArtists.${timeRangeKey}`] = []
   await loadTopArtists(selectedTimeRange.value)
 }
 

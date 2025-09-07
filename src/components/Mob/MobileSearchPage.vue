@@ -22,7 +22,7 @@
     </div>
 
     <!-- Loading State -->
-    <div v-if="spotifyStore.isLoading" class="loading-container">
+    <div v-if="musicStore.isLoading" class="loading-container">
       <div class="loading-spinner"></div>
       <p class="loading-text">Searching...</p>
     </div>
@@ -48,11 +48,11 @@
       </div>
 
       <!-- Songs Section -->
-      <div v-if="spotifyStore.getSearchTracks.length > 0" class="mobile-search-section">
+      <div v-if="musicStore.getSearchTracks.length > 0" class="mobile-search-section">
         <h3 class="section-title">Songs</h3>
         <div :class="['releases-container', preferencesStore.viewMode]">
           <MobileTrackItem
-            v-for="(track, index) in spotifyStore.getSearchTracks"
+            v-for="(track, index) in musicStore.getSearchTracks"
             :key="index"
             :track="track"
             :num="0"
@@ -65,11 +65,11 @@
       </div>
 
       <!-- Artists Section -->
-      <div v-if="spotifyStore.getSearchArtists.length > 0" class="mobile-search-section">
+      <div v-if="musicStore.getSearchArtists.length > 0" class="mobile-search-section">
         <h3 class="section-title">Artists</h3>
         <div :class="['releases-container', preferencesStore.viewMode]">
           <div
-            v-for="(artist, index) in spotifyStore.getSearchArtists"
+            v-for="(artist, index) in musicStore.getSearchArtists"
             :key="index"
             class="song-item"
             @click="handleArtistClick(artist, $event)"
@@ -90,11 +90,11 @@
       </div>
 
       <!-- Albums Section -->
-      <div v-if="spotifyStore.getSearchAlbums.length > 0" class="mobile-search-section">
+      <div v-if="musicStore.getSearchAlbums.length > 0" class="mobile-search-section">
         <h3 class="section-title">Albums</h3>
         <div :class="['releases-container', preferencesStore.viewMode]">
           <div
-            v-for="(album, index) in spotifyStore.getSearchAlbums"
+            v-for="(album, index) in musicStore.getSearchAlbums"
             :key="index"
             class="song-item"
             @click="handleAlbumClick(album, $event)"
@@ -115,11 +115,11 @@
       </div>
 
       <!-- Playlists Section -->
-      <div v-if="spotifyStore.getSearchPlaylists.length > 0" class="mobile-search-section">
+      <div v-if="musicStore.getSearchPlaylists.length > 0" class="mobile-search-section">
         <h3 class="section-title">Playlists</h3>
         <div :class="['releases-container', preferencesStore.viewMode]">
           <div
-            v-for="(playlist, index) in spotifyStore.getSearchPlaylists"
+            v-for="(playlist, index) in musicStore.getSearchPlaylists"
             :key="index"
             class="song-item"
             @click="handlePlaylistClick(playlist, $event)"
@@ -141,7 +141,7 @@
     </div>
 
     <!-- No Results -->
-    <div v-else-if="searchQuery && !spotifyStore.isLoading" class="empty-state">
+    <div v-else-if="searchQuery && !musicStore.isLoading" class="empty-state">
       <div class="empty-state-icon">🔍</div>
       <h3 class="empty-state-title">No results found</h3>
       <p class="empty-state-text">Try searching for something else</p>
@@ -158,7 +158,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useSpotifyStore } from '../../stores/spotify-store'
+import { useMusicStore } from '../../stores/music-store'
 import { useDeeperStore } from '../../stores/deeper-store'
 import { useQueueStore } from '../../stores/queue-store'
 import { usePreferencesStore } from '../../stores/preferences-store'
@@ -166,7 +166,7 @@ import { useAudioStore } from '../../stores/audio-store'
 import MobileTrackItem from './MobileTrackItem.vue'
 
 // Stores
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 const deeperStore = useDeeperStore()
 const queueStore = useQueueStore()
 const preferencesStore = usePreferencesStore()
@@ -177,29 +177,29 @@ const searchQuery = ref('')
 
 // Computed
 const hasSearchResults = computed(() => {
-  return spotifyStore.getSearchTracks.length > 0 ||
-         spotifyStore.getSearchArtists.length > 0 ||
-         spotifyStore.getSearchAlbums.length > 0 ||
-         spotifyStore.getSearchPlaylists.length > 0
+  return musicStore.getSearchTracks.length > 0 ||
+         musicStore.getSearchArtists.length > 0 ||
+         musicStore.getSearchAlbums.length > 0 ||
+         musicStore.getSearchPlaylists.length > 0
 })
 
 const totalResults = computed(() => {
-  return spotifyStore.getSearchTracks.length +
-         spotifyStore.getSearchArtists.length +
-         spotifyStore.getSearchAlbums.length +
-         spotifyStore.getSearchPlaylists.length
+  return musicStore.getSearchTracks.length +
+         musicStore.getSearchArtists.length +
+         musicStore.getSearchAlbums.length +
+         musicStore.getSearchPlaylists.length
 })
 
 // Methods
 const handleSearch = () => {
   if (searchQuery.value.trim()) {
-    spotifyStore.search(searchQuery.value)
+    musicStore.search(searchQuery.value)
   }
 }
 
 const clearSearch = () => {
   searchQuery.value = ''
-  spotifyStore.clearSearchResults()
+  musicStore.clearSearchResults()
 }
 
 const toggleViewMode = () => {

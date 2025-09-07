@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-import {spotifyApi} from '../services/spotifyApi'
+import {musicServiceManager} from '../services/MusicServiceManager'
 import {useVisibilityManager} from '../composables/useVisibilityManager'
 import {toRaw} from 'vue'
 
@@ -307,8 +307,9 @@ export const useDeeperStore = defineStore('deeper', {
 
                     // Check if user follows this track
                     try {
-                        const response = await spotifyApi.checkFollowingTrack(trackData.id)
-                        trackData.followed = response.data[0]
+                        const service = musicServiceManager.getCurrentService()
+                        const response = await service.checkFollowingTrack(trackData.id)
+                        trackData.followed = response
                     } catch (error) {
                         console.error(258,error)
                         trackData.followed = false
@@ -420,29 +421,31 @@ export const useDeeperStore = defineStore('deeper', {
                 if (!artistData) {
                     console.log('Fetching new artist data for:', item.id)
                     // Fetch comprehensive artist data
+                    const service = musicServiceManager.getCurrentService()
                     const [artistInfo, topTracks, albums, singles, appearances, related] = await Promise.all([
-                        spotifyApi.getArtist(item.id),
-                        spotifyApi.getArtistTopTracks(item.id),
-                        spotifyApi.getArtistAlbums(item.id),
-                        spotifyApi.getArtistSingles(item.id),
-                        spotifyApi.getArtistAppearances(item.id),
-                        spotifyApi.getRelatedArtists(item.id)
+                        service.getArtist(item.id),
+                        service.getArtistTopTracks(item.id),
+                        service.getArtistAlbums(item.id),
+                        service.getArtistSingles(item.id),
+                        service.getArtistAppearances(item.id),
+                        service.getRelatedArtists(item.id)
                     ])
 
                 console.log('API responses:', {
-                    artistInfo: artistInfo.data,
-                    topTracks: topTracks.data,
-                    albums: albums.data,
-                    singles: singles.data,
-                    appearances: appearances.data,
-                    related: related.data
+                    artistInfo: artistInfo,
+                    topTracks: topTracks,
+                    albums: albums,
+                    singles: singles,
+                    appearances: appearances,
+                    related: related
                 })
 
                 // Check if user follows this artist
                 let followed = false
                 try {
-                    const followResponse = await spotifyApi.checkFollowingArtist(item.id)
-                    followed = followResponse.data[0]
+                    const service = musicServiceManager.getCurrentService()
+                    const followResponse = await service.checkFollowingArtist(item.id)
+                    followed = followResponse
                 } catch (error) {
                     followed = false
                 }
@@ -452,7 +455,7 @@ export const useDeeperStore = defineStore('deeper', {
 
                 // Add artist info
                 const artistDataItem = {
-                    ...artistInfo.data,
+                    ...artistInfo,
                     followed,
                     type: 'trackartist'
                 }
@@ -460,13 +463,13 @@ export const useDeeperStore = defineStore('deeper', {
 
                 // Add top tracks
                 const topTracksItem = {
-                    ...topTracks.data,
+                    tracks: topTracks,
                     type: 'top_tracks'
                 }
                 trackartistArray.push(topTracksItem)
 
                 // Add albums
-                const enrichedAlbums = await this.enrichAlbums(albums.data.items)
+                const enrichedAlbums = await this.enrichAlbums(albums)
                 const albumsItem = {
                     items: enrichedAlbums,
                     type: 'albums'
@@ -474,7 +477,7 @@ export const useDeeperStore = defineStore('deeper', {
                 trackartistArray.push(albumsItem)
 
                 // Add singles
-                const enrichedSingles = await this.enrichAlbums(singles.data.items)
+                const enrichedSingles = await this.enrichAlbums(singles)
                 const singlesItem = {
                     items: enrichedSingles,
                     type: 'single'
@@ -482,7 +485,7 @@ export const useDeeperStore = defineStore('deeper', {
                 trackartistArray.push(singlesItem)
 
                 // Add appearances
-                const enrichedAppearances = await this.enrichAlbums(appearances.data.items)
+                const enrichedAppearances = await this.enrichAlbums(appearances)
                 const appearancesItem = {
                     items: enrichedAppearances,
                     type: 'appears_on'
@@ -490,7 +493,7 @@ export const useDeeperStore = defineStore('deeper', {
                 trackartistArray.push(appearancesItem)
 
                 // Add related artists
-                const enrichedRelated = await this.enrichArtists(related.data.artists)
+                const enrichedRelated = await this.enrichArtists(related)
                 const relatedItem = {
                     artists: enrichedRelated,
                     type: 'related-artists'
@@ -579,8 +582,9 @@ export const useDeeperStore = defineStore('deeper', {
 
                     // Check if user follows this album
                     try {
-                        const response = await spotifyApi.checkFollowingAlbum(albumData.id)
-                        albumData.followed = response.data[0]
+                        const service = musicServiceManager.getCurrentService()
+                        const response = await service.checkFollowingAlbum(albumData.id)
+                        albumData.followed = response
                     } catch (error) {
                         albumData.followed = false
                     }
@@ -641,8 +645,9 @@ export const useDeeperStore = defineStore('deeper', {
 
                     // Check if user follows this album
                     try {
-                        const response = await spotifyApi.checkFollowingPlaylist(playlistData.id)
-                        playlistData.followed = response.data[0]
+                        const service = musicServiceManager.getCurrentService()
+                        const response = await service.checkFollowingPlaylist(playlistData.id)
+                        playlistData.followed = response
                     } catch (error) {
                         playlistData.followed = false
                     }
@@ -653,10 +658,17 @@ export const useDeeperStore = defineStore('deeper', {
 
             // Ensure tracks are populated; fetch full playlist if missing/empty
             try {
-                if (!playlistData.tracks || !playlistData.tracks.items || playlistData.tracks.items.length === 0) {
-                    const fullResponse = await spotifyApi.getPlaylist(playlistData.id)
-                    if (fullResponse?.data?.tracks) {
-                        playlistData.tracks = fullResponse.data.tracks
+                // Check both old structure (tracks.items) and new structure (tracks directly)
+                const hasTracks = playlistData.tracks && (
+                    (playlistData.tracks.items && playlistData.tracks.items.length > 0) ||
+                    (Array.isArray(playlistData.tracks) && playlistData.tracks.length > 0)
+                )
+                
+                if (!hasTracks) {
+                    const service = musicServiceManager.getCurrentService()
+                    const fullResponse = await service.getPlaylist(playlistData.id)
+                    if (fullResponse?.tracks) {
+                        playlistData.tracks = fullResponse.tracks
                     }
                 }
             } catch (e) {
@@ -708,7 +720,8 @@ export const useDeeperStore = defineStore('deeper', {
                 let seedData = this.getCachedSeedArtist(seedId)
 
                 if (!seedData) {
-                    const response = await spotifyApi.getRecommendations({
+                    const service = musicServiceManager.getCurrentService()
+                    const response = await service.getRecommendations({
                         seed_artists: item.id,
                         limit: 50,
                         offset: 0,
@@ -716,7 +729,7 @@ export const useDeeperStore = defineStore('deeper', {
                     })
 
                     seedData = {
-                        tracks: response.data.tracks,
+                        tracks: response,
                         type: 'seed_artists',
                         id: seedId,
                         name: item.name,
@@ -768,7 +781,8 @@ export const useDeeperStore = defineStore('deeper', {
                 let seedData = this.getCachedSeedTrack(seedId)
 
                 if (!seedData) {
-                    const response = await spotifyApi.getRecommendations({
+                    const service = musicServiceManager.getCurrentService()
+                    const response = await service.getRecommendations({
                         seed_tracks: item.id,
                         limit: 50,
                         offset: 0,
@@ -776,7 +790,7 @@ export const useDeeperStore = defineStore('deeper', {
                     })
 
                     seedData = {
-                        tracks: response.data.tracks,
+                        tracks: response,
                         type: 'seed_tracks',
                         id: seedId,
                         name: item.name,
@@ -825,12 +839,13 @@ export const useDeeperStore = defineStore('deeper', {
 
             for (const album of albums) {
                 try {
-                    const tracksResponse = await spotifyApi.getAlbumTracks(album.id)
-                    const tracks = tracksResponse.data.items
+                    const service = musicServiceManager.getCurrentService()
+                    const tracksResponse = await service.getAlbumTracks(album.id)
+                    const tracks = tracksResponse
                     album.tracks = tracks
 
-                    if (tracks.length > 0 && tracks[0].preview_url) {
-                        album.preview_url = tracks[0].preview_url
+                    if (tracks.length > 0 && (tracks[0].preview_url || tracks[0].previewUrl)) {
+                        album.preview_url = tracks[0].preview_url || tracks[0].previewUrl
                     }
 
                     if (album.images.length > 0 && album.images[0]?.url) {
@@ -852,11 +867,12 @@ export const useDeeperStore = defineStore('deeper', {
 
             for (const artist of artists) {
                 try {
-                    const tracksResponse = await spotifyApi.getArtistTopTracks(artist.id, 'UA')
-                    const tracks = tracksResponse.data.tracks
+                    const service = musicServiceManager.getCurrentService()
+                    const tracksResponse = await service.getArtistTopTracks(artist.id, 'UA')
+                    const tracks = tracksResponse
 
-                    if (tracks.length > 0 && tracks[0].preview_url) {
-                        artist.preview_url = tracks[0].preview_url
+                    if (tracks.length > 0 && (tracks[0].preview_url || tracks[0].previewUrl)) {
+                        artist.preview_url = tracks[0].preview_url || tracks[0].previewUrl
                     }
 
                     if (artist.images.length > 0 && artist.images[0]?.url) {

@@ -1,5 +1,5 @@
 <script setup>
-import {useSpotifyStore} from "../stores/spotify-store";
+import {useMusicStore} from "../stores/music-store";
 import { getSectionName } from '../utils/sectionUtils';
 import {useAudioStore} from "../stores/audio-store";
 import {useQueueStore} from "../stores/queue-store";
@@ -10,7 +10,7 @@ import {useMediaDisplay} from "../composables/useMediaDisplay";
 import { useVisibilityManager } from "../composables/useVisibilityManager";
 
 const props = defineProps(['d', 'num'])
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 const audioStore = useAudioStore()
 const queueStore = useQueueStore()
 const deeperStore = useDeeperStore()
@@ -55,6 +55,16 @@ function setActive(id) {
   selected.value = id
 }
 
+async function refreshSeedArtists() {
+  try {
+    console.log('Refreshing seed artists for:', props.d.id)
+    // Call the deeper store to refresh the seed artists data
+    await deeperStore.getSeedArtistRecommendations(props.d, getSectionName(props.num), props.d.parentKey)
+  } catch (error) {
+    console.error('Failed to refresh seed artists:', error)
+  }
+}
+
 onMounted(async () => {
   // Wait for the next tick to ensure the ref is available
   await nextTick()
@@ -77,14 +87,14 @@ onMounted(async () => {
         <span class="title-text">Recommended songs based on {{ d.name }}</span>
       </div>
       <div class="seed-actions">
-        <button class="refresh-button" @click="spotifyStore.reloadSA({num:num,id:d.id,name:d.name })">
+        <button class="refresh-button" @click="refreshSeedArtists">
           <img class="refresh-icon" src="../assets/refresh-icon.png" alt="Refresh">
         </button>
         <sort-tracks v-model="selectedSASortOption"/>
       </div>
     </div>
 
-    <div class="mobile-tracks-container">
+    <div class="tracks-container">
       <template v-for="(track, index) in sortedSAItems" :key="index">
         <div
             :class="['media-card', getTrackMediaDisplay(track).displayClass.value, selected === track.id ? 'selected' : '']"

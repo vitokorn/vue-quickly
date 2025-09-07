@@ -1,5 +1,5 @@
 <script setup>
-import { useSpotifyStore } from "../../stores/spotify-store"
+import { useMusicStore } from "../../stores/music-store"
 import { getSectionName } from '../../utils/sectionUtils';
 import { useAudioStore } from "../../stores/audio-store"
 import { useQueueStore } from "../../stores/queue-store"
@@ -12,7 +12,7 @@ import MobileTrackItem from './MobileTrackItem.vue'
 import MobilePaginationContainer from './MobilePaginationContainer.vue'
 
 const props = defineProps(['d', 'num'])
-const spotifyStore = useSpotifyStore()
+const musicStore = useMusicStore()
 const audioStore = useAudioStore()
 const queueStore = useQueueStore()
 const deeperStore = useDeeperStore()
@@ -153,7 +153,7 @@ const handlePageChange = async (page) => {
       // Need to fetch more data
       loadingMore.value = true
       try {
-        const tracksData = await spotifyStore.fetchPlaylistTracks(props.d.id, currentOffset)
+        const tracksData = await musicStore.fetchPlaylistTracks(props.d.id, currentOffset)
         // Append new tracks to existing tracks
         if (props.d.tracks && tracksData.items) {
           props.d.tracks.items.push(...tracksData.items)
