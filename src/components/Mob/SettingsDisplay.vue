@@ -160,7 +160,7 @@ const currentTheme = ref('light')
 const changeTheme = (theme) => {
   const root = document.documentElement
   root.className = theme === 'light' ? '' : theme
-  localStorage.setItem('theme', theme)
+  localStorage.setItem('user-theme', theme)
   currentTheme.value = theme
 }
 
@@ -195,7 +195,7 @@ const showWelcomeModal = () => {
 }
 
 onMounted(() => {
-  const savedTheme = localStorage.getItem('theme') || 'light'
+  const savedTheme = localStorage.getItem('user-theme') || 'light'
   currentTheme.value = savedTheme
   changeTheme(savedTheme)
 })

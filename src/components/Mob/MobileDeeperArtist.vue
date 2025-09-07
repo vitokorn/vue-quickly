@@ -310,7 +310,7 @@ onUnmounted(() => {
         </div>
     </div>
       <div class="artist-actions">
-        <button class="recommend-btn" @click="handleRecommendClick">
+        <button class="action-button" @click="handleRecommendClick">
           <span class="btn-icon">🎵</span>
           Get Recommendations
         </button>

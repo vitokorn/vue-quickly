@@ -32,22 +32,18 @@ const queueStore = useQueueStore()
 const deeperStore = useDeeperStore()
 
 // Composables
-const {createPlaylistTrackSorter, createTrackSorter, createArtistSorter, createAlbumSorter} = useSorting()
 const {
   selectedItem,
   selectedTopMenu,
   selectedPersonalPlaylist,
   selectedSpotifyPlaylist,
   setSelectedItem,
-  setSelectedPersonalPlaylist,
-  setSelectedSpotifyPlaylist,
   setSelectedTopMenu
 } = useSelection()
 const {search} = useFiltering()
 
 // Local state
 const showWelcomeModal = ref(localStorage.getItem('welcome-modal-seen') !== 'true')
-const expandedTabs = ref(new Set())
 
 // Event handlers
 const handleTrackClick = async (track, event) => {
@@ -103,28 +99,6 @@ async function handlePlaylistClick(playlist, event) {
 const handleGenreClick = (genre, event) => {
   // TODO: Implement genre functionality
   console.log('Genre click:', genre)
-}
-
-const handleSeedArtist = async (artist, event) => {
-  const sectionName = getSectionName(selectedTopMenu.value)
-  await deeperStore.getSeedArtistRecommendations(artist, sectionName)
-}
-
-const handleFollowArtist = async (artist, event) => {
-  try {
-    await spotifyStore.followArtist(artist)
-  } catch (error) {
-    console.error('Failed to follow artist:', error)
-  }
-}
-
-const handleQueueTrack = (track) => {
-  queueStore.addToQueue(track)
-}
-
-// Utility functions
-const formatArtistNames = (artists) => {
-  return artistUtils.formatArtistNamesSimple(artists)
 }
 
 const getSectionName = (num) => {
@@ -248,6 +222,23 @@ const handleTabClick = async (tabNumber, event) => {
 const handleSearch = (event) => {
   selectedTopMenu.value = 10
   spotifyStore.search(event.target.value)
+}
+
+const handleSearchClick = async (item, type) => {
+  deeperStore.sections['search'] = [];
+  if (type === 'song') {
+    setSelectedItem('song' + item.id);
+    await deeperStore.getTrackDetails(item, 'search')
+  } else if (type === 'artist') {
+    setSelectedItem('artist' + item.id);
+    await deeperStore.getArtistDetails(item, 'search')
+  } else if (type === 'album') {
+    setSelectedItem('album' + item.id);
+    await deeperStore.getAlbumDetails(item, 'search')
+  } else if (type === 'playlist') {
+    setSelectedItem('playlist' + item.id);
+    await deeperStore.getPlaylistDetails(item, 'search')
+  }
 }
 
 // Welcome modal handlers
@@ -379,7 +370,7 @@ const handleCloseWelcomeModal = () => {
                   type="song"
                   :selected-item="selectedItem"
                   :unplayable-tracks="audioStore.unplayableTracks"
-                  @item-click="async (item, event) => { if (deeperStore.getIsGloballyLoading) return; setSelectedItem('song' + item.id); await deeperStore.getTrackDetails(item, 'search') }"
+                  @item-click="async (item, event) => { if (deeperStore.getIsGloballyLoading) return; await handleSearchClick(item, 'song') }"
                   @item-hover="audioStore.handleParentAudioHover"
                   @item-leave="audioStore.handleParentAudioLeave"
               />
@@ -389,7 +380,7 @@ const handleCloseWelcomeModal = () => {
                   type="artist"
                   :selected-item="selectedItem"
                   :unplayable-tracks="audioStore.unplayableTracks"
-                  @item-click="async (item, event) => { if (deeperStore.getIsGloballyLoading) return; setSelectedItem('artist' + item.id); await deeperStore.getArtistDetails(item, 'search') }"
+                  @item-click="async (item, event) => { if (deeperStore.getIsGloballyLoading) return; await handleSearchClick(item, 'album') }"
                   @item-hover="audioStore.handleParentAudioHover"
                   @item-leave="audioStore.handleParentAudioLeave"
               />
@@ -399,7 +390,7 @@ const handleCloseWelcomeModal = () => {
                   type="album"
                   :selected-item="selectedItem"
                   :unplayable-tracks="audioStore.unplayableTracks"
-                  @item-click="async (item, event) => { if (deeperStore.getIsGloballyLoading) return; setSelectedItem('album' + item.id); await deeperStore.getAlbumDetails(item, 'search') }"
+                  @item-click="async (item, event) => { if (deeperStore.getIsGloballyLoading) return; await handleSearchClick(item, 'album')}"
                   @item-hover="audioStore.handleParentAudioHover"
                   @item-leave="audioStore.handleParentAudioLeave"
               />
@@ -409,7 +400,7 @@ const handleCloseWelcomeModal = () => {
                   type="playlist"
                   :selected-item="selectedItem"
                   :unplayable-tracks="audioStore.unplayableTracks"
-                  @item-click="async (item, event) => { if (deeperStore.getIsGloballyLoading) return; setSelectedItem('playlist' + item.id); await deeperStore.getPlaylistDetails(item, 'search') }"
+                  @item-click="async (item, event) => { if (deeperStore.getIsGloballyLoading) return; await handleSearchClick(item, 'playlist') }"
                   @item-hover="audioStore.handleParentAudioHover"
                   @item-leave="audioStore.handleParentAudioLeave"
               />

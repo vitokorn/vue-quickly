@@ -515,8 +515,22 @@ export const useDeeperStore = defineStore('deeper', {
 
                 const visibilityManager = useVisibilityManager()
 
+                // Enhanced cleanup logic for artists
                 if (derivedParentKey) {
+                    // If this is a related artist, remove descendants of the parent
                     this.removeDescendantsOfParent(sectionName, derivedParentKey, visibilityManager)
+                } else {
+                    // If this is a root artist, remove all existing trackartist components and their descendants
+                    // This ensures that when switching between different root artists, previous related artists are cleaned up
+                    const sectionItems = this.sections[sectionName] || []
+                    const existingArtists = sectionItems.filter(item => item.type === 'trackartist')
+                    
+                    for (const existingArtist of existingArtists) {
+                        if (existingArtist.id !== item.id) {
+                            // Remove the entire subtree rooted at this artist
+                            this.removeSubtree(sectionName, existingArtist.id, visibilityManager, 'trackartist')
+                        }
+                    }
                 }
 
                 // Add to section

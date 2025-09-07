@@ -119,7 +119,7 @@ window.addEventListener('resize', () => {
         </div>
       </div>
       <div class="artist-actions" :class="{'grid-column-2': mobileClass}">
-        <button class="recommend-btn"
+        <button class="action-button"
                 @click="handleRecommendClick">
           <span class="btn-icon">🎵</span>
           Recommended songs based on this

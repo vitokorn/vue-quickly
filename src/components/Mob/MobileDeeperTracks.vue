@@ -211,7 +211,7 @@ onUnmounted(() => {
         Play Track
       </button>
 
-      <button class="recommend-btn" @click="handleRecommendClick">
+      <button class="action-button" @click="handleRecommendClick">
         <span class="btn-icon">🎵</span>
         Get Recommendations
       </button>

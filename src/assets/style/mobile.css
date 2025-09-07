@@ -1669,7 +1669,7 @@
 .mobile-seed-tracks .back-button {
     background: none;
     border: none;
-    color: #ffffff;
+    color: var(--title-color);
     padding: 8px;
     border-radius: 8px;
     cursor: pointer;
@@ -1778,27 +1778,7 @@
     max-width: 300px;
 }
 
-.spotify-link {
-    gap: 8px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    border: none;
-    cursor: pointer;
-}
 
-.spotify-link {
-    background: var(--action-btn-bg);
-    color: var(--title-color);
-    border: 1px solid var(--item-border);
-}
-
-.spotify-link:hover {
-    background: var(--action-btn-hover-bg);
-    transform: translateY(-1px);
-}
 
 .follow-section {
     display: flex;
@@ -2589,7 +2569,7 @@
 .item-name {
     font-size: 16px;
     font-weight: 600;
-    color: white;
+    color: var(--title-color);
     margin-bottom: 4px;
     white-space: nowrap;
     overflow: hidden;
@@ -2609,7 +2589,7 @@
 
 .item-artist, .item-genres, .item-type {
     font-size: 14px;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--title-color);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
