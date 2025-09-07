@@ -1,16 +1,16 @@
 <script setup>
 /* eslint-disable no-useless-escape */
-import MainLayout from './components/layout/MainLayout.vue'
-import Header from "./components/Header.vue";
-import QueueModal from "./components/QueueModal.vue";
+import MobileLayout from './components/layout/MobileLayout.vue'
+import MainLayout from "./components/layout/MainLayout.vue";
+import {isMobile} from "./mixins/detectingMobileMixin.js";
 
 </script>
 
 <template>
-  <Header/>
-  <br>
-  <MainLayout />
-  <QueueModal/>
+  <div class="container" v-if="!isMobile()">
+    <MainLayout/>
+  </div>
+  <MobileLayout v-if="isMobile()"/>
 </template>
 
 <style>
@@ -24,8 +24,9 @@ import QueueModal from "./components/QueueModal.vue";
 </style>
 
 <style>
-@import './assets/style/styles.css';
 @import './assets/style/normalize.css';
 @import "./assets/style/bootstrap-grid.css";
+@import "./assets/style/styles.css";
+@import "./assets/style/mobile.css";
 </style>
 

@@ -1,50 +1,111 @@
 <script setup>
-import {useDMStore} from "../stores/dm-store";
+import {useQueueStore} from "../stores/queue-store";
+import {useSpotifyStore} from "../stores/spotify-store";
 
-const store = useDMStore()
+const queueStore = useQueueStore()
+const spotifyStore = useSpotifyStore()
+
+const handleSaveQueue = async () => {
+  try {
+    await queueStore.saveQueue()
+  } catch (error) {
+    console.error('Failed to save queue:', error)
+  }
+}
+
+const handleSaveToPlaylist = async (playlistId) => {
+  try {
+    await queueStore.saveQueueToPlaylist(playlistId)
+  } catch (error) {
+    console.error('Failed to save queue to playlist:', error)
+  }
+}
+
+const handleCreatePlaylist = async () => {
+  const name = prompt('Name for your playlist:', 'Discovered')
+  if (name) {
+    try {
+      await spotifyStore.createPlaylist(name)
+      // Refresh playlists
+      await spotifyStore.fetchPlaylists(0)
+    } catch (error) {
+      console.error('Failed to create playlist:', error)
+    }
+  }
+}
 </script>
 
 <template>
-  <div class="modal" v-if="store.queueModal">
-    <a class="modal__close" href="#"></a>
-    <div class="modal__content">
-      <a class="modal__content__close pointer" @click="store.queueModal=false">x</a>
-      <div class="mb-2">Queue</div>
-      <div class="display-flex align-items-center">
-        <button v-on:click="store.savequeue()">Save all tracks</button>
-        <select class="text-truncate">
-          <option selected disabled>Add all to playlist</option>
-          <option v-on:click="store.createplaylist()">New playlist</option>
-          <template v-for="(playlist,index) of store.listplaylists" v-bind:key="index">
-            <option v-bind:id="playlist.id">{{ playlist.name }}</option>
-          </template>
-        </select>
-        <div v-on:click="store.removequeue()"><svg height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z"/></svg></div>
+  <div v-if="queueStore.isQueueModalOpen" class="modal-overlay" @click="queueStore.setQueueModal(false)">
+    <div class="modal-content" @click.stop>
+      <div class="modal-header">
+        <h2 class="modal-title">Queue</h2>
+        <button class="modal-close" @click="queueStore.setQueueModal(false)">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6.225 4.811a1 1 0 00-1.414 1.414L10.586 12 4.81 17.775a1 1 0 101.414 1.414L12 13.414l5.775 5.775a1 1 0 001.414-1.414L13.414 12l5.775-5.775a1 1 0 00-1.414-1.414L12 10.586 6.225 4.81z"/>
+          </svg>
+        </button>
       </div>
-      <div class="pe-3 mt-2" style="height: 250px;overflow-y: auto;">
-        <div v-for="(q,index) in store.queuearr" class="playable-modal"
-             v-bind:key="index">
-          <div class="display-flex">
-            <div v-if="q.image" tabindex="0" class="itemImg itemImg-xs itemImg-search"
-                 v-bind:style="{ 'background-image': 'url(' + q.image.url + ')' }">
+
+      <div class="modal-actions">
+        <button class="action-btn save-btn" @click="handleSaveQueue">
+          <span class="btn-icon">💾</span>
+          <span class="btn-text">Save all tracks</span>
+        </button>
+
+        <div class="playlist-selector">
+          <select class="playlist-select" @change="handleSaveToPlaylist($event.target.value)">
+            <option selected disabled>Add all to playlist</option>
+            <option value="new" @click="handleCreatePlaylist">New playlist</option>
+            <template v-for="(playlist, index) of spotifyStore.getPlaylists" :key="index">
+              <option :value="playlist.id">{{ playlist.name }}</option>
+            </template>
+          </select>
+        </div>
+
+        <button class="action-btn clear-btn" @click="queueStore.clearQueue()">
+          <span class="btn-icon">🗑️</span>
+          <span class="btn-text">Clear queue</span>
+        </button>
+      </div>
+
+      <div class="queue-list">
+        <div v-for="(q, index) in queueStore.getQueueArr" :key="index" class="queue-item">
+          <div class="track-info">
+            <div class="track-image">
+              <div v-if="q.image"
+                   class="track-cover"
+                   :style="{ 'background-image': 'url(' + q.image.url + ')' }">
+              </div>
+              <div v-else
+                   class="track-cover no-image">
+                <span class="no-image-icon">🎵</span>
+              </div>
             </div>
-            <div v-else-if="store.unplayable_tracks" tabindex="0" class="itemImg itemImg-xs itemImg-search half-opacity" style="color: grey;">
-              <audio preload="none"></audio>
-            </div>
-            <div>
-              <div style="font-size: .9em;">{{ q.name }}</div>
-              <div class="artist" style="font-size: .85em;">{{ q.artists }}</div>
+
+            <div class="track-details">
+              <div class="track-name">{{ q.name }}</div>
+              <div class="track-artists">{{ q.artists }}</div>
             </div>
           </div>
-          <div class="display-flex align-items-center" v-on:click="store.removequeueitem(q.id)"><svg height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z"/></svg></div>
+
+          <button class="remove-btn" @click="queueStore.removeFromQueue(q.id)">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6.225 4.811a1 1 0 00-1.414 1.414L10.586 12 4.81 17.775a1 1 0 101.414 1.414L12 13.414l5.775 5.775a1 1 0 001.414-1.414L13.414 12l5.775-5.775a1 1 0 00-1.414-1.414L12 10.586 6.225 4.81z"/>
+            </svg>
+          </button>
         </div>
       </div>
-      <p>Spotify Premium required to play the full song in Discover Mobily. Save these tracks above to listen in the
-        main Spotify app.</p>
+
+      <div class="modal-footer">
+        <p class="premium-notice">
+          <span class="notice-icon">ℹ️</span>
+          Spotify Premium required to play the full song in Discover Mobily. Save these tracks above to listen in the main Spotify app.
+        </p>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-
 </style>

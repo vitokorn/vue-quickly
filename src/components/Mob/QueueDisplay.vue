@@ -1,0 +1,145 @@
+<script setup>
+import { onMounted, ref } from 'vue'
+import { useQueueStore } from "../../stores/queue-store"
+import { useSpotifyStore } from "../../stores/spotify-store"
+import { usePreferencesStore } from "../../stores/preferences-store"
+import MobileTrackItem from './MobileTrackItem.vue'
+import MobileTracksList from "./MobileTracksList.vue";
+import QueueItem from "./QueueItem.vue";
+
+const queueStore = useQueueStore()
+const spotifyStore = useSpotifyStore()
+const preferencesStore = usePreferencesStore()
+
+onMounted(() => {
+  // Load queue from localStorage when component mounts
+  queueStore.loadQueue()
+
+  // Load playlists if not already loaded
+  if (spotifyStore.getPlaylists.length === 0) {
+    spotifyStore.fetchPlaylists(0)
+  }
+})
+
+const handleSaveQueue = async () => {
+  try {
+    await queueStore.saveQueue()
+  } catch (error) {
+    console.error('Failed to save queue:', error)
+  }
+}
+
+const handleSaveToPlaylist = async (playlistId) => {
+  if (playlistId === 'new') {
+    const name = prompt('Name for your playlist:', 'Discovered')
+    if (name) {
+      try {
+        await spotifyStore.createPlaylist(name)
+        await spotifyStore.fetchPlaylists(0)
+      } catch (error) {
+        console.error('Failed to create playlist:', error)
+      }
+    }
+  } else if (playlistId !== 'default') {
+    try {
+      await queueStore.saveQueueToPlaylist(playlistId)
+    } catch (error) {
+      console.error('Failed to save queue to playlist:', error)
+    }
+  }
+}
+
+const toggleViewMode = () => {
+  preferencesStore.toggleViewMode()
+}
+</script>
+
+<template>
+  <div class="queue-display">
+    <!-- Queue Header -->
+    <div class="queue-header">
+      <div class="queue-title">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="queue-icon">
+          <path d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0016.5 9h-1.875a1.875 1.875 0 01-1.875-1.875V5.25A3.75 3.75 0 009 1.5H5.625z" />
+          <path d="M12.971 1.816A5.23 5.23 0 0114.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 013.434 1.279 9.768 9.768 0 00-6.963-6.963z" />
+        </svg>
+        <h3>Queue ({{ queueStore.getQueueCount() }})</h3>
+      </div>
+      <div class="header-actions">
+        <button class="view-toggle-btn" @click="toggleViewMode" :title="preferencesStore.viewMode === 'list' ? 'Grid view' : 'List view'">
+          <svg v-if="preferencesStore.viewMode === 'list'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h2.25a3 3 0 013 3v2.25a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9.75 0a3 3 0 013-3H18a3 3 0 013 3v2.25a3 3 0 01-3 3h-2.25a3 3 0 01-3-3V6zM3 15.75a3 3 0 013-3h2.25a3 3 0 013 3V18a3 3 0 01-3 3H6a3 3 0 01-3-3v-2.25zm9.75 0a3 3 0 013-3H18a3 3 0 013 3V18a3 3 0 01-3 3h-2.25a3 3 0 01-3-3v-2.25z" clip-rule="evenodd" />
+          </svg>
+          <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M2.625 6.75a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0A.75.75 0 018.25 6h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75zM2.625 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zM7.5 12a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12A.75.75 0 017.5 12zm-4.875 5.25a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Queue Actions -->
+    <div v-if="queueStore.getQueueCount() > 0" class="queue-actions">
+      <button class="action-btn save-btn" @click="handleSaveQueue">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="action-icon">
+          <path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z" clip-rule="evenodd" />
+        </svg>
+        Save All
+      </button>
+
+      <div class="playlist-selector">
+        <select class="playlist-select" @change="handleSaveToPlaylist($event.target.value)">
+          <option value="default" selected disabled>Add to Playlist</option>
+          <option value="new">New Playlist</option>
+          <template v-for="(playlist, index) of spotifyStore.getPlaylists" :key="index">
+            <option :value="playlist.id">{{ playlist.name }}</option>
+          </template>
+        </select>
+      </div>
+
+      <button class="action-btn clear-btn" @click="queueStore.clearQueue()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="action-icon">
+          <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.196 51.196 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 00-6 0v-.113c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z" clip-rule="evenodd" />
+        </svg>
+        Clear
+      </button>
+    </div>
+
+    <!-- Queue List -->
+    <div :class="['releases-container', preferencesStore.viewMode]" v-if="queueStore.getQueueCount()">
+      <QueueItem
+        v-for="(track, index) in queueStore.getQueueArr"
+        :key="index"
+        :track="track"
+        section-name="queue"
+        parent-id="queue"
+        :num="11"
+        :show-remove="true"
+        :view-mode="preferencesStore.viewMode"
+        @remove="queueStore.removeFromQueue(track.id)"
+      />
+    </div>
+
+    <!-- Empty State -->
+    <div v-else class="empty-queue">
+      <div class="empty-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M11.584 2.376a.75.75 0 01.832 0l9 6a.75.75 0 11-.832 1.248L12 3.901 3.416 9.624a.75.75 0 01-.832-1.248l9-6z" />
+          <path d="M20.25 11.25v5.533c0 1.036-.84 1.875-1.875 1.875H5.625A1.875 1.875 0 013.75 16.783V11.25H2.25a.75.75 0 010-1.5h1.5V6.75c0-1.036.84-1.875 1.875-1.875h.75a.75.75 0 010 1.5h-.75a.375.375 0 00-.375.375v3.375h1.5a.75.75 0 010 1.5H3.75v5.533a.375.375 0 00.375.375h12.75a.375.375 0 00.375-.375V11.25h1.5a.75.75 0 010-1.5h-1.5V6.75a.375.375 0 00-.375-.375h-.75a.75.75 0 010-1.5h.75c1.036 0 1.875.84 1.875 1.875v3.375h1.5a.75.75 0 010 1.5z" />
+        </svg>
+      </div>
+      <h4>Your queue is empty</h4>
+      <p>Add tracks from your discoveries to build your queue</p>
+    </div>
+
+    <!-- Premium Notice -->
+    <div v-if="queueStore.getQueueCount() > 0" class="premium-notice">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="notice-icon">
+        <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
+      </svg>
+      <span>Spotify Premium required to play full songs. Save tracks to listen in the main Spotify app.</span>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+</style>

@@ -1,62 +1,153 @@
 <script setup>
+import {useSpotifyStore} from "../stores/spotify-store";
+import {useAudioStore} from "../stores/audio-store";
+import {useQueueStore} from "../stores/queue-store";
+import {useDeeperStore} from "../stores/deeper-store";
+import {onMounted, ref, computed, nextTick, watch} from "vue";
 import TrackCover from "./TrackCover.vue";
-import {useDMStore} from "../stores/dm-store";
+import {useMediaDisplay} from "../composables/useMediaDisplay";
+import {useVisibilityManager} from "../composables/useVisibilityManager";
+import {useLoading} from "../composables/useLoading";
+import { getSectionName } from '../utils/sectionUtils';
+import LoadingState from "./common/LoadingState.vue";
+const props = defineProps(['d', 'num'])
+const spotifyStore = useSpotifyStore()
+const audioStore = useAudioStore()
+const queueStore = useQueueStore()
+const deeperStore = useDeeperStore()
+const selected = ref()
+const cover = ref(null)
+const componentRef = ref(null)
+const mobileClass = ref(false)
 
-defineProps(['d', 'num'])
-const store = useDMStore()
+// Loading state management
+const { isLoading, loadingMessage, withLoading } = useLoading({
+  message: 'Loading track details...'
+})
+
+// Get visibility manager
+const visibilityManager = useVisibilityManager()
+
+// Helper function to get media display for an artist
+function getArtistMediaDisplay(artist) {
+  return useMediaDisplay(computed(() => artist))
+}
+
+const handleRecommendClick = async () => {
+  try {
+  deeperStore.setGlobalLoading(true)
+    const sectionName = getSectionName(props.num)
+    await deeperStore.getSeedTrackRecommendations(props.d, sectionName, props.d.id)
+  } catch (error) {
+    console.error('Failed to get recommendations:', error)
+    alert('Failed to load recommendations. Please try again.')
+  } finally {
+    deeperStore.setGlobalLoading(false)
+  }
+}
+
+
+function setActive(id) {
+  selected.value = id
+}
+
+function resolveCover() {
+  console.log(props.d)
+  if (props.d.album && props.d.album.images) {
+    cover.value = props.d.album.images[0]
+  } else if (props.d.images) {
+    cover.value = props.d.images[0]
+  } else if (props.d.track && props.d.track.album && props.d.track.album.images && props.d.track.album.images[0]) {
+    cover.value = props.d.track.album.images[0]
+  }
+  console.log(cover.value)
+}
+
+onMounted(async () => {
+  await withLoading(async () => {
+    resolveCover()
+
+    // Wait for the next tick to ensure the ref is available
+    await nextTick()
+
+    // Register this component with the visibility manager
+    const trackKey = `${props.d.type}_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
+    console.log('Registering component with ref:', componentRef.value)
+    console.log('Ref element:', componentRef.value?.tagName, componentRef.value?.className)
+    console.log('Registering with key:', trackKey)
+    visibilityManager.registerComponent(trackKey, componentRef)
+
+    // Show this component after registration
+    console.log('Showing component after registration:', trackKey)
+    visibilityManager.showComponent(trackKey)
+  }, { message: 'Initializing track view...' })
+})
+mobileClass.value = window.innerWidth < 768;
+window.addEventListener('resize', () => {
+  mobileClass.value = window.innerWidth < 768;
+})
 </script>
 
 <template>
-  <div class="playlisttrack card2 display-flex my-3" v-bind:id="'d'+d.id">
-    <track-cover :d="d" :cover=d.album.images[0]></track-cover>
-    <div class="text-left ms-2" style="width: 50%;">
-      <div>{{ d.name }}</div>
-      <div class="display-flex align-items-center"><p>By </p>
-        <div v-for="(art,index) in d.artists" class="display-flex align-items-center" v-bind:key="index">
-          <div v-if="d.artists.length > 1 && d.artists.length - 1 === index">&</div>
-          <div v-if="d.artists.length >= 2 && d.artists.length - 1 !== index && index !== 0">,</div>
-          <div class="mx-1 pointer"
-               v-on:click="store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})">
-            {{ art.name }}
+  <div class="modern-track-card" ref="componentRef">
+    <!-- Loading State -->
+    <LoadingState
+      v-if="isLoading"
+      :message="loadingMessage"
+      variant="default"
+    />
+
+    <div v-else class="deeper-header p-4">
+      <track-cover :d="d" :cover="cover"></track-cover>
+      <div class="track-info">
+        <h3 class="track-title">{{ d.name }}</h3>
+        <div class="artists-section">
+          <span class="artists-label">By</span>
+          <div class="artists-list">
+            <template v-for="(art, index) in d.artists" :key="index">
+              <div v-if="d.artists.length > 1 && d.artists.length - 1 === index" class="separator">&</div>
+              <div v-if="d.artists.length >= 2 && d.artists.length - 1 !== index && index !== 0"
+                    class="separator">,</div>
+              <div class="artist-item">
+                <button class="artist-link"
+                        @click="deeperStore.getArtistDetails(art, getSectionName(num), d.id)">
+                  {{ art.name }}
+                </button>
+              </div>
+            </template>
           </div>
         </div>
       </div>
-      <span class="light-washed-rose"
-            v-on:click="store.seedTracks({item:d,num:num,sib:'playlisttrack',child:'d'+ d.id})">Recommended songs based on this</span>
-      <div>
-        <button class="button"><a class="linkresset" v-bind:href="d['external_urls']['spotify']" target="_blank">Open in
-          Spotify</a></button>
-        <!--        Save<input type="checkbox" v-if="d.followed" @click.once="followTrack(d,$event)"  checked v-model="d.followed">-->
-        <!--        <input type="checkbox" v-else @click.once="followTrack(d,$event)" v-model="d.followed">-->
+      <div class="artist-actions" :class="{'grid-column-2': mobileClass}">
+        <button class="action-button"
+                @click="handleRecommendClick">
+          <span class="btn-icon">🎵</span>
+          Recommended songs based on this
+        </button>
+        <a class="spotify-link" :href="d.external_urls?.spotify" target="_blank" rel="noopener">
+          <span class="link-icon">🎧</span>
+          Open in Spotify
+        </a>
       </div>
     </div>
-    <template v-for="(art,index) in d.artists">
-      <div class="artist-cirle con3" v-if="d.preview_url && d.album.images[0]" v-bind:key="index"
-           v-on:click="store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})"
-           v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
-        <audio preload="auto" v-bind:src="d.preview_url"></audio>
-        <div class="float-left" style="position: absolute; font-size: 0.7em;">{{ art.name }}</div>
-      </div>
-      <div class="artist-cirle con3 half-opacity" v-else-if="!d.preview_url && d.album.images[0]" v-bind:key="'2'+index"
-           v-on:click="store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})"
-           v-bind:style="{ 'background-image': 'url(' + d.album.images[0].url + ')' }">
-        <audio></audio>
-        <div class="float-left" style="position: absolute; font-size: 0.7em;">{{ art.name }}</div>
-      </div>
-      <div class="artist-cirle con3" v-else-if="d.preview_url && !d.album.images[0]" v-bind:key="'3'+index"
-           v-on:click="store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})">
-        <audio preload="auto" v-bind:src="d.preview_url"></audio>
-        <div class="float-left" style="position: absolute; font-size: 0.7em;">{{ art.name }}</div>
-      </div>
-      <div class="artist-cirle con3 half-opacity" v-else-if="store.unplayable_tracks" v-bind:key="'4'+index"
-           v-on:click="store.deeperartist({item:art,track:d,num:num,flag:false,sib:'playlisttrack'})">
-        <audio preload="none"></audio>
-        <div class="float-left" style="position: absolute; font-size: 0.7em;">{{ art.name }}</div>
-      </div>
-    </template>
+    <!--It requires an additional request to show this block, so I commented it out for now-->
+    <!--    <div class="artists-grid">-->
+    <!--      <div v-for="(art, index) in d.artists" :key="index">-->
+    <!--        <div :class="['artist-card', getArtistMediaDisplay(art).displayClass.value, selected === art.id ? 'selected' : '']"-->
+    <!--             :style="getArtistMediaDisplay(art).backgroundStyle.value"-->
+    <!--             @mouseover="getArtistMediaDisplay(art).hasPreview.value && audioStore.handleAudioHover($event)"-->
+    <!--             @mouseleave="getArtistMediaDisplay(art).hasPreview.value && audioStore.handleAudioLeave($event)"-->
+    <!--             @click="setActive(art.id);deeperStore.getArtistDetails(art, 'playlisttrack')">-->
+    <!--          <div class="artist-overlay">-->
+    <!--            <div class="artist-name">{{ art.name }}</div>-->
+    <!--          </div>-->
+    <!--          <audio :preload="getArtistMediaDisplay(art).audioPreload.value" :src="getArtistMediaDisplay(art).audioSrc.value"></audio>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </div>-->
   </div>
 </template>
 
 <style scoped>
-
+/* Styles moved to main styles.css */
 </style>

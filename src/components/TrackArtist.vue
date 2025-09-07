@@ -1,163 +1,272 @@
 <script setup>
-import {useDMStore} from "../stores/dm-store";
-import {ref} from "vue";
+import {useSpotifyStore} from "../stores/spotify-store";
+import {useAudioStore} from "../stores/audio-store";
+import {useQueueStore} from "../stores/queue-store";
+import {useDeeperStore} from "../stores/deeper-store";
+import {ref, computed, onMounted, nextTick} from "vue";
+import {useMediaDisplay} from "../composables/useMediaDisplay";
+import {useVisibilityManager} from "../composables/useVisibilityManager";
+import {getSectionName} from "../utils/sectionUtils";
 
-defineProps(['d', 'num'])
-const store = useDMStore()
+const props = defineProps(['d', 'num'])
+const spotifyStore = useSpotifyStore()
+const audioStore = useAudioStore()
+const queueStore = useQueueStore()
+const deeperStore = useDeeperStore()
 const selected = ref()
+const componentRef = ref(null)
+
+// Get visibility manager
+const visibilityManager = useVisibilityManager()
+
+const artistData = computed(() => {
+  if (props.d.data && Array.isArray(props.d.data)) {
+    // Find the trackartist item in the data array
+    const artistItem = props.d.data.find(item => item.type === 'trackartist')
+    return artistItem || props.d
+  }
+  return props.d
+})
+
+const topTracksData = computed(() => {
+  if (props.d.data && Array.isArray(props.d.data)) {
+    const topTracksItem = props.d.data.find(item => item.type === 'top_tracks')
+    return topTracksItem?.tracks || []
+  }
+  return []
+})
+
+const albumsData = computed(() => {
+  if (props.d.data && Array.isArray(props.d.data)) {
+    const albumsItem = props.d.data.find(item => item.type === 'albums')
+    return albumsItem?.items || []
+  }
+  return []
+})
+
+const singlesData = computed(() => {
+  if (props.d.data && Array.isArray(props.d.data)) {
+    const singlesItem = props.d.data.find(item => item.type === 'single')
+    return singlesItem?.items || []
+  }
+  return []
+})
+
+const appearsOnData = computed(() => {
+  if (props.d.data && Array.isArray(props.d.data)) {
+    const appearsOnItem = props.d.data.find(item => item.type === 'appears_on')
+    return appearsOnItem?.items || []
+  }
+  return []
+})
+
+const relatedArtistsData = computed(() => {
+  if (props.d.data && Array.isArray(props.d.data)) {
+    const relatedItem = props.d.data.find(item => item.type === 'related-artists')
+    return relatedItem?.artists || []
+  }
+  return []
+})
+
+// Helper function to get media display for any item
+function getMediaDisplay(item) {
+  return useMediaDisplay(computed(() => item))
+}
+
+
 function setActive(id) {
   selected.value = id
 }
+
+onMounted(async () => {
+  await nextTick()
+  console.log('TrackArtist component mounted with props:', props.d)
+  const artistKey = `trackartist_${props.d?.id || 'default'}${props.d?.parentKey ? `__p:${props.d.parentKey}__` : ''}`
+  console.log('Registering TrackArtist component with key:', artistKey)
+  visibilityManager.registerComponent(artistKey, componentRef)
+  console.log('Showing TrackArtist component after registration:', artistKey)
+  visibilityManager.showComponent(artistKey)
+})
 </script>
+
 <template>
-  <div class="trackartist card2 text-left" style="gap: 16px;">
-    <template v-for="(ta,index) in d">
-      <div v-if="ta.type==='artist'" class="recartist card2 text-left" v-bind:id="'art'+ta.id" v-bind:key="index"
-           style="width: 100%;gap: 16px;">
-        <div class="con3 text-left" v-if="ta.preview_url && ta.images[0]"
-             v-bind:style="{ 'background-image': 'url(' + ta.images[0].url + ')' }"
-             v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)">{{ ta.name }}
-          <audio preload="auto" v-bind:src="ta.preview_url"></audio>
-        </div>
-        <div class="con3 text-left half-opacity" v-else-if="!ta.preview_url && ta.images[0]"
-             v-bind:style="{ 'background-image': 'url(' + ta.images[0].url + ')' }">{{ ta.name }}
-          <audio></audio>
-        </div>
-        <div class="con3 text-left" v-else-if="ta.preview_url && !ta.images[0]"
-             v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)">{{ ta.name }}
-          <audio preload="auto" v-bind:src="ta.preview_url"></audio>
-        </div>
-        <div class="con3 text-left half-opacity" v-else>{{ ta.name }}
-          <audio></audio>
-        </div>
-        <div>{{ ta.name }}
-          <div>{{ ta['followers']['total'] + ' followers' }}</div>
-          <div class="display-flex">
-            <template v-for="(g,index) in ta['genres']" v-bind:key="'2'+index">
-              <div v-if="ta['genres'].length > 1 && ta['genres'].length - 1 === index" class="me-2">&</div>
-              <div v-if="ta['genres'].length >= 2 && ta['genres'].length - 1 !== index && index !== 0" class="me-2">,</div>
-              <div
-                   v-on:click="store.thesoundof({name:g,num:num,sib:'trackartist',child:false})"
-                   class="me-2" >{{ g }}
-              </div>
-            </template>
+  <div class="modern-track-artist" ref="componentRef">
+    <!-- Artist Section -->
+    <div v-if="artistData" class="artist-section">
+      <div class="deeper-header">
+        <!-- Artist Cover -->
+        <div :class="['artist-cover', getMediaDisplay(artistData).displayClass.value]"
+             :style="getMediaDisplay(artistData).backgroundStyle.value"
+             @mouseover="getMediaDisplay(artistData).hasPreview.value && audioStore.handleAudioHover($event)"
+             @mouseleave="getMediaDisplay(artistData).hasPreview.value && audioStore.handleAudioLeave($event)">
+          <div class="cover-overlay">
+            <div class="artist-name">{{ artistData.name }}</div>
           </div>
-          <div class="light-washed-rose" v-on:click="store.seedArtist({item:ta,num:num,sib:'trackartist'})">
+          <audio :preload="getMediaDisplay(artistData).audioPreload.value"
+                 :src="getMediaDisplay(artistData).audioSrc.value"></audio>
+        </div>
+
+        <!-- Artist Info -->
+        <div class="artist-info">
+          <h2 class="artist-title">{{ artistData.name }}</h2>
+          <div class="artist-stats">
+            <span class="followers-count">{{ artistData.followers?.total?.toLocaleString() }} followers</span>
+          </div>
+
+          <!-- Genres -->
+          <div class="genres-section" v-if="artistData.genres && artistData.genres.length > 0">
+            <div class="gnr-list">
+              <template v-for="(g, gIndex) in artistData.genres" :key="'genre-'+gIndex">
+                <span v-if="artistData.genres.length > 1 && artistData.genres.length - 1 === gIndex"
+                      class="separator">&</span>
+                <span v-if="artistData.genres.length >= 2 && artistData.genres.length - 1 !== gIndex && gIndex !== 0"
+                      class="separator">,</span>
+                <button class="genre-tag"
+                        @click="spotifyStore.getTheSoundOf({name:g,num:num,sib:'trackartist',child:false})">
+                  {{ g }}
+                </button>
+              </template>
+            </div>
+          </div>
+        </div>
+        <!-- Actions -->
+        <div class="artist-actions">
+          <button class="action-button"
+                  @click="deeperStore.getSeedArtistRecommendations(artistData, getSectionName(num), d.id)">
+            <span class="btn-icon">🎵</span>
             Recommended artists songs based on this
-          </div>
-          <div>
-            <button class="button"><a class="linkresset" v-bind:href="ta['external_urls']['spotify']" target="_blank">Open
-              in Spotify</a></button>
-            Follow<input type="checkbox" v-if="ta.followed" @click.once="store.followArtist({artist:ta,event:$event})"
-                         checked v-model="ta.followed">
-            <input type="checkbox" v-else @click.once="store.followArtist({artist:ta,event:$event})"
-                   v-model="ta.followed">
-          </div>
-        </div>
-      </div>
-      <div v-if="ta.type==='top_tracks'" class="break" v-bind:key="index">Top tracks</div>
-      <div v-if="ta.type==='top_tracks'" v-bind:key="index" tabindex="0" class="top-tracks card2">
-        <div v-for="(tt,index) in ta['tracks']" v-bind:key="index">
-          <div v-if="tt.preview_url && tt.album.images[0]" class="con3"
-               :class="selected===tt.id ? 'selected' : ''"
-               v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }"
-               v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)"
-               v-on:click="setActive(tt.id);store.deeperTracks({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id}); store.queuein(tt)">
-            {{ tt.name }}
-            <audio v-bind:src="tt.preview_url"></audio>
-          </div>
-          <div v-else-if="!tt.preview_url && tt.album.images[0]" class="con3 half-opacity"
-               :class="selected===tt.id ? 'selected' : ''"
-               v-bind:style="{ 'background-image': 'url(' + tt.album.images[0].url + ')' }"
-               v-on:click="setActive(tt.id);store.deeperTracks({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id}); store.queuein(tt)">
-            {{ tt.name }}
-            <audio></audio>
-          </div>
-          <div v-else-if="tt.preview_url && !tt.album.images[0]" class="con3"
-               :class="selected===tt.id ? 'selected' : ''"
-               v-on:mouseover="store.mouseOver($event)"
-               v-on:mouseleave="store.mouseLeave($event)"
-               v-on:click="setActive(tt.id);store.deeperTracks({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id}); store.queuein(tt)">
-            {{ tt.name }}
-            <audio v-bind:src="tt.preview_url"></audio>
-          </div>
-          <div v-else class="con3 half-opacity"
-               :class="selected===tt.id ? 'selected' : ''"
-               v-on:click="setActive(tt.id);store.deeperTracks({item:tt,num:num,flag:false,sib:'trackartist',child:'art' + d[0].id}); store.queuein(tt)">
-            {{ tt.name }}
-            <audio></audio>
+          </button>
+
+          <a class="spotify-link"
+             :href="artistData.external_urls?.spotify"
+             target="_blank"
+             rel="noopener">
+            <span class="link-icon">🎧</span>
+            Open in Spotify
+          </a>
+
+          <div class="follow-section">
+            <span class="follow-label">Follow</span>
+            <label class="follow-checkbox">
+              <input type="checkbox"
+                     v-if="artistData.followed"
+                     @click.once="spotifyStore.followArtist(artistData)"
+                     checked
+                     v-model="artistData.followed">
+              <input type="checkbox"
+                     v-else
+                     @click.once="spotifyStore.followArtist(artistData)"
+                     v-model="artistData.followed">
+              <span class="checkmark"></span>
+            </label>
           </div>
         </div>
       </div>
-      <div v-if="ta.type==='albums' && ta.length > 0" class="break" v-bind:key="index">Albums</div>
-      <div v-if="ta.type==='single' && ta.length > 0" class="break" v-bind:key="index">Single</div>
-      <div v-if="ta.type==='appears_on' && ta.length > 0" class="break" v-bind:key="index">Appears on</div>
-      <div
-          v-if="ta.type==='albums' && ta.length > 0 || ta.type==='single' && ta.length > 0 || ta.type==='appears_on' && ta.length > 0"
-          v-bind:key="index" tabindex="0" class="card2">
-        <div v-for="(a,index) in ta" v-bind:key="index">
-          <div v-if="a.preview_url && a.images[0]" class="con3"
-               :class="selected===a.id ? 'selected' : ''"
-               v-on:click="setActive(a.id);store.deeperAlbum({item:a,num:num,child:'art' + d[0].id,search:false})"
-               v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)"
-               v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{ a.name }}
-            <audio preload="auto" v-bind:src="a.preview_url"></audio>
+    </div>
+    <div class="info-section">
+      <!-- Top Tracks Section -->
+      <div v-if="topTracksData.length > 0" class="section-header py-2">
+        <h3 class="section-title">Top tracks</h3>
+      </div>
+
+      <div v-if="topTracksData.length > 0" class="albums-grid">
+        <template v-for="(tt, ttIndex) in topTracksData" :key="ttIndex">
+          <div :class="['track-card', getMediaDisplay(tt).displayClass.value, selected === tt.id ? 'selected' : '']"
+               :style="getMediaDisplay(tt).backgroundStyle.value"
+               @mouseover="getMediaDisplay(tt).hasPreview.value && audioStore.handleAudioHover($event)"
+               @mouseleave="getMediaDisplay(tt).hasPreview.value && audioStore.handleAudioLeave($event)"
+               @click="setActive(tt.id);deeperStore.getTrackDetails(tt, getSectionName(num), d.id); queueStore.addToQueue(tt)">
+            <div class="track-overlay">
+              <div class="track-name">{{ tt.name }}</div>
+            </div>
+            <audio :preload="getMediaDisplay(tt).audioPreload.value" :src="getMediaDisplay(tt).audioSrc.value"></audio>
           </div>
-          <div v-else-if="!a.preview_url && a.images[0]" class="con3 half-opacity"
-               :class="selected===a.id ? 'selected' : ''"
-               v-on:click="setActive(a.id);store.deeperAlbum({item:a,num:num,child:'art' + d[0].id,search:false})"
-               v-bind:style="{ 'background-image': 'url(' + a.images[0].url + ')' }">{{ a.name }}
-            <audio></audio>
-          </div>
-          <div v-else-if="a.preview_url && !a.images[0]" class="con3"
-               :class="selected===a.id ? 'selected' : ''"
-               v-on:click="setActive(a.id);store.deeperAlbum({item:a,num:num,child:'art' + d[0].id,search:false})"
-               v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)">{{ a.name }}
-            <audio preload="auto" v-bind:src="a.preview_url"></audio>
-          </div>
-          <div v-else class="con3 half-opacity"
-               :class="selected===a.id ? 'selected' : ''"
-               v-on:click="setActive(a.id);store.deeperAlbum({item:a,num:num,child:'art' + d[0].id,search:false})"
-               >{{ a.name }}
-            <audio></audio>
+        </template>
+      </div>
+
+      <!-- Albums Section -->
+      <div v-if="albumsData.length > 0" class="section-header py-2">
+        <h3 class="section-title">Albums</h3>
+      </div>
+
+      <div v-if="albumsData.length > 0" class="albums-grid">
+        <div v-for="(a, aIndex) in albumsData" :key="aIndex">
+          <div :class="['track-card', getMediaDisplay(a).displayClass.value, selected === a.id ? 'selected' : '']"
+               :style="getMediaDisplay(a).backgroundStyle.value"
+               @click="setActive(a.id);deeperStore.getAlbumDetails(a, getSectionName(num), d.id)"
+               @mouseover="getMediaDisplay(a).hasPreview.value && audioStore.handleAudioHover($event)"
+               @mouseleave="getMediaDisplay(a).hasPreview.value && audioStore.handleAudioLeave($event)">
+            <div class="track-overlay">
+              <div class="track-name">{{ a.name }}</div>
+            </div>
+            <audio :preload="getMediaDisplay(a).audioPreload.value" :src="getMediaDisplay(a).audioSrc.value"></audio>
           </div>
         </div>
       </div>
-      <div v-if="ta.type==='related-artists' && ta.length > 0" class="break" v-bind:key="index">Related Artist</div>
-      <div v-if="ta.type==='related-artists' && ta.length > 0" v-bind:key="index" class="card2">
-        <div v-for="(r,index) in ta" v-bind:key="index">
-          <div v-if="r.preview_url && r.images[0]" tabindex="0" class="img-xs background-setting"
-               :class="selected===r.id ? 'selected' : ''"
-               v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }"
-               v-on:mouseover="store.mouseOver($event)"
-               v-on:mouseleave="store.mouseLeave($event)"
-               v-on:click="setActive(r.id);store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
-            <audio preload="auto" v-bind:src="r.preview_url"></audio>
-          </div>
-          <div v-else-if="!r.preview_url && r.images[0]" class="img-xs half-opacity"
-               :class="selected===r.id ? 'selected' : ''"
-               v-bind:style="{ 'background-image': 'url(' + r.images[0].url + ')' }"
-               v-on:click="setActive(r.id);store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
-            <audio></audio>
-          </div>
-          <div v-else-if="r.preview_url && !r.images[0]" tabindex="0" class="img-xs"
-               :class="selected===r.id ? 'selected' : ''"
-               v-on:mouseover="store.mouseOver($event)" v-on:mouseleave="store.mouseLeave($event)"
-               v-on:click="setActive(r.id);store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
-            <audio preload="auto" v-bind:src="r.preview_url"></audio>
-          </div>
-          <div v-else class="img-xs half-opacity"
-               :class="selected===r.id ? 'selected' : ''"
-               v-on:click="setActive(r.id);store.deeperartist({item:r,track:ta[index],num:num,flag:false,sib:'trackartist',related:'art' + d[0].id})">
-            <audio></audio>
+
+      <!-- Singles Section -->
+      <div v-if="singlesData.length > 0" class="section-header py-2">
+        <h3 class="section-title">Singles</h3>
+      </div>
+
+      <div v-if="singlesData.length > 0" class="albums-grid">
+        <div v-for="(s, sIndex) in singlesData" :key="sIndex">
+          <div :class="['track-card', getMediaDisplay(s).displayClass.value, selected === s.id ? 'selected' : '']"
+               :style="getMediaDisplay(s).backgroundStyle.value"
+               @click="setActive(s.id);deeperStore.getAlbumDetails(s, getSectionName(num), d.id)"
+               @mouseover="getMediaDisplay(s).hasPreview.value && audioStore.handleAudioHover($event)"
+               @mouseleave="getMediaDisplay(s).hasPreview.value && audioStore.handleAudioLeave($event)">
+            <div class="track-overlay">
+              <div class="track-name">{{ s.name }}</div>
+            </div>
+            <audio :preload="getMediaDisplay(s).audioPreload.value" :src="getMediaDisplay(s).audioSrc.value"></audio>
           </div>
         </div>
       </div>
-    </template>
+
+      <!-- Appears On Section -->
+      <div v-if="appearsOnData.length > 0" class="section-header py-2">
+        <h3 class="section-title">Appears on</h3>
+      </div>
+
+      <div v-if="appearsOnData.length > 0" class="albums-grid">
+        <div v-for="(ao, aoIndex) in appearsOnData" :key="aoIndex">
+          <div :class="['track-card', getMediaDisplay(ao).displayClass.value, selected === ao.id ? 'selected' : '']"
+               :style="getMediaDisplay(ao).backgroundStyle.value"
+               @click="setActive(ao.id);deeperStore.getAlbumDetails(ao, getSectionName(num), d.id)"
+               @mouseover="getMediaDisplay(ao).hasPreview.value && audioStore.handleAudioHover($event)"
+               @mouseleave="getMediaDisplay(ao).hasPreview.value && audioStore.handleAudioLeave($event)">
+            <div class="track-overlay">
+              <div class="track-name">{{ ao.name }}</div>
+            </div>
+            <audio :preload="getMediaDisplay(ao).audioPreload.value" :src="getMediaDisplay(ao).audioSrc.value"></audio>
+          </div>
+        </div>
+      </div>
+
+      <!-- Related Artists Section -->
+      <div v-if="relatedArtistsData.length > 0" class="section-header py-2">
+        <h3 class="section-title">Related Artists</h3>
+      </div>
+
+      <div v-if="relatedArtistsData.length > 0" class="albums-grid">
+        <template v-for="(r, rIndex) in relatedArtistsData" :key="rIndex">
+          <div
+              :class="['track-card', getMediaDisplay(r).displayClass.value, selected === r.id ? 'selected' : '']"
+              :style="getMediaDisplay(r).backgroundStyle.value"
+              @mouseover="getMediaDisplay(r).hasPreview.value && audioStore.handleAudioHover($event)"
+              @mouseleave="getMediaDisplay(r).hasPreview.value && audioStore.handleAudioLeave($event)"
+              @click="setActive(r.id);deeperStore.getArtistDetails(r, getSectionName(num), d.id)">
+            <div class="track-overlay">
+              <div class="track-name">{{ r.name }}</div>
+            </div>
+            <audio :preload="getMediaDisplay(r).audioPreload.value" :src="getMediaDisplay(r).audioSrc.value"></audio>
+          </div>
+        </template>
+      </div>
+    </div>
   </div>
 </template>
 
-
 <style scoped>
-
 </style>

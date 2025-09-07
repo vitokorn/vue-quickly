@@ -1,14 +1,9 @@
 // const dbConfig = require("../db.config.js");
 
 const Sequelize = require("sequelize");
-const sequelize = new Sequelize(process.env.db, process.env.user, process.env.password, {
+let config = {
     host: process.env.host,
     dialect: "postgres",
-    dialectOptions: {
-        ssl: {
-            require: true,
-            rejectUnauthorized: false // <<<<<<< YOU NEED THIS
-        }},
     operatorsAliases: false,
     pool: {
         max: 5,
@@ -16,8 +11,15 @@ const sequelize = new Sequelize(process.env.db, process.env.user, process.env.pa
         acquire: 30000,
         idle: 10000
     }
-});
-
+};
+if (process.env.ssl === "true") {
+    config.dialectOptions = {
+        ssl: {
+            require: true,
+                rejectUnauthorized: false
+        }}
+}
+const sequelize = new Sequelize(process.env.db, process.env.user, process.env.password,config)
 const db = {};
 
 db.Sequelize = Sequelize;
