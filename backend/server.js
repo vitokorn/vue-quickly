@@ -26,7 +26,8 @@ app.get("/", (req, res) => {
     res.json({ message: "Welcome to DM." });
 });
 
-require("./routers/user.router.js")(app);
+require("./routers/spotify.router.js")(app);
+require("./routers/lastfm.router.js")(app);
 // set port, listen for requests
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {

@@ -461,15 +461,44 @@ export class DeezerService extends MusicServiceInterface {
 
   async getRecommendations(params) {
     try {
-      // Deezer doesn't have a direct recommendations endpoint like Spotify
-      // We'll use the artist radio endpoint as a workaround for recommendations
+      // Handle seed tracks by getting similar tracks from Last.fm and searching in Deezer
+      if (params.seedTracks && params.seedTracks.length > 0) {
+        const recommendations = []
+
+        for (const seedTrack of params.seedTracks) {
+            console.log('seedTrack:', seedTrack)
+          try {
+            // Use title_short if available, otherwise fall back to full name
+            const trackTitle = seedTrack.title_short || seedTrack.name
+            const fallbackTitle = seedTrack.title_short ? seedTrack.name : null
+            console.log(`Searching Last.fm with title: "${trackTitle}" (original: "${seedTrack.name}")`)
+
+            // Get similar tracks from Last.fm for this seed track
+            const similarTracks = await this.getSimilarTracksFromLastfm(
+              seedTrack.artists[0].name,
+              trackTitle,
+              params.limit || 10,
+              fallbackTitle
+            )
+            recommendations.push(...similarTracks)
+          } catch (error) {
+            console.error(`Error getting similar tracks for seed track "${seedTrack.name}":`, error)
+          }
+        }
+
+        // Remove duplicates and limit results
+        const uniqueRecommendations = this.removeDuplicateTracks(recommendations)
+        return uniqueRecommendations.slice(0, params.limit || 20)
+      }
+
+      // Handle seed artists using Deezer's artist radio endpoint
       if (params.seedArtists && params.seedArtists.length > 0) {
         const artistId = params.seedArtists[0].id
         const response = await this.request(`/artist/${artistId}/radio`)
         return response.data.map(track => this.transformTrack(track))
       }
 
-      // If no seed artists, return empty array
+      // If no seed data, return empty array
       return []
     } catch (error) {
       console.error('Deezer getRecommendations error:', error)
@@ -601,9 +630,13 @@ export class DeezerService extends MusicServiceInterface {
       artists = [this.transformArtist(data.artist)]
     }
 
+    const shortTitle = this.generateShortTitle(data.title)
+    console.log(`Deezer track: "${data.title}" -> short: "${shortTitle}"`)
+
     return {
       id: data.id.toString(),
       name: data.title,
+      title_short: shortTitle,
       artists: artists,
       album: data.album ? this.transformAlbum(data.album) : null,
       duration_ms: parseInt(data.duration) * 1000, // Convert seconds to milliseconds
@@ -742,5 +775,222 @@ export class DeezerService extends MusicServiceInterface {
       height: img.height || null,
       width: img.width || null
     }))
+  }
+
+  // ==================== HELPER METHODS ====================
+
+  /**
+   * Generate a short title by removing common suffixes and extra information
+   * @param {string} fullTitle - The full track title
+   * @returns {string} - The shortened title
+   */
+  generateShortTitle(fullTitle) {
+    if (!fullTitle) return ''
+
+    let shortTitle = fullTitle.trim()
+
+    // Remove common remix indicators
+    const remixPatterns = [
+      /\s*-\s*[^-]*(?:remix|edit|version|mix|radio|single|extended|club|dub|instrumental|acoustic|live|demo|original|explicit|clean)\s*$/i,
+      /\s*\([^)]*(?:remix|edit|version|mix|radio|single|extended|club|dub|instrumental|acoustic|live|demo|original|explicit|clean)[^)]*\)\s*$/i,
+      /\s*\[[^\]]*(?:remix|edit|version|mix|radio|single|extended|club|dub|instrumental|acoustic|live|demo|original|explicit|clean)[^\]]*\]\s*$/i
+    ]
+
+    for (const pattern of remixPatterns) {
+      shortTitle = shortTitle.replace(pattern, '')
+    }
+
+    // Remove common prefixes
+    const prefixPatterns = [
+      /^(?:feat\.|ft\.|featuring)\s*/i,
+      /^(?:prod\.|produced by)\s*/i
+    ]
+
+    for (const pattern of prefixPatterns) {
+      shortTitle = shortTitle.replace(pattern, '')
+    }
+
+    // Remove extra whitespace and return
+    return shortTitle.trim()
+  }
+
+  /**
+   * Remove duplicate tracks based on track ID
+   * @param {Array} tracks - Array of track objects
+   * @returns {Array} Array of unique tracks
+   */
+  removeDuplicateTracks(tracks) {
+    const seen = new Set()
+    return tracks.filter(track => {
+      if (seen.has(track.id)) {
+        return false
+      }
+      seen.add(track.id)
+      return true
+    })
+  }
+
+  // ==================== LAST.FM INTEGRATION METHODS ====================
+
+  /**
+   * Get similar tracks from Last.fm and search them in Deezer
+   * @param {string} artist - Artist name
+   * @param {string} track - Track name
+   * @param {number} limit - Number of similar tracks to fetch (default: 10)
+   * @returns {Promise<Object>} Combined results from Last.fm and Deezer
+   */
+  async getSimilarTracksForDeezer(artist, track, limit = 10) {
+    try {
+      if (!artist || !track) {
+        throw new Error('Artist and track parameters are required')
+      }
+
+      // Get similar tracks from Last.fm
+      const lastfmApiKey = ''
+      const lastfmUrl = `https://ws.audioscrobbler.com/2.0/?method=track.getsimilar&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&api_key=${lastfmApiKey}&format=json&limit=${limit}`
+
+      const lastfmResponse = await fetch(lastfmUrl)
+      const lastfmData = await lastfmResponse.json()
+
+      if (!lastfmData.similartracks || !lastfmData.similartracks.track) {
+        return {
+          originalTrack: { artist, track },
+          similarTracks: [],
+          deezerResults: [],
+          summary: {
+            totalSimilarTracks: 0,
+            foundInDeezer: 0,
+            notFoundInDeezer: 0
+          }
+        }
+      }
+
+      const similarTracks = Array.isArray(lastfmData.similartracks.track)
+        ? lastfmData.similartracks.track
+        : [lastfmData.similartracks.track]
+
+      // Search each similar track in Deezer
+      const deezerResults = []
+
+      for (const lastfmTrack of similarTracks) {
+        try {
+          const searchQuery = `${lastfmTrack.artist.name} ${lastfmTrack.name}`
+          const deezerResponse = await this.request(`/search/track?q=${encodeURIComponent(searchQuery)}&limit=1`)
+
+          if (deezerResponse && deezerResponse.data && deezerResponse.data.length > 0) {
+            const deezerTrack = deezerResponse.data[0]
+            deezerResults.push({
+              lastfmTrack: {
+                name: lastfmTrack.name,
+                artist: lastfmTrack.artist.name,
+                playcount: lastfmTrack.playcount,
+                match: lastfmTrack.match,
+                url: lastfmTrack.url,
+                duration: lastfmTrack.duration,
+                images: lastfmTrack.image
+              },
+              deezerTrack: this.transformTrack(deezerTrack),
+              searchQuery: searchQuery
+            })
+          } else {
+            // Track not found in Deezer
+            deezerResults.push({
+              lastfmTrack: {
+                name: lastfmTrack.name,
+                artist: lastfmTrack.artist.name,
+                playcount: lastfmTrack.playcount,
+                match: lastfmTrack.match,
+                url: lastfmTrack.url,
+                duration: lastfmTrack.duration,
+                images: lastfmTrack.image
+              },
+              deezerTrack: null,
+              searchQuery: searchQuery,
+              error: 'Track not found in Deezer'
+            })
+          }
+        } catch (error) {
+          console.error(`Error searching track "${lastfmTrack.name}" by "${lastfmTrack.artist.name}" in Deezer:`, error)
+          deezerResults.push({
+            lastfmTrack: {
+              name: lastfmTrack.name,
+              artist: lastfmTrack.artist.name,
+              playcount: lastfmTrack.playcount,
+              match: lastfmTrack.match,
+              url: lastfmTrack.url,
+              duration: lastfmTrack.duration,
+              images: lastfmTrack.image
+            },
+            deezerTrack: null,
+            searchQuery: `${lastfmTrack.artist.name} ${lastfmTrack.name}`,
+            error: 'Search failed'
+          })
+        }
+      }
+
+      return {
+        originalTrack: {
+          artist,
+          track,
+          lastfmUrl: `https://www.last.fm/music/${encodeURIComponent(artist)}/_/${encodeURIComponent(track)}`
+        },
+        similarTracks: similarTracks.map(t => ({
+          name: t.name,
+          artist: t.artist.name,
+          playcount: t.playcount,
+          match: t.match,
+          url: t.url,
+          duration: t.duration,
+          images: t.image
+        })),
+        deezerResults: deezerResults,
+        summary: {
+          totalSimilarTracks: similarTracks.length,
+          foundInDeezer: deezerResults.filter(r => r.deezerTrack !== null).length,
+          notFoundInDeezer: deezerResults.filter(r => r.deezerTrack === null).length
+        }
+      }
+
+    } catch (error) {
+      console.error('Error getting similar tracks for Deezer:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Get similar tracks from Last.fm and return only Deezer results
+   * @param {string} artist - Artist name
+   * @param {string} track - Track name
+   * @param {number} limit - Number of similar tracks to fetch (default: 10)
+   * @param {string} fallbackTrack - Optional fallback track name to try if first search fails
+   * @returns {Promise<Array>} Array of Deezer tracks found
+   */
+  async getSimilarTracksFromLastfm(artist, track, limit = 10, fallbackTrack = null) {
+    try {
+      const results = await this.getSimilarTracksForDeezer(artist, track, limit)
+      const foundTracks = results.deezerResults
+        .filter(result => result.deezerTrack !== null)
+        .map(result => result.deezerTrack)
+      console.log(foundTracks)
+        console.log(track)
+        console.log(fallbackTrack)
+      // If no tracks found and we have a fallback, try the fallback
+      if (foundTracks.length === 0 && fallbackTrack && fallbackTrack !== track) {
+        console.log(`No tracks found for "${track}", trying fallback "${fallbackTrack}"`)
+        try {
+          const fallbackResults = await this.getSimilarTracksForDeezer(artist, fallbackTrack, limit)
+          return fallbackResults.deezerResults
+            .filter(result => result.deezerTrack !== null)
+            .map(result => result.deezerTrack)
+        } catch (fallbackError) {
+          console.error('Fallback search also failed:', fallbackError)
+        }
+      }
+
+      return foundTracks
+    } catch (error) {
+      console.error('Error getting similar tracks from Last.fm:', error)
+      throw error
+    }
   }
 }

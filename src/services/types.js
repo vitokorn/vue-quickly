@@ -68,6 +68,7 @@ export class Track {
   constructor(data) {
     this.id = data.id
     this.name = data.name
+    this.title_short = data.title_short || this.generateShortTitle(data.name)
     this.artists = data.artists || []
     this.album = data.album
     this.duration = data.duration || 0
@@ -78,6 +79,41 @@ export class Track {
     this.trackNumber = data.trackNumber || 0
     this.discNumber = data.discNumber || 1
     this.followed = data.followed || false
+  }
+
+  /**
+   * Generate a short title by removing common suffixes and extra information
+   * @param {string} fullTitle - The full track title
+   * @returns {string} - The shortened title
+   */
+  generateShortTitle(fullTitle) {
+    if (!fullTitle) return ''
+    
+    let shortTitle = fullTitle.trim()
+    
+    // Remove common remix indicators
+    const remixPatterns = [
+      /\s*-\s*[^-]*(?:remix|edit|version|mix|radio|single|extended|club|dub|instrumental|acoustic|live|demo|original|explicit|clean)\s*$/i,
+      /\s*\([^)]*(?:remix|edit|version|mix|radio|single|extended|club|dub|instrumental|acoustic|live|demo|original|explicit|clean)[^)]*\)\s*$/i,
+      /\s*\[[^\]]*(?:remix|edit|version|mix|radio|single|extended|club|dub|instrumental|acoustic|live|demo|original|explicit|clean)[^\]]*\]\s*$/i
+    ]
+    
+    for (const pattern of remixPatterns) {
+      shortTitle = shortTitle.replace(pattern, '')
+    }
+    
+    // Remove common prefixes
+    const prefixPatterns = [
+      /^(?:feat\.|ft\.|featuring)\s*/i,
+      /^(?:prod\.|produced by)\s*/i
+    ]
+    
+    for (const pattern of prefixPatterns) {
+      shortTitle = shortTitle.replace(pattern, '')
+    }
+    
+    // Remove extra whitespace and return
+    return shortTitle.trim()
   }
 }
 

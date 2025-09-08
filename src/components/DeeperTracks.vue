@@ -130,7 +130,7 @@ window.addEventListener('resize', () => {
         </div>
       </div>
       <div class="artist-actions" :class="{'grid-column-2': mobileClass}">
-        <button v-if="supportsTrackRecommendations"
+        <button
                 class="action-button"
                 @click="handleRecommendClick">
           <span class="btn-icon">🎵</span>

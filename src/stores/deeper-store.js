@@ -527,7 +527,7 @@ export const useDeeperStore = defineStore('deeper', {
                     // This ensures that when switching between different root artists, previous related artists are cleaned up
                     const sectionItems = this.sections[sectionName] || []
                     const existingArtists = sectionItems.filter(item => item.type === 'trackartist')
-                    
+
                     for (const existingArtist of existingArtists) {
                         if (existingArtist.id !== item.id) {
                             // Remove the entire subtree rooted at this artist
@@ -663,7 +663,7 @@ export const useDeeperStore = defineStore('deeper', {
                     (playlistData.tracks.items && playlistData.tracks.items.length > 0) ||
                     (Array.isArray(playlistData.tracks) && playlistData.tracks.length > 0)
                 )
-                
+
                 if (!hasTracks) {
                     const service = musicServiceManager.getCurrentService()
                     const fullResponse = await service.getPlaylist(playlistData.id)
@@ -722,7 +722,7 @@ export const useDeeperStore = defineStore('deeper', {
                 if (!seedData) {
                     const service = musicServiceManager.getCurrentService()
                     const response = await service.getRecommendations({
-                        seed_artists: item.id,
+                        seedArtists: [item], // Pass the full artist object
                         limit: 50,
                         offset: 0,
                         market: 'UA'
@@ -783,11 +783,12 @@ export const useDeeperStore = defineStore('deeper', {
                 if (!seedData) {
                     const service = musicServiceManager.getCurrentService()
                     const response = await service.getRecommendations({
-                        seed_tracks: item.id,
-                        limit: 50,
+                        seedTracks: [item], // Pass the full track object
+                        limit: 20,
                         offset: 0,
                         market: 'UA'
                     })
+                    console.log(response)
 
                     seedData = {
                         tracks: response,

@@ -9,6 +9,7 @@ import {ref, computed, onMounted, onUnmounted, nextTick} from "vue";
 import {useMobileMediaDisplay} from "../../composables/useMobileMediaDisplay.js";
 import { useVisibilityManager } from "../../composables/useVisibilityManager";
 import MobileTrackItem from './MobileTrackItem.vue';
+import {getCurrentServiceType} from "../../utils/initializeMusicStore.js";
 
 const props = defineProps(['d', 'num'])
 const musicStore = useMusicStore()
@@ -48,6 +49,29 @@ const sortedSTItems = computed(() => {
 })
 
 // Helper function to get section name from num
+
+// Helper functions for Last.fm statistics
+function getUniqueArtists() {
+  if (!props.d.tracks) return 0
+  const uniqueArtists = new Set()
+  props.d.tracks.forEach(track => {
+    if (track.artists && track.artists.length > 0) {
+      uniqueArtists.add(track.artists[0].name)
+    }
+  })
+  return uniqueArtists.size
+}
+
+function getUniqueAlbums() {
+  if (!props.d.tracks) return 0
+  const uniqueAlbums = new Set()
+  props.d.tracks.forEach(track => {
+    if (track.album && track.album.name) {
+      uniqueAlbums.add(track.album.name)
+    }
+  })
+  return uniqueAlbums.size
+}
 
 const handleTrackClick = async (track, event) => {
   if (deeperStore.getIsGloballyLoading) return
@@ -160,6 +184,37 @@ onUnmounted(() => {
             <option value="release_date">Sort by release date</option>
             <option value="track">Sort by track name</option>
           </select>
+        </div>
+      </div>
+
+      <!-- Last.fm Integration Indicator -->
+      <div v-if="getCurrentServiceType() === 'deezer'" class="lastfm-indicator">
+        <div class="lastfm-header">
+          <div class="lastfm-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+          </div>
+          <div class="lastfm-info">
+            <span class="lastfm-title">Powered by Last.fm</span>
+            <span class="lastfm-subtitle">Similar tracks discovered via Last.fm API</span>
+          </div>
+        </div>
+        <div class="lastfm-stats" v-if="d.tracks && d.tracks.length > 0">
+          <div class="stat-item">
+            <span class="stat-number">{{ d.tracks.length }}</span>
+            <span class="stat-label">tracks found</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number">{{ getUniqueArtists() }}</span>
+            <span class="stat-label">artists</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number">{{ getUniqueAlbums() }}</span>
+            <span class="stat-label">albums</span>
+          </div>
         </div>
       </div>
 
