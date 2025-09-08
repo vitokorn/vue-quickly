@@ -82,6 +82,12 @@ function handleTrackClick(item, event) {
   queueStore.addToQueue(track)
 }
 
+function handleOwnerClick() {
+  if (props.d.owner && props.d.owner.id) {
+    deeperStore.getUserPlaylists(props.d.owner, getSectionName(props.num), props.d.id)
+  }
+}
+
 onMounted(() => {
   // Register this component with the visibility manager
   const playlistKey = `deeperplaylist_${props.d.id}${props.d.parentKey ? `__p:${props.d.parentKey}__` : ''}`
@@ -111,6 +117,15 @@ onMounted(() => {
         </button>
       </div>
       <div class="playlist-description" v-html="d.description"></div>
+      <div class="playlist-meta" v-if="d.owner">
+        <span class="playlist-owner clickable-owner" @click="handleOwnerClick">
+          By {{ d.owner.display_name }}
+        </span>
+        <span v-if="d.tracks && d.tracks.total" class="track-count">{{ d.tracks.total }} tracks</span>
+        <span v-if="d.public !== undefined" class="playlist-visibility">
+          {{ d.public ? 'Public' : 'Private' }}
+        </span>
+      </div>
       <div class="follow-section">
         <span class="follow-label">Follow</span>
         <label class="follow-checkbox">

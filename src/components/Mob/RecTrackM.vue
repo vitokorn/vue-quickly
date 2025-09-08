@@ -6,6 +6,7 @@ import MobileDeeperAlbum from "./MobileDeeperAlbum.vue";
 import SeedArtistsMob from "./SeedArtistsMob.vue";
 import SeedTracksMob from "./SeedTracksMob.vue";
 import MobileDeeperPlaylist from "./MobileDeeperPlaylist.vue";
+import MobileUserPlaylists from "./MobileUserPlaylists.vue";
 import {useDeeperStore} from "../../stores/deeper-store";
 
 const props = defineProps(['num'])
@@ -70,6 +71,13 @@ function dab() {
       <!-- Deeper Playlist -->
       <MobileDeeperPlaylist
         v-else-if="item.type === 'deeperplaylist'"
+        :d="item"
+        :num="num"
+      />
+
+      <!-- User Playlists -->
+      <MobileUserPlaylists
+        v-else-if="item.type === 'user-playlists'"
         :d="item"
         :num="num"
       />

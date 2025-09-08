@@ -2376,3 +2376,28 @@ audio {
 .grid-column-2 {
     grid-column: span 2
 }
+
+/* Playlist-specific styles */
+.playlist-info {
+    margin-top: 4px;
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+.playlist-owner {
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 400;
+}
+
+.clickable-owner {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+}
+
+.clickable-owner:hover {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-1px);
+}

@@ -1,5 +1,5 @@
 import { MusicServiceInterface } from '../MusicServiceInterface.js'
-import { SERVICE_TYPES } from '../types.js'
+import {Image, SERVICE_TYPES} from '../types.js'
 
 export class DeezerService extends MusicServiceInterface {
   constructor() {
@@ -180,8 +180,14 @@ export class DeezerService extends MusicServiceInterface {
     throw new Error('Deezer getPlaylist not yet implemented')
   }
 
-  async getPlaylistTracks(id, offset, limit) {
-    throw new Error('Deezer getPlaylistTracks not yet implemented')
+  async getPlaylistTracks(id, offset = 0, limit = 50) {
+    try {
+      const response = await this.request(`/playlist/${id}/tracks?limit=${limit}&index=${offset}`)
+      return response.data.map(track => this.transformTrack(track))
+    } catch (error) {
+      console.error('Deezer getPlaylistTracks error:', error)
+      throw error
+    }
   }
 
   async createPlaylist(name, description) {
@@ -281,14 +287,31 @@ export class DeezerService extends MusicServiceInterface {
 
   async getArtistAppearances(id, limit = 10) {
     try {
-      const allAlbums = await this.getAllArtistAlbums(id)
-      // Filter for compilation appearances
-      const appearances = allAlbums.filter(album =>
-        album.record_type === 'compilation'
-      ).slice(0, limit) // Apply limit after filtering
-      return appearances.map(album => this.transformAlbum(album))
+      // Get artist albums and filter for compilation albums where artist appears
+      const response = await this.request(`/artist/${id}/albums`)
+      const albums = response.data || []
+
+      // Filter for compilation albums (where artist appears but doesn't own)
+      const compilationAlbums = albums.filter(album =>
+        album.record_type === 'compilation' ||
+        (album.artist && album.artist.id !== parseInt(id))
+      ).slice(0, limit)
+
+      return compilationAlbums.map(album => this.transformAlbum(album))
     } catch (error) {
       console.error('Deezer getArtistAppearances error:', error)
+      throw error
+    }
+  }
+
+  async getArtistPlaylists(id, limit = 10) {
+    try {
+      // Use artist playlists endpoint to find playlists featuring this artist
+      const response = await this.request(`/artist/${id}/playlists`)
+      const playlists = response.data || []
+      return playlists.slice(0, limit).map(playlist => this.transformPlaylist(playlist))
+    } catch (error) {
+      console.error('Deezer getArtistPlaylists error:', error)
       throw error
     }
   }
@@ -335,39 +358,64 @@ export class DeezerService extends MusicServiceInterface {
     }
   }
 
+  // Helper method to create owner images array
+  createOwnerImages(userData) {
+    if (!userData) return []
+
+    const images = []
+    if (userData.picture_small) images.push(new Image(userData.picture_small, 56, 56))
+    if (userData.picture_medium) images.push(new Image(userData.picture_medium, 250, 250))
+    if (userData.picture_big) images.push(new Image(userData.picture_big, 500, 500))
+    if (userData.picture_xl) images.push(new Image(userData.picture_xl, 1000, 1000))
+
+    return images
+  }
+
   // Playlist methods
   async getPlaylist(id) {
     try {
       const response = await this.request(`/playlist/${id}`)
-      return this.transformPlaylist(response)
+      const playlist = this.transformPlaylist(response)
+
+      // Enrich owner data with user profile information
+      if (playlist && playlist.owner && playlist.owner.id) {
+        try {
+          const userResponse = await this.request(`/user/${playlist.owner.id}`)
+          if (userResponse) {
+            // Update owner with complete user data
+            playlist.owner = {
+              ...playlist.owner,
+              images: this.createOwnerImages(userResponse),
+              picture: userResponse.picture,
+              picture_small: userResponse.picture_small,
+              picture_medium: userResponse.picture_medium,
+              picture_big: userResponse.picture_big,
+              picture_xl: userResponse.picture_xl,
+              country: userResponse.country,
+              tracklist: userResponse.tracklist
+            }
+          }
+        } catch (userError) {
+          console.warn(`Failed to fetch user data for playlist ${id}:`, userError)
+          // Continue with existing owner data if user fetch fails
+        }
+      }
+
+      return playlist
     } catch (error) {
       console.error('Deezer getPlaylist error:', error)
       throw error
     }
   }
 
-  async getUserPlaylists(offset = 0, userId) {
-    try {
-        let limit = 20
-        let url = `/user/${userId}/playlists?limit=${limit}&index=${offset}`
-        if (offset > 0) {
-            url += `&index=${offset}`
-        }
-      const response = await this.request(url)
-      return response.data.map(playlist => this.transformPlaylist(playlist))
-    } catch (error) {
-      console.error('Deezer getUserPlaylists error:', error)
-      throw error
-    }
-  }
 
-  async getPlaylists(limit = 20, offset = 0) {
+  async getPlaylists(userId, limit = 20, offset = 0) {
     try {
         const response = await this.request(`/user/${userId}/playlists?limit=${limit}&index=${offset}`)
       const data = response?.data || []
       return data.map(playlist => this.transformPlaylist(playlist)).filter(p => p !== null)
     } catch (error) {
-      console.error('Deezer getChartPlaylists error:', error)
+      console.error('Deezer getPlaylists error:', error)
       throw error
     }
   }
@@ -377,11 +425,38 @@ export class DeezerService extends MusicServiceInterface {
             // const response = await this.request(`/user/637006841/playlists?limit=${limit}&index=${offset}`)
             const response = await this.request(`/chart/0/playlists?limit=${limit}&index=${offset}`)
             const data = response?.data || []
-            return data.map(playlist => this.transformPlaylist(playlist)).filter(p => p !== null)
+            const playlists = data.map(playlist => this.transformPlaylist(playlist)).filter(p => p !== null)
+
+            // Enrich playlists with missing descriptions
+            return await this.enrichPlaylistsWithDescriptions(playlists)
         } catch (error) {
             console.error('Deezer getChartPlaylists error:', error)
             throw error
         }
+    }
+
+    async enrichPlaylistsWithDescriptions(playlists) {
+        const enrichedPlaylists = []
+
+        for (const playlist of playlists) {
+            try {
+                // Check if description is missing or empty
+                if (!playlist.description || playlist.description.trim().length === 0) {
+                    // Fetch full playlist data to get description
+                    const fullPlaylist = await this.getPlaylist(playlist.id)
+                    if (fullPlaylist && fullPlaylist.description) {
+                        playlist.description = fullPlaylist.description
+                    }
+                }
+                enrichedPlaylists.push(playlist)
+            } catch (error) {
+                console.warn(`Failed to enrich playlist ${playlist.id} with description:`, error)
+                // Still add the playlist even if enrichment fails
+                enrichedPlaylists.push(playlist)
+            }
+        }
+
+        return enrichedPlaylists
     }
 
 
@@ -434,7 +509,9 @@ export class DeezerService extends MusicServiceInterface {
         const playlistsResponse = await this.request(`/search/playlist?q=${encodeURIComponent(query)}&limit=${limit}`)
         console.log('Playlists response:', playlistsResponse)
         if (playlistsResponse && playlistsResponse.data && Array.isArray(playlistsResponse.data)) {
-          searchResults.playlists = playlistsResponse.data.map(playlist => this.transformPlaylist(playlist)).filter(playlist => playlist !== null)
+          const playlists = playlistsResponse.data.map(playlist => this.transformPlaylist(playlist)).filter(playlist => playlist !== null)
+          // Enrich playlists with missing descriptions
+          searchResults.playlists = await this.enrichPlaylistsWithDescriptions(playlists)
         } else {
           console.warn('Invalid playlists response structure:', playlistsResponse)
           searchResults.playlists = []
@@ -729,6 +806,7 @@ export class DeezerService extends MusicServiceInterface {
 
     // Transform tracks if they exist in the playlist data
     let tracks = null
+      console.log('809', data.tracks)
     if (data.tracks && data.tracks.data && Array.isArray(data.tracks.data)) {
       tracks = {
         items: data.tracks.data.map(track => ({
@@ -741,14 +819,12 @@ export class DeezerService extends MusicServiceInterface {
         total: data.nb_tracks || 0
       }
     }
-
+    console.log('playlist 767', data)
     return {
       id: data.id.toString(),
       name: data.title,
       description: data.description || '',
       images: this.transformImages([
-        { url: data.picture_small, height: 56, width: 56 },
-        { url: data.picture_medium, height: 250, width: 250 },
         { url: data.picture_big, height: 500, width: 500 },
         { url: data.picture_xl, height: 1000, width: 1000 }
       ]),
@@ -759,12 +835,23 @@ export class DeezerService extends MusicServiceInterface {
       tracks: tracks,
       owner: {
         display_name: data.creator?.name || data.user?.name || 'Unknown',
-        id: (data.creator?.id || data.user?.id)?.toString() || 'unknown'
+        external_urls: {
+          deezer: data.creator?.link || data.user?.link || `https://www.deezer.com/profile/${(data.creator?.id || data.user?.id)?.toString() || 'unknown'}`
+        },
+        href: `https://api.deezer.com/user/${(data.creator?.id || data.user?.id)?.toString() || 'unknown'}`,
+        id: (data.creator?.id || data.user?.id)?.toString() || 'unknown',
+        type: "user",
+        uri: `deezer:user:${(data.creator?.id || data.user?.id)?.toString() || 'unknown'}`,
+        // Additional Deezer-specific fields
+        images: this.createOwnerImages(data.creator || data.user),
+        country: data.creator?.country || data.user?.country,
+        tracklist: data.creator?.tracklist || data.user?.tracklist
       },
       public: data.public || false,
       service: this.serviceType
     }
   }
+
 
   transformImages(images) {
     if (!images || !Array.isArray(images)) {
@@ -990,6 +1077,52 @@ export class DeezerService extends MusicServiceInterface {
       return foundTracks
     } catch (error) {
       console.error('Error getting similar tracks from Last.fm:', error)
+      throw error
+    }
+  }
+
+  async getUserPlaylists(userId, limit = 20) {
+    try {
+      // Fetch both user data and playlists in parallel
+      const [userResponse, playlistsResponse] = await Promise.all([
+        this.request(`/user/${userId}`),
+        this.request(`/user/${userId}/playlists?limit=${limit}`)
+      ])
+
+        const userData = userResponse || {}
+        const playlists = playlistsResponse.data || []
+
+        // Transform playlists and add Spotify-style owner data to each playlist
+        const transformedPlaylists = playlists.map(playlist => {
+          const transformedPlaylist = this.transformPlaylist(playlist)
+          // Add Spotify-style owner data to the playlist
+          if (transformedPlaylist) {
+            transformedPlaylist.owner = {
+              display_name: userData.name,
+              external_urls: {
+                deezer: userData.link || `https://www.deezer.com/profile/${userData.id}`
+              },
+              href: `https://api.deezer.com/user/${userData.id}`,
+              id: userData.id,
+              type: "user",
+              uri: `deezer:user:${userData.id}`,
+              // Additional Deezer-specific fields
+              images: this.createOwnerImages(userData),
+              picture: userData.picture,
+              picture_small: userData.picture_small,
+              picture_medium: userData.picture_medium,
+              picture_big: userData.picture_big,
+              picture_xl: userData.picture_xl,
+              country: userData.country,
+              tracklist: userData.tracklist
+            }
+          }
+          return transformedPlaylist
+        })
+
+      return transformedPlaylists
+    } catch (error) {
+      console.error('Deezer getUserPlaylists error:', error)
       throw error
     }
   }

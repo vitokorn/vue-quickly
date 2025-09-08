@@ -100,6 +100,14 @@ export class NapsterService extends MusicServiceInterface {
     throw new Error('Napster getRelatedArtists not yet implemented')
   }
 
+  async getArtistAppearances(id, limit = 10) {
+    throw new Error('Napster getArtistAppearances not yet implemented')
+  }
+
+  async getArtistPlaylists(id, limit = 10) {
+    throw new Error('Napster getArtistPlaylists not yet implemented')
+  }
+
   // Album methods
   async getAlbum(id) {
     throw new Error('Napster getAlbum not yet implemented')
@@ -175,5 +183,9 @@ export class NapsterService extends MusicServiceInterface {
 
   async checkFollowingPlaylist(id) {
     throw new Error('Napster checkFollowingPlaylist not yet implemented')
+  }
+
+  async getUserPlaylists(userId, limit = 20) {
+    throw new Error('Napster getUserPlaylists not yet implemented')
   }
 }

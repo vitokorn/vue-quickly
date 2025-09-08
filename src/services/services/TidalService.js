@@ -100,6 +100,14 @@ export class TidalService extends MusicServiceInterface {
     throw new Error('Tidal getRelatedArtists not yet implemented')
   }
 
+  async getArtistAppearances(id, limit = 10) {
+    throw new Error('Tidal getArtistAppearances not yet implemented')
+  }
+
+  async getArtistPlaylists(id, limit = 10) {
+    throw new Error('Tidal getArtistPlaylists not yet implemented')
+  }
+
   // Album methods
   async getAlbum(id) {
     throw new Error('Tidal getAlbum not yet implemented')
@@ -175,5 +183,9 @@ export class TidalService extends MusicServiceInterface {
 
   async checkFollowingPlaylist(id) {
     throw new Error('Tidal checkFollowingPlaylist not yet implemented')
+  }
+
+  async getUserPlaylists(userId, limit = 20) {
+    throw new Error('Tidal getUserPlaylists not yet implemented')
   }
 }

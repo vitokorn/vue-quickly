@@ -97,6 +97,18 @@ export class MusicServiceInterface {
     throw new Error('getRelatedArtists() must be implemented by subclass')
   }
 
+  async getArtistAppearances(id, limit = 10) {
+    throw new Error('getArtistAppearances() must be implemented by subclass')
+  }
+
+  async getArtistPlaylists(id, limit = 10) {
+    throw new Error('getArtistPlaylists() must be implemented by subclass')
+  }
+
+  async getUserPlaylists(userId, limit = 20) {
+    throw new Error('getUserPlaylists() must be implemented by subclass')
+  }
+
   // Album methods
   async getAlbum(id) {
     throw new Error('getAlbum() must be implemented by subclass')

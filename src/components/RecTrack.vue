@@ -7,6 +7,7 @@ import DeeperTracks from "./DeeperTracks.vue";
 import DeeperAlbum from "./DeeperAlbum.vue";
 import SeedArtists from "./SeedArtists.vue";
 import DeeperPlaylist from "./DeeperPlaylist.vue";
+import UserPlaylists from "./UserPlaylists.vue";
 
 const props = defineProps(['num'])
 const deeperStore = useDeeperStore()
@@ -70,6 +71,13 @@ function dab() {
         <!-- Deeper Playlist -->
         <DeeperPlaylist
           v-else-if="item.type === 'deeperplaylist'"
+          :d="item"
+          :num="num"
+        />
+
+        <!-- User Playlists -->
+        <UserPlaylists
+          v-else-if="item.type === 'user-playlists'"
           :d="item"
           :num="num"
         />

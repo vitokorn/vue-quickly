@@ -14,6 +14,7 @@ export const useDeeperStore = defineStore('deeper', {
             artists: new Set(),
             albums: new Set(),
             playlists: new Set(),
+            'user-playlists': new Set(),
             seedArtists: new Set(),
             seedTracks: new Set()
         },
@@ -422,12 +423,13 @@ export const useDeeperStore = defineStore('deeper', {
                     console.log('Fetching new artist data for:', item.id)
                     // Fetch comprehensive artist data
                     const service = musicServiceManager.getCurrentService()
-                    const [artistInfo, topTracks, albums, singles, appearances, related] = await Promise.all([
+                    const [artistInfo, topTracks, albums, singles, appearances, playlists, related] = await Promise.all([
                         service.getArtist(item.id),
                         service.getArtistTopTracks(item.id),
                         service.getArtistAlbums(item.id),
                         service.getArtistSingles(item.id),
                         service.getArtistAppearances(item.id),
+                        service.getArtistPlaylists(item.id),
                         service.getRelatedArtists(item.id)
                     ])
 
@@ -437,6 +439,7 @@ export const useDeeperStore = defineStore('deeper', {
                     albums: albums,
                     singles: singles,
                     appearances: appearances,
+                    playlists: playlists,
                     related: related
                 })
 
@@ -491,6 +494,14 @@ export const useDeeperStore = defineStore('deeper', {
                     type: 'appears_on'
                 }
                 trackartistArray.push(appearancesItem)
+
+                // Add playlists
+                const enrichedPlaylists = await this.enrichPlaylists(playlists)
+                const playlistsItem = {
+                    items: enrichedPlaylists,
+                    type: 'playlists'
+                }
+                trackartistArray.push(playlistsItem)
 
                 // Add related artists
                 const enrichedRelated = await this.enrichArtists(related)
@@ -656,7 +667,7 @@ export const useDeeperStore = defineStore('deeper', {
                     this.cache.playlists.set(playlistData.id, playlistData)
                 }
 
-            // Ensure tracks are populated; fetch full playlist if missing/empty
+            // Ensure tracks and description are populated; fetch full playlist if missing/empty
             try {
                 // Check both old structure (tracks.items) and new structure (tracks directly)
                 const hasTracks = playlistData.tracks && (
@@ -664,15 +675,31 @@ export const useDeeperStore = defineStore('deeper', {
                     (Array.isArray(playlistData.tracks) && playlistData.tracks.length > 0)
                 )
 
-                if (!hasTracks) {
+                // Check if description is missing or empty
+                const hasDescription = playlistData.description && playlistData.description.trim().length > 0
+
+                // Fetch full playlist data if tracks or description are missing
+                if (!hasTracks || !hasDescription) {
                     const service = musicServiceManager.getCurrentService()
                     const fullResponse = await service.getPlaylist(playlistData.id)
-                    if (fullResponse?.tracks) {
-                        playlistData.tracks = fullResponse.tracks
+
+                    if (fullResponse) {
+                        // Update tracks if missing
+                        if (!hasTracks && fullResponse.tracks) {
+                            playlistData.tracks = fullResponse.tracks
+                        }
+
+                        // Update description if missing
+                        if (!hasDescription && fullResponse.description) {
+                            playlistData.description = fullResponse.description
+                        }
+
+                        // Update cache with enriched data
+                        this.cache.playlists.set(playlistData.id, playlistData)
                     }
                 }
             } catch (e) {
-                console.warn('Failed to ensure playlist tracks; proceeding with existing data', e)
+                console.warn('Failed to ensure playlist tracks/description; proceeding with existing data', e)
             }
 
                 // Attach explicit parent context (no derivation for albums)
@@ -704,6 +731,59 @@ export const useDeeperStore = defineStore('deeper', {
             } finally {
                 // Clear loading state
                 this.setLoading('playlists', item.id, false)
+                this.setGlobalLoading(false)
+            }
+        },
+
+        // User playlists
+        async getUserPlaylists(user, sectionName, parentKey = null) {
+            // Set loading state
+            this.setLoading('user-playlists', user.id, true)
+            this.setGlobalLoading(true)
+
+            try {
+                const service = musicServiceManager.getCurrentService()
+
+                // Get user playlists from the service
+                const playlists = await service.getUserPlaylists(user.id, 20)
+
+                // Create user playlists data structure
+                const userPlaylistsData = {
+                    id: `user-playlists-${user.id}`,
+                    name: `${user.display_name}'s Playlists`,
+                    type: 'user-playlists',
+                    owner: user,
+                    playlists: playlists,
+                    parentKey: parentKey
+                }
+                console.log('userPlaylistsData', userPlaylistsData)
+
+                const visibilityManager = useVisibilityManager()
+
+                // Replace previous user playlists under the same parent
+                if (parentKey) {
+                    this.removeDescendantsOfParent(sectionName, parentKey, visibilityManager)
+                }
+
+                // Add to section
+                this.addToSection(sectionName, userPlaylistsData)
+
+                // Hide the currently visible component within same parent context
+                this.hideVisibleComponentOfType('user-playlists', visibilityManager, parentKey)
+
+                // Ensure target is visible
+                const targetKey = `user-playlists_${user.id}${parentKey ? `__p:${parentKey}__` : ''}`
+                visibilityManager.showComponent(targetKey)
+
+                console.log('User playlists added to section, component will show when registered')
+
+                return userPlaylistsData
+            } catch (error) {
+                console.error('Failed to get user playlists:', error)
+                throw error
+            } finally {
+                // Clear loading state
+                this.setLoading('user-playlists', user.id, false)
                 this.setGlobalLoading(false)
             }
         },
@@ -861,6 +941,41 @@ export const useDeeperStore = defineStore('deeper', {
             }
 
             return enrichedAlbums
+        },
+
+        async enrichPlaylists(playlists) {
+            const enrichedPlaylists = []
+
+            for (const playlist of playlists) {
+                try {
+                    const service = musicServiceManager.getCurrentService()
+                    const tracksResponse = await service.getPlaylistTracks(playlist.id)
+                    const tracks = tracksResponse
+                    playlist.tracks = tracks
+
+                    if (tracks.length > 0 && (tracks[0].preview_url || tracks[0].previewUrl)) {
+                        playlist.preview_url = tracks[0].preview_url || tracks[0].previewUrl
+                    }
+
+                    if (playlist.images.length > 0 && playlist.images[0]?.url) {
+                        enrichedPlaylists.push(playlist)
+                    } else {
+                        playlist.images[0] = {url: ''}
+                        enrichedPlaylists.push(playlist)
+                    }
+                } catch (error) {
+                    console.error(`Failed to enrich playlist ${playlist.id}:`, error)
+                    // Still add the playlist even if enrichment fails
+                    if (playlist.images.length > 0 && playlist.images[0]?.url) {
+                        enrichedPlaylists.push(playlist)
+                    } else {
+                        playlist.images[0] = {url: ''}
+                        enrichedPlaylists.push(playlist)
+                    }
+                }
+            }
+
+            return enrichedPlaylists
         },
 
         async enrichArtists(artists) {

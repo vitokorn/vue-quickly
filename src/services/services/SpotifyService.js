@@ -157,7 +157,7 @@ export class SpotifyService extends MusicServiceInterface {
   }
 
   // Playlist methods
-  async getUserPlaylists(offset = 0) {
+  async getUserPlaylists(userId,offset = 0) {
       let limit = 50
     const response = await this.request(`/me/playlists?fields=items(name,id,images,owner,public)&limit=${limit}&offset=${offset}`)
     return response.data.items.map(playlist => this.transformPlaylist({
@@ -251,6 +251,11 @@ export class SpotifyService extends MusicServiceInterface {
       ...album,
       service: this.serviceType
     }))
+  }
+
+  async getArtistPlaylists(id, limit = 10) {
+    console.warn('getArtistPlaylists not fully implemented for Spotify service (returning empty array for now)')
+    return []
   }
 
   async getRelatedArtists(id) {
@@ -477,5 +482,16 @@ export class SpotifyService extends MusicServiceInterface {
       followers: data.followers,
       service: this.serviceType
     })
+  }
+
+  async getUserPlaylists(userId, limit = 20) {
+    try {
+      const response = await this.request(`/users/${userId}/playlists?limit=${limit}`)
+      const playlists = response.items || []
+      return playlists.map(playlist => this.transformPlaylist(playlist))
+    } catch (error) {
+      console.error('Spotify getUserPlaylists error:', error)
+      throw error
+    }
   }
 }

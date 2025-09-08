@@ -61,6 +61,14 @@ const appearsOnData = computed(() => {
   return []
 })
 
+const playlistsData = computed(() => {
+  if (props.d.data && Array.isArray(props.d.data)) {
+    const playlistsItem = props.d.data.find(item => item.type === 'playlists')
+    return playlistsItem?.items || []
+  }
+  return []
+})
+
 const relatedArtistsData = computed(() => {
   if (props.d.data && Array.isArray(props.d.data)) {
     const relatedItem = props.d.data.find(item => item.type === 'related-artists')
@@ -263,6 +271,29 @@ onMounted(async () => {
               <div class="track-name">{{ ao.name }}</div>
             </div>
             <audio :preload="getMediaDisplay(ao).audioPreload.value" :src="getMediaDisplay(ao).audioSrc.value"></audio>
+          </div>
+        </div>
+      </div>
+
+      <!-- Playlists Section -->
+      <div v-if="playlistsData.length > 0" class="section-header py-2">
+        <h3 class="section-title">Featured in Playlists</h3>
+      </div>
+
+      <div v-if="playlistsData.length > 0" class="albums-grid">
+        <div v-for="(playlist, playlistIndex) in playlistsData" :key="playlistIndex">
+          <div :class="['track-card', getMediaDisplay(playlist).displayClass.value, selected === playlist.id ? 'selected' : '']"
+               :style="getMediaDisplay(playlist).backgroundStyle.value"
+               @click="setActive(playlist.id);deeperStore.getPlaylistDetails(playlist, getSectionName(num), d.id)"
+               @mouseover="getMediaDisplay(playlist).hasPreview.value && audioStore.handleAudioHover($event)"
+               @mouseleave="getMediaDisplay(playlist).hasPreview.value && audioStore.handleAudioLeave($event)">
+            <div class="track-overlay">
+              <div class="track-name">{{ playlist.name }}</div>
+              <div class="playlist-info" v-if="playlist.owner">
+                <span class="playlist-owner">by {{ playlist.owner.display_name }}</span>
+              </div>
+            </div>
+            <audio :preload="getMediaDisplay(playlist).audioPreload.value" :src="getMediaDisplay(playlist).audioSrc.value"></audio>
           </div>
         </div>
       </div>
