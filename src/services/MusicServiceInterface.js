@@ -1,13 +1,13 @@
 // Abstract interface for all music services
-import { 
-  Artist, 
-  Album, 
-  Track, 
-  Playlist, 
-  SearchResults, 
+import {
+  Artist,
+  Album,
+  Track,
+  Playlist,
+  SearchResults,
   RecommendationParams,
   User,
-  TIME_RANGES 
+  TIME_RANGES
 } from './types.js'
 
 export class MusicServiceInterface {
@@ -85,7 +85,7 @@ export class MusicServiceInterface {
     throw new Error('getArtist() must be implemented by subclass')
   }
 
-  async getArtistTopTracks(id, market = 'US') {
+  async getArtistTopTracks(id, market = 'US', bypass=true) {
     throw new Error('getArtistTopTracks() must be implemented by subclass')
   }
 

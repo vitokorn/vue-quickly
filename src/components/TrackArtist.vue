@@ -7,6 +7,7 @@ import {ref, computed, onMounted, nextTick} from "vue";
 import {useMediaDisplay} from "../composables/useMediaDisplay";
 import {useVisibilityManager} from "../composables/useVisibilityManager";
 import {getSectionName} from "../utils/sectionUtils";
+import {getCurrentServiceType} from "../utils/initializeMusicStore.js";
 
 const props = defineProps(['d', 'num'])
 const musicStore = useMusicStore()
@@ -159,12 +160,12 @@ onMounted(async () => {
             Recommended artists songs based on this
           </button>
 
-          <a class="spotify-link"
+          <a  :class="getCurrentServiceType() + '-link'"
              :href="artistData.external_urls?.spotify"
              target="_blank"
              rel="noopener">
             <span class="link-icon">🎧</span>
-            Open in Spotify
+            Open in {{getCurrentServiceType().charAt(0).toUpperCase() + getCurrentServiceType().slice(1)}}
           </a>
 
           <div class="follow-section">

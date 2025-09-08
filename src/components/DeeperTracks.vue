@@ -11,6 +11,7 @@ import {useVisibilityManager} from "../composables/useVisibilityManager";
 import {useLoading} from "../composables/useLoading";
 import { getSectionName } from '../utils/sectionUtils';
 import LoadingState from "./common/LoadingState.vue";
+import {getCurrentServiceType} from "../utils/initializeMusicStore.js";
 const props = defineProps(['d', 'num'])
 const musicStore = useMusicStore()
 const audioStore = useAudioStore()
@@ -129,15 +130,16 @@ window.addEventListener('resize', () => {
         </div>
       </div>
       <div class="artist-actions" :class="{'grid-column-2': mobileClass}">
-        <button v-if="supportsTrackRecommendations" 
+        <button v-if="supportsTrackRecommendations"
                 class="action-button"
                 @click="handleRecommendClick">
           <span class="btn-icon">🎵</span>
           Recommended songs based on this
         </button>
-        <a class="spotify-link" :href="d.external_urls?.spotify" target="_blank" rel="noopener">
+        <a  :class="getCurrentServiceType() + '-link'"
+            :href="d.external_urls?.spotify" target="_blank" rel="noopener">
           <span class="link-icon">🎧</span>
-          Open in Spotify
+          Open in {{getCurrentServiceType().charAt(0).toUpperCase() + getCurrentServiceType().slice(1)}}
         </a>
       </div>
     </div>

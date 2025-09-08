@@ -1554,7 +1554,7 @@ h1 {
 }
 
 
-.spotify-link, .action-button {
+.spotify-link, .deezer-link, .action-button {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -1600,6 +1600,20 @@ h1 {
     color: var(--spotify-green);
     transform: translateY(-2px);
     box-shadow: var(--tab-box-shadow);
+}
+
+.deezer-link {
+    text-decoration: none;
+    background: blueviolet;
+    color: var(--title-color);
+    border: 1px solid var(--dq-bg);
+}
+
+.deezer-link:hover {
+    background: #e7ceff;
+    border-color: blueviolet;
+    color: blueviolet;
+    box-shadow: 0 4px 15px blueviolet;
 }
 
 .btn-icon {

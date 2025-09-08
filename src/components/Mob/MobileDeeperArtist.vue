@@ -9,6 +9,7 @@ import { useVisibilityManager } from '../../composables/useVisibilityManager'
 import { useMobileMediaDisplay } from '../../composables/useMobileMediaDisplay.js'
 import { getSectionName } from '../../utils/sectionUtils';
 import MobileTrackItem from './MobileTrackItem.vue';
+import {getCurrentServiceType} from "../../utils/initializeMusicStore.js";
 
 const props = defineProps(['d', 'num'])
 
@@ -315,9 +316,10 @@ onUnmounted(() => {
           Get Recommendations
         </button>
 
-        <a class="spotify-link" :href="d.external_urls?.spotify" target="_blank" rel="noopener">
+        <a  :class="getCurrentServiceType() + '-link'"
+            :href="d.external_urls?.spotify" target="_blank" rel="noopener">
           <span class="link-icon">🎧</span>
-          Open in Spotify
+          Open in {{getCurrentServiceType().charAt(0).toUpperCase() + getCurrentServiceType().slice(1)}}
         </a>
 
         <div class="follow-section">

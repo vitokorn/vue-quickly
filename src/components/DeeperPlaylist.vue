@@ -10,6 +10,7 @@ import {useMediaDisplay} from "../composables/useMediaDisplay";
 import { useVisibilityManager } from "../composables/useVisibilityManager";
 import TrackCover from "./TrackCover.vue";
 import PlaylistTrackItem from "./PlaylistTrackItem.vue";
+import {getCurrentServiceType} from "../utils/initializeMusicStore.js";
 
 const props = defineProps(['d', 'num'])
 const musicStore = useMusicStore()
@@ -120,12 +121,12 @@ onMounted(() => {
       </div>
     </div>
     <div>
-      <a class="spotify-link"
+      <a  :class="getCurrentServiceType() + '-link'"
          :href="d.external_urls?.spotify"
          target="_blank"
          rel="noopener">
         <span class="link-icon">🎧</span>
-        Open in Spotify
+        Open in {{getCurrentServiceType().charAt(0).toUpperCase() + getCurrentServiceType().slice(1)}}
       </a>
       <SortTracks v-model="selectedDeeperPlaylistSortOption"  :full_width="true"/>
     </div>
