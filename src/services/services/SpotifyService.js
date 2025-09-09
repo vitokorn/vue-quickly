@@ -157,17 +157,6 @@ export class SpotifyService extends MusicServiceInterface {
   }
 
   // Playlist methods
-  async getUserPlaylists(userId,offset = 0) {
-      let limit = 50
-    const response = await this.request(`/me/playlists?fields=items(name,id,images,owner,public)&limit=${limit}&offset=${offset}`)
-    return response.data.items.map(playlist => this.transformPlaylist({
-      ...playlist,
-      service: this.serviceType
-    }))
-  }
-
-
-
   async getPlaylists(offset = 0, limit = 50) {
     const response = await this.request(`/users/spotify/playlists?fields=items(name,id,images,owner,public)&limit=${limit}&offset=${offset}`)
     return response.data.items.map(playlist => this.transformPlaylist({
@@ -342,6 +331,35 @@ export class SpotifyService extends MusicServiceInterface {
     }))
   }
 
+  // Categories methods
+  async getCategories(offset = 0, limit = 50) {
+    const response = await this.request(`/browse/categories?offset=${offset}&limit=${limit}`)
+    return {
+      items: response.data.categories.items.map(category => ({
+        id: category.id,
+        name: category.name,
+        icons: category.icons,
+        href: category.href
+      })),
+      total: response.data.categories.total,
+      next: response.data.categories.next,
+      previous: response.data.categories.previous
+    }
+  }
+
+  async getCategoryPlaylists(categoryId, offset = 0, limit = 50) {
+    const response = await this.request(`/browse/categories/${categoryId}/playlists?offset=${offset}&limit=${limit}`)
+    return {
+      items: response.data.playlists.items.map(playlist => this.transformPlaylist({
+        ...playlist,
+        service: this.serviceType
+      })),
+      total: response.data.playlists.total,
+      next: response.data.playlists.next,
+      previous: response.data.playlists.previous
+    }
+  }
+
   // Follow/Unfollow methods
   async followArtist(id) {
     await this.request(`/me/following?type=artist&ids=${id}`, { method: 'PUT' })
@@ -486,9 +504,24 @@ export class SpotifyService extends MusicServiceInterface {
 
   async getUserPlaylists(userId, limit = 20) {
     try {
-      const response = await this.request(`/users/${userId}/playlists?limit=${limit}`)
-      const playlists = response.items || []
-      return playlists.map(playlist => this.transformPlaylist(playlist))
+      let endpoint
+      if (userId) {
+        // Get playlists for a specific user
+        endpoint = `/users/${userId}/playlists?limit=${limit}`
+      } else {
+        // Get current user's playlists
+        endpoint = `/me/playlists?limit=${limit}`
+      }
+
+      const response = await this.request(endpoint)
+      const playlists = response.data.items || []
+        for (const playlist of playlists) {
+            playlist.tracks = await this.transformTrack({})
+        }
+      return playlists.map(playlist => this.transformPlaylist({
+        ...playlist,
+        service: this.serviceType
+      }))
     } catch (error) {
       console.error('Spotify getUserPlaylists error:', error)
       throw error

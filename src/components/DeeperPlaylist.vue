@@ -11,6 +11,7 @@ import { useVisibilityManager } from "../composables/useVisibilityManager";
 import TrackCover from "./TrackCover.vue";
 import PlaylistTrackItem from "./PlaylistTrackItem.vue";
 import {getCurrentServiceType} from "../utils/initializeMusicStore.js";
+import {musicServiceManager} from "../services/MusicServiceManager.js";
 
 const props = defineProps(['d', 'num'])
 const musicStore = useMusicStore()
@@ -121,12 +122,14 @@ onMounted(() => {
         <span class="playlist-owner clickable-owner" @click="handleOwnerClick">
           By {{ d.owner.display_name }}
         </span>
-        <span v-if="d.tracks && d.tracks.total" class="track-count">{{ d.tracks.total }} tracks</span>
-        <span v-if="d.public !== undefined" class="playlist-visibility">
-          {{ d.public ? 'Public' : 'Private' }}
-        </span>
       </div>
-      <div class="follow-section">
+      <div v-if="d.tracks && d.tracks.total" class="playlist-meta" >
+        {{ d.tracks.total }} tracks
+      </div>
+      <div v-if="d.public !== undefined" class="playlist-meta" >
+          {{ d.public ? 'Public' : 'Private' }}
+      </div>
+      <div class="follow-section" v-if="musicServiceManager.currentServiceType !== 'deezer'">
         <span class="follow-label">Follow</span>
         <label class="follow-checkbox">
           <!-- Follow functionality will be implemented later -->

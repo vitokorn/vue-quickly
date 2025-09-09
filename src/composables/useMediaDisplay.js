@@ -21,6 +21,9 @@ export function useMediaDisplay(item, cover = null) {
         if (item.value?.tracks?.items && item.value.tracks.items.length > 0) {
             const firstTrack = item.value.tracks.items[0]
             return !!(firstTrack?.preview_url || firstTrack?.previewUrl)
+        } else if (item.value?.tracks && item.value?.tracks.length > 0) {
+            const firstTrack = item.value.tracks[0]
+            return !!(firstTrack?.preview_url || firstTrack?.previewUrl)
         }
         return !!(item.value?.preview_url || item.value?.previewUrl)
     })
@@ -65,28 +68,49 @@ export function useMediaDisplay(item, cover = null) {
 
     // Get audio source
     const audioSrc = computed(() => {
-        const previewUrl = item.value?.preview_url || item.value?.previewUrl
-        if (hasPreview.value && previewUrl) {
+        // Check direct preview URL first
+        const directPreviewUrl = item.value?.preview_url || item.value?.previewUrl
+        if (directPreviewUrl) {
             try {
-                // Use encodeURI to properly encode the URL
-                return encodeURI(previewUrl)
+                return encodeURI(directPreviewUrl)
             } catch (error) {
-                console.warn('Invalid audio URL:', previewUrl, error)
+                console.warn('Invalid direct audio URL:', directPreviewUrl, error)
                 return ''
             }
-        } else if (item.value?.tracks?.items && item.value.tracks.items.length > 0) {
+        }
+
+        // Check tracks.items structure (Deezer/some Spotify responses)
+        if (item.value?.tracks?.items && item.value.tracks.items.length > 0) {
             const firstTrack = item.value.tracks.items[0]
             const trackPreviewUrl = firstTrack?.preview_url || firstTrack?.previewUrl
             if (trackPreviewUrl) {
                 try {
-                    // Use encodeURI to properly encode the URL
                     return encodeURI(trackPreviewUrl)
                 } catch (error) {
-                    console.warn('Invalid audio URL:', trackPreviewUrl, error)
+                    console.warn('Invalid track audio URL:', trackPreviewUrl, error)
                     return ''
                 }
             }
         }
+
+        // Check tracks array structure (direct tracks array)
+        if (item.value?.tracks && Array.isArray(item.value.tracks) && item.value.tracks.length > 0) {
+            const firstTrackWithPreview = item.value.tracks.find(track =>
+                track.previewUrl || track.preview_url
+            )
+            if (firstTrackWithPreview) {
+                const trackPreviewUrl = firstTrackWithPreview.previewUrl || firstTrackWithPreview.preview_url
+                if (trackPreviewUrl) {
+                    try {
+                        return encodeURI(trackPreviewUrl)
+                    } catch (error) {
+                        console.warn('Invalid array track audio URL:', trackPreviewUrl, error)
+                        return ''
+                    }
+                }
+            }
+        }
+
         return ''
     })
 

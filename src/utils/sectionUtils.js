@@ -25,6 +25,8 @@ export function getSectionName(num) {
             return 'newReleases'
         case 8:
             return 'spotifyPlaylists'
+        case 9:
+            return 'categories'
         case 10:
             return 'search'
         case 11:

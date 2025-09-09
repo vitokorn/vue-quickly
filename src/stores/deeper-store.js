@@ -38,6 +38,8 @@ export const useDeeperStore = defineStore('deeper', {
             followedArtists: [],
             newReleases: [],
             spotifyPlaylists: [],
+            categories: [],
+            categoryPlaylists: [],
             search: [],
             artistDetails: []
         },
@@ -650,6 +652,7 @@ export const useDeeperStore = defineStore('deeper', {
                 const cached = this.getCachedPlaylist(item.id)
                 if (cached) {
                     playlistData = cached
+
                 } else {
                     playlistData = {...item}
                     playlistData.type = 'deeperplaylist'
@@ -671,8 +674,8 @@ export const useDeeperStore = defineStore('deeper', {
             try {
                 // Check both old structure (tracks.items) and new structure (tracks directly)
                 const hasTracks = playlistData.tracks && (
-                    (playlistData.tracks.items && playlistData.tracks.items.length > 0) ||
-                    (Array.isArray(playlistData.tracks) && playlistData.tracks.length > 0)
+                    (playlistData.tracks.items && playlistData.tracks.items.length > 1) ||
+                    (Array.isArray(playlistData.tracks) && playlistData.tracks.length > 1)
                 )
 
                 // Check if description is missing or empty
@@ -746,7 +749,6 @@ export const useDeeperStore = defineStore('deeper', {
 
                 // Get user playlists from the service
                 const playlists = await service.getUserPlaylists(user.id, 20)
-
                 // Create user playlists data structure
                 const userPlaylistsData = {
                     id: `user-playlists-${user.id}`,
@@ -755,6 +757,9 @@ export const useDeeperStore = defineStore('deeper', {
                     owner: user,
                     playlists: playlists,
                     parentKey: parentKey
+                }
+                for (const playlist of userPlaylistsData.playlists) {
+                    playlist.tracks = await service.getPlaylistTracks(playlist.id, 0, 1)
                 }
                 console.log('userPlaylistsData', userPlaylistsData)
 
@@ -1020,6 +1025,59 @@ export const useDeeperStore = defineStore('deeper', {
                 Object.keys(this.cache).forEach(key => {
                     this.cache[key].clear()
                 })
+            }
+        },
+
+        // Categories methods
+        async getCategories(sectionName, offset = 0, limit = 50) {
+            this.setGlobalLoading(true)
+
+            try {
+                const service = musicServiceManager.getCurrentService()
+                const response = await service.getCategories(offset, limit)
+
+                // Add categories to section
+                response.items.forEach(category => {
+                    const categoryData = {
+                        ...category,
+                        type: 'category',
+                        parentKey: null
+                    }
+                    this.addToSection(sectionName, categoryData)
+                })
+
+                return response
+            } catch (error) {
+                console.error('Failed to get categories:', error)
+                throw error
+            } finally {
+                this.setGlobalLoading(false)
+            }
+        },
+
+        async getCategoryPlaylists(categoryId, sectionName, parentKey = null) {
+            this.setGlobalLoading(true)
+
+            try {
+                const service = musicServiceManager.getCurrentService()
+                const response = await service.getCategoryPlaylists(categoryId, 0, 50)
+
+                // Add playlists to section
+                response.items.forEach(playlist => {
+                    const playlistData = {
+                        ...playlist,
+                        type: 'category-playlist',
+                        parentKey: parentKey
+                    }
+                    this.addToSection(sectionName, playlistData)
+                })
+
+                return response
+            } catch (error) {
+                console.error('Failed to get category playlists:', error)
+                throw error
+            } finally {
+                this.setGlobalLoading(false)
             }
         }
     }

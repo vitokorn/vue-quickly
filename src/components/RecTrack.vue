@@ -81,6 +81,13 @@ function dab() {
           :d="item"
           :num="num"
         />
+
+        <!-- Category Playlists -->
+        <DeeperPlaylist
+          v-else-if="item.type === 'category-playlist'"
+          :d="item"
+          :num="num"
+        />
       </template>
     </div>
   </div>

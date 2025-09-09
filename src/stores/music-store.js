@@ -28,6 +28,13 @@ export const useMusicStore = defineStore('music', {
     savedTracksTotal: 0,
     followedArtists: [],
     playlists: [],
+    spotifyPlaylistsPagination: {
+      total: 0,
+      next: null,
+      previous: null,
+      offset: 0,
+      limit: 50
+    },
 
     // Search results
     searchInput: '',
@@ -296,6 +303,11 @@ export const useMusicStore = defineStore('music', {
     async fetchPlaylists(offset = 0) {
       this.setLoading(true)
       try {
+        // Clear playlists if this is the first fetch
+        if (offset === 0) {
+          this.playlists = []
+        }
+
         const service = musicServiceManager.getCurrentService()
         const playlists = await service.getUserPlaylists(localStorage.getItem('deezer-user-id'), offset)
         this.playlists.push(...playlists)
@@ -366,6 +378,11 @@ export const useMusicStore = defineStore('music', {
     async fetchSpotifyPlaylists(offset = 0) {
       this.setLoading(true)
       try {
+        // Clear playlists if this is the first fetch
+        if (offset === 0) {
+          this.playlists = []
+        }
+
         const service = musicServiceManager.getCurrentService()
         // Check if the service has a getSpotifyPlaylists method
         if (service.getSpotifyPlaylists) {

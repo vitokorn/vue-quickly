@@ -27,6 +27,7 @@ import SavedAlbums from '../SavedAlbums.vue'
 import SavedTracks from '../SavedTracks.vue'
 import FollowedArtists from '../FollowedArtists.vue'
 import NewReleases from '../NewReleases.vue'
+import Categories from '../Categories.vue'
 // Stores
 const musicStore = useMusicStore()
 const audioStore = useAudioStore()
@@ -150,6 +151,8 @@ const getSectionName = (num) => {
       return 'newReleases'
     case 8:
       return 'spotifyPlaylists'
+    case 9:
+      return 'categories'
     case 10:
       return 'search'
     default:
@@ -242,6 +245,10 @@ const handleTabClick = async (tabNumber, event) => {
         if (!musicStore.getSpotifyPlaylists || musicStore.getSpotifyPlaylists.length === 0) {
           await musicStore.fetchSpotifyPlaylists(0)
         }
+        break
+      case 9:
+        deeperStore.clearSection('categories')
+        // Categories will be loaded by the Categories component
         break
     }
   } catch (error) {
@@ -402,6 +409,11 @@ const handleDeezerUserSaved = (userData) => {
                   @playlist-select="handlePlaylistClick"
               />
             </div>
+          </div>
+
+          <!-- Categories Section -->
+          <div v-if="selectedTopMenu === 9">
+            <Categories />
           </div>
 
           <!-- Search Section -->

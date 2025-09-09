@@ -10,6 +10,7 @@ import { useVisibilityManager } from "../composables/useVisibilityManager";
 import { getSectionName } from '../utils/sectionUtils';
 import { getCurrentServiceType } from "../utils/initializeMusicStore.js";
 import TrackCover from "./TrackCover.vue";
+import PlaylistPreview from "./PlaylistPreview.vue";
 
 const props = defineProps(['d', 'num'])
 const musicStore = useMusicStore()
@@ -80,21 +81,12 @@ onMounted(() => {
       </div>
 
     <!-- Playlists Grid -->
-    <div class="releases-container">
+    <div class="releases-container grid">
       <template v-for="(playlist, index) in d.playlists" :key="index">
-        <div class="media-card"
-             :style="{backgroundImage: 'url(' + (playlist.images[0].url) + ')'}"
-             @click="handlePlaylistClick(playlist)"
-             @mouseover="audioStore.handleAudioHover($event)"
-             @mouseleave="audioStore.handleAudioLeave($event)">
-        <div class="track-overlay">
-          <div class="track-info">
-            <div class="track-name">{{ playlist.name }}</div>
-          </div>
-        </div>
-        </div>
-        <audio :preload="getMediaDisplay(playlist).audioPreload.value"
-               :src="getMediaDisplay(playlist).audioSrc.value"></audio>
+        <PlaylistPreview 
+          :playlist="playlist" 
+          @click="handlePlaylistClick" 
+        />
       </template>
     </div>
 

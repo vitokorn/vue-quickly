@@ -1,424 +1,424 @@
-import { MusicServiceInterface } from '../MusicServiceInterface.js'
+import {MusicServiceInterface} from '../MusicServiceInterface.js'
 import {Image, SERVICE_TYPES} from '../types.js'
 
 export class DeezerService extends MusicServiceInterface {
-  constructor() {
-    super()
-    this.baseURL = 'https://api.deezer.com'
-    this.serviceType = SERVICE_TYPES.DEEZER
-  }
-
-  getServiceName() {
-    return 'Deezer'
-  }
-
-  getServiceType() {
-    return this.serviceType
-  }
-
-  // Authentication methods
-  async authenticate() {
-    // TODO: Implement Deezer OAuth flow
-    throw new Error('Deezer authentication not yet implemented')
-  }
-
-  async refreshToken() {
-    // TODO: Implement Deezer token refresh
-    throw new Error('Deezer token refresh not yet implemented')
-  }
-
-  logout() {
-    // TODO: Implement Deezer logout
-    throw new Error('Deezer logout not yet implemented')
-  }
-
-  isAuthenticated() {
-    // TODO: Check Deezer authentication status
-    return false
-  }
-
-  // User data methods
-  async getCurrentUser() {
-    throw new Error('Deezer getCurrentUser not yet implemented')
-  }
-
-  async getTopTracks(timeRange) {
-    throw new Error('Deezer getTopTracks not yet implemented')
-  }
-
-  async getTopArtists(timeRange) {
-    throw new Error('Deezer getTopArtists not yet implemented')
-  }
-
-  async getSavedAlbums(offset, limit) {
-    try {
-      const userId = localStorage.getItem('deezer-user-id')
-      if (!userId) {
-        return []
-      }
-
-      const safeLimit = typeof limit === 'number' && limit > 0 ? limit : 20
-      const safeOffset = typeof offset === 'number' && offset >= 0 ? offset : 0
-
-      const resp = await this.request(`/user/${userId}/albums?limit=${safeLimit}&index=${safeOffset}`)
-      const data = resp?.data || []
-
-      // Return array of { album: Album, added_at }
-      return data
-        .map(a => ({
-          album: this.transformAlbum(a),
-          added_at: a?.time_add ? new Date(a.time_add * 1000).toISOString() : new Date().toISOString()
-        }))
-        .filter(item => item.album !== null)
-    } catch (error) {
-      console.error('Deezer getSavedAlbums error:', error)
-      throw error
-    }
-  }
-
-  async getSavedTracks(offset, limit) {
-    try {
-      // Require user id set via DeezerWelcomeModal
-      const userId = localStorage.getItem('deezer-user-id')
-      if (!userId) {
-        return { items: [], total: 0 }
-      }
-
-      // Resolve loved playlist id (cached, with paginated discovery fallback)
-      const lovedId = await this.getOrFindLovedPlaylistId(userId)
-      if (!lovedId) {
-        return { items: [], total: 0 }
-      }
-
-      // Fetch tracks from the loved playlist with pagination
-      const safeLimit = typeof limit === 'number' && limit > 0 ? limit : 50
-      const safeOffset = typeof offset === 'number' && offset >= 0 ? offset : 0
-      const playlistResponse = await this.request(`/playlist/${lovedId}?limit=${safeLimit}&index=${safeOffset}`)
-
-      const items = (playlistResponse?.tracks?.data || []).map(track => ({
-        track: this.transformTrack(track),
-        // Deezer exposes time_add (unix seconds) on items in some endpoints; fallback to now
-        added_at: track?.time_add ? new Date(track.time_add * 1000).toISOString() : new Date().toISOString()
-      })).filter(i => i.track !== null)
-
-      const total = playlistResponse?.nb_tracks || playlistResponse?.tracks?.total || playlistResponse?.tracks?.data?.length || 0
-      return { items, total }
-    } catch (error) {
-      console.error('Deezer getSavedTracks error:', error)
-      throw error
-    }
-  }
-
-  // Resolve and cache the loved playlist id for a user, paginating through all playlists if needed
-  async getOrFindLovedPlaylistId(userId) {
-    // Check cache first
-    if (this.lovedPlaylistIdCache.has(userId)) {
-      return this.lovedPlaylistIdCache.get(userId)
+    constructor() {
+        super()
+        this.baseURL = 'https://api.deezer.com'
+        this.serviceType = SERVICE_TYPES.DEEZER
     }
 
-    // Paginate over user playlists to find is_loved_track === true
-    const pageSize = 100
-    let index = 0
-    let total = Infinity
-
-    while (index < total) {
-      const resp = await this.request(`/user/${userId}/playlists?limit=${pageSize}&index=${index}`)
-      const data = resp?.data || []
-      if (typeof resp?.total === 'number') total = resp.total
-
-      // Try to find loved within this page
-      const loved = data.find(p => p && p.is_loved_track === true)
-      if (loved && loved.id) {
-        const lovedId = loved.id
-        this.lovedPlaylistIdCache.set(userId, lovedId)
-        return lovedId
-      }
-
-      // If page smaller than pageSize, no more pages
-      if (data.length < pageSize) break
-      index += pageSize
+    getServiceName() {
+        return 'Deezer'
     }
 
-    // Not found
-    this.lovedPlaylistIdCache.set(userId, null)
-    return null
-  }
-
-  async getFollowedArtists(limit = 50, offset = 0) {
-    try {
-      const userId = localStorage.getItem('deezer-user-id')
-      if (!userId) {
-        return []
-      }
-
-      const safeLimit = typeof limit === 'number' && limit > 0 ? limit : 50
-      const safeOffset = typeof offset === 'number' && offset >= 0 ? offset : 0
-
-      const resp = await this.request(`/user/${userId}/artists?limit=${safeLimit}&index=${safeOffset}`)
-      const data = resp?.data || []
-
-      return data
-        .map(artist => this.transformArtist(artist))
-        .filter(a => a !== null)
-    } catch (error) {
-      console.error('Deezer getFollowedArtists error:', error)
-      throw error
-    }
-  }
-
-  // Playlist methods
-  async getPlaylists(offset, limit) {
-    throw new Error('Deezer getPlaylists not yet implemented')
-  }
-
-  async getSpotifyPlaylists(offset, limit) {
-      throw new Error('Deezer getPlaylists not yet implemented')
-  }
-
-
-  async getPlaylist(id) {
-    throw new Error('Deezer getPlaylist not yet implemented')
-  }
-
-  async getPlaylistTracks(id, offset = 0, limit = 50) {
-    try {
-      const response = await this.request(`/playlist/${id}/tracks?limit=${limit}&index=${offset}`)
-      return response.data.map(track => this.transformTrack(track))
-    } catch (error) {
-      console.error('Deezer getPlaylistTracks error:', error)
-      throw error
-    }
-  }
-
-  async createPlaylist(name, description) {
-    throw new Error('Deezer createPlaylist not yet implemented')
-  }
-
-  async addTracksToPlaylist(playlistId, trackIds) {
-    throw new Error('Deezer addTracksToPlaylist not yet implemented')
-  }
-
-  // Artist methods
-  async getArtist(id) {
-    try {
-      const response = await this.request(`/artist/${id}`)
-      return this.transformArtist(response)
-    } catch (error) {
-      console.error('Deezer getArtist error:', error)
-      throw error
-    }
-  }
-
-  async getArtistTopTracks(id, market) {
-    try {
-      let first_response = await this.request(`/artist/${id}/top`)
-      let second_response = await this.request(`/artist/${id}/top?index=5`)
-        let response = first_response.data.concat(second_response.data)
-      return response.map(track => this.transformTrack(track))
-    } catch (error) {
-      console.error('Deezer getArtistTopTracks error:', error)
-      throw error
-    }
-  }
-
-  // Cache for artist albums to avoid multiple requests
-  artistAlbumsCache = new Map()
-  // Cache for loved-tracks playlist id per user
-  lovedPlaylistIdCache = new Map()
-
-  async getArtistAlbums(id, includeGroups, limit = 20) {
-    try {
-      const allAlbums = await this.getAllArtistAlbums(id)
-      // Filter to only include albums (exclude singles, EPs, and compilations)
-      const albums = allAlbums.filter(album =>
-        album.record_type === 'album'
-      ).slice(0, limit) // Apply limit after filtering
-      return albums.map(album => this.transformAlbum(album))
-    } catch (error) {
-      console.error('Deezer getArtistAlbums error:', error)
-      throw error
-    }
-  }
-
-  async getRelatedArtists(id) {
-    try {
-      const response = await this.request(`/artist/${id}/related`)
-      return response.data.map(artist => this.transformArtist(artist))
-    } catch (error) {
-      console.error('Deezer getRelatedArtists error:', error)
-      throw error
-    }
-  }
-
-  // Single method to get all artist albums (cached) - uses fixed limit for consistent caching
-  async getAllArtistAlbums(id) {
-    const cacheKey = `${id}` // Remove limit from cache key to ensure all methods share same cache
-
-    if (this.artistAlbumsCache.has(cacheKey)) {
-      console.log('Using cached albums for artist:', id)
-      return this.artistAlbumsCache.get(cacheKey)
+    getServiceType() {
+        return this.serviceType
     }
 
-    try {
-      console.log('Fetching albums from API for artist:', id)
-      const response = await this.request(`/artist/${id}/albums?limit=50`) // Fixed limit for caching
-      this.artistAlbumsCache.set(cacheKey, response.data)
-      return response.data
-    } catch (error) {
-      console.error('Deezer getAllArtistAlbums error:', error)
-      throw error
+    // Authentication methods
+    async authenticate() {
+        // TODO: Implement Deezer OAuth flow
+        throw new Error('Deezer authentication not yet implemented')
     }
-  }
 
-  // Additional artist methods for deeper functionality (now using cached data)
-  async getArtistSingles(id, limit = 10) {
-    try {
-      const allAlbums = await this.getAllArtistAlbums(id)
-      // Filter for singles and EPs
-      const singles = allAlbums.filter(album =>
-        album.record_type === 'single' || album.record_type === 'ep'
-      ).slice(0, limit) // Apply limit after filtering
-      return singles.map(album => this.transformAlbum(album))
-    } catch (error) {
-      console.error('Deezer getArtistSingles error:', error)
-      throw error
+    async refreshToken() {
+        // TODO: Implement Deezer token refresh
+        throw new Error('Deezer token refresh not yet implemented')
     }
-  }
 
-  async getArtistAppearances(id, limit = 10) {
-    try {
-      // Get artist albums and filter for compilation albums where artist appears
-      const response = await this.request(`/artist/${id}/albums`)
-      const albums = response.data || []
-
-      // Filter for compilation albums (where artist appears but doesn't own)
-      const compilationAlbums = albums.filter(album =>
-        album.record_type === 'compilation' ||
-        (album.artist && album.artist.id !== parseInt(id))
-      ).slice(0, limit)
-
-      return compilationAlbums.map(album => this.transformAlbum(album))
-    } catch (error) {
-      console.error('Deezer getArtistAppearances error:', error)
-      throw error
+    logout() {
+        // TODO: Implement Deezer logout
+        throw new Error('Deezer logout not yet implemented')
     }
-  }
 
-  async getArtistPlaylists(id, limit = 10) {
-    try {
-      // Use artist playlists endpoint to find playlists featuring this artist
-      const response = await this.request(`/artist/${id}/playlists`)
-      const playlists = response.data || []
-      return playlists.slice(0, limit).map(playlist => this.transformPlaylist(playlist))
-    } catch (error) {
-      console.error('Deezer getArtistPlaylists error:', error)
-      throw error
+    isAuthenticated() {
+        // TODO: Check Deezer authentication status
+        return false
     }
-  }
 
-  async getArtistRadio(id) {
-    try {
-      const response = await this.request(`/artist/${id}/radio`)
-      return response.data.map(track => this.transformTrack(track))
-    } catch (error) {
-      console.error('Deezer getArtistRadio error:', error)
-      throw error
+    // User data methods
+    async getCurrentUser() {
+        throw new Error('Deezer getCurrentUser not yet implemented')
     }
-  }
 
-  // Album methods
-  async getAlbum(id) {
-    try {
-      const response = await this.request(`/album/${id}`)
-      return this.transformAlbum(response)
-    } catch (error) {
-      console.error('Deezer getAlbum error:', error)
-      throw error
+    async getTopTracks(timeRange) {
+        throw new Error('Deezer getTopTracks not yet implemented')
     }
-  }
 
-  async getAlbumTracks(id) {
-    try {
-      const response = await this.request(`/album/${id}/tracks`)
-      return response.data.map(track => this.transformTrack(track))
-    } catch (error) {
-      console.error('Deezer getAlbumTracks error:', error)
-      throw error
+    async getTopArtists(timeRange) {
+        throw new Error('Deezer getTopArtists not yet implemented')
     }
-  }
 
-  // Track methods
-  async getTrack(id) {
-    try {
-      const response = await this.request(`/track/${id}`)
-      return this.transformTrack(response)
-    } catch (error) {
-      console.error('Deezer getTrack error:', error)
-      throw error
-    }
-  }
-
-  // Helper method to create owner images array
-  createOwnerImages(userData) {
-    if (!userData) return []
-
-    const images = []
-    if (userData.picture_small) images.push(new Image(userData.picture_small, 56, 56))
-    if (userData.picture_medium) images.push(new Image(userData.picture_medium, 250, 250))
-    if (userData.picture_big) images.push(new Image(userData.picture_big, 500, 500))
-    if (userData.picture_xl) images.push(new Image(userData.picture_xl, 1000, 1000))
-
-    return images
-  }
-
-  // Playlist methods
-  async getPlaylist(id) {
-    try {
-      const response = await this.request(`/playlist/${id}`)
-      const playlist = this.transformPlaylist(response)
-
-      // Enrich owner data with user profile information
-      if (playlist && playlist.owner && playlist.owner.id) {
+    async getSavedAlbums(offset, limit) {
         try {
-          const userResponse = await this.request(`/user/${playlist.owner.id}`)
-          if (userResponse) {
-            // Update owner with complete user data
-            playlist.owner = {
-              ...playlist.owner,
-              images: this.createOwnerImages(userResponse),
-              picture: userResponse.picture,
-              picture_small: userResponse.picture_small,
-              picture_medium: userResponse.picture_medium,
-              picture_big: userResponse.picture_big,
-              picture_xl: userResponse.picture_xl,
-              country: userResponse.country,
-              tracklist: userResponse.tracklist
+            const userId = localStorage.getItem('deezer-user-id')
+            if (!userId) {
+                return []
             }
-          }
-        } catch (userError) {
-          console.warn(`Failed to fetch user data for playlist ${id}:`, userError)
-          // Continue with existing owner data if user fetch fails
+
+            const safeLimit = typeof limit === 'number' && limit > 0 ? limit : 20
+            const safeOffset = typeof offset === 'number' && offset >= 0 ? offset : 0
+
+            const resp = await this.request(`/user/${userId}/albums?limit=${safeLimit}&index=${safeOffset}`)
+            const data = resp?.data || []
+
+            // Return array of { album: Album, added_at }
+            return data
+                .map(a => ({
+                    album: this.transformAlbum(a),
+                    added_at: a?.time_add ? new Date(a.time_add * 1000).toISOString() : new Date().toISOString()
+                }))
+                .filter(item => item.album !== null)
+        } catch (error) {
+            console.error('Deezer getSavedAlbums error:', error)
+            throw error
         }
-      }
-
-      return playlist
-    } catch (error) {
-      console.error('Deezer getPlaylist error:', error)
-      throw error
     }
-  }
 
+    async getSavedTracks(offset, limit) {
+        try {
+            // Require user id set via DeezerWelcomeModal
+            const userId = localStorage.getItem('deezer-user-id')
+            if (!userId) {
+                return {items: [], total: 0}
+            }
 
-  async getPlaylists(userId, limit = 20, offset = 0) {
-    try {
-        const response = await this.request(`/user/${userId}/playlists?limit=${limit}&index=${offset}`)
-      const data = response?.data || []
-      return data.map(playlist => this.transformPlaylist(playlist)).filter(p => p !== null)
-    } catch (error) {
-      console.error('Deezer getPlaylists error:', error)
-      throw error
+            // Resolve loved playlist id (cached, with paginated discovery fallback)
+            const lovedId = await this.getOrFindLovedPlaylistId(userId)
+            if (!lovedId) {
+                return {items: [], total: 0}
+            }
+
+            // Fetch tracks from the loved playlist with pagination
+            const safeLimit = typeof limit === 'number' && limit > 0 ? limit : 50
+            const safeOffset = typeof offset === 'number' && offset >= 0 ? offset : 0
+            const playlistResponse = await this.request(`/playlist/${lovedId}?limit=${safeLimit}&index=${safeOffset}`)
+
+            const items = (playlistResponse?.tracks?.data || []).map(track => ({
+                track: this.transformTrack(track),
+                // Deezer exposes time_add (unix seconds) on items in some endpoints; fallback to now
+                added_at: track?.time_add ? new Date(track.time_add * 1000).toISOString() : new Date().toISOString()
+            })).filter(i => i.track !== null)
+
+            const total = playlistResponse?.nb_tracks || playlistResponse?.tracks?.total || playlistResponse?.tracks?.data?.length || 0
+            return {items, total}
+        } catch (error) {
+            console.error('Deezer getSavedTracks error:', error)
+            throw error
+        }
     }
-  }
+
+    // Resolve and cache the loved playlist id for a user, paginating through all playlists if needed
+    async getOrFindLovedPlaylistId(userId) {
+        // Check cache first
+        if (this.lovedPlaylistIdCache.has(userId)) {
+            return this.lovedPlaylistIdCache.get(userId)
+        }
+
+        // Paginate over user playlists to find is_loved_track === true
+        const pageSize = 100
+        let index = 0
+        let total = Infinity
+
+        while (index < total) {
+            const resp = await this.request(`/user/${userId}/playlists?limit=${pageSize}&index=${index}`)
+            const data = resp?.data || []
+            if (typeof resp?.total === 'number') total = resp.total
+
+            // Try to find loved within this page
+            const loved = data.find(p => p && p.is_loved_track === true)
+            if (loved && loved.id) {
+                const lovedId = loved.id
+                this.lovedPlaylistIdCache.set(userId, lovedId)
+                return lovedId
+            }
+
+            // If page smaller than pageSize, no more pages
+            if (data.length < pageSize) break
+            index += pageSize
+        }
+
+        // Not found
+        this.lovedPlaylistIdCache.set(userId, null)
+        return null
+    }
+
+    async getFollowedArtists(limit = 50, offset = 0) {
+        try {
+            const userId = localStorage.getItem('deezer-user-id')
+            if (!userId) {
+                return []
+            }
+
+            const safeLimit = typeof limit === 'number' && limit > 0 ? limit : 50
+            const safeOffset = typeof offset === 'number' && offset >= 0 ? offset : 0
+
+            const resp = await this.request(`/user/${userId}/artists?limit=${safeLimit}&index=${safeOffset}`)
+            const data = resp?.data || []
+
+            return data
+                .map(artist => this.transformArtist(artist))
+                .filter(a => a !== null)
+        } catch (error) {
+            console.error('Deezer getFollowedArtists error:', error)
+            throw error
+        }
+    }
+
+    // Playlist methods
+    async getPlaylists(offset, limit) {
+        throw new Error('Deezer getPlaylists not yet implemented')
+    }
+
+    async getSpotifyPlaylists(offset, limit) {
+        throw new Error('Deezer getPlaylists not yet implemented')
+    }
+
+
+    async getPlaylist(id) {
+        throw new Error('Deezer getPlaylist not yet implemented')
+    }
+
+    async getPlaylistTracks(id, offset = 0, limit = 50) {
+        try {
+            const response = await this.request(`/playlist/${id}/tracks?limit=${limit}&index=${offset}`)
+            return response.data.map(track => this.transformTrack(track))
+        } catch (error) {
+            console.error('Deezer getPlaylistTracks error:', error)
+            throw error
+        }
+    }
+
+    async createPlaylist(name, description) {
+        throw new Error('Deezer createPlaylist not yet implemented')
+    }
+
+    async addTracksToPlaylist(playlistId, trackIds) {
+        throw new Error('Deezer addTracksToPlaylist not yet implemented')
+    }
+
+    // Artist methods
+    async getArtist(id) {
+        try {
+            const response = await this.request(`/artist/${id}`)
+            return this.transformArtist(response)
+        } catch (error) {
+            console.error('Deezer getArtist error:', error)
+            throw error
+        }
+    }
+
+    async getArtistTopTracks(id, market) {
+        try {
+            let first_response = await this.request(`/artist/${id}/top`)
+            let second_response = await this.request(`/artist/${id}/top?index=5`)
+            let response = first_response.data.concat(second_response.data)
+            return response.map(track => this.transformTrack(track))
+        } catch (error) {
+            console.error('Deezer getArtistTopTracks error:', error)
+            throw error
+        }
+    }
+
+    // Cache for artist albums to avoid multiple requests
+    artistAlbumsCache = new Map()
+    // Cache for loved-tracks playlist id per user
+    lovedPlaylistIdCache = new Map()
+
+    async getArtistAlbums(id, includeGroups, limit = 20) {
+        try {
+            const allAlbums = await this.getAllArtistAlbums(id)
+            // Filter to only include albums (exclude singles, EPs, and compilations)
+            const albums = allAlbums.filter(album =>
+                album.record_type === 'album'
+            ).slice(0, limit) // Apply limit after filtering
+            return albums.map(album => this.transformAlbum(album))
+        } catch (error) {
+            console.error('Deezer getArtistAlbums error:', error)
+            throw error
+        }
+    }
+
+    async getRelatedArtists(id) {
+        try {
+            const response = await this.request(`/artist/${id}/related`)
+            return response.data.map(artist => this.transformArtist(artist))
+        } catch (error) {
+            console.error('Deezer getRelatedArtists error:', error)
+            throw error
+        }
+    }
+
+    // Single method to get all artist albums (cached) - uses fixed limit for consistent caching
+    async getAllArtistAlbums(id) {
+        const cacheKey = `${id}` // Remove limit from cache key to ensure all methods share same cache
+
+        if (this.artistAlbumsCache.has(cacheKey)) {
+            console.log('Using cached albums for artist:', id)
+            return this.artistAlbumsCache.get(cacheKey)
+        }
+
+        try {
+            console.log('Fetching albums from API for artist:', id)
+            const response = await this.request(`/artist/${id}/albums?limit=50`) // Fixed limit for caching
+            this.artistAlbumsCache.set(cacheKey, response.data)
+            return response.data
+        } catch (error) {
+            console.error('Deezer getAllArtistAlbums error:', error)
+            throw error
+        }
+    }
+
+    // Additional artist methods for deeper functionality (now using cached data)
+    async getArtistSingles(id, limit = 10) {
+        try {
+            const allAlbums = await this.getAllArtistAlbums(id)
+            // Filter for singles and EPs
+            const singles = allAlbums.filter(album =>
+                album.record_type === 'single' || album.record_type === 'ep'
+            ).slice(0, limit) // Apply limit after filtering
+            return singles.map(album => this.transformAlbum(album))
+        } catch (error) {
+            console.error('Deezer getArtistSingles error:', error)
+            throw error
+        }
+    }
+
+    async getArtistAppearances(id, limit = 10) {
+        try {
+            // Get artist albums and filter for compilation albums where artist appears
+            const response = await this.request(`/artist/${id}/albums`)
+            const albums = response.data || []
+
+            // Filter for compilation albums (where artist appears but doesn't own)
+            const compilationAlbums = albums.filter(album =>
+                album.record_type === 'compilation' ||
+                (album.artist && album.artist.id !== parseInt(id))
+            ).slice(0, limit)
+
+            return compilationAlbums.map(album => this.transformAlbum(album))
+        } catch (error) {
+            console.error('Deezer getArtistAppearances error:', error)
+            throw error
+        }
+    }
+
+    async getArtistPlaylists(id, limit = 10) {
+        try {
+            // Use artist playlists endpoint to find playlists featuring this artist
+            const response = await this.request(`/artist/${id}/playlists`)
+            const playlists = response.data || []
+            return playlists.slice(0, limit).map(playlist => this.transformPlaylist(playlist))
+        } catch (error) {
+            console.error('Deezer getArtistPlaylists error:', error)
+            throw error
+        }
+    }
+
+    async getArtistRadio(id) {
+        try {
+            const response = await this.request(`/artist/${id}/radio`)
+            return response.data.map(track => this.transformTrack(track))
+        } catch (error) {
+            console.error('Deezer getArtistRadio error:', error)
+            throw error
+        }
+    }
+
+    // Album methods
+    async getAlbum(id) {
+        try {
+            const response = await this.request(`/album/${id}`)
+            return this.transformAlbum(response)
+        } catch (error) {
+            console.error('Deezer getAlbum error:', error)
+            throw error
+        }
+    }
+
+    async getAlbumTracks(id) {
+        try {
+            const response = await this.request(`/album/${id}/tracks`)
+            return response.data.map(track => this.transformTrack(track))
+        } catch (error) {
+            console.error('Deezer getAlbumTracks error:', error)
+            throw error
+        }
+    }
+
+    // Track methods
+    async getTrack(id) {
+        try {
+            const response = await this.request(`/track/${id}`)
+            return this.transformTrack(response)
+        } catch (error) {
+            console.error('Deezer getTrack error:', error)
+            throw error
+        }
+    }
+
+    // Helper method to create owner images array
+    createOwnerImages(userData) {
+        if (!userData) return []
+
+        const images = []
+        if (userData.picture_small) images.push(new Image(userData.picture_small, 56, 56))
+        if (userData.picture_medium) images.push(new Image(userData.picture_medium, 250, 250))
+        if (userData.picture_big) images.push(new Image(userData.picture_big, 500, 500))
+        if (userData.picture_xl) images.push(new Image(userData.picture_xl, 1000, 1000))
+
+        return images
+    }
+
+    // Playlist methods
+    async getPlaylist(id) {
+        try {
+            const response = await this.request(`/playlist/${id}`)
+            const playlist = this.transformPlaylist(response)
+
+            // Enrich owner data with user profile information
+            if (playlist && playlist.owner && playlist.owner.id) {
+                try {
+                    const userResponse = await this.request(`/user/${playlist.owner.id}`)
+                    if (userResponse) {
+                        // Update owner with complete user data
+                        playlist.owner = {
+                            ...playlist.owner,
+                            images: this.createOwnerImages(userResponse),
+                            picture: userResponse.picture,
+                            picture_small: userResponse.picture_small,
+                            picture_medium: userResponse.picture_medium,
+                            picture_big: userResponse.picture_big,
+                            picture_xl: userResponse.picture_xl,
+                            country: userResponse.country,
+                            tracklist: userResponse.tracklist
+                        }
+                    }
+                } catch (userError) {
+                    console.warn(`Failed to fetch user data for playlist ${id}:`, userError)
+                    // Continue with existing owner data if user fetch fails
+                }
+            }
+
+            return playlist
+        } catch (error) {
+            console.error('Deezer getPlaylist error:', error)
+            throw error
+        }
+    }
+
+
+    async getPlaylists(userId, limit = 20, offset = 0) {
+        try {
+            const response = await this.request(`/user/${userId}/playlists?limit=${limit}&index=${offset}`)
+            const data = response?.data || []
+            return data.map(playlist => this.transformPlaylist(playlist)).filter(p => p !== null)
+        } catch (error) {
+            console.error('Deezer getPlaylists error:', error)
+            throw error
+        }
+    }
 
     async getSpotifyPlaylists(limit = 20, offset = 0) {
         try {
@@ -460,670 +460,704 @@ export class DeezerService extends MusicServiceInterface {
     }
 
 
-
-  // Search and discovery
-  async search(query, types, limit = 20) {
-    try {
-      const searchResults = {
-        tracks: [],
-        artists: [],
-        albums: [],
-        playlists: []
-      }
-
-      // Search for each type if specified
-      if (!types || types.includes('track')) {
-        const tracksResponse = await this.request(`/search/track?q=${encodeURIComponent(query)}&limit=${limit}`)
-        console.log('Tracks response:', tracksResponse)
-        if (tracksResponse && tracksResponse.data && Array.isArray(tracksResponse.data)) {
-          searchResults.tracks = tracksResponse.data.map(track => this.transformTrack(track)).filter(track => track !== null)
-        } else {
-          console.warn('Invalid tracks response structure:', tracksResponse)
-          searchResults.tracks = []
-        }
-      }
-
-      if (!types || types.includes('artist')) {
-        const artistsResponse = await this.request(`/search/artist?q=${encodeURIComponent(query)}&limit=${limit}`)
-        console.log('Artists response:', artistsResponse)
-        if (artistsResponse && artistsResponse.data && Array.isArray(artistsResponse.data)) {
-          searchResults.artists = artistsResponse.data.map(artist => this.transformArtist(artist)).filter(artist => artist !== null)
-        } else {
-          console.warn('Invalid artists response structure:', artistsResponse)
-          searchResults.artists = []
-        }
-      }
-
-      if (!types || types.includes('album')) {
-        const albumsResponse = await this.request(`/search/album?q=${encodeURIComponent(query)}&limit=${limit}`)
-        console.log('Albums response:', albumsResponse)
-        if (albumsResponse && albumsResponse.data && Array.isArray(albumsResponse.data)) {
-          searchResults.albums = albumsResponse.data.map(album => this.transformAlbum(album)).filter(album => album !== null)
-        } else {
-          console.warn('Invalid albums response structure:', albumsResponse)
-          searchResults.albums = []
-        }
-      }
-
-      if (!types || types.includes('playlist')) {
-        const playlistsResponse = await this.request(`/search/playlist?q=${encodeURIComponent(query)}&limit=${limit}`)
-        console.log('Playlists response:', playlistsResponse)
-        if (playlistsResponse && playlistsResponse.data && Array.isArray(playlistsResponse.data)) {
-          const playlists = playlistsResponse.data.map(playlist => this.transformPlaylist(playlist)).filter(playlist => playlist !== null)
-          // Enrich playlists with missing descriptions
-          searchResults.playlists = await this.enrichPlaylistsWithDescriptions(playlists)
-        } else {
-          console.warn('Invalid playlists response structure:', playlistsResponse)
-          searchResults.playlists = []
-        }
-      }
-
-      return searchResults
-    } catch (error) {
-      console.error('Deezer search error:', error)
-      throw error
-    }
-  }
-
-  async getNewReleases(limit = 20, offset = 0) {
-    try {
-      const response = await this.request(`/editorial/0/releases`)
-      const albums = response.data.slice(offset, offset + limit) // Apply offset and limit
-      return albums.map(album => this.transformAlbum(album))
-    } catch (error) {
-      console.error('Deezer getNewReleases error:', error)
-      throw error
-    }
-  }
-
-  async getRecommendations(params) {
-    try {
-      // Handle seed tracks by getting similar tracks from Last.fm and searching in Deezer
-      if (params.seedTracks && params.seedTracks.length > 0) {
-        const recommendations = []
-
-        for (const seedTrack of params.seedTracks) {
-            console.log('seedTrack:', seedTrack)
-          try {
-            // Use title_short if available, otherwise fall back to full name
-            const trackTitle = seedTrack.title_short || seedTrack.name
-            const fallbackTitle = seedTrack.title_short ? seedTrack.name : null
-            console.log(`Searching Last.fm with title: "${trackTitle}" (original: "${seedTrack.name}")`)
-
-            // Get similar tracks from Last.fm for this seed track
-            const similarTracks = await this.getSimilarTracksFromLastfm(
-              seedTrack.artists[0].name,
-              trackTitle,
-              params.limit || 10,
-              fallbackTitle
-            )
-            recommendations.push(...similarTracks)
-          } catch (error) {
-            console.error(`Error getting similar tracks for seed track "${seedTrack.name}":`, error)
-          }
-        }
-
-        // Remove duplicates and limit results
-        const uniqueRecommendations = this.removeDuplicateTracks(recommendations)
-        return uniqueRecommendations.slice(0, params.limit || 20)
-      }
-
-      // Handle seed artists using Deezer's artist radio endpoint
-      if (params.seedArtists && params.seedArtists.length > 0) {
-        const artistId = params.seedArtists[0].id
-        const response = await this.request(`/artist/${artistId}/radio`)
-        return response.data.map(track => this.transformTrack(track))
-      }
-
-      // If no seed data, return empty array
-      return []
-    } catch (error) {
-      console.error('Deezer getRecommendations error:', error)
-      throw error
-    }
-  }
-
-
-  // User methods
-  async getUser(id) {
-    try {
-      const response = await this.request(`/user/${id}`)
-      return {
-        id: response.id,
-        display_name: response.name,
-        name: response.name,
-        country: response.country,
-        images: this.transformImages([
-          { url: response.picture_small, height: 56, width: 56 },
-          { url: response.picture_medium, height: 250, width: 250 },
-          { url: response.picture_big, height: 500, width: 500 },
-          { url: response.picture_xl, height: 1000, width: 1000 }
-        ])
-      }
-    } catch (error) {
-      console.error('Deezer getUser error:', error)
-      throw error
-    }
-  }
-
-  // Follow/Unfollow methods
-  async followArtist(id) {
-    throw new Error('Deezer followArtist not yet implemented')
-  }
-
-  async unfollowArtist(id) {
-    throw new Error('Deezer unfollowArtist not yet implemented')
-  }
-
-  async followAlbum(id) {
-    throw new Error('Deezer followAlbum not yet implemented')
-  }
-
-  async unfollowAlbum(id) {
-    throw new Error('Deezer unfollowAlbum not yet implemented')
-  }
-
-  async followTrack(id) {
-    throw new Error('Deezer followTrack not yet implemented')
-  }
-
-  async unfollowTrack(id) {
-    throw new Error('Deezer unfollowTrack not yet implemented')
-  }
-
-  async followPlaylist(id) {
-    throw new Error('Deezer followPlaylist not yet implemented')
-  }
-
-  async unfollowPlaylist(id) {
-    throw new Error('Deezer unfollowPlaylist not yet implemented')
-  }
-
-  // Check following status
-  async checkFollowingArtist(id) {
-    throw new Error('Deezer checkFollowingArtist not yet implemented')
-  }
-
-  async checkFollowingAlbum(id) {
-    throw new Error('Deezer checkFollowingAlbum not yet implemented')
-  }
-
-  async checkFollowingTrack(id) {
-    throw new Error('Deezer checkFollowingTrack not yet implemented')
-  }
-
-  async checkFollowingPlaylist(id) {
-    throw new Error('Deezer checkFollowingPlaylist not yet implemented')
-  }
-
-  // Helper method for making requests
-  async request(endpoint) {
-    // Try multiple CORS proxy options
-    const proxies = [
-      'https://corsproxy.io/?',
-      'https://api.codetabs.com/v1/proxy?quest=',
-      'https://thingproxy.freeboard.io/fetch/'
-    ]
-
-    const targetUrl = `${this.baseURL}${endpoint}`
-
-    for (let i = 0; i < proxies.length; i++) {
-      try {
-        const proxyUrl = proxies[i]
-        const fullUrl = i === 0 ? `${proxyUrl}${encodeURIComponent(targetUrl)}` : `${proxyUrl}${targetUrl}`
-
-        const response = await fetch(fullUrl, {
-          headers: {
-            'Accept': 'application/json'
-          }
-        })
-
-        if (response.ok) {
-          const data = await response.json()
-          console.log(`Proxy ${i + 1} success for ${endpoint}:`, data)
-          return data
-        }
-      } catch (error) {
-        console.warn(`Proxy ${i + 1} failed:`, error.message)
-        if (i === proxies.length - 1) {
-          throw new Error(`All CORS proxies failed. Last error: ${error.message}`)
-        }
-      }
-    }
-  }
-
-  // Transformation methods to convert Deezer format to our standard format
-  transformTrack(data) {
-    if (!data || !data.id) {
-      console.warn('Invalid track data:', data)
-      return null
-    }
-
-    // Handle contributors array for more detailed artist information
-    let artists = []
-    if (data.contributors && Array.isArray(data.contributors)) {
-      artists = data.contributors.map(contributor => this.transformArtist(contributor))
-    } else if (data.artist) {
-      artists = [this.transformArtist(data.artist)]
-    }
-
-    const shortTitle = this.generateShortTitle(data.title)
-    console.log(`Deezer track: "${data.title}" -> short: "${shortTitle}"`)
-
-    return {
-      id: data.id.toString(),
-      name: data.title,
-      title_short: shortTitle,
-      artists: artists,
-      album: data.album ? this.transformAlbum(data.album) : null,
-      duration_ms: parseInt(data.duration) * 1000, // Convert seconds to milliseconds
-      preview_url: data.preview || null,
-      previewUrl: data.preview || null,
-      external_urls: {
-        spotify: data.link,
-        deezer: data.link
-      },
-      images: this.transformImages(data.album?.cover_medium ? [{
-        url: data.album.cover_medium,
-        height: 250,
-        width: 250
-      }] : []),
-      // Additional Deezer-specific fields
-      readable: data.readable || false,
-      rank: data.rank || 0,
-      explicit_lyrics: data.explicit_lyrics || false,
-      explicit_content_lyrics: data.explicit_content_lyrics || 0,
-      explicit_content_cover: data.explicit_content_cover || 0,
-      service: this.serviceType
-    }
-  }
-
-  transformArtist(data) {
-    if (!data || !data.id) {
-      console.warn('Invalid artist data:', data)
-      return null
-    }
-
-    return {
-      id: data.id.toString(),
-      name: data.name,
-      images: this.transformImages(data.picture_medium ? [{
-        url: data.picture_medium,
-        height: 250,
-        width: 250
-      }] : []),
-      external_urls: {
-        spotify: data.link,
-        deezer: data.link
-      },
-      followers: {
-        total: data.nb_fan || 0
-      },
-      // Additional Deezer-specific fields
-      genres: [], // Deezer doesn't provide genres in artist data
-      popularity: 0, // Deezer doesn't provide popularity score
-      nb_album: data.nb_album || 0,
-      radio: data.radio || false,
-      service: this.serviceType
-    }
-  }
-
-  transformAlbum(data) {
-    if (!data || !data.id) {
-      console.warn('Invalid album data:', data)
-      return null
-    }
-
-    return {
-      id: data.id.toString(),
-      name: data.title,
-      artists: data.artist ? [this.transformArtist(data.artist)] : [],
-      images: this.transformImages(data.cover_medium ? [{
-        url: data.cover_medium,
-        height: 250,
-        width: 250
-      }] : []),
-      external_urls: {
-        spotify: data.link,
-        deezer: data.link
-      },
-      total_tracks: data.nb_tracks || 0,
-      // Additional Deezer-specific fields
-      release_date: data.release_date || null,
-      record_type: data.record_type || 'album',
-      fans: data.fans || 0,
-      genre_id: data.genre_id || null,
-      explicit_lyrics: data.explicit_lyrics || false,
-      service: this.serviceType
-    }
-  }
-
-  transformPlaylist(data) {
-    if (!data || !data.id) {
-      console.warn('Invalid playlist data:', data)
-      return null
-    }
-
-    // Transform tracks if they exist in the playlist data
-    let tracks = null
-      console.log('809', data.tracks)
-    if (data.tracks && data.tracks.data && Array.isArray(data.tracks.data)) {
-      tracks = {
-        items: data.tracks.data.map(track => ({
-          track: this.transformTrack(track)
-        })),
-        total: data.nb_tracks || data.tracks.data.length
-      }
-    } else {
-      tracks = {
-        total: data.nb_tracks || 0
-      }
-    }
-    console.log('playlist 767', data)
-    return {
-      id: data.id.toString(),
-      name: data.title,
-      description: data.description || '',
-      images: this.transformImages([
-        { url: data.picture_big, height: 500, width: 500 },
-        { url: data.picture_xl, height: 1000, width: 1000 }
-      ]),
-      external_urls: {
-        spotify: data.link,
-        deezer: data.link
-      },
-      tracks: tracks,
-      owner: {
-        display_name: data.creator?.name || data.user?.name || 'Unknown',
-        external_urls: {
-          deezer: data.creator?.link || data.user?.link || `https://www.deezer.com/profile/${(data.creator?.id || data.user?.id)?.toString() || 'unknown'}`
-        },
-        href: `https://api.deezer.com/user/${(data.creator?.id || data.user?.id)?.toString() || 'unknown'}`,
-        id: (data.creator?.id || data.user?.id)?.toString() || 'unknown',
-        type: "user",
-        uri: `deezer:user:${(data.creator?.id || data.user?.id)?.toString() || 'unknown'}`,
-        // Additional Deezer-specific fields
-        images: this.createOwnerImages(data.creator || data.user),
-        country: data.creator?.country || data.user?.country,
-        tracklist: data.creator?.tracklist || data.user?.tracklist
-      },
-      public: data.public || false,
-      service: this.serviceType
-    }
-  }
-
-
-  transformImages(images) {
-    if (!images || !Array.isArray(images)) {
-      return []
-    }
-    return images.map(img => ({
-      url: img.url,
-      height: img.height || null,
-      width: img.width || null
-    }))
-  }
-
-  // ==================== HELPER METHODS ====================
-
-  /**
-   * Generate a short title by removing common suffixes and extra information
-   * @param {string} fullTitle - The full track title
-   * @returns {string} - The shortened title
-   */
-  generateShortTitle(fullTitle) {
-    if (!fullTitle) return ''
-
-    let shortTitle = fullTitle.trim()
-
-    // Remove common remix indicators
-    const remixPatterns = [
-      /\s*-\s*[^-]*(?:remix|edit|version|mix|radio|single|extended|club|dub|instrumental|acoustic|live|demo|original|explicit|clean)\s*$/i,
-      /\s*\([^)]*(?:remix|edit|version|mix|radio|single|extended|club|dub|instrumental|acoustic|live|demo|original|explicit|clean)[^)]*\)\s*$/i,
-      /\s*\[[^\]]*(?:remix|edit|version|mix|radio|single|extended|club|dub|instrumental|acoustic|live|demo|original|explicit|clean)[^\]]*\]\s*$/i
-    ]
-
-    for (const pattern of remixPatterns) {
-      shortTitle = shortTitle.replace(pattern, '')
-    }
-
-    // Remove common prefixes
-    const prefixPatterns = [
-      /^(?:feat\.|ft\.|featuring)\s*/i,
-      /^(?:prod\.|produced by)\s*/i
-    ]
-
-    for (const pattern of prefixPatterns) {
-      shortTitle = shortTitle.replace(pattern, '')
-    }
-
-    // Remove extra whitespace and return
-    return shortTitle.trim()
-  }
-
-  /**
-   * Remove duplicate tracks based on track ID
-   * @param {Array} tracks - Array of track objects
-   * @returns {Array} Array of unique tracks
-   */
-  removeDuplicateTracks(tracks) {
-    const seen = new Set()
-    return tracks.filter(track => {
-      if (seen.has(track.id)) {
-        return false
-      }
-      seen.add(track.id)
-      return true
-    })
-  }
-
-  // ==================== LAST.FM INTEGRATION METHODS ====================
-
-  /**
-   * Get similar tracks from Last.fm and search them in Deezer
-   * @param {string} artist - Artist name
-   * @param {string} track - Track name
-   * @param {number} limit - Number of similar tracks to fetch (default: 10)
-   * @returns {Promise<Object>} Combined results from Last.fm and Deezer
-   */
-  async getSimilarTracksForDeezer(artist, track, limit = 10) {
-    try {
-      if (!artist || !track) {
-        throw new Error('Artist and track parameters are required')
-      }
-
-      // Get similar tracks from Last.fm
-      const lastfmApiKey = ''
-      const lastfmUrl = `https://ws.audioscrobbler.com/2.0/?method=track.getsimilar&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&api_key=${lastfmApiKey}&format=json&limit=${limit}`
-
-      const lastfmResponse = await fetch(lastfmUrl)
-      const lastfmData = await lastfmResponse.json()
-
-      if (!lastfmData.similartracks || !lastfmData.similartracks.track) {
-        return {
-          originalTrack: { artist, track },
-          similarTracks: [],
-          deezerResults: [],
-          summary: {
-            totalSimilarTracks: 0,
-            foundInDeezer: 0,
-            notFoundInDeezer: 0
-          }
-        }
-      }
-
-      const similarTracks = Array.isArray(lastfmData.similartracks.track)
-        ? lastfmData.similartracks.track
-        : [lastfmData.similartracks.track]
-
-      // Search each similar track in Deezer
-      const deezerResults = []
-
-      for (const lastfmTrack of similarTracks) {
+    // Search and discovery
+    async search(query, types, limit = 20) {
         try {
-          const searchQuery = `${lastfmTrack.artist.name} ${lastfmTrack.name}`
-          const deezerResponse = await this.request(`/search/track?q=${encodeURIComponent(searchQuery)}&limit=1`)
-
-          if (deezerResponse && deezerResponse.data && deezerResponse.data.length > 0) {
-            const deezerTrack = deezerResponse.data[0]
-            deezerResults.push({
-              lastfmTrack: {
-                name: lastfmTrack.name,
-                artist: lastfmTrack.artist.name,
-                playcount: lastfmTrack.playcount,
-                match: lastfmTrack.match,
-                url: lastfmTrack.url,
-                duration: lastfmTrack.duration,
-                images: lastfmTrack.image
-              },
-              deezerTrack: this.transformTrack(deezerTrack),
-              searchQuery: searchQuery
-            })
-          } else {
-            // Track not found in Deezer
-            deezerResults.push({
-              lastfmTrack: {
-                name: lastfmTrack.name,
-                artist: lastfmTrack.artist.name,
-                playcount: lastfmTrack.playcount,
-                match: lastfmTrack.match,
-                url: lastfmTrack.url,
-                duration: lastfmTrack.duration,
-                images: lastfmTrack.image
-              },
-              deezerTrack: null,
-              searchQuery: searchQuery,
-              error: 'Track not found in Deezer'
-            })
-          }
-        } catch (error) {
-          console.error(`Error searching track "${lastfmTrack.name}" by "${lastfmTrack.artist.name}" in Deezer:`, error)
-          deezerResults.push({
-            lastfmTrack: {
-              name: lastfmTrack.name,
-              artist: lastfmTrack.artist.name,
-              playcount: lastfmTrack.playcount,
-              match: lastfmTrack.match,
-              url: lastfmTrack.url,
-              duration: lastfmTrack.duration,
-              images: lastfmTrack.image
-            },
-            deezerTrack: null,
-            searchQuery: `${lastfmTrack.artist.name} ${lastfmTrack.name}`,
-            error: 'Search failed'
-          })
-        }
-      }
-
-      return {
-        originalTrack: {
-          artist,
-          track,
-          lastfmUrl: `https://www.last.fm/music/${encodeURIComponent(artist)}/_/${encodeURIComponent(track)}`
-        },
-        similarTracks: similarTracks.map(t => ({
-          name: t.name,
-          artist: t.artist.name,
-          playcount: t.playcount,
-          match: t.match,
-          url: t.url,
-          duration: t.duration,
-          images: t.image
-        })),
-        deezerResults: deezerResults,
-        summary: {
-          totalSimilarTracks: similarTracks.length,
-          foundInDeezer: deezerResults.filter(r => r.deezerTrack !== null).length,
-          notFoundInDeezer: deezerResults.filter(r => r.deezerTrack === null).length
-        }
-      }
-
-    } catch (error) {
-      console.error('Error getting similar tracks for Deezer:', error)
-      throw error
-    }
-  }
-
-  /**
-   * Get similar tracks from Last.fm and return only Deezer results
-   * @param {string} artist - Artist name
-   * @param {string} track - Track name
-   * @param {number} limit - Number of similar tracks to fetch (default: 10)
-   * @param {string} fallbackTrack - Optional fallback track name to try if first search fails
-   * @returns {Promise<Array>} Array of Deezer tracks found
-   */
-  async getSimilarTracksFromLastfm(artist, track, limit = 10, fallbackTrack = null) {
-    try {
-      const results = await this.getSimilarTracksForDeezer(artist, track, limit)
-      const foundTracks = results.deezerResults
-        .filter(result => result.deezerTrack !== null)
-        .map(result => result.deezerTrack)
-      console.log(foundTracks)
-        console.log(track)
-        console.log(fallbackTrack)
-      // If no tracks found and we have a fallback, try the fallback
-      if (foundTracks.length === 0 && fallbackTrack && fallbackTrack !== track) {
-        console.log(`No tracks found for "${track}", trying fallback "${fallbackTrack}"`)
-        try {
-          const fallbackResults = await this.getSimilarTracksForDeezer(artist, fallbackTrack, limit)
-          return fallbackResults.deezerResults
-            .filter(result => result.deezerTrack !== null)
-            .map(result => result.deezerTrack)
-        } catch (fallbackError) {
-          console.error('Fallback search also failed:', fallbackError)
-        }
-      }
-
-      return foundTracks
-    } catch (error) {
-      console.error('Error getting similar tracks from Last.fm:', error)
-      throw error
-    }
-  }
-
-  async getUserPlaylists(userId, limit = 20) {
-    try {
-      // Fetch both user data and playlists in parallel
-      const [userResponse, playlistsResponse] = await Promise.all([
-        this.request(`/user/${userId}`),
-        this.request(`/user/${userId}/playlists?limit=${limit}`)
-      ])
-
-        const userData = userResponse || {}
-        const playlists = playlistsResponse.data || []
-
-        // Transform playlists and add Spotify-style owner data to each playlist
-        const transformedPlaylists = playlists.map(playlist => {
-          const transformedPlaylist = this.transformPlaylist(playlist)
-          // Add Spotify-style owner data to the playlist
-          if (transformedPlaylist) {
-            transformedPlaylist.owner = {
-              display_name: userData.name,
-              external_urls: {
-                deezer: userData.link || `https://www.deezer.com/profile/${userData.id}`
-              },
-              href: `https://api.deezer.com/user/${userData.id}`,
-              id: userData.id,
-              type: "user",
-              uri: `deezer:user:${userData.id}`,
-              // Additional Deezer-specific fields
-              images: this.createOwnerImages(userData),
-              picture: userData.picture,
-              picture_small: userData.picture_small,
-              picture_medium: userData.picture_medium,
-              picture_big: userData.picture_big,
-              picture_xl: userData.picture_xl,
-              country: userData.country,
-              tracklist: userData.tracklist
+            const searchResults = {
+                tracks: [],
+                artists: [],
+                albums: [],
+                playlists: []
             }
-          }
-          return transformedPlaylist
-        })
 
-      return transformedPlaylists
-    } catch (error) {
-      console.error('Deezer getUserPlaylists error:', error)
-      throw error
+            // Search for each type if specified
+            if (!types || types.includes('track')) {
+                const tracksResponse = await this.request(`/search/track?q=${encodeURIComponent(query)}&limit=${limit}`)
+                console.log('Tracks response:', tracksResponse)
+                if (tracksResponse && tracksResponse.data && Array.isArray(tracksResponse.data)) {
+                    searchResults.tracks = tracksResponse.data.map(track => this.transformTrack(track)).filter(track => track !== null)
+                } else {
+                    console.warn('Invalid tracks response structure:', tracksResponse)
+                    searchResults.tracks = []
+                }
+            }
+
+            if (!types || types.includes('artist')) {
+                const artistsResponse = await this.request(`/search/artist?q=${encodeURIComponent(query)}&limit=${limit}`)
+                console.log('Artists response:', artistsResponse)
+                if (artistsResponse && artistsResponse.data && Array.isArray(artistsResponse.data)) {
+                    searchResults.artists = artistsResponse.data.map(artist => this.transformArtist(artist)).filter(artist => artist !== null)
+                } else {
+                    console.warn('Invalid artists response structure:', artistsResponse)
+                    searchResults.artists = []
+                }
+            }
+
+            if (!types || types.includes('album')) {
+                const albumsResponse = await this.request(`/search/album?q=${encodeURIComponent(query)}&limit=${limit}`)
+                console.log('Albums response:', albumsResponse)
+                if (albumsResponse && albumsResponse.data && Array.isArray(albumsResponse.data)) {
+                    searchResults.albums = albumsResponse.data.map(album => this.transformAlbum(album)).filter(album => album !== null)
+                } else {
+                    console.warn('Invalid albums response structure:', albumsResponse)
+                    searchResults.albums = []
+                }
+            }
+
+            if (!types || types.includes('playlist')) {
+                const playlistsResponse = await this.request(`/search/playlist?q=${encodeURIComponent(query)}&limit=${limit}`)
+                console.log('Playlists response:', playlistsResponse)
+                if (playlistsResponse && playlistsResponse.data && Array.isArray(playlistsResponse.data)) {
+                    const playlists = playlistsResponse.data.map(playlist => this.transformPlaylist(playlist)).filter(playlist => playlist !== null)
+                    // Enrich playlists with missing descriptions
+                    searchResults.playlists = await this.enrichPlaylistsWithDescriptions(playlists)
+                } else {
+                    console.warn('Invalid playlists response structure:', playlistsResponse)
+                    searchResults.playlists = []
+                }
+            }
+
+            return searchResults
+        } catch (error) {
+            console.error('Deezer search error:', error)
+            throw error
+        }
     }
-  }
+
+    async getNewReleases(limit = 20, offset = 0) {
+        try {
+            const response = await this.request(`/editorial/0/releases`)
+            const albums = response.data.slice(offset, offset + limit) // Apply offset and limit
+            return albums.map(album => this.transformAlbum(album))
+        } catch (error) {
+            console.error('Deezer getNewReleases error:', error)
+            throw error
+        }
+    }
+
+    async getRecommendations(params) {
+        try {
+            // Handle seed tracks by getting similar tracks from Last.fm and searching in Deezer
+            if (params.seedTracks && params.seedTracks.length > 0) {
+                const recommendations = []
+
+                for (const seedTrack of params.seedTracks) {
+                    console.log('seedTrack:', seedTrack)
+                    try {
+                        // Use title_short if available, otherwise fall back to full name
+                        const trackTitle = seedTrack.title_short || seedTrack.name
+                        const fallbackTitle = seedTrack.title_short ? seedTrack.name : null
+                        console.log(`Searching Last.fm with title: "${trackTitle}" (original: "${seedTrack.name}")`)
+
+                        // Get similar tracks from Last.fm for this seed track
+                        const similarTracks = await this.getSimilarTracksFromLastfm(
+                            seedTrack.artists[0].name,
+                            trackTitle,
+                            params.limit || 10,
+                            fallbackTitle
+                        )
+                        recommendations.push(...similarTracks)
+                    } catch (error) {
+                        console.error(`Error getting similar tracks for seed track "${seedTrack.name}":`, error)
+                    }
+                }
+
+                // Remove duplicates and limit results
+                const uniqueRecommendations = this.removeDuplicateTracks(recommendations)
+                return uniqueRecommendations.slice(0, params.limit || 20)
+            }
+
+            // Handle seed artists using Deezer's artist radio endpoint
+            if (params.seedArtists && params.seedArtists.length > 0) {
+                const artistId = params.seedArtists[0].id
+                const response = await this.request(`/artist/${artistId}/radio`)
+                return response.data.map(track => this.transformTrack(track))
+            }
+
+            // If no seed data, return empty array
+            return []
+        } catch (error) {
+            console.error('Deezer getRecommendations error:', error)
+            throw error
+        }
+    }
+
+    // Categories methods
+    async getCategories(offset = 0, limit = 50) {
+        try {
+            const response = await this.request(`/genre?index=${offset}&limit=${limit}`)
+            return {
+                items: response.data.data.map(genre => ({
+                    id: genre.id,
+                    name: genre.name,
+                    icons: genre.picture ? [{url: genre.picture}] : [],
+                    href: genre.link
+                })),
+                total: response.data.total,
+                next: response.data.next,
+                previous: response.data.prev
+            }
+        } catch (error) {
+            console.error('Deezer getCategories error:', error)
+            throw error
+        }
+    }
+
+    async getCategoryPlaylists(categoryId, offset = 0, limit = 50) {
+        try {
+            const response = await this.request(`/genre/${categoryId}/playlists?index=${offset}&limit=${limit}`)
+            return {
+                items: response.data.data.map(playlist => this.transformPlaylist(playlist)),
+                total: response.data.total,
+                next: response.data.next,
+                previous: response.data.prev
+            }
+        } catch (error) {
+            console.error('Deezer getCategoryPlaylists error:', error)
+            throw error
+        }
+    }
+
+
+    // User methods
+    async getUser(id) {
+        try {
+            const response = await this.request(`/user/${id}`)
+            return {
+                id: response.id,
+                display_name: response.name,
+                name: response.name,
+                country: response.country,
+                images: this.transformImages([
+                    {url: response.picture_small, height: 56, width: 56},
+                    {url: response.picture_medium, height: 250, width: 250},
+                    {url: response.picture_big, height: 500, width: 500},
+                    {url: response.picture_xl, height: 1000, width: 1000}
+                ])
+            }
+        } catch (error) {
+            console.error('Deezer getUser error:', error)
+            throw error
+        }
+    }
+
+    // Follow/Unfollow methods
+    async followArtist(id) {
+        throw new Error('Deezer followArtist not yet implemented')
+    }
+
+    async unfollowArtist(id) {
+        throw new Error('Deezer unfollowArtist not yet implemented')
+    }
+
+    async followAlbum(id) {
+        throw new Error('Deezer followAlbum not yet implemented')
+    }
+
+    async unfollowAlbum(id) {
+        throw new Error('Deezer unfollowAlbum not yet implemented')
+    }
+
+    async followTrack(id) {
+        throw new Error('Deezer followTrack not yet implemented')
+    }
+
+    async unfollowTrack(id) {
+        throw new Error('Deezer unfollowTrack not yet implemented')
+    }
+
+    async followPlaylist(id) {
+        throw new Error('Deezer followPlaylist not yet implemented')
+    }
+
+    async unfollowPlaylist(id) {
+        throw new Error('Deezer unfollowPlaylist not yet implemented')
+    }
+
+    // Check following status
+    async checkFollowingArtist(id) {
+        throw new Error('Deezer checkFollowingArtist not yet implemented')
+    }
+
+    async checkFollowingAlbum(id) {
+        throw new Error('Deezer checkFollowingAlbum not yet implemented')
+    }
+
+    async checkFollowingTrack(id) {
+        throw new Error('Deezer checkFollowingTrack not yet implemented')
+    }
+
+    async checkFollowingPlaylist(id) {
+        throw new Error('Deezer checkFollowingPlaylist not yet implemented')
+    }
+
+    // Helper method for making requests
+    async request(endpoint) {
+        // Try multiple CORS proxy options
+        const proxies = [
+            'https://corsproxy.io/?',
+            'https://api.codetabs.com/v1/proxy?quest=',
+            'https://thingproxy.freeboard.io/fetch/'
+        ]
+
+        const targetUrl = `${this.baseURL}${endpoint}`
+
+        for (let i = 0; i < proxies.length; i++) {
+            try {
+                const proxyUrl = proxies[i]
+                const fullUrl = i === 0 ? `${proxyUrl}${encodeURIComponent(targetUrl)}` : `${proxyUrl}${targetUrl}`
+
+                const response = await fetch(fullUrl, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+
+                if (response.ok) {
+                    const data = await response.json()
+                    console.log(`Proxy ${i + 1} success for ${endpoint}:`, data)
+                    return data
+                }
+            } catch (error) {
+                console.warn(`Proxy ${i + 1} failed:`, error.message)
+                if (i === proxies.length - 1) {
+                    throw new Error(`All CORS proxies failed. Last error: ${error.message}`)
+                }
+            }
+        }
+    }
+
+    // Transformation methods to convert Deezer format to our standard format
+    transformTrack(data) {
+        if (!data || !data.id) {
+            console.warn('Invalid track data:', data)
+            return null
+        }
+
+        // Handle contributors array for more detailed artist information
+        let artists = []
+        if (data.contributors && Array.isArray(data.contributors)) {
+            artists = data.contributors.map(contributor => this.transformArtist(contributor))
+        } else if (data.artist) {
+            artists = [this.transformArtist(data.artist)]
+        }
+
+        const shortTitle = this.generateShortTitle(data.title)
+        console.log(`Deezer track: "${data.title}" -> short: "${shortTitle}"`)
+
+        return {
+            id: data.id.toString(),
+            name: data.title,
+            title_short: shortTitle,
+            artists: artists,
+            album: data.album ? this.transformAlbum(data.album) : null,
+            duration_ms: parseInt(data.duration) * 1000, // Convert seconds to milliseconds
+            previewUrl: data.preview || null,
+            external_urls: {
+                spotify: data.link,
+                deezer: data.link
+            },
+            images: this.transformImages(data.album?.cover_medium ? [{
+                url: data.album.cover_medium,
+                height: 250,
+                width: 250
+            }] : []),
+            // Additional Deezer-specific fields
+            readable: data.readable || false,
+            rank: data.rank || 0,
+            explicit_lyrics: data.explicit_lyrics || false,
+            explicit_content_lyrics: data.explicit_content_lyrics || 0,
+            explicit_content_cover: data.explicit_content_cover || 0,
+            service: this.serviceType
+        }
+    }
+
+    transformArtist(data) {
+        if (!data || !data.id) {
+            console.warn('Invalid artist data:', data)
+            return null
+        }
+
+        return {
+            id: data.id.toString(),
+            name: data.name,
+            images: this.transformImages(data.picture_medium ? [{
+                url: data.picture_medium,
+                height: 250,
+                width: 250
+            }] : []),
+            external_urls: {
+                spotify: data.link,
+                deezer: data.link
+            },
+            followers: {
+                total: data.nb_fan || 0
+            },
+            // Additional Deezer-specific fields
+            genres: [], // Deezer doesn't provide genres in artist data
+            popularity: 0, // Deezer doesn't provide popularity score
+            nb_album: data.nb_album || 0,
+            radio: data.radio || false,
+            service: this.serviceType
+        }
+    }
+
+    transformAlbum(data) {
+        if (!data || !data.id) {
+            console.warn('Invalid album data:', data)
+            return null
+        }
+
+        return {
+            id: data.id.toString(),
+            name: data.title,
+            artists: data.artist ? [this.transformArtist(data.artist)] : [],
+            images: this.transformImages(data.cover_medium ? [{
+                url: data.cover_medium,
+                height: 250,
+                width: 250
+            }] : []),
+            external_urls: {
+                spotify: data.link,
+                deezer: data.link
+            },
+            total_tracks: data.nb_tracks || 0,
+            // Additional Deezer-specific fields
+            release_date: data.release_date || null,
+            record_type: data.record_type || 'album',
+            fans: data.fans || 0,
+            genre_id: data.genre_id || null,
+            explicit_lyrics: data.explicit_lyrics || false,
+            service: this.serviceType
+        }
+    }
+
+    transformPlaylist(data) {
+        if (!data || !data.id) {
+            console.warn('Invalid playlist data:', data)
+            return null
+        }
+
+        // Transform tracks if they exist in the playlist data
+        let tracks = null
+        console.log('809', data.tracks)
+        if (data.tracks && data.tracks.data && Array.isArray(data.tracks.data)) {
+            tracks = {
+                items: data.tracks.data.map(track => ({
+                    track: this.transformTrack(track)
+                })),
+                total: data.nb_tracks || data.tracks.data.length
+            }
+        } else {
+            tracks = {
+                total: data.nb_tracks || 0
+            }
+        }
+        console.log('playlist 767', data)
+        return {
+            id: data.id.toString(),
+            name: data.title,
+            description: data.description || '',
+            images: this.transformImages([
+                {url: data.picture_big, height: 500, width: 500},
+                {url: data.picture_xl, height: 1000, width: 1000}
+            ]),
+            external_urls: {
+                spotify: data.link,
+                deezer: data.link
+            },
+            tracks: tracks,
+            owner: {
+                display_name: data.creator?.name || data.user?.name || 'Unknown',
+                external_urls: {
+                    deezer: data.creator?.link || data.user?.link || `https://www.deezer.com/profile/${(data.creator?.id || data.user?.id)?.toString() || 'unknown'}`
+                },
+                href: `https://api.deezer.com/user/${(data.creator?.id || data.user?.id)?.toString() || 'unknown'}`,
+                id: (data.creator?.id || data.user?.id)?.toString() || 'unknown',
+                type: "user",
+                uri: `deezer:user:${(data.creator?.id || data.user?.id)?.toString() || 'unknown'}`,
+                // Additional Deezer-specific fields
+                images: this.createOwnerImages(data.creator || data.user),
+                country: data.creator?.country || data.user?.country,
+                tracklist: data.creator?.tracklist || data.user?.tracklist
+            },
+            public: data.public || false,
+            service: this.serviceType
+        }
+    }
+
+
+    transformImages(images) {
+        if (!images || !Array.isArray(images)) {
+            return []
+        }
+        return images.map(img => ({
+            url: img.url,
+            height: img.height || null,
+            width: img.width || null
+        }))
+    }
+
+    // ==================== HELPER METHODS ====================
+
+    /**
+     * Generate a short title by removing common suffixes and extra information
+     * @param {string} fullTitle - The full track title
+     * @returns {string} - The shortened title
+     */
+    generateShortTitle(fullTitle) {
+        if (!fullTitle) return ''
+
+        let shortTitle = fullTitle.trim()
+
+        // Remove common remix indicators
+        const remixPatterns = [
+            /\s*-\s*[^-]*(?:remix|edit|version|mix|radio|single|extended|club|dub|instrumental|acoustic|live|demo|original|explicit|clean)\s*$/i,
+            /\s*\([^)]*(?:remix|edit|version|mix|radio|single|extended|club|dub|instrumental|acoustic|live|demo|original|explicit|clean)[^)]*\)\s*$/i,
+            /\s*\[[^\]]*(?:remix|edit|version|mix|radio|single|extended|club|dub|instrumental|acoustic|live|demo|original|explicit|clean)[^\]]*\]\s*$/i
+        ]
+
+        for (const pattern of remixPatterns) {
+            shortTitle = shortTitle.replace(pattern, '')
+        }
+
+        // Remove common prefixes
+        const prefixPatterns = [
+            /^(?:feat\.|ft\.|featuring)\s*/i,
+            /^(?:prod\.|produced by)\s*/i
+        ]
+
+        for (const pattern of prefixPatterns) {
+            shortTitle = shortTitle.replace(pattern, '')
+        }
+
+        // Remove extra whitespace and return
+        return shortTitle.trim()
+    }
+
+    /**
+     * Remove duplicate tracks based on track ID
+     * @param {Array} tracks - Array of track objects
+     * @returns {Array} Array of unique tracks
+     */
+    removeDuplicateTracks(tracks) {
+        const seen = new Set()
+        return tracks.filter(track => {
+            if (seen.has(track.id)) {
+                return false
+            }
+            seen.add(track.id)
+            return true
+        })
+    }
+
+    // ==================== LAST.FM INTEGRATION METHODS ====================
+
+    /**
+     * Get similar tracks from Last.fm and search them in Deezer
+     * @param {string} artist - Artist name
+     * @param {string} track - Track name
+     * @param {number} limit - Number of similar tracks to fetch (default: 10)
+     * @returns {Promise<Object>} Combined results from Last.fm and Deezer
+     */
+    async getSimilarTracksForDeezer(artist, track, limit = 10) {
+        try {
+            if (!artist || !track) {
+                throw new Error('Artist and track parameters are required')
+            }
+
+            // Get similar tracks from Last.fm
+            const lastfmApiKey = ''
+            const lastfmUrl = `https://ws.audioscrobbler.com/2.0/?method=track.getsimilar&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&api_key=${lastfmApiKey}&format=json&limit=${limit}`
+
+            const lastfmResponse = await fetch(lastfmUrl)
+            const lastfmData = await lastfmResponse.json()
+
+            if (!lastfmData.similartracks || !lastfmData.similartracks.track) {
+                return {
+                    originalTrack: {artist, track},
+                    similarTracks: [],
+                    deezerResults: [],
+                    summary: {
+                        totalSimilarTracks: 0,
+                        foundInDeezer: 0,
+                        notFoundInDeezer: 0
+                    }
+                }
+            }
+
+            const similarTracks = Array.isArray(lastfmData.similartracks.track)
+                ? lastfmData.similartracks.track
+                : [lastfmData.similartracks.track]
+
+            // Search each similar track in Deezer
+            const deezerResults = []
+
+            for (const lastfmTrack of similarTracks) {
+                try {
+                    const searchQuery = `${lastfmTrack.artist.name} ${lastfmTrack.name}`
+                    const deezerResponse = await this.request(`/search/track?q=${encodeURIComponent(searchQuery)}&limit=1`)
+
+                    if (deezerResponse && deezerResponse.data && deezerResponse.data.length > 0) {
+                        const deezerTrack = deezerResponse.data[0]
+                        deezerResults.push({
+                            lastfmTrack: {
+                                name: lastfmTrack.name,
+                                artist: lastfmTrack.artist.name,
+                                playcount: lastfmTrack.playcount,
+                                match: lastfmTrack.match,
+                                url: lastfmTrack.url,
+                                duration: lastfmTrack.duration,
+                                images: lastfmTrack.image
+                            },
+                            deezerTrack: this.transformTrack(deezerTrack),
+                            searchQuery: searchQuery
+                        })
+                    } else {
+                        // Track not found in Deezer
+                        deezerResults.push({
+                            lastfmTrack: {
+                                name: lastfmTrack.name,
+                                artist: lastfmTrack.artist.name,
+                                playcount: lastfmTrack.playcount,
+                                match: lastfmTrack.match,
+                                url: lastfmTrack.url,
+                                duration: lastfmTrack.duration,
+                                images: lastfmTrack.image
+                            },
+                            deezerTrack: null,
+                            searchQuery: searchQuery,
+                            error: 'Track not found in Deezer'
+                        })
+                    }
+                } catch (error) {
+                    console.error(`Error searching track "${lastfmTrack.name}" by "${lastfmTrack.artist.name}" in Deezer:`, error)
+                    deezerResults.push({
+                        lastfmTrack: {
+                            name: lastfmTrack.name,
+                            artist: lastfmTrack.artist.name,
+                            playcount: lastfmTrack.playcount,
+                            match: lastfmTrack.match,
+                            url: lastfmTrack.url,
+                            duration: lastfmTrack.duration,
+                            images: lastfmTrack.image
+                        },
+                        deezerTrack: null,
+                        searchQuery: `${lastfmTrack.artist.name} ${lastfmTrack.name}`,
+                        error: 'Search failed'
+                    })
+                }
+            }
+
+            return {
+                originalTrack: {
+                    artist,
+                    track,
+                    lastfmUrl: `https://www.last.fm/music/${encodeURIComponent(artist)}/_/${encodeURIComponent(track)}`
+                },
+                similarTracks: similarTracks.map(t => ({
+                    name: t.name,
+                    artist: t.artist.name,
+                    playcount: t.playcount,
+                    match: t.match,
+                    url: t.url,
+                    duration: t.duration,
+                    images: t.image
+                })),
+                deezerResults: deezerResults,
+                summary: {
+                    totalSimilarTracks: similarTracks.length,
+                    foundInDeezer: deezerResults.filter(r => r.deezerTrack !== null).length,
+                    notFoundInDeezer: deezerResults.filter(r => r.deezerTrack === null).length
+                }
+            }
+
+        } catch (error) {
+            console.error('Error getting similar tracks for Deezer:', error)
+            throw error
+        }
+    }
+
+    /**
+     * Get similar tracks from Last.fm and return only Deezer results
+     * @param {string} artist - Artist name
+     * @param {string} track - Track name
+     * @param {number} limit - Number of similar tracks to fetch (default: 10)
+     * @param {string} fallbackTrack - Optional fallback track name to try if first search fails
+     * @returns {Promise<Array>} Array of Deezer tracks found
+     */
+    async getSimilarTracksFromLastfm(artist, track, limit = 10, fallbackTrack = null) {
+        try {
+            const results = await this.getSimilarTracksForDeezer(artist, track, limit)
+            const foundTracks = results.deezerResults
+                .filter(result => result.deezerTrack !== null)
+                .map(result => result.deezerTrack)
+            console.log(foundTracks)
+            console.log(track)
+            console.log(fallbackTrack)
+            // If no tracks found and we have a fallback, try the fallback
+            if (foundTracks.length === 0 && fallbackTrack && fallbackTrack !== track) {
+                console.log(`No tracks found for "${track}", trying fallback "${fallbackTrack}"`)
+                try {
+                    const fallbackResults = await this.getSimilarTracksForDeezer(artist, fallbackTrack, limit)
+                    return fallbackResults.deezerResults
+                        .filter(result => result.deezerTrack !== null)
+                        .map(result => result.deezerTrack)
+                } catch (fallbackError) {
+                    console.error('Fallback search also failed:', fallbackError)
+                }
+            }
+
+            return foundTracks
+        } catch (error) {
+            console.error('Error getting similar tracks from Last.fm:', error)
+            throw error
+        }
+    }
+
+    async getUserPlaylists(userId, limit = 20) {
+        try {
+            // Fetch both user data and playlists in parallel
+            const [userResponse, playlistsResponse] = await Promise.all([
+                this.request(`/user/${userId}`),
+                this.request(`/user/${userId}/playlists?limit=${limit}`)
+            ])
+
+            const userData = userResponse || {}
+            const playlists = playlistsResponse.data || []
+
+            // Transform playlists and add Spotify-style owner data to each playlist
+            const transformedPlaylists = playlists.map(playlist => {
+                const transformedPlaylist = this.transformPlaylist(playlist)
+                // Add Spotify-style owner data to the playlist
+                if (transformedPlaylist) {
+                    transformedPlaylist.owner = {
+                        display_name: userData.name,
+                        external_urls: {
+                            deezer: userData.link || `https://www.deezer.com/profile/${userData.id}`
+                        },
+                        href: `https://api.deezer.com/user/${userData.id}`,
+                        id: userData.id,
+                        type: "user",
+                        uri: `deezer:user:${userData.id}`,
+                        // Additional Deezer-specific fields
+                        images: this.createOwnerImages(userData),
+                        picture: userData.picture,
+                        picture_small: userData.picture_small,
+                        picture_medium: userData.picture_medium,
+                        picture_big: userData.picture_big,
+                        picture_xl: userData.picture_xl,
+                        country: userData.country,
+                        tracklist: userData.tracklist
+                    }
+                }
+                return transformedPlaylist
+            })
+
+            return transformedPlaylists
+        } catch (error) {
+            console.error('Deezer getUserPlaylists error:', error)
+            throw error
+        }
+    }
 }

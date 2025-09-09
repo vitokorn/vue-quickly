@@ -136,6 +136,15 @@ export class MusicServiceInterface {
     throw new Error('getRecommendations() must be implemented by subclass')
   }
 
+  // Categories methods
+  async getCategories(offset = 0, limit = 50) {
+    throw new Error('getCategories() must be implemented by subclass')
+  }
+
+  async getCategoryPlaylists(categoryId, offset = 0, limit = 50) {
+    throw new Error('getCategoryPlaylists() must be implemented by subclass')
+  }
+
   // Follow/Unfollow methods
   async followArtist(id) {
     throw new Error('followArtist() must be implemented by subclass')
