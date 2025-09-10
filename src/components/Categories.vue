@@ -3,8 +3,8 @@
     <div class="categories-header">
       <h2>Browse Categories</h2>
       <div class="pagination-controls" v-if="pagination.total > pagination.limit">
-        <button 
-          @click="loadPreviousPage" 
+        <button
+          @click="loadPreviousPage"
           :disabled="!pagination.previous || loading"
           class="pagination-btn"
         >
@@ -13,8 +13,8 @@
         <span class="pagination-info">
           {{ currentOffset + 1 }}-{{ Math.min(currentOffset + pagination.limit, pagination.total) }} of {{ pagination.total }}
         </span>
-        <button 
-          @click="loadNextPage" 
+        <button
+          @click="loadNextPage"
           :disabled="!pagination.next || loading"
           class="pagination-btn"
         >
@@ -33,16 +33,16 @@
     </div>
 
     <div v-else class="categories-grid">
-      <div 
-        v-for="category in categories" 
+      <div
+        v-for="category in categories"
         :key="category.id"
         class="category-card"
         @click="selectCategory(category)"
       >
         <div class="category-image">
-          <img 
-            v-if="category.icons && category.icons.length > 0" 
-            :src="category.icons[0].url" 
+          <img
+            v-if="category.icons && category.icons.length > 0"
+            :src="category.icons[0].url"
             :alt="category.name"
             @error="handleImageError"
           />
@@ -72,16 +72,16 @@
       </div>
 
       <div v-else class="playlists-grid">
-        <div 
-          v-for="playlist in categoryPlaylists" 
+        <div
+          v-for="playlist in categoryPlaylists"
           :key="playlist.id"
           class="playlist-card"
           @click="selectPlaylist(playlist)"
         >
           <div class="playlist-image">
-            <img 
-              v-if="playlist.images && playlist.images.length > 0" 
-              :src="playlist.images[0].url" 
+            <img
+              v-if="playlist.images && playlist.images.length > 0"
+              :src="playlist.images[0].url"
               :alt="playlist.name"
               @error="handleImageError"
             />
@@ -135,9 +135,9 @@ const loadCategories = async (offset = 0) => {
       deeperStore.clearSection(sectionName.value)
       categories.value = []
     }
-    
+
     const response = await deeperStore.getCategories(sectionName.value, offset, pagination.value.limit)
-    
+
     // Update pagination info
     pagination.value = {
       total: response.total,
@@ -145,13 +145,13 @@ const loadCategories = async (offset = 0) => {
       next: response.next,
       previous: response.previous
     }
-    
+
     currentOffset.value = offset
-    
+
     // Get categories from store
     const sectionData = deeperStore.getSectionData(sectionName.value)
     categories.value = sectionData.filter(item => item.type === 'category')
-    
+
   } catch (error) {
     console.error('Failed to load categories:', error)
   } finally {
@@ -176,20 +176,20 @@ const selectCategory = async (category) => {
   selectedCategory.value = category
   playlistsLoading.value = true
   categoryPlaylists.value = []
-  
+
   try {
     const response = await deeperStore.getCategoryPlaylists(
-      category.id, 
-      'categoryPlaylists', 
+      category.id,
+      'categoryPlaylists',
       category.id
     )
-    
+
     // Get playlists from store
     const sectionData = deeperStore.getSectionData('categoryPlaylists')
-    categoryPlaylists.value = sectionData.filter(item => 
+    categoryPlaylists.value = sectionData.filter(item =>
       item.type === 'category-playlist' && item.parentKey === category.id
     )
-    
+
   } catch (error) {
     console.error('Failed to load category playlists:', error)
   } finally {
@@ -463,27 +463,27 @@ onMounted(() => {
   .categories-container {
     padding: 15px;
   }
-  
+
   .categories-header {
     flex-direction: column;
     gap: 15px;
     align-items: flex-start;
   }
-  
+
   .categories-grid {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 15px;
   }
-  
+
   .category-image {
     height: 100px;
   }
-  
+
   .playlists-grid {
     grid-template-columns: 1fr;
     gap: 12px;
   }
-  
+
   .category-playlists-section {
     margin-top: 20px;
   }

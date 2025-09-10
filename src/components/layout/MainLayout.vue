@@ -404,7 +404,7 @@ const handleDeezerUserSaved = (userData) => {
               <PlaylistSelector
                   :playlists="musicStore.getSpotifyPlaylists"
                   :selected-playlist="selectedSpotifyPlaylist"
-                  :title="currentServiceType.toLowerCase(0) + 'Playlists'"
+                  :title="currentServiceType.charAt(0).toUpperCase() + currentServiceType.slice(1) + ' Playlists'"
                   placeholder="Search Spotify playlists..."
                   @playlist-select="handlePlaylistClick"
               />

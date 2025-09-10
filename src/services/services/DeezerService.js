@@ -1,5 +1,6 @@
 import {MusicServiceInterface} from '../MusicServiceInterface.js'
 import {Image, SERVICE_TYPES} from '../types.js'
+import {useDeeperStore} from '../../stores/deeper-store.js'
 
 export class DeezerService extends MusicServiceInterface {
     constructor() {
@@ -585,17 +586,31 @@ export class DeezerService extends MusicServiceInterface {
     // Categories methods
     async getCategories(offset = 0, limit = 50) {
         try {
-            const response = await this.request(`/genre?index=${offset}&limit=${limit}`)
+            const response = await this.request(`/radio/lists?index=${offset}&limit=${limit}`)
+
+            // Transform radio items according to the actual API response structure
+            const radioItems = response.data.map(radio => ({
+                id: radio.id,
+                name: radio.title, // Use 'title' instead of 'name'
+                type: 'radio',
+                icons: radio.picture ? [{url: radio.picture}] : [],
+                href: radio.link || `https://www.deezer.com/radio/${radio.id}`,
+                tracklist: radio.tracklist,
+                description: radio.description || '',
+                // Add additional image sizes if available
+                images: radio.picture_medium ? [
+                    { url: radio.picture_small, height: 56, width: 56 },
+                    { url: radio.picture_medium, height: 250, width: 250 },
+                    { url: radio.picture_big, height: 500, width: 500 },
+                    { url: radio.picture_xl, height: 1000, width: 1000 }
+                ] : []
+            }))
+
             return {
-                items: response.data.data.map(genre => ({
-                    id: genre.id,
-                    name: genre.name,
-                    icons: genre.picture ? [{url: genre.picture}] : [],
-                    href: genre.link
-                })),
-                total: response.data.total,
-                next: response.data.next,
-                previous: response.data.prev
+                items: radioItems,
+                total: response.total,
+                next: response.next,
+                previous: null // Radio lists don't seem to have 'prev' field
             }
         } catch (error) {
             console.error('Deezer getCategories error:', error)
@@ -605,6 +620,32 @@ export class DeezerService extends MusicServiceInterface {
 
     async getCategoryPlaylists(categoryId, offset = 0, limit = 50) {
         try {
+            // Check if this is a radio category (radio IDs are numeric)
+            if (!isNaN(categoryId)) {
+                // For radio categories, return radio tracks as a playlist-like structure
+                const tracks = await this.getRadioTracks(categoryId, offset, limit)
+
+                // Get the cached category to use its name
+                const deeperStore = useDeeperStore()
+                const cachedCategory = deeperStore.getCachedCategory(categoryId)
+
+                return {
+                    items: [{
+                        id: `radio_${categoryId}`,
+                        name: cachedCategory ? cachedCategory.name : `Radio ${categoryId}`,
+                        type: 'radio',
+                        tracks: {
+                            items: tracks.map(track => ({ track })),
+                            total: tracks.length
+                        }
+                    }],
+                    total: 1,
+                    next: null,
+                    previous: null
+                }
+            }
+
+            // For genre categories, use the original logic
             const response = await this.request(`/genre/${categoryId}/playlists?index=${offset}&limit=${limit}`)
             return {
                 items: response.data.data.map(playlist => this.transformPlaylist(playlist)),
@@ -614,6 +655,17 @@ export class DeezerService extends MusicServiceInterface {
             }
         } catch (error) {
             console.error('Deezer getCategoryPlaylists error:', error)
+            throw error
+        }
+    }
+
+    // Radio methods
+    async getRadioTracks(radioId, offset = 0, limit = 50) {
+        try {
+            const response = await this.request(`/radio/${radioId}/tracks?index=${offset}&limit=${limit}`)
+            return response.data.map(track => this.transformTrack(track))
+        } catch (error) {
+            console.error('Deezer getRadioTracks error:', error)
             throw error
         }
     }

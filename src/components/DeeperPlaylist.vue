@@ -12,12 +12,15 @@ import TrackCover from "./TrackCover.vue";
 import PlaylistTrackItem from "./PlaylistTrackItem.vue";
 import {getCurrentServiceType} from "../utils/initializeMusicStore.js";
 import {musicServiceManager} from "../services/MusicServiceManager.js";
+import {storeToRefs} from "pinia";
+import {SERVICE_TYPES} from "../services/types.js";
 
 const props = defineProps(['d', 'num'])
 const musicStore = useMusicStore()
 const audioStore = useAudioStore()
 const queueStore = useQueueStore()
 const deeperStore = useDeeperStore()
+const { currentServiceType } = storeToRefs(musicStore)
 const selected = ref()
 const selectedDeeperPlaylistSortOption = ref("")
 const componentRef = ref(null)
@@ -99,6 +102,18 @@ onMounted(() => {
     componentRef.value.style.display = 'none'
   }
 })
+const getServiceIcon = (serviceType) => {
+  const icons = {
+    [SERVICE_TYPES.SPOTIFY]: '/img/spotify-icon.svg',
+    [SERVICE_TYPES.DEEZER]: '/img/deezer-icon.svg',
+    [SERVICE_TYPES.TIDAL]: '/img/tidal-icon.svg',
+    [SERVICE_TYPES.NAPSTER]: '/img/napster-icon.svg'
+  }
+  return icons[serviceType] || '/img/default-service-icon.svg'
+}
+const currentServiceIcon = computed(()=> {
+  return getServiceIcon(currentServiceType.value)
+})
 </script>
 
 <template>
@@ -109,6 +124,9 @@ onMounted(() => {
           :cover="coverImage"
           v-if="hasCover"
       />
+      <div v-else>
+        <img :src="currentServiceIcon"/>
+      </div>
     </div>
     <div class="playlist-info">
       <div class="playlist-title-section">

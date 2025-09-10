@@ -51,7 +51,8 @@ export const useDeeperStore = defineStore('deeper', {
             albums: new Map(),
             playlists: new Map(),
             seedArtists: new Map(),
-            seedTracks: new Map()
+            seedTracks: new Map(),
+            categories: new Map()
         }
     }),
 
@@ -64,6 +65,7 @@ export const useDeeperStore = defineStore('deeper', {
         getCachedPlaylist: (state) => (id) => state.cache.playlists.get(id),
         getCachedSeedArtist: (state) => (id) => state.cache.seedArtists.get(id),
         getCachedSeedTrack: (state) => (id) => state.cache.seedTracks.get(id),
+        getCachedCategory: (state) => (id) => state.cache.categories.get(id),
 
         // Loading state getters
         isTrackLoading: (state) => (id) => state.loading.tracks.has(id),
@@ -1036,7 +1038,7 @@ export const useDeeperStore = defineStore('deeper', {
                 const service = musicServiceManager.getCurrentService()
                 const response = await service.getCategories(offset, limit)
 
-                // Add categories to section
+                // Add categories to section and cache
                 response.items.forEach(category => {
                     const categoryData = {
                         ...category,
@@ -1044,6 +1046,9 @@ export const useDeeperStore = defineStore('deeper', {
                         parentKey: null
                     }
                     this.addToSection(sectionName, categoryData)
+
+                    // Cache the category data for later use
+                    this.cache.categories.set(category.id, categoryData)
                 })
 
                 return response
@@ -1060,6 +1065,7 @@ export const useDeeperStore = defineStore('deeper', {
 
             try {
                 const service = musicServiceManager.getCurrentService()
+
                 const response = await service.getCategoryPlaylists(categoryId, 0, 50)
 
                 // Add playlists to section
