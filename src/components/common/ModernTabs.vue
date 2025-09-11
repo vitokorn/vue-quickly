@@ -59,7 +59,8 @@ const allTabs = computed(() => [
     icon: '🎧',
     text: `${currentServiceType.value.charAt(0).toUpperCase()}${currentServiceType.value.slice(1)} Playlists`
   },
-  { id: 'option9', value: 9, icon: '🏷️', text: 'Categories' }
+  { id: 'option9', value: 9, icon: '🏷️', text: 'Categories' },
+  { id: 'option11', value: 11, icon: '🎼', text: 'Genres' }
 ])
 
 

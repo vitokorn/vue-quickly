@@ -181,6 +181,26 @@ export class SpotifyService extends MusicServiceInterface {
     }))
   }
 
+  async getGenrePlaylist(id) {
+    // For Spotify, a genre entry refers to a playlist id; fetch full playlist with tracks
+    const playlistResponse = await this.request(`/playlists/${id}`)
+    const tracksResponse = await this.request(`/playlists/${id}/tracks?limit=50`)
+
+    console.log('Spotify getGenrePlaylist - playlist:', playlistResponse.data.name)
+    console.log('Spotify getGenrePlaylist - tracks count:', tracksResponse.data.items.length)
+
+    // Combine playlist metadata with tracks in the format transformPlaylist expects
+    const playlistWithTracks = {
+      ...playlistResponse.data,
+      tracks: {
+        items: tracksResponse.data.items,
+        total: tracksResponse.data.total
+      }
+    }
+
+    return this.transformPlaylist(playlistWithTracks)
+  }
+
   async createPlaylist(name, description = '') {
     const username = this.getUsername()
     const response = await this.request(`/users/${username}/playlists`, {
@@ -359,6 +379,62 @@ export class SpotifyService extends MusicServiceInterface {
       previous: response.data.playlists.previous
     }
   }
+
+  // Genres methods
+  async getGenres(offset = 0, limit = 50) {
+    try {
+      // Load genres from the_sound_of.json file
+      // Try multiple possible paths for the JSON file
+      let response;
+      const possiblePaths = [
+        '/src/data/the_sound_of.json',
+        '/data/the_sound_of.json',
+        './data/the_sound_of.json',
+        '../data/the_sound_of.json'
+      ];
+
+      for (const path of possiblePaths) {
+        try {
+          response = await fetch(path);
+          if (response.ok) {
+            console.log('✅ Found genres file at:', path)
+            break;
+          }
+        } catch (e) {
+          console.log('❌ Failed to load from:', path, e.message)
+        }
+      }
+
+      if (!response || !response.ok) {
+        throw new Error('Failed to load genres data from any path')
+      }
+
+      const genresData = await response.json()
+
+      // Transform the data to match the expected format
+      const genres = genresData.slice(offset, offset + limit).map(genre => ({
+        id: genre.id,
+        name: genre.name,
+        type: 'genre',
+        icons: [],
+        href: `https://open.spotify.com/genre/${genre.id}`,
+        description: genre.name,
+        // Add additional image sizes if available
+        images: []
+      }))
+
+      return {
+        items: genres,
+        total: genresData.length,
+        next: offset + limit < genresData.length ? `/genres?offset=${offset + limit}&limit=${limit}` : null,
+        previous: offset > 0 ? `/genres?offset=${Math.max(0, offset - limit)}&limit=${limit}` : null
+      }
+    } catch (error) {
+      console.error('Spotify getGenres error:', error)
+      throw error
+    }
+  }
+
 
   // Follow/Unfollow methods
   async followArtist(id) {

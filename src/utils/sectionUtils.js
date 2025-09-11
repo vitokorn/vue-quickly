@@ -30,6 +30,8 @@ export function getSectionName(num) {
         case 10:
             return 'search'
         case 11:
+            return 'genres'
+        case 13:
             return 'queue'
         case 22:
             return 'topArtists6'

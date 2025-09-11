@@ -43,6 +43,7 @@ const {
   selectedTopMenu,
   selectedPersonalPlaylist,
   selectedSpotifyPlaylist,
+  selectedGenrePlaylist,
   setSelectedItem,
   setSelectedTopMenu
 } = useSelection()
@@ -128,9 +129,15 @@ async function handlePlaylistClick(playlist, event) {
   await deeperStore.getPlaylistDetails(playlist, sectionName)
 }
 
-const handleGenreClick = (genre, event) => {
-  // TODO: Implement genre functionality
-  console.log('Genre click:', genre)
+async function handleGenreClick(genrePlaylist, event) {
+  if (deeperStore.getIsGloballyLoading) {
+    console.log('Genre playlist click blocked - global loading in progress')
+    return
+  }
+
+  // Load genre playlist details
+  const sectionName = getSectionName(selectedTopMenu.value)
+  await deeperStore.getGenreDetails(genrePlaylist, sectionName)
 }
 
 const getSectionName = (num) => {
@@ -153,6 +160,8 @@ const getSectionName = (num) => {
       return 'spotifyPlaylists'
     case 9:
       return 'categories'
+    case 11:
+      return 'genres'
     case 10:
       return 'search'
     default:
@@ -249,6 +258,12 @@ const handleTabClick = async (tabNumber, event) => {
       case 9:
         deeperStore.clearSection('categories')
         // Categories will be loaded by the Categories component
+        break
+      case 11:
+        // Load genre playlists through the music store
+        if (!musicStore.getGenrePlaylists || musicStore.getGenrePlaylists.length === 0) {
+          await musicStore.fetchGenrePlaylists(0)
+        }
         break
     }
   } catch (error) {
@@ -414,6 +429,20 @@ const handleDeezerUserSaved = (userData) => {
           <!-- Categories Section -->
           <div v-if="selectedTopMenu === 9">
             <Categories />
+          </div>
+
+          <!-- Genres Section -->
+          <div v-if="selectedTopMenu === 11">
+            <Loader v-if="musicStore.isLoading"/>
+            <div v-show="!musicStore.isLoading" class="flex-stretch">
+              <PlaylistSelector
+                :playlists="musicStore.getGenrePlaylists"
+                :selected-playlist="selectedGenrePlaylist"
+                title="Genre Playlists"
+                placeholder="Search genre playlists..."
+                @playlist-select="handleGenreClick"
+              />
+            </div>
           </div>
 
           <!-- Search Section -->

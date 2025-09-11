@@ -191,6 +191,30 @@ export class DeezerService extends MusicServiceInterface {
         }
     }
 
+    async getGenrePlaylist(id) {
+        const deeperStore = useDeeperStore()
+        const cachedPlaylist = deeperStore.getCachedGenre(id)
+        try {
+            // Fallback to radio tracks for the genre id
+            const tracks = await this.getRadioTracks(id, 0, 50)
+            return {
+                id: `radio_${id}`,
+                name: cachedPlaylist.name,
+                description: cachedPlaylist.description,
+                images: [],
+                owner: { display_name: 'Deezer' },
+                public: false,
+                totalTracks: tracks.length,
+                external_urls: { deezer: `https://www.deezer.com/radio/${id}` },
+                service: this.serviceType,
+                tracks: { items: tracks.map(t => ({ track: t })), total: tracks.length }
+            }
+        } catch (e) {
+            console.error('Deezer getGenrePlaylist fallback failed', e)
+            throw e
+        }
+    }
+
     async createPlaylist(name, description) {
         throw new Error('Deezer createPlaylist not yet implemented')
     }
@@ -666,6 +690,40 @@ export class DeezerService extends MusicServiceInterface {
             return response.data.map(track => this.transformTrack(track))
         } catch (error) {
             console.error('Deezer getRadioTracks error:', error)
+            throw error
+        }
+    }
+
+    // Genres methods
+    async getGenres(offset = 0, limit = 50) {
+        try {
+            console.log('🎵 DeezerService: Fetching genres with offset:', offset, 'limit:', limit)
+            const response = await this.request(`/genre?index=${offset}&limit=${limit}`)
+            console.log('📦 DeezerService: Genres response:', response)
+
+            // Transform genre data to match the expected format
+            const genres = response.data.map(genre => ({
+                id: genre.id.toString(),
+                name: genre.name,
+                type: 'genre',
+                icons: genre.picture ? [{url: genre.picture}] : [],
+                href: genre.link || `https://www.deezer.com/genre/${genre.id}`,
+                description: genre.name,
+                // Add additional image sizes if available
+                images: genre.picture_medium ? [
+                    { url: genre.picture_big, height: 500, width: 500 },
+                    { url: genre.picture_xl, height: 1000, width: 1000 }
+                ] : []
+            }))
+
+            return {
+                items: genres,
+                total: response.total || genres.length,
+                next: offset + limit < (response.total || genres.length) ? `/genre?index=${offset + limit}&limit=${limit}` : null,
+                previous: offset > 0 ? `/genre?index=${Math.max(0, offset - limit)}&limit=${limit}` : null
+            }
+        } catch (error) {
+            console.error('Deezer getGenres error:', error)
             throw error
         }
     }

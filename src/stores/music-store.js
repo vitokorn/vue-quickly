@@ -28,6 +28,7 @@ export const useMusicStore = defineStore('music', {
     savedTracksTotal: 0,
     followedArtists: [],
     playlists: [],
+    genrePlaylists: [],
     spotifyPlaylistsPagination: {
       total: 0,
       next: null,
@@ -85,6 +86,7 @@ export const useMusicStore = defineStore('music', {
     getPlaylists: (state) => state.playlists,
     getNewReleases: (state) => state.newReleases,
     getSpotifyPlaylists: (state) => state.playlists, // Legacy compatibility
+    getGenrePlaylists: (state) => state.genrePlaylists,
 
     // Search results getters
     getSearchTracks: (state) => state.searchResults.tracks,
@@ -94,6 +96,38 @@ export const useMusicStore = defineStore('music', {
   },
 
   actions: {
+    // Genre playlists actions
+    async fetchGenrePlaylists(offset = 0) {
+      this.setLoading(true)
+      try {
+        // Clear list on first page
+        if (offset === 0) {
+          this.genrePlaylists = []
+        }
+
+        const service = musicServiceManager.getCurrentService()
+        const genresResponse = await service.getGenres(offset, 50)
+        const items = Array.isArray(genresResponse?.items) ? genresResponse.items : []
+
+        // Map genres into selector-friendly playlist-like items
+        const mapped = items.map(g => ({
+          id: g.id,
+          name: g.name,
+          images: g.images || g.icons || [],
+          description: g.description || `Content from ${g.name} genre`,
+          genreId: g.id,
+          genreName: g.name,
+          type: 'playlist'
+        }))
+
+        this.genrePlaylists.push(...mapped)
+      } catch (error) {
+        console.error('Failed to fetch genre playlists:', error)
+        throw error
+      } finally {
+        this.setLoading(false)
+      }
+    },
     // Service management actions
     async initializeServices() {
       this.availableServices = musicServiceManager.getAvailableServices()

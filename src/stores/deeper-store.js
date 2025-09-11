@@ -16,7 +16,8 @@ export const useDeeperStore = defineStore('deeper', {
             playlists: new Set(),
             'user-playlists': new Set(),
             seedArtists: new Set(),
-            seedTracks: new Set()
+            seedTracks: new Set(),
+            genres: new Set(),
         },
 
         // Currently loading items for UI feedback
@@ -40,6 +41,9 @@ export const useDeeperStore = defineStore('deeper', {
             spotifyPlaylists: [],
             categories: [],
             categoryPlaylists: [],
+            genres: [],
+            genrePlaylists: [],
+            genreContent: [],
             search: [],
             artistDetails: []
         },
@@ -52,7 +56,8 @@ export const useDeeperStore = defineStore('deeper', {
             playlists: new Map(),
             seedArtists: new Map(),
             seedTracks: new Map(),
-            categories: new Map()
+            categories: new Map(),
+            genres: new Map()
         }
     }),
 
@@ -66,6 +71,7 @@ export const useDeeperStore = defineStore('deeper', {
         getCachedSeedArtist: (state) => (id) => state.cache.seedArtists.get(id),
         getCachedSeedTrack: (state) => (id) => state.cache.seedTracks.get(id),
         getCachedCategory: (state) => (id) => state.cache.categories.get(id),
+        getCachedGenre: (state) => (id) => state.cache.genres.get(id),
 
         // Loading state getters
         isTrackLoading: (state) => (id) => state.loading.tracks.has(id),
@@ -736,6 +742,58 @@ export const useDeeperStore = defineStore('deeper', {
             } finally {
                 // Clear loading state
                 this.setLoading('playlists', item.id, false)
+                this.setGlobalLoading(false)
+            }
+        },
+
+        // Get details for a specific genre playlist/artist (routes to playlist or artist details)
+        async getGenreDetails(item, sectionName, parentKey = null) {
+            const loadingKey = item.genreId || item.id
+            // Set loading state
+            this.setLoading('playlists', loadingKey, true)
+            this.setGlobalLoading(true)
+            console.log(item, sectionName, parentKey)
+            try {
+                const service = musicServiceManager.getCurrentService()
+                const visibilityManager = useVisibilityManager()
+                this.cache.genres.set(item.id, item)
+                // Fetch the concrete playlist representing this genre
+                let playlistData = await service.getGenrePlaylist(item.id)
+                if (!playlistData) {
+                    throw new Error('No playlist data returned for genre')
+                }
+                console.log('item', item, 'playlistData', playlistData)
+                // Attach explicit parent context and set correct type
+                const derivedParentKey = parentKey || null
+                playlistData = { ...playlistData, type: 'deeperplaylist', parentKey: derivedParentKey }
+
+                // Cache the playlist
+                this.cache.playlists.set(playlistData.id, playlistData)
+
+
+                // Replace previous deeperplaylist under the same parent
+                if (derivedParentKey) {
+                    this.removeDescendantsOfParent(sectionName, derivedParentKey, visibilityManager)
+                }
+
+                // Add to section
+                this.addToSection(sectionName, playlistData)
+
+                // Hide the currently visible deeperplaylist component within same parent context
+                this.hideVisibleComponentOfType('deeperplaylist', visibilityManager, derivedParentKey)
+
+                // Ensure target is visible (use the actual playlist id)
+                const targetKey = `deeperplaylist_${playlistData.id}${derivedParentKey ? `__p:${derivedParentKey}__` : ''}`
+                visibilityManager.showComponent(targetKey)
+
+                console.log('Genre playlist added to section, component will show when registered')
+                return playlistData
+            } catch (error) {
+                console.error('❌ DeeperStore: Failed to get genre details:', error)
+                throw error
+            } finally {
+                // Clear loading state
+                this.setLoading('playlists', loadingKey, false)
                 this.setGlobalLoading(false)
             }
         },
