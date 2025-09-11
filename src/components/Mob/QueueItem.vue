@@ -47,7 +47,7 @@ const handleClick = async (event) => {
   emit('click', props.trackItem || props.track, event)
 
   // Play/pause audio on click
-  const previewUrl = props.track.preview_url
+  const previewUrl = props.track.preview_url || props.track.previewUrl
   if (previewUrl) {
     await audioStore.mobileToggleTrack(props.track.id, previewUrl)
   }
@@ -56,9 +56,9 @@ const handleClick = async (event) => {
 const getReleasePreviewUrl = (release) => {
   console.log(release)
   if (release.tracks && release.tracks.items && release.tracks.items.length > 0) {
-    return release.tracks.items[0].preview_url
-  } else if (release.preview_url) {
-    return release.preview_url
+    return release.tracks.items[0].preview_url || release.tracks.items[0].previewUrl
+  } else if (release.preview_url || release.previewUrl) {
+    return release.preview_url || release.previewUrl
   }
   return null
 }

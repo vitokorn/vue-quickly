@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import {computed, onMounted, ref, watch} from 'vue'
 import SettingsDisplay from '../Mob/SettingsDisplay.vue'
 import QueueDisplay from "../Mob/QueueDisplay.vue"
 import PlaylistsPage from "../Mob/PlaylistsPage.vue"
@@ -13,11 +13,22 @@ import MobileFollowedArtists from "../Mob/MobileFollowedArtists.vue";
 import MobileSavedTracks from "../Mob/MobileSavedTracks.vue";
 import MobileSearchPage from "../Mob/MobileSearchPage.vue";
 import GlobalPreloader from "../common/GlobalPreloader.vue";
+import {useMusicStore} from "../../stores/music-store.js";
+import {storeToRefs} from "pinia";
 
 // Reactive state
 const currentTab = ref(0)
 const searchQuery = ref('')
 const isSidebarOpen = ref(false)
+
+// Get current service type
+const musicStore = useMusicStore()
+const { currentServiceType } = storeToRefs(musicStore)
+
+// Check if current service supports top artists/tracks
+const supportsTopArtistsTracks = computed(() => {
+  return currentServiceType.value !== 'deezer'
+})
 
 // Methods
 const setCurrentTab = (tab) => {
@@ -47,6 +58,27 @@ const handleSearch = () => {
 
 // Define emits
 const emit = defineEmits(['search'])
+
+watch(currentServiceType, (newServiceType) => {
+  console.log('MobileLayout: Service changed to', newServiceType)
+
+  // Redirect from Top Artists (2) or Top Tracks (3) to Playlists (1) when switching to Deezer
+  if (newServiceType === 'deezer' && (currentTab.value === 2 || currentTab.value === 3)) {
+    console.log('MobileLayout: Redirecting from Top Artists/Tracks to Playlists for Deezer')
+    setCurrentTab(1)
+  }
+}, { immediate: true })
+
+// Debug on mount
+onMounted(async () => {
+  await musicStore.initializeServices()
+
+  const serviceManagerType = musicStore.currentService?.serviceType
+  if (serviceManagerType && serviceManagerType !== currentServiceType.value) {
+    console.log('MobileLayout: Syncing service type from', currentServiceType.value, 'to', serviceManagerType)
+    musicStore.currentServiceType = serviceManagerType
+  }
+})
 </script>
 
 <template>
@@ -90,6 +122,7 @@ const emit = defineEmits(['search'])
             <span class="sidebar-nav-label">Playlists</span>
           </button>
           <button
+              v-if="supportsTopArtistsTracks"
               class="sidebar-nav-item"
               :class="{ active: currentTab === 2 }"
               @click="setCurrentTab(2); closeSidebar()"
@@ -100,6 +133,7 @@ const emit = defineEmits(['search'])
             <span class="sidebar-nav-label">Top Artists</span>
           </button>
           <button
+              v-if="supportsTopArtistsTracks"
               class="sidebar-nav-item"
               :class="{ active: currentTab === 3 }"
               @click="setCurrentTab(3); closeSidebar()"
@@ -225,11 +259,11 @@ const emit = defineEmits(['search'])
         <PlaylistsPage />
       </div>
 
-      <div v-else-if="currentTab === 2">
+      <div v-else-if="currentTab === 2 && supportsTopArtistsTracks">
         <MobileTopArtists />
       </div>
 
-      <div v-else-if="currentTab === 3">
+      <div v-else-if="currentTab === 3 && supportsTopArtistsTracks">
         <MobileTopTracks />
       </div>
 

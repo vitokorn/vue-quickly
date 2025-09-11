@@ -17,7 +17,7 @@ export function useMobileMediaDisplay(item, cover = null) {
 
   // Check if item has preview URL
   const hasPreview = computed(() => {
-    return !!item.value?.preview_url
+    return !!(item.value?.preview_url || item.value?.previewUrl)
   })
 
   // Check if item has an image
@@ -48,7 +48,7 @@ export function useMobileMediaDisplay(item, cover = null) {
 
   // Get preview URL for mobile audio
   const previewUrl = computed(() => {
-    return hasPreview.value ? item.value.preview_url : null
+    return hasPreview.value ? (item.value.preview_url || item.value.previewUrl) : null
   })
 
   // Get track ID for mobile audio

@@ -117,6 +117,33 @@
       </button>
     </div>
 
+    <!-- Service Selection Section -->
+    <div class="mobile-settings-header">
+      <div class="mobile-header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12 3.75a8.25 8.25 0 110 16.5 8.25 8.25 0 010-16.5z"/>
+        </svg>
+      </div>
+      <h1 class="mobile-header-title">Music Service</h1>
+    </div>
+    <div class="mobile-actions-section">
+      <button class="mobile-action-button" @click="switchToService('spotify')">
+        <span class="mobile-action-icon">🎵</span>
+        <span class="mobile-action-text">Spotify</span>
+        <span class="mobile-action-status" :class="{ active: currentServiceType === 'spotify' }">
+          {{ currentServiceType === 'spotify' ? 'ACTIVE' : '' }}
+        </span>
+      </button>
+
+      <button class="mobile-action-button" @click="switchToService('deezer')">
+        <span class="mobile-action-icon">🎧</span>
+        <span class="mobile-action-text">Deezer</span>
+        <span class="mobile-action-status" :class="{ active: currentServiceType === 'deezer' }">
+          {{ currentServiceType === 'deezer' ? 'ACTIVE' : '' }}
+        </span>
+      </button>
+    </div>
+
     <!-- Actions Section -->
     <div class="mobile-settings-header">
       <div class="mobile-header-icon">
@@ -151,11 +178,17 @@
 import Logout from "../Logout.vue";
 import { useAudioStore } from "../../stores/audio-store.js";
 import { usePreferencesStore } from "../../stores/preferences-store.js";
+import { useMusicStore } from "../../stores/music-store.js";
 import { ref, onMounted } from 'vue';
+import { storeToRefs } from "pinia";
 
 const audioStore = useAudioStore()
 const preferencesStore = usePreferencesStore()
+const musicStore = useMusicStore()
 const currentTheme = ref('light')
+
+// Get current service type
+const { currentServiceType } = storeToRefs(musicStore)
 
 const changeTheme = (theme) => {
   const root = document.documentElement
@@ -192,6 +225,16 @@ const clearCache = () => {
 const showWelcomeModal = () => {
   localStorage.removeItem('welcome-modal-seen')
   window.location.reload()
+}
+
+const switchToService = async (serviceType) => {
+  try {
+    await musicStore.switchService(serviceType)
+    console.log(`Switched to ${serviceType}`)
+  } catch (error) {
+    console.error('Failed to switch service:', error)
+    alert('Failed to switch service. Please try again.')
+  }
 }
 
 onMounted(() => {

@@ -78,7 +78,7 @@ const hasPreview = (release) => {
 // Helper function to get preview URL for a release
 const getReleasePreviewUrl = (release) => {
   if (release.tracks && release.tracks.items && release.tracks.items.length > 0) {
-    return release.tracks.items[0].preview_url
+    return release.tracks.items[0].preview_url || release.tracks.items[0].previewUrl
   }
   return null
 }
@@ -106,8 +106,9 @@ const handleReleaseClick = (release, event) => {
   // Check if release has tracks with preview URL
   if (release.tracks && release.tracks.items && release.tracks.items.length > 0) {
     const firstTrack = release.tracks.items[0]
-    if (firstTrack.preview_url) {
-      audioStore.mobileToggleTrack(firstTrack.id, firstTrack.preview_url)
+    const previewUrl = firstTrack.preview_url || firstTrack.previewUrl
+    if (previewUrl) {
+      audioStore.mobileToggleTrack(firstTrack.id, previewUrl)
     }
   }
 }
