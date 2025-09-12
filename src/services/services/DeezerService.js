@@ -1084,16 +1084,7 @@ export class DeezerService extends MusicServiceInterface {
             const lastfmData = await lastfmResponse.json()
 
             if (!lastfmData.similartracks || !lastfmData.similartracks.track) {
-                return {
-                    originalTrack: {artist, track},
-                    similarTracks: [],
-                    deezerResults: [],
-                    summary: {
-                        totalSimilarTracks: 0,
-                        foundInDeezer: 0,
-                        notFoundInDeezer: 0
-                    }
-                }
+                return await this.getSimilarArtistsAsTracks(artist, limit)
             }
 
             const similarTracks = Array.isArray(lastfmData.similartracks.track)
@@ -1187,6 +1178,169 @@ export class DeezerService extends MusicServiceInterface {
             throw error
         }
     }
+
+
+    /**
+     * Get similar artists and their top tracks as fallback when similar tracks are not available
+     * @param {string} artist - Artist name
+     * @param {number} limit - Number of similar artists to fetch (default: 10)
+     * @returns {Promise<Object>} Combined results from Last.fm and Deezer
+     */
+    async getSimilarArtistsAsTracks(artist, limit = 10) {
+        try {
+            if (!artist) {
+                throw new Error('Artist parameter is required')
+            }
+
+            // Get similar artists from Last.fm
+            const lastfmApiKey = ''
+            const lastfmUrl = `https://ws.audioscrobbler.com/2.0/?method=artist.getsimilar&artist=${encodeURIComponent(artist)}&api_key=${lastfmApiKey}&format=json&limit=${limit}`
+
+            const lastfmResponse = await fetch(lastfmUrl)
+            const lastfmData = await lastfmResponse.json()
+
+            if (!lastfmData.similarartists || !lastfmData.similarartists.artist) {
+                return {
+                    originalTrack: {artist, track: 'N/A'},
+                    similarTracks: [],
+                    deezerResults: [],
+                    summary: {
+                        totalSimilarTracks: 0,
+                        foundInDeezer: 0,
+                        notFoundInDeezer: 0
+                    },
+                    fallbackUsed: 'similar_artists',
+                    fallbackMessage: 'No similar artists found'
+                }
+            }
+
+            const similarArtists = Array.isArray(lastfmData.similarartists.artist)
+                ? lastfmData.similarartists.artist
+                : [lastfmData.similarartists.artist]
+
+            // Get top track for each similar artist
+            const deezerResults = []
+            const similarTracks = []
+
+            for (const lastfmArtist of similarArtists) {
+                try {
+                    // Get top track for this artist
+                    const topTracksUrl = `https://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist=${encodeURIComponent(lastfmArtist.name)}&api_key=${lastfmApiKey}&format=json&limit=1`
+
+                    const topTracksResponse = await fetch(topTracksUrl)
+                    const topTracksData = await topTracksResponse.json()
+
+                    if (topTracksData.toptracks && topTracksData.toptracks.track && topTracksData.toptracks.track.length > 0) {
+                        const topTrack = Array.isArray(topTracksData.toptracks.track)
+                            ? topTracksData.toptracks.track[0]
+                            : topTracksData.toptracks.track
+
+                        // Create a similar track object from the top track
+                        const similarTrack = {
+                            name: topTrack.name,
+                            artist: {
+                                name: lastfmArtist.name
+                            },
+                            playcount: topTrack.playcount || '0',
+                            match: lastfmArtist.match || '0',
+                            url: topTrack.url,
+                            duration: topTrack.duration || '0',
+                            image: topTrack.image || lastfmArtist.image || []
+                        }
+
+                        similarTracks.push(similarTrack)
+
+                        // Search this track in Deezer
+                        const searchQuery = `${lastfmArtist.name} ${topTrack.name}`
+                        const deezerResponse = await this.request(`/search/track?q=${encodeURIComponent(searchQuery)}&limit=1`)
+
+                        if (deezerResponse && deezerResponse.data && deezerResponse.data.length > 0) {
+                            const deezerTrack = deezerResponse.data[0]
+                            deezerResults.push({
+                                lastfmTrack: {
+                                    name: topTrack.name,
+                                    artist: lastfmArtist.name,
+                                    playcount: topTrack.playcount || '0',
+                                    match: lastfmArtist.match || '0',
+                                    url: topTrack.url,
+                                    duration: topTrack.duration || '0',
+                                    images: topTrack.image || lastfmArtist.image || []
+                                },
+                                deezerTrack: this.transformTrack(deezerTrack),
+                                searchQuery: searchQuery,
+                                source: 'similar_artist_top_track'
+                            })
+                        } else {
+                            // Track not found in Deezer
+                            deezerResults.push({
+                                lastfmTrack: {
+                                    name: topTrack.name,
+                                    artist: lastfmArtist.name,
+                                    playcount: topTrack.playcount || '0',
+                                    match: lastfmArtist.match || '0',
+                                    url: topTrack.url,
+                                    duration: topTrack.duration || '0',
+                                    images: topTrack.image || lastfmArtist.image || []
+                                },
+                                deezerTrack: null,
+                                searchQuery: searchQuery,
+                                error: 'Track not found in Deezer',
+                                source: 'similar_artist_top_track'
+                            })
+                        }
+                    }
+                } catch (error) {
+                    console.error(`Error getting top track for artist "${lastfmArtist.name}":`, error)
+                    // Still add the artist info even if we can't get their top track
+                    deezerResults.push({
+                        lastfmTrack: {
+                            name: 'Unknown',
+                            artist: lastfmArtist.name,
+                            playcount: '0',
+                            match: lastfmArtist.match || '0',
+                            url: lastfmArtist.url,
+                            duration: '0',
+                            images: lastfmArtist.image || []
+                        },
+                        deezerTrack: null,
+                        searchQuery: lastfmArtist.name,
+                        error: 'Failed to get top track',
+                        source: 'similar_artist_fallback'
+                    })
+                }
+            }
+
+            return {
+                originalTrack: {
+                    artist,
+                    track: 'N/A',
+                    lastfmUrl: `https://www.last.fm/music/${encodeURIComponent(artist)}`
+                },
+                similarTracks: similarTracks.map(t => ({
+                    name: t.name,
+                    artist: t.artist.name,
+                    playcount: t.playcount,
+                    match: t.match,
+                    url: t.url,
+                    duration: t.duration,
+                    images: t.image
+                })),
+                deezerResults: deezerResults,
+                summary: {
+                    totalSimilarTracks: similarTracks.length,
+                    foundInDeezer: deezerResults.filter(r => r.deezerTrack !== null).length,
+                    notFoundInDeezer: deezerResults.filter(r => r.deezerTrack === null).length
+                },
+                fallbackUsed: 'similar_artists',
+                fallbackMessage: `Found ${similarTracks.length} tracks from similar artists`
+            }
+
+        } catch (error) {
+            console.error('Error getting similar artists as tracks:', error)
+            throw error
+        }
+    }
+
 
     /**
      * Get similar tracks from Last.fm and return only Deezer results
