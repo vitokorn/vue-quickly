@@ -5,7 +5,7 @@ import QueueDisplay from "../Mob/QueueDisplay.vue"
 import PlaylistsPage from "../Mob/PlaylistsPage.vue"
 import NewReleasesPage from "../Mob/NewReleasesPage.vue"
 import RecTrackM from "../Mob/RecTrackM.vue";
-import SpotifyPlaylistsPage from "../Mob/SpotifyPlaylistsPage.vue";
+import ServicePlaylistsPage from "../Mob/ServicePlaylistsPage.vue";
 import MobileTopArtists from "../Mob/MobileTopArtists.vue";
 import MobileTopTracks from "../Mob/MobileTopTracks.vue";
 import MobileSavedAlbums from "../Mob/MobileSavedAlbums.vue";
@@ -214,8 +214,10 @@ onMounted(async () => {
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="sidebar-nav-icon">
               <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z" clip-rule="evenodd" />
             </svg>
-            <span class="sidebar-nav-label">Spotify Playlists</span>
+            <span class="sidebar-nav-label">{{currentServiceType.charAt(0).toUpperCase() + currentServiceType.slice(1)}} Playlists</span>
           </button>
+
+
         </div>
 
         <!-- Settings -->
@@ -284,7 +286,7 @@ onMounted(async () => {
       </div>
 
       <div v-else-if="currentTab === 8">
-        <SpotifyPlaylistsPage />
+        <ServicePlaylistsPage />
       </div>
 
       <div v-if="currentTab === 11">

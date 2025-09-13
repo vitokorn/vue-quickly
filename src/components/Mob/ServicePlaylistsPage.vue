@@ -1,29 +1,3 @@
-<template>
-  <div class="playlists-page">
-    <!-- Loading State -->
-    <div v-if="loading" class="loading-state">
-      <div class="loading-spinner"></div>
-      <p>Loading playlists...</p>
-    </div>
-
-    <!-- Content -->
-    <div v-else class="playlists-content">
-      <div class="playlists-section">
-        <PlaylistSelector
-          :playlists="musicStore.getSpotifyPlaylists"
-          :selected-playlist="selectedSpotifyPlaylist"
-          title="Spotify Playlists"
-          placeholder="Search Spotify playlists..."
-          :items-per-page="10"
-          @playlist-arrow-click="handleSpotifyPlaylistArrowClick"
-          @search="handlePlaylistSearch"
-          @load-more="handleLoadMoreSpotifyPlaylists"
-        />
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useMusicStore } from '../../stores/music-store'
@@ -31,10 +5,11 @@ import { useDeeperStore } from '../../stores/deeper-store'
 import PlaylistSelector from './PlaylistSelector.vue'
 import MobileDeeperPlaylist from './MobileDeeperPlaylist.vue'
 import { useSelection } from '../../composables/useSelection.js'
+import {storeToRefs} from "pinia";
 
 const musicStore = useMusicStore()
 const deeperStore = useDeeperStore()
-
+const { currentServiceType } = storeToRefs(musicStore)
 // Reactive state
 const loading = ref(false)
 const error = ref(null)
@@ -142,6 +117,33 @@ onMounted(() => {
   loadPlaylistsContent()
 })
 </script>
+
+<template>
+  <div class="playlists-page">
+    <!-- Loading State -->
+    <div v-if="loading" class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>Loading playlists...</p>
+    </div>
+
+    <!-- Content -->
+    <div v-else class="playlists-content">
+      <div class="playlists-section">
+        <PlaylistSelector
+          :playlists="musicStore.getSpotifyPlaylists"
+          :selected-playlist="selectedSpotifyPlaylist"
+          :title="currentServiceType.charAt(0).toUpperCase() + currentServiceType.slice(1) + ' Playlists'"
+          placeholder="Search service playlists..."
+          :items-per-page="10"
+          @playlist-arrow-click="handleSpotifyPlaylistArrowClick"
+          @search="handlePlaylistSearch"
+          @load-more="handleLoadMoreSpotifyPlaylists"
+        />
+      </div>
+    </div>
+  </div>
+</template>
+
 
 <style scoped>
 .playlists-page {

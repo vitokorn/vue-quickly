@@ -142,6 +142,14 @@
           {{ currentServiceType === 'deezer' ? 'ACTIVE' : '' }}
         </span>
       </button>
+
+      <button class="mobile-action-button" @click="switchToService('apple')">
+        <span class="mobile-action-icon">🎵</span>
+        <span class="mobile-action-text">Apple Music</span>
+        <span class="mobile-action-status" :class="{ active: currentServiceType === 'apple' }">
+          {{ currentServiceType === 'apple' ? 'ACTIVE' : '' }}
+        </span>
+      </button>
     </div>
 
     <!-- Actions Section -->
