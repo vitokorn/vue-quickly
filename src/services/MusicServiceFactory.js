@@ -3,6 +3,7 @@ import { SpotifyService } from './services/SpotifyService.js'
 import { DeezerService } from './services/DeezerService.js'
 import { TidalService } from './services/TidalService.js'
 import { AppleService } from './services/AppleService.js'
+import { YouTubeService } from './services/YouTubeService.js'
 import { SERVICE_TYPES } from './types.js'
 
 export class MusicServiceFactory {
@@ -36,6 +37,9 @@ export class MusicServiceFactory {
         break
       case SERVICE_TYPES.APPLE:
         service = new AppleService()
+        break
+      case SERVICE_TYPES.YOUTUBE:
+        service = new YouTubeService()
         break
       default:
         throw new Error(`Service implementation not found for: ${serviceType}`)
@@ -74,6 +78,7 @@ export class MusicServiceFactory {
       [SERVICE_TYPES.DEEZER]: 'Deezer',
       [SERVICE_TYPES.TIDAL]: 'Tidal',
       [SERVICE_TYPES.APPLE]: 'Apple Music',
+      [SERVICE_TYPES.YOUTUBE]: 'YouTube Music',
     }
     return displayNames[serviceType] || serviceType
   }
@@ -89,6 +94,7 @@ export class MusicServiceFactory {
       [SERVICE_TYPES.DEEZER]: '/img/deezer-icon.svg',
       [SERVICE_TYPES.TIDAL]: '/img/tidal-icon.svg',
       [SERVICE_TYPES.APPLE]: '/img/apple-music-icon.svg',
+      [SERVICE_TYPES.YOUTUBE]: '/img/youtube-music-icon.svg',
     }
     return icons[serviceType] || '/img/default-service-icon.svg'
   }

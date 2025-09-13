@@ -15,6 +15,7 @@ const implementedServices = [
   SERVICE_TYPES.SPOTIFY,
   SERVICE_TYPES.DEEZER,
   SERVICE_TYPES.APPLE,
+  SERVICE_TYPES.YOUTUBE
   // Add other services as they are implemented
 ]
 
@@ -63,6 +64,7 @@ const getServiceIcon = (serviceType) => {
     [SERVICE_TYPES.DEEZER]: '/img/deezer-icon.svg',
     [SERVICE_TYPES.TIDAL]: '/img/tidal-icon.svg',
     [SERVICE_TYPES.APPLE]: '/img/apple-music-icon.svg',
+    [SERVICE_TYPES.YOUTUBE]: '/img/youtube-music-icon.svg'
   }
   return icons[serviceType] || '/img/default-service-icon.svg'
 }

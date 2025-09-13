@@ -1,7 +1,7 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
-import { useMusicStore } from '../stores/music-store.js'
-import { SERVICE_TYPES } from '../services/types.js'
+import {ref, computed, onMounted, watch} from 'vue'
+import {useMusicStore} from '../stores/music-store.js'
+import {SERVICE_TYPES} from '../services/types.js'
 
 const props = defineProps({
   isVisible: {
@@ -24,6 +24,7 @@ const implementedServices = [
   SERVICE_TYPES.SPOTIFY,
   SERVICE_TYPES.DEEZER,
   SERVICE_TYPES.APPLE,
+  SERVICE_TYPES.YOUTUBE
   // Add other services as they are implemented
 ]
 
@@ -43,6 +44,7 @@ const getServiceIcon = (serviceType) => {
     [SERVICE_TYPES.DEEZER]: '/img/deezer-icon.svg',
     [SERVICE_TYPES.TIDAL]: '/img/tidal-icon.svg',
     [SERVICE_TYPES.APPLE]: '/img/apple-music-icon.svg',
+    [SERVICE_TYPES.YOUTUBE]: '/img/youtube-music-icon.svg'
   }
   return icons[serviceType] || '/img/default-service-icon.svg'
 }
@@ -107,73 +109,73 @@ const handleImageError = (event) => {
 <template>
   <div v-if="props.isVisible" class="service-selector-modal-overlay" @click.self="emit('close')">
     <div class="service-selector">
-    <div class="service-selector-header">
-      <h3>Music Service</h3>
-      <p>Choose your preferred music streaming service</p>
-    </div>
+      <div class="service-selector-header">
+        <h3>Music Service</h3>
+        <p>Choose your preferred music streaming service</p>
+      </div>
 
-    <div class="service-grid">
-      <div
-        v-for="service in availableServices"
-        :key="service.type"
-        class="service-card"
-        :class="{
+      <div class="service-grid">
+        <div
+            v-for="service in availableServices"
+            :key="service.type"
+            class="service-card"
+            :class="{
           'active': service.type === currentServiceType,
           'disabled': !isServiceImplemented(service.type)
         }"
-        @click="selectService(service.type)"
-      >
-        <div class="service-icon">
-          <img
-            :src="getServiceIcon(service.type)"
-            :alt="service.name"
-            @error="handleImageError"
-          />
-        </div>
-        <div class="service-info">
-          <h4>{{ service.name }}</h4>
-          <p v-if="!isServiceImplemented(service.type)" class="coming-soon">
-            Coming Soon
-          </p>
-          <p v-else-if="service.type === currentServiceType" class="current-service">
-            Currently Active
-          </p>
-          <p v-else class="service-description">
-            {{ getServiceDescription(service.type) }}
-          </p>
-        </div>
-        <div class="service-status">
-          <div v-if="service.type === currentServiceType" class="status-indicator active">
-            <i class="check-icon">✓</i>
+            @click="selectService(service.type)"
+        >
+          <div class="service-icon">
+            <img
+                :src="getServiceIcon(service.type)"
+                :alt="service.name"
+                @error="handleImageError"
+            />
           </div>
-          <div v-else-if="!isServiceImplemented(service.type)" class="status-indicator disabled">
-            <i class="lock-icon">🔒</i>
+          <div class="service-info">
+            <h4>{{ service.name }}</h4>
+            <p v-if="!isServiceImplemented(service.type)" class="coming-soon">
+              Coming Soon
+            </p>
+            <p v-else-if="service.type === currentServiceType" class="current-service">
+              Currently Active
+            </p>
+            <p v-else class="service-description">
+              {{ getServiceDescription(service.type) }}
+            </p>
           </div>
-          <div v-else class="status-indicator available">
-            <i class="arrow-icon">→</i>
+          <div class="service-status">
+            <div v-if="service.type === currentServiceType" class="status-indicator active">
+              <i class="check-icon">✓</i>
+            </div>
+            <div v-else-if="!isServiceImplemented(service.type)" class="status-indicator disabled">
+              <i class="lock-icon">🔒</i>
+            </div>
+            <div v-else class="status-indicator available">
+              <i class="arrow-icon">→</i>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div v-if="showSwitchWarning" class="switch-warning">
-      <div class="warning-content">
-        <i class="warning-icon">⚠️</i>
-        <div class="warning-text">
-          <h4>Switch Music Service?</h4>
-          <p>Switching services will clear your current data and require re-authentication.</p>
-        </div>
-        <div class="warning-actions">
-          <button @click="confirmSwitch" class="btn-confirm">Switch</button>
-          <button @click="cancelSwitch" class="btn-cancel">Cancel</button>
+      <div v-if="showSwitchWarning" class="switch-warning">
+        <div class="warning-content">
+          <i class="warning-icon">⚠️</i>
+          <div class="warning-text">
+            <h4>Switch Music Service?</h4>
+            <p>Switching services will clear your current data and require re-authentication.</p>
+          </div>
+          <div class="warning-actions">
+            <button @click="confirmSwitch" class="btn-confirm">Switch</button>
+            <button @click="cancelSwitch" class="btn-cancel">Cancel</button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div v-if="isLoading" class="loading-overlay">
-      <div class="loading-spinner"></div>
-      <p>Switching service...</p>
-    </div>
+      <div v-if="isLoading" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p>Switching service...</p>
+      </div>
     </div>
   </div>
 </template>
@@ -415,8 +417,12 @@ const handleImageError = (event) => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-overlay p {
