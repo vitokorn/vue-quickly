@@ -19,21 +19,18 @@ const savedAlbums = ref([])
 // Methods
 const loadSavedAlbums = async () => {
   if (musicStore.getSavedAlbums && musicStore.getSavedAlbums.length > 0) {
-    console.log('Using cached saved albums data')
     savedAlbums.value = musicStore.getSavedAlbums.map(item => item.album)
-    return
-  }
-
-  loading.value = true
-  try {
-    // Load saved albums from Spotify API
-    await musicStore.fetchSavedAlbums(0)
-    // Spotify returns saved albums in format: { added_at: "...", album: {...} }
-    savedAlbums.value = (musicStore.getSavedAlbums || []).map(item => item.album)
-  } catch (error) {
-    console.error('Failed to load saved albums:', error)
-  } finally {
-    loading.value = false
+  } else {
+    // Fallback: load data if not available (shouldn't happen with proper tab switching)
+    loading.value = true
+    try {
+      await musicStore.fetchSavedAlbums(0)
+      savedAlbums.value = (musicStore.getSavedAlbums || []).map(item => item.album)
+    } catch (error) {
+      console.error('Failed to load saved albums:', error)
+    } finally {
+      loading.value = false
+    }
   }
 }
 

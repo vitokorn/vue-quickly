@@ -334,7 +334,7 @@ export const useMusicStore = defineStore('music', {
     },
 
     // Playlists actions
-    async fetchPlaylists(offset = 0) {
+    async fetchPlaylists(userId, offset = 0) {
       this.setLoading(true)
       try {
         // Clear playlists if this is the first fetch
@@ -343,7 +343,8 @@ export const useMusicStore = defineStore('music', {
         }
 
         const service = musicServiceManager.getCurrentService()
-        const playlists = await service.getUserPlaylists(localStorage.getItem('deezer-user-id'), offset)
+
+        const playlists = await service.getUserPlaylists(null, offset)
         this.playlists.push(...playlists)
 
         // Continue fetching if there are more playlists

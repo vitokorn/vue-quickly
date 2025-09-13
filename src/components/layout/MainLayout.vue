@@ -29,6 +29,7 @@ import SavedTracks from '../SavedTracks.vue'
 import FollowedArtists from '../FollowedArtists.vue'
 import NewReleases from '../NewReleases.vue'
 import Categories from '../Categories.vue'
+import {getSectionName} from "../../utils/sectionUtils.js";
 // Stores
 const musicStore = useMusicStore()
 const audioStore = useAudioStore()
@@ -142,34 +143,6 @@ async function handleGenreClick(genrePlaylist, event) {
   await deeperStore.getGenreDetails(genrePlaylist, sectionName)
 }
 
-const getSectionName = (num) => {
-  switch (num) {
-    case 1:
-      return 'yourPlaylists'
-    case 2:
-      return 'topArtists'
-    case 3:
-      return 'topTracks'
-    case 4:
-      return 'savedAlbums'
-    case 5:
-      return 'savedTracks'
-    case 6:
-      return 'followedArtists'
-    case 7:
-      return 'newReleases'
-    case 8:
-      return 'spotifyPlaylists'
-    case 9:
-      return 'categories'
-    case 11:
-      return 'genres'
-    case 10:
-      return 'search'
-    default:
-      return 'search'
-  }
-}
 
 const polygon = (item, d, num) => {
   const sectionName = getSectionName(num)
@@ -245,12 +218,6 @@ const handleTabClick = async (tabNumber, event) => {
           await musicStore.fetchFollowedArtists()
         }
         break
-      case 7:
-        deeperStore.clearSection('newReleases')
-        if (!musicStore.getNewReleases || musicStore.getNewReleases.length === 0) {
-          await musicStore.fetchNewReleases(0)
-        }
-        break
       case 8:
         deeperStore.clearSection('spotifyPlaylists')
         if (!musicStore.getSpotifyPlaylists || musicStore.getSpotifyPlaylists.length === 0) {
@@ -258,6 +225,12 @@ const handleTabClick = async (tabNumber, event) => {
         }
         break
       case 9:
+        deeperStore.clearSection('newReleases')
+        if (!musicStore.getNewReleases || musicStore.getNewReleases.length === 0) {
+          await musicStore.fetchNewReleases(0)
+        }
+        break
+      case 10:
         deeperStore.clearSection('categories')
         // Categories will be loaded by the Categories component
         break
@@ -275,7 +248,7 @@ const handleTabClick = async (tabNumber, event) => {
 
 // Search handler
 const handleSearch = (event) => {
-  selectedTopMenu.value = 10
+  selectedTopMenu.value = 12
   musicStore.search(event.target.value)
 }
 
@@ -414,14 +387,8 @@ const handleOpenServiceSelector = () => {
             />
           </div>
 
-          <!-- New Releases Section -->
           <div v-if="selectedTopMenu === 7">
-            <NewReleases
-                :selected-top-menu="selectedTopMenu"
-                @album-click="async (album, event) => { if (deeperStore.getIsGloballyLoading) return; setSelectedItem('7' + album.id); await deeperStore.getAlbumDetails(album, 'newReleases') }"
-                @album-hover="handleTrackHover"
-                @album-leave="handleTrackLeave"
-            />
+
           </div>
 
           <!-- Spotify Playlists Section -->
@@ -438,8 +405,18 @@ const handleOpenServiceSelector = () => {
             </div>
           </div>
 
-          <!-- Categories Section -->
+          <!-- New Releases Section -->
           <div v-if="selectedTopMenu === 9">
+            <NewReleases
+                :selected-top-menu="selectedTopMenu"
+                @album-click="async (album, event) => { if (deeperStore.getIsGloballyLoading) return; setSelectedItem('7' + album.id); await deeperStore.getAlbumDetails(album, 'newReleases') }"
+                @album-hover="handleTrackHover"
+                @album-leave="handleTrackLeave"
+            />
+          </div>
+
+          <!-- Categories Section -->
+          <div v-if="selectedTopMenu === 10">
             <Categories />
           </div>
 
@@ -450,7 +427,7 @@ const handleOpenServiceSelector = () => {
               <PlaylistSelector
                 :playlists="musicStore.getGenrePlaylists"
                 :selected-playlist="selectedGenrePlaylist"
-                title="Genre Playlists"
+                title="Genres Playlists"
                 placeholder="Search genre playlists..."
                 @playlist-select="handleGenreClick"
               />
@@ -458,7 +435,7 @@ const handleOpenServiceSelector = () => {
           </div>
 
           <!-- Search Section -->
-          <div v-if="selectedTopMenu === 10" class="search-section">
+          <div v-if="selectedTopMenu === 12" class="search-section">
             <Loader v-if="musicStore.isLoading"/>
             <div class="search-header">
               <h2 class="search-title">{{ musicStore.searchInput }}</h2>

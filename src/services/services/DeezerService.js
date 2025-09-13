@@ -1381,6 +1381,9 @@ export class DeezerService extends MusicServiceInterface {
 
     async getUserPlaylists(userId, limit = 20) {
         try {
+            if (!userId) {
+                userId = localStorage.getItem('deezer-user-id')
+            }
             // Fetch both user data and playlists in parallel
             const [userResponse, playlistsResponse] = await Promise.all([
                 this.request(`/user/${userId}`),

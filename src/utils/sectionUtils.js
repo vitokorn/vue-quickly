@@ -22,15 +22,17 @@ export function getSectionName(num) {
         case 6:
             return 'followedArtists'
         case 7:
-            return 'newReleases'
+            return 'charts'
         case 8:
             return 'spotifyPlaylists'
         case 9:
-            return 'categories'
+            return 'newReleases'
         case 10:
-            return 'search'
+            return 'categories'
         case 11:
             return 'genres'
+        case 12:
+            return 'search'
         case 13:
             return 'queue'
         case 22:

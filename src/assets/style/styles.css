@@ -93,19 +93,19 @@
     padding: 12px 16px;
     margin: 12px 0;
   }
-  
+
   .lastfm-stats {
     padding: 8px;
   }
-  
+
   .stat-number {
     font-size: 16px;
   }
-  
+
   .stat-label {
     font-size: 10px;
   }
-  
+
   .stat-divider {
     height: 20px;
     margin: 0 6px;
@@ -216,8 +216,7 @@ input[type="text"] {
     }
 
     .search-tab {
-        grid-column: 1 / -1;
-        margin-left: 0;
+        grid-column: 2/4;
     }
 
     .search-container {
@@ -1790,9 +1789,7 @@ input[type=checkbox] {
 }
 
 .search-tab {
-    margin-left: auto;
     min-width: 250px;
-    width: 100%;
 }
 
 .modern-search {
@@ -1832,7 +1829,6 @@ input[type=checkbox] {
     }
 
     .search-tab {
-        margin-left: auto;
         flex-shrink: 0;
     }
 }
@@ -1860,7 +1856,6 @@ input[type=checkbox] {
     }
 
     .search-tab {
-        margin-left: auto;
         flex-shrink: 0;
         min-width: 220px;
     }

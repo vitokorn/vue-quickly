@@ -2,6 +2,7 @@
 import {ref, computed} from 'vue'
 import RefreshButton from "./RefreshButton.vue";
 import {useMusicStore} from "../stores/music-store.js";
+import {storeToRefs} from "pinia";
 
 const props = defineProps({
   playlists: {
@@ -26,6 +27,7 @@ const emit = defineEmits(['playlist-select', 'search'])
 
 const searchTerm = ref('')
 const musicStore = useMusicStore()
+const { currentServiceType } = storeToRefs(musicStore)
 
 const filteredPlaylists = computed(() => {
   if (!searchTerm.value) {
@@ -49,6 +51,7 @@ const handleSearch = (event) => {
 <template>
   <div class="playlist-selector">
     <!-- Search Header -->
+    <h3 v-if="title === 'Genres Playlists'">{{currentServiceType === 'spotify' ? '[by everynoise.com]' : ''}}</h3>
     <div class="p-2 flex-between-center">
       <div class="grid-2-1">
         <h4>{{title}}</h4>

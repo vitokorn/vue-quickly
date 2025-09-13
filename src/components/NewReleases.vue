@@ -42,7 +42,7 @@ const sortedNRItems = createNewReleaseSorter(
 
 // Event handlers
 const handleAlbumClick = async (album, event) => {
-  setSelectedItem('7' + album.id)
+  setSelectedItem('9' + album.id)
   await deeperStore.getAlbumDetails(album, 'newReleases')
   emit('album-click', album, event)
 }
@@ -75,13 +75,13 @@ const handleRefresh = () => {
       <SortAlbums v-model="selectedNRSortOption" />
     </div>
     <Loader v-if="musicStore.isLoading" />
-      <div id="newrelease" class="display-flex flex-wrap" v-show="selectedTopMenu === 7">
+      <div id="newrelease" class="display-flex flex-wrap" v-show="selectedTopMenu === 9">
         <div class="display-flex flex-wrap py-2 gap-8">
           <template v-for="(item, index) of sortedNRItems" :key="index">
             <AlbumItem
               :album="item"
-              :selected="selectedItem === '7' + item.id"
-              :album-prefix="'7'"
+              :selected="selectedItem === '9' + item.id"
+              :album-prefix="'9'"
               @click="handleAlbumClick"
               @hover="handleAlbumHover"
               @leave="handleAlbumLeave"

@@ -23,7 +23,7 @@ const currentServiceName = computed(() => {
 })
 
 const currentServiceIcon = computed(() => {
-  return getServiceIcon(currentServiceType.value)
+  return getServiceIcon(musicStore.currentServiceType)
 })
 
 onMounted(async () => {
@@ -68,13 +68,13 @@ const getServiceIcon = (serviceType) => {
 }
 
 const selectService = async (serviceType) => {
-  if (!isServiceImplemented(serviceType) || serviceType === currentServiceType.value) {
+  if (!isServiceImplemented(serviceType) || serviceType === musicStore.currentServiceType) {
     return
   }
 
   try {
     await musicStore.switchService(serviceType)
-    currentServiceType.value = serviceType
+    currentServiceType.value = musicStore.currentServiceType
     showDropdown.value = false
 
     // Emit event to parent component if needed
@@ -120,7 +120,7 @@ const handleImageError = (event) => {
             :key="service.type"
             class="service-option"
             :class="{
-            'active': service.type === currentServiceType,
+            'active': service.type === musicStore.currentServiceType,
             'disabled': !isServiceImplemented(service.type)
           }"
         >
@@ -131,7 +131,7 @@ const handleImageError = (event) => {
               @error="handleImageError"
           />
           <span class="option-name">{{ service.name }}</span>
-          <span v-if="service.type === currentServiceType" class="current-badge">Current</span>
+          <span v-if="service.type === musicStore.currentServiceType" class="current-badge">Current</span>
           <span v-else-if="!isServiceImplemented(service.type)" class="coming-soon-badge">Soon</span>
         </div>
       </div>

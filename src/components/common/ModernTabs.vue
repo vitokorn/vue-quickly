@@ -12,17 +12,17 @@
         <span class="tabs-tab-text">{{ tab.text }}</span>
         </div>
       </li>
+      <li class="tab-item search-tab" id="srch">
+        <div class="search-container">
+          <input type="search"
+                 class="modern-search"
+                 v-model="searchQuery"
+                 @keyup="handleSearch"
+                 placeholder="Search music...">
+          <span class="search-icon">🔍</span>
+        </div>
+      </li>
     </ul>
-    <li class="tab-item search-tab" id="srch">
-      <div class="search-container">
-        <input type="search"
-               class="modern-search"
-               v-model="searchQuery"
-               @keyup="handleSearch"
-               placeholder="Search music...">
-        <span class="search-icon">🔍</span>
-      </div>
-    </li>
   </nav>
 </template>
 
@@ -52,14 +52,15 @@ const allTabs = computed(() => [
   { id: 'option4', value: 4, icon: '💿', text: 'Saved Albums' },
   { id: 'option5', value: 5, icon: '❤️', text: 'Saved Tracks' },
   { id: 'option6', value: 6, icon: '⭐', text: 'Followed Artists' },
-  { id: 'option7', value: 7, icon: '🆕', text: 'New Releases' },
+  { id: 'option7', value: 7, icon: '📊', text: 'Charts' },
   {
     id: 'option8',
     value: 8,
     icon: '🎧',
     text: `${currentServiceType.value.charAt(0).toUpperCase()}${currentServiceType.value.slice(1)} Playlists`
   },
-  { id: 'option9', value: 9, icon: '🏷️', text: 'Categories' },
+  { id: 'option9', value: 9, icon: '🆕', text: 'New Releases' },
+  { id: 'option10', value: 10, icon: '🏷️', text: 'Categories' },
   { id: 'option11', value: 11, icon: '🎼', text: 'Genres' }
 ])
 

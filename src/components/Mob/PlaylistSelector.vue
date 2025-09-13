@@ -2,6 +2,8 @@
 import {ref, computed} from 'vue'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import MobilePaginationContainer from './MobilePaginationContainer.vue'
+import {storeToRefs} from "pinia";
+import {useMusicStore} from "../../stores/music-store.js";
 
 const preferencesStore = usePreferencesStore()
 
@@ -29,6 +31,8 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['playlist-select', 'search', 'load-more', 'playlist-arrow-click'])
+const musicStore = useMusicStore()
+const { currentServiceType } = storeToRefs(musicStore)
 
 const searchTerm = ref('')
 const currentPage = ref(1)
@@ -203,7 +207,7 @@ const resetPagination = () => {
             <div class="item-name">{{ playlist.name }}</div>
             <div class="item-artist">
               <span v-if="playlist.owner">{{ playlist.owner.display_name }}</span>
-              <span v-else>Spotify</span>
+              <span v-else>{{ currentServiceType.charAt(0).toUpperCase() + currentServiceType.slice(1) }}</span>
               <span v-if="playlist.tracks && playlist.tracks.length > 0">
                   {{ playlist.tracks.length }} tracks
                 </span>

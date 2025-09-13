@@ -14,15 +14,19 @@ import MobileSavedTracks from "../Mob/MobileSavedTracks.vue";
 import MobileSearchPage from "../Mob/MobileSearchPage.vue";
 import GlobalPreloader from "../common/GlobalPreloader.vue";
 import {useMusicStore} from "../../stores/music-store.js";
+import {useDeeperStore} from "../../stores/deeper-store.js";
 import {storeToRefs} from "pinia";
+import GenresPage from "../Mob/GenresPage.vue";
+import CategoriesPage from "../Mob/CategoriesPage.vue";
 
 // Reactive state
-const currentTab = ref(0)
+const currentTab = ref(12)
 const searchQuery = ref('')
 const isSidebarOpen = ref(false)
 
 // Get current service type
 const musicStore = useMusicStore()
+const deeperStore = useDeeperStore()
 const { currentServiceType } = storeToRefs(musicStore)
 
 // Check if current service supports top artists/tracks
@@ -35,14 +39,6 @@ const setCurrentTab = (tab) => {
   currentTab.value = tab
 }
 
-const showProfile = () => {
-  setCurrentTab('profile')
-}
-
-const showQueue = () => {
-  setCurrentTab('queue')
-}
-
 const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value
 }
@@ -51,13 +47,81 @@ const closeSidebar = () => {
   isSidebarOpen.value = false
 }
 
-const handleSearch = () => {
-  // Emit search event for parent components
-  emit('search', searchQuery.value)
-}
-
 // Define emits
 const emit = defineEmits(['search'])
+
+// Tab switching logic similar to desktop
+const initializeTabData = async (tabNumber) => {
+
+  try {
+    switch (tabNumber) {
+      case 1:
+        // Your Playlists
+        break
+      case 2:
+        // Top Artists
+        if (!musicStore.getTopArtistsShort || musicStore.getTopArtistsShort.length === 0) {
+          await musicStore.fetchTopArtists('short_term')
+        }
+        break
+      case 3:
+        // Top Tracks
+        if (!musicStore.getTopTracksShort || musicStore.getTopTracksShort.length === 0) {
+          await musicStore.fetchTopTracks('short_term')
+        }
+        break
+      case 4:
+        // Saved Albums
+        deeperStore.clearSection('savedAlbums')
+        if (!musicStore.getSavedAlbums || musicStore.getSavedAlbums.length === 0) {
+          await musicStore.fetchSavedAlbums(0)
+        }
+        break
+      case 5:
+        // Saved Tracks
+        deeperStore.clearSection('savedTracks')
+        if (!musicStore.getSavedTracks || musicStore.getSavedTracks.length === 0) {
+          await musicStore.fetchSavedTracks(0)
+        }
+        break
+      case 6:
+        // Followed Artists
+        deeperStore.clearSection('followedArtists')
+        if (!musicStore.getFollowedArtists || musicStore.getFollowedArtists.length === 0) {
+          await musicStore.fetchFollowedArtists()
+        }
+        break
+      case 8:
+        // Service Playlists
+        deeperStore.clearSection('spotifyPlaylists')
+        if (!musicStore.getSpotifyPlaylists || musicStore.getSpotifyPlaylists.length === 0) {
+          await musicStore.fetchSpotifyPlaylists(0)
+        }
+        break
+      case 9:
+        // New Releases
+        deeperStore.clearSection('newReleases')
+        if (!musicStore.getNewReleases || musicStore.getNewReleases.length === 0) {
+          await musicStore.fetchNewReleases(0)
+        }
+        break
+      case 10:
+        // Categories
+        deeperStore.clearSection('categories')
+        // Categories will be loaded by the CategoriesPage component
+        break
+      case 11:
+        // Genres
+        // Load genre playlists through the music store
+        if (!musicStore.getGenrePlaylists || musicStore.getGenrePlaylists.length === 0) {
+          await musicStore.fetchGenrePlaylists(0)
+        }
+        break
+    }
+  } catch (error) {
+    console.error('Failed to fetch data for mobile tab:', tabNumber, error)
+  }
+}
 
 watch(currentServiceType, (newServiceType) => {
   console.log('MobileLayout: Service changed to', newServiceType)
@@ -66,6 +130,14 @@ watch(currentServiceType, (newServiceType) => {
   if (newServiceType === 'deezer' && (currentTab.value === 2 || currentTab.value === 3)) {
     console.log('MobileLayout: Redirecting from Top Artists/Tracks to Playlists for Deezer')
     setCurrentTab(1)
+  }
+}, { immediate: true })
+
+// Watch for tab changes and initialize data
+watch(currentTab, async (newTab, oldTab) => {
+  if (newTab !== oldTab) {
+    console.log('MobileLayout: Tab changed to', newTab)
+    await initializeTabData(newTab)
   }
 }, { immediate: true })
 
@@ -188,23 +260,13 @@ onMounted(async () => {
           <h3 class="sidebar-section-title">Discover</h3>
           <button
             class="sidebar-nav-item"
-            :class="{ active: currentTab === 0 }"
-            @click="setCurrentTab(0); closeSidebar()"
+            :class="{ active: currentTab === 12 }"
+            @click="setCurrentTab(12); closeSidebar()"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="sidebar-nav-icon">
               <path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM2.25 10.5a8.25 8.25 0 1114.59 5.28l4.69 4.69a.75.75 0 11-1.06 1.06l-4.69-4.69A8.25 8.25 0 012.25 10.5z" clip-rule="evenodd" />
             </svg>
             <span class="sidebar-nav-label">Search</span>
-          </button>
-          <button
-            class="sidebar-nav-item"
-            :class="{ active: currentTab === 7 }"
-            @click="setCurrentTab(7); closeSidebar()"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="sidebar-nav-icon">
-              <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z" clip-rule="evenodd" />
-            </svg>
-            <span class="sidebar-nav-label">New Releases</span>
           </button>
           <button
               class="sidebar-nav-item"
@@ -216,7 +278,36 @@ onMounted(async () => {
             </svg>
             <span class="sidebar-nav-label">{{currentServiceType.charAt(0).toUpperCase() + currentServiceType.slice(1)}} Playlists</span>
           </button>
-
+          <button
+              class="sidebar-nav-item"
+              :class="{ active: currentTab === 9 }"
+              @click="setCurrentTab(9); closeSidebar()"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="sidebar-nav-icon">
+              <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z" clip-rule="evenodd" />
+            </svg>
+            <span class="sidebar-nav-label">New Releases</span>
+          </button>
+          <button
+              class="sidebar-nav-item"
+              :class="{ active: currentTab === 10 }"
+              @click="setCurrentTab(10); closeSidebar()"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="sidebar-nav-icon">
+              <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z" clip-rule="evenodd" />
+            </svg>
+            <span class="sidebar-nav-label">Categories</span>
+          </button>
+          <button
+              class="sidebar-nav-item"
+              :class="{ active: currentTab === 11 }"
+              @click="setCurrentTab(11); closeSidebar()"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="sidebar-nav-icon">
+              <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z" clip-rule="evenodd" />
+            </svg>
+            <span class="sidebar-nav-label">Genres</span>
+          </button>
 
         </div>
 
@@ -225,8 +316,8 @@ onMounted(async () => {
           <h3 class="sidebar-section-title">Settings</h3>
           <button
             class="sidebar-nav-item"
-            :class="{ active: currentTab === 12 }"
-            @click="setCurrentTab(12); closeSidebar()"
+            :class="{ active: currentTab === 13 }"
+            @click="setCurrentTab(13); closeSidebar()"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="sidebar-nav-icon">
               <path d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 6.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z" />
@@ -235,8 +326,8 @@ onMounted(async () => {
           </button>
           <button
               class="sidebar-nav-item"
-              :class="{ active: currentTab === 11 }"
-              @click="setCurrentTab(11); closeSidebar()"
+              :class="{ active: currentTab === 14 }"
+              @click="setCurrentTab(14); closeSidebar()"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="sidebar-nav-icon">
               <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" clip-rule="evenodd" />
@@ -253,11 +344,7 @@ onMounted(async () => {
     <!-- Main Content Area -->
     <main class="mobile-main">
 
-      <div v-if="currentTab === 0">
-        <MobileSearchPage />
-      </div>
-
-      <div v-else-if="currentTab === 1">
+      <div v-if="currentTab === 1">
         <PlaylistsPage />
       </div>
 
@@ -280,23 +367,34 @@ onMounted(async () => {
       <div v-else-if="currentTab === 6">
         <MobileFollowedArtists />
       </div>
-
       <div v-else-if="currentTab === 7">
-        <NewReleasesPage />
-      </div>
 
+      </div>
       <div v-else-if="currentTab === 8">
         <ServicePlaylistsPage />
       </div>
 
-      <div v-if="currentTab === 11">
-        <SettingsDisplay/>
+      <div v-else-if="currentTab === 9">
+        <NewReleasesPage />
+      </div>
+      <div v-else-if="currentTab === 10">
+        <CategoriesPage />
+      </div>
+      <div v-else-if="currentTab === 11">
+        <GenresPage />
       </div>
       <div v-else-if="currentTab === 12">
+        <MobileSearchPage />
+      </div>
+      <div v-else-if="currentTab === 13">
         <slot name="queue">
           <QueueDisplay />
         </slot>
       </div>
+      <div v-if="currentTab === 14">
+        <SettingsDisplay/>
+      </div>
+
     </main>
 
     <RecTrackM :num="currentTab"/>
