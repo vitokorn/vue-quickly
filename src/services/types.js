@@ -3,6 +3,7 @@ export const SERVICE_TYPES = {
   SPOTIFY: 'spotify',
   DEEZER: 'deezer',
   TIDAL: 'tidal',
+  APPLE: 'apple',
 }
 
 export const TIME_RANGES = {

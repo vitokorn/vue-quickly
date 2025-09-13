@@ -2,10 +2,10 @@
   <div class="service-indicator" @click="toggleDropdown">
     <div class="current-service">
       <img
-        :src="currentServiceIcon"
-        :alt="currentServiceName"
-        class="service-logo"
-        @error="handleImageError"
+          :src="currentServiceIcon"
+          :alt="currentServiceName"
+          class="service-logo"
+          @error="handleImageError"
       />
       <span class="service-name">{{ currentServiceName }}</span>
       <i class="dropdown-arrow" :class="{ 'open': showDropdown }">▼</i>
@@ -19,20 +19,20 @@
 
       <div class="service-list">
         <div
-          v-for="service in availableServices"
-          :key="service.type"
-          class="service-option"
-          :class="{
+            v-for="service in availableServices"
+            :key="service.type"
+            class="service-option"
+            :class="{
             'active': service.type === currentServiceType,
             'disabled': !isServiceImplemented(service.type)
           }"
-          @click="selectService(service.type)"
+            @click="selectService(service.type)"
         >
           <img
-            :src="getServiceIcon(service.type)"
-            :alt="service.name"
-            class="option-icon"
-            @error="handleImageError"
+              :src="getServiceIcon(service.type)"
+              :alt="service.name"
+              class="option-icon"
+              @error="handleImageError"
           />
           <span class="option-name">{{ service.name }}</span>
           <span v-if="service.type === currentServiceType" class="current-badge">Current</span>
@@ -50,8 +50,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useMusicStore } from '../stores/music-store.js'
+import {ref, computed, onMounted, onUnmounted} from 'vue'
+import {useMusicStore} from '../stores/music-store.js'
 import {SERVICE_TYPES as SERIVICE_TYPES, SERVICE_TYPES} from '../services/types.js'
 
 const musicStore = useMusicStore()
@@ -63,7 +63,7 @@ const currentServiceType = ref(SERVICE_TYPES.SPOTIFY)
 const implementedServices = [
   SERVICE_TYPES.SPOTIFY,
   SERVICE_TYPES.DEEZER,
-    SERIVICE_TYPES.SPOTYSTEIN,
+  SERIVICE_TYPES.APPLE,
   // Add other services as they are implemented
 ]
 
@@ -111,6 +111,7 @@ const getServiceIcon = (serviceType) => {
     [SERVICE_TYPES.SPOTIFY]: '/img/spotify-icon.svg',
     [SERVICE_TYPES.DEEZER]: '/img/deezer-icon.svg',
     [SERVICE_TYPES.TIDAL]: '/img/tidal-icon.svg',
+    [SERVICE_TYPES.APPLE]: '/img/apple-music-icon.svg',
   }
   return icons[serviceType] || '/img/default-service-icon.svg'
 }

@@ -2,6 +2,7 @@ import { MusicServiceInterface } from './MusicServiceInterface.js'
 import { SpotifyService } from './services/SpotifyService.js'
 import { DeezerService } from './services/DeezerService.js'
 import { TidalService } from './services/TidalService.js'
+import { AppleService } from './services/AppleService.js'
 import { SERVICE_TYPES } from './types.js'
 
 export class MusicServiceFactory {
@@ -32,6 +33,9 @@ export class MusicServiceFactory {
         break
       case SERVICE_TYPES.TIDAL:
         service = new TidalService()
+        break
+      case SERVICE_TYPES.APPLE:
+        service = new AppleService()
         break
       default:
         throw new Error(`Service implementation not found for: ${serviceType}`)
@@ -69,6 +73,7 @@ export class MusicServiceFactory {
       [SERVICE_TYPES.SPOTIFY]: 'Spotify',
       [SERVICE_TYPES.DEEZER]: 'Deezer',
       [SERVICE_TYPES.TIDAL]: 'Tidal',
+      [SERVICE_TYPES.APPLE]: 'Apple Music',
       [SERVICE_TYPES.SPOTYSTEIN]: 'Spotystein',
     }
     return displayNames[serviceType] || serviceType
@@ -84,6 +89,7 @@ export class MusicServiceFactory {
       [SERVICE_TYPES.SPOTIFY]: '/img/spotify-icon.svg',
       [SERVICE_TYPES.DEEZER]: '/img/deezer-icon.svg',
       [SERVICE_TYPES.TIDAL]: '/img/tidal-icon.svg',
+      [SERVICE_TYPES.APPLE]: '/img/apple-icon.svg',
       [SERVICE_TYPES.SPOTYSTEIN]: '/img/spotify-icon.svg', // Use Spotify icon for now
     }
     return icons[serviceType] || '/img/default-service-icon.svg'

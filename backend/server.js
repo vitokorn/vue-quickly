@@ -21,6 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 // API routes first
 require("./routers/spotify.router.js")(app);
 require("./routers/lastfm.router.js")(app);
+require("./routers/apple.router.js")(app);
 
 // simple route
 app.get("/", (req, res) => {
@@ -35,7 +36,8 @@ app.get('*', (req, res) => {
     // Only handle non-API routes
     if (!req.path.startsWith('/spotify') &&
         !req.path.startsWith('/lastfm') &&
-        !req.path.startsWith('/deezer')) {
+        !req.path.startsWith('/deezer') &&
+        !req.path.startsWith('/apple')) {
         res.sendFile(path + '/index.html');
     } else {
         res.status(404).json({ error: 'API endpoint not found' });

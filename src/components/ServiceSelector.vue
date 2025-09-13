@@ -4,21 +4,21 @@
       <h3>Music Service</h3>
       <p>Choose your preferred music streaming service</p>
     </div>
-    
+
     <div class="service-grid">
-      <div 
-        v-for="service in availableServices" 
+      <div
+        v-for="service in availableServices"
         :key="service.type"
         class="service-card"
-        :class="{ 
+        :class="{
           'active': service.type === currentServiceType,
           'disabled': !isServiceImplemented(service.type)
         }"
         @click="selectService(service.type)"
       >
         <div class="service-icon">
-          <img 
-            :src="getServiceIcon(service.type)" 
+          <img
+            :src="getServiceIcon(service.type)"
             :alt="service.name"
             @error="handleImageError"
           />
@@ -396,15 +396,15 @@ const handleImageError = (event) => {
   .service-selector {
     padding: 1rem;
   }
-  
+
   .service-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .service-card {
     padding: 0.75rem;
   }
-  
+
   .service-icon {
     width: 40px;
     height: 40px;
