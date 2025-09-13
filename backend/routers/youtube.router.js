@@ -39,6 +39,26 @@ module.exports = (app) => {
      */
     router.get("/youtube/user/profile", youtubeController.getUserProfile);
 
+    // ==================== AUTH COOKIE ROUTES ====================
+
+    /**
+     * @route POST /youtube/auth/cookies
+     * @desc Set YouTube cookies for authenticated requests
+     */
+    router.post("/youtube/auth/cookies", youtubeController.setCookies);
+
+    /**
+     * @route POST /youtube/auth/clear
+     * @desc Clear YouTube cookies
+     */
+    router.post("/youtube/auth/clear", youtubeController.clearCookies);
+
+    /**
+     * @route GET /youtube/auth/status
+     * @desc Get YouTube authorization status
+     */
+    router.get("/youtube/auth/status", youtubeController.getStatus);
+
     // ==================== SEARCH ROUTES ====================
 
     /**

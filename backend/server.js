@@ -1,10 +1,10 @@
 require("dotenv").config();
+const path = require("path"); // правильное подключение модуля
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const app = express();
-const path = __dirname + '/../public/'
 
 var corsOptions = {
     origin: "http://localhost:8081"
@@ -23,26 +23,18 @@ require("./routers/spotify.router.js")(app);
 require("./routers/lastfm.router.js")(app);
 require("./routers/apple.router.js")(app);
 require("./routers/youtube.router.js")(app);
+const publicPath = path.join(__dirname, "../public");
+app.use(express.static(publicPath));
 
-// simple route
-app.get("/", (req, res) => {
-    res.json({ message: "Welcome to DM." });
-});
-
-// Serve static files after API routes
-app.use(express.static(path));
-
-// Catch all handler: send back index.html for client-side routing (only for non-API routes)
-app.get('*', (req, res) => {
-    // Only handle non-API routes
-    if (!req.path.startsWith('/spotify') &&
-        !req.path.startsWith('/lastfm') &&
-        !req.path.startsWith('/deezer') &&
-        !req.path.startsWith('/apple') &&
-        !req.path.startsWith('/youtube')) {
-        res.sendFile(path + '/index.html');
+app.get("*", (req, res) => {
+    if (!req.path.startsWith("/spotify") &&
+        !req.path.startsWith("/lastfm") &&
+        !req.path.startsWith("/deezer") &&
+        !req.path.startsWith("/apple") &&
+        !req.path.startsWith("/youtube")) {
+        res.sendFile(path.join(publicPath, "index.html"));
     } else {
-        res.status(404).json({ error: 'API endpoint not found' });
+        res.status(404).json({ error: "API endpoint not found" });
     }
 });
 // set port, listen for requests

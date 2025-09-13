@@ -2,8 +2,9 @@ const db = require("../models");
 const User = db.users;
 const { Innertube } = require('youtubei');
 
-// Store Innertube instances per user
+// Store Innertube instances and auth cookies per user (in-memory)
 const innertubeInstances = new Map();
+const ytAuthCookies = new Map(); // username -> cookie string
 
 // Helper function to get username from cookies
 const getUsername = (req) => {
@@ -17,11 +18,30 @@ const getInnertubeInstance = async (username) => {
     }
 
     try {
-        const yt = await Innertube.create({
-            lang: 'en',
-            location: 'US',
-            retrieve_player_js: true,
-        });
+        const cookieString = ytAuthCookies.get(username);
+        let yt;
+        if (cookieString) {
+            // Wrap fetch to always attach YouTube cookies
+            const customFetch = async (input, init = {}) => {
+                init.headers = {
+                    ...(init.headers || {}),
+                    'cookie': cookieString
+                };
+                return fetch(input, init);
+            };
+            yt = await Innertube.create({
+                lang: 'en',
+                location: 'US',
+                retrieve_player_js: true,
+                fetch: customFetch
+            });
+        } else {
+            yt = await Innertube.create({
+                lang: 'en',
+                location: 'US',
+                retrieve_player_js: true,
+            });
+        }
 
         innertubeInstances.set(username, yt);
         return yt;
@@ -65,10 +85,7 @@ exports.handleCallback = async (req, res) => {
         res.cookie('username', userId, {
             expires: new Date(Date.now() + 3600000 * 24 * 365)
         });
-        res.cookie('access_token', 'youtube_token', {
-            sameSite: 'strict',
-            expires: new Date(Date.now() + 3600000 * 24 * 7)
-        });
+        res.cookie('yt_authorized', '0', { sameSite: 'strict', expires: new Date(Date.now() + 3600000 * 24 * 365) });
         res.cookie('country', 'US', {
             expires: new Date(Date.now() + 3600000 * 24 * 365)
         });
@@ -80,6 +97,72 @@ exports.handleCallback = async (req, res) => {
     } catch (error) {
         console.error('Error in YouTube callback:', error);
         res.status(500).json({ error: 'Authentication failed' });
+    }
+};
+
+// ==================== COOKIE AUTH METHODS ====================
+
+/**
+ * Save YouTube cookies provided by the user for authenticated requests
+ */
+exports.setCookies = async (req, res) => {
+    try {
+        const username = getUsername(req) || ('youtube_user_' + Date.now());
+        const { SAPISID, HSID, SSID, SID } = req.body || {};
+
+        if (!SAPISID || !HSID || !SSID || !SID) {
+            return res.status(400).json({ error: 'Missing required cookies: SAPISID, HSID, SSID, SID' });
+        }
+
+        // Build cookie string
+        const cookieString = `SAPISID=${SAPISID}; HSID=${HSID}; SSID=${SSID}; SID=${SID}; Domain=.youtube.com; Path=/;`;
+        ytAuthCookies.set(username, cookieString);
+
+        // Invalidate existing Innertube instance to recreate with cookies
+        if (innertubeInstances.has(username)) {
+            innertubeInstances.delete(username);
+        }
+
+        // Ensure username and authorization cookie are set
+        res.cookie('username', username, { expires: new Date(Date.now() + 3600000 * 24 * 365) });
+        res.cookie('yt_authorized', '1', { sameSite: 'strict', expires: new Date(Date.now() + 3600000 * 24 * 365) });
+
+        return res.json({ success: true });
+    } catch (error) {
+        console.error('Error setting YouTube cookies:', error);
+        res.status(500).json({ error: 'Failed to save cookies' });
+    }
+};
+
+/**
+ * Clear stored YouTube cookies
+ */
+exports.clearCookies = async (req, res) => {
+    try {
+        const username = getUsername(req);
+        if (username) {
+            ytAuthCookies.delete(username);
+            innertubeInstances.delete(username);
+        }
+        res.clearCookie('yt_authorized');
+        return res.json({ success: true });
+    } catch (error) {
+        console.error('Error clearing YouTube cookies:', error);
+        res.status(500).json({ error: 'Failed to clear cookies' });
+    }
+};
+
+/**
+ * Return authorization status
+ */
+exports.getStatus = async (req, res) => {
+    try {
+        const username = getUsername(req);
+        const authorized = !!(username && ytAuthCookies.get(username));
+        return res.json({ authorized });
+    } catch (error) {
+        console.error('Error getting YouTube status:', error);
+        res.status(500).json({ error: 'Failed to get status' });
     }
 };
 

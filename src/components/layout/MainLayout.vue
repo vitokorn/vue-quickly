@@ -19,6 +19,7 @@ import PlaylistSelector from '../PlaylistSelector.vue'
 import SearchCategory from '../SearchCategory.vue'
 import WelcomeModal from '../WelcomeModal.vue'
 import DeezerWelcomeModal from '../DeezerWelcomeModal.vue'
+import YouTubeAuthModal from '../YouTubeAuthModal.vue'
 import ServiceSelector from '../ServiceSelector.vue'
 import Header from "../Header.vue";
 import QueueModal from "../QueueModal.vue";
@@ -54,6 +55,7 @@ const {search} = useFiltering()
 const showWelcomeModal = ref(localStorage.getItem('welcome-modal-seen') !== 'true')
 const showDeezerWelcomeModal = ref(false)
 const showServiceSelector = ref(false)
+const showYouTubeAuthModal = ref(false)
 
 // For testing - you can temporarily set this to true to see the modal
 // const showDeezerWelcomeModal = ref(true)
@@ -74,6 +76,14 @@ watch(currentServiceType, (newService) => {
     // Redirect from Top Artists (2) or Top Tracks (3) to Your Playlists (1) when switching to Deezer
     if (selectedTopMenu.value === 2 || selectedTopMenu.value === 3) {
       console.log('Redirecting from Top Artists/Tracks to Your Playlists for Deezer')
+      setSelectedTopMenu(1)
+    }
+  }
+  if (newService === 'youtube') {
+    // Always prompt for cookie auth when switching to YouTube
+    showYouTubeAuthModal.value = true
+    // Gate tabs by redirecting to Playlists (1) if on unsupported sections
+    if ([2,3,4,5,6,11].includes(selectedTopMenu.value)) {
       setSelectedTopMenu(1)
     }
   }
@@ -337,6 +347,14 @@ const handleOpenServiceSelector = () => {
     <ServiceSelector
         :is-visible="showServiceSelector"
         @close="showServiceSelector = false"
+    />
+
+    <!-- YouTube Auth Modal -->
+    <YouTubeAuthModal
+        :is-visible="showYouTubeAuthModal"
+        @close="showYouTubeAuthModal = false"
+        @authorized="showYouTubeAuthModal = false"
+        @skip="showYouTubeAuthModal = false"
     />
 
     <!-- Main content -->
