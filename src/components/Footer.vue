@@ -1,7 +1,13 @@
 <script setup>
 import ServiceIndicator from "./ServiceIndicator.vue";
 
+const emit = defineEmits(['openServiceSelector'])
+
 const currentYear = new Date().getFullYear()
+
+const handleOpenServiceSelector = () => {
+  emit('openServiceSelector')
+}
 </script>
 
 <template>
@@ -23,7 +29,7 @@ const currentYear = new Date().getFullYear()
 
         <!-- Service Selection -->
         <div class="service-section">
-          <ServiceIndicator />
+          <ServiceIndicator @openServiceSelector="handleOpenServiceSelector" />
         </div>
 
         <div class="footer-section">

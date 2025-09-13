@@ -74,7 +74,6 @@ export class MusicServiceFactory {
       [SERVICE_TYPES.DEEZER]: 'Deezer',
       [SERVICE_TYPES.TIDAL]: 'Tidal',
       [SERVICE_TYPES.APPLE]: 'Apple Music',
-      [SERVICE_TYPES.SPOTYSTEIN]: 'Spotystein',
     }
     return displayNames[serviceType] || serviceType
   }
@@ -89,8 +88,7 @@ export class MusicServiceFactory {
       [SERVICE_TYPES.SPOTIFY]: '/img/spotify-icon.svg',
       [SERVICE_TYPES.DEEZER]: '/img/deezer-icon.svg',
       [SERVICE_TYPES.TIDAL]: '/img/tidal-icon.svg',
-      [SERVICE_TYPES.APPLE]: '/img/apple-icon.svg',
-      [SERVICE_TYPES.SPOTYSTEIN]: '/img/spotify-icon.svg', // Use Spotify icon for now
+      [SERVICE_TYPES.APPLE]: '/img/apple-music-icon.svg',
     }
     return icons[serviceType] || '/img/default-service-icon.svg'
   }

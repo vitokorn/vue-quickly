@@ -19,6 +19,7 @@ import PlaylistSelector from '../PlaylistSelector.vue'
 import SearchCategory from '../SearchCategory.vue'
 import WelcomeModal from '../WelcomeModal.vue'
 import DeezerWelcomeModal from '../DeezerWelcomeModal.vue'
+import ServiceSelector from '../ServiceSelector.vue'
 import Header from "../Header.vue";
 import QueueModal from "../QueueModal.vue";
 import TopTracks from '../TopTracks.vue'
@@ -52,6 +53,7 @@ const {search} = useFiltering()
 // Local state
 const showWelcomeModal = ref(localStorage.getItem('welcome-modal-seen') !== 'true')
 const showDeezerWelcomeModal = ref(false)
+const showServiceSelector = ref(false)
 
 // For testing - you can temporarily set this to true to see the modal
 // const showDeezerWelcomeModal = ref(true)
@@ -308,6 +310,10 @@ const handleDeezerUserSaved = (userData) => {
   console.log('Deezer user saved:', userData)
   // The modal will close automatically after success
 }
+
+const handleOpenServiceSelector = () => {
+  showServiceSelector.value = true
+}
 </script>
 
 <template>
@@ -325,6 +331,12 @@ const handleDeezerUserSaved = (userData) => {
         :is-visible="showDeezerWelcomeModal"
         @close="handleCloseDeezerWelcomeModal"
         @user-saved="handleDeezerUserSaved"
+    />
+
+    <!-- Service Selector Modal -->
+    <ServiceSelector
+        :is-visible="showServiceSelector"
+        @close="showServiceSelector = false"
     />
 
     <!-- Main content -->
@@ -501,7 +513,7 @@ const handleDeezerUserSaved = (userData) => {
       </div>
 
       <!-- Footer -->
-      <Footer/>
+      <Footer @openServiceSelector="handleOpenServiceSelector"/>
     </div>
   </div>
 

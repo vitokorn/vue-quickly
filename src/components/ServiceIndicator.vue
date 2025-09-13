@@ -1,58 +1,9 @@
-<template>
-  <div class="service-indicator" @click="toggleDropdown">
-    <div class="current-service">
-      <img
-          :src="currentServiceIcon"
-          :alt="currentServiceName"
-          class="service-logo"
-          @error="handleImageError"
-      />
-      <span class="service-name">{{ currentServiceName }}</span>
-      <i class="dropdown-arrow" :class="{ 'open': showDropdown }">▼</i>
-    </div>
-
-    <div v-if="showDropdown" class="service-dropdown">
-      <div class="dropdown-header">
-        <h4>Switch Music Service</h4>
-        <button @click="closeDropdown" class="close-btn">×</button>
-      </div>
-
-      <div class="service-list">
-        <div
-            v-for="service in availableServices"
-            :key="service.type"
-            class="service-option"
-            :class="{
-            'active': service.type === currentServiceType,
-            'disabled': !isServiceImplemented(service.type)
-          }"
-            @click="selectService(service.type)"
-        >
-          <img
-              :src="getServiceIcon(service.type)"
-              :alt="service.name"
-              class="option-icon"
-              @error="handleImageError"
-          />
-          <span class="option-name">{{ service.name }}</span>
-          <span v-if="service.type === currentServiceType" class="current-badge">Current</span>
-          <span v-else-if="!isServiceImplemented(service.type)" class="coming-soon-badge">Soon</span>
-        </div>
-      </div>
-
-      <div class="dropdown-footer">
-        <button @click="openServiceSelector" class="manage-services-btn">
-          Manage Services
-        </button>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup>
 import {ref, computed, onMounted, onUnmounted} from 'vue'
 import {useMusicStore} from '../stores/music-store.js'
 import {SERVICE_TYPES as SERIVICE_TYPES, SERVICE_TYPES} from '../services/types.js'
+
+const emit = defineEmits(['openServiceSelector'])
 
 const musicStore = useMusicStore()
 
@@ -63,7 +14,7 @@ const currentServiceType = ref(SERVICE_TYPES.SPOTIFY)
 const implementedServices = [
   SERVICE_TYPES.SPOTIFY,
   SERVICE_TYPES.DEEZER,
-  SERIVICE_TYPES.APPLE,
+  SERVICE_TYPES.APPLE,
   // Add other services as they are implemented
 ]
 
@@ -136,13 +87,63 @@ const selectService = async (serviceType) => {
 const openServiceSelector = () => {
   showDropdown.value = false
   // Emit event to open full service selector modal
-  // emit('openServiceSelector')
+  emit('openServiceSelector')
 }
 
 const handleImageError = (event) => {
   event.target.src = '/img/default-service-icon.svg'
 }
 </script>
+
+<template>
+  <div class="service-indicator" @click="toggleDropdown">
+    <div class="current-service">
+      <img
+          :src="currentServiceIcon"
+          :alt="currentServiceName"
+          class="service-logo"
+          @error="handleImageError"
+      />
+      <span class="service-name">{{ currentServiceName }}</span>
+      <i class="dropdown-arrow" :class="{ 'open': showDropdown }">▼</i>
+    </div>
+
+    <div v-if="showDropdown" class="service-dropdown">
+      <div class="dropdown-header">
+        <h4>Switch Music Service</h4>
+        <button @click="closeDropdown" class="close-btn">×</button>
+      </div>
+
+      <div class="service-list">
+        <div
+            v-for="service in availableServices"
+            :key="service.type"
+            class="service-option"
+            :class="{
+            'active': service.type === currentServiceType,
+            'disabled': !isServiceImplemented(service.type)
+          }"
+        >
+          <img
+              :src="getServiceIcon(service.type)"
+              :alt="service.name"
+              class="option-icon"
+              @error="handleImageError"
+          />
+          <span class="option-name">{{ service.name }}</span>
+          <span v-if="service.type === currentServiceType" class="current-badge">Current</span>
+          <span v-else-if="!isServiceImplemented(service.type)" class="coming-soon-badge">Soon</span>
+        </div>
+      </div>
+
+      <div class="dropdown-footer">
+        <button @click="openServiceSelector" class="manage-services-btn">
+          Manage Services
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .service-indicator {
