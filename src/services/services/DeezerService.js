@@ -6,6 +6,7 @@ export class DeezerService extends MusicServiceInterface {
     constructor() {
         super()
         this.baseURL = 'https://api.deezer.com'
+        this.backendUrl = 'http://localhost:8000'
         this.serviceType = SERVICE_TYPES.DEEZER
     }
 
@@ -1076,27 +1077,26 @@ export class DeezerService extends MusicServiceInterface {
                 throw new Error('Artist and track parameters are required')
             }
 
-            // Get similar tracks from Last.fm
-            const lastfmApiKey = ''
-            const lastfmUrl = `https://ws.audioscrobbler.com/2.0/?method=track.getsimilar&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&api_key=${lastfmApiKey}&format=json&limit=${limit}`
+            // Get similar tracks from backend (which uses Last.fm)
+            const backendResponse = await fetch(`${this.backendUrl}/lastfm/similar-tracks-for-deezer?artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&limit=${limit}`)
+            const backendData = await backendResponse.json()
 
-            const lastfmResponse = await fetch(lastfmUrl)
-            const lastfmData = await lastfmResponse.json()
-
-            if (!lastfmData.similartracks || !lastfmData.similartracks.track) {
-                return await this.getSimilarArtistsAsTracks(artist, limit)
+            if (!backendResponse.ok) {
+                // If backend fails, try fallback to similar artists
+                if (backendResponse.status === 404) {
+                    return await this.getSimilarArtistsAsTracks(artist, limit)
+                }
+                throw new Error(backendData.error || 'Failed to get similar tracks from backend')
             }
 
-            const similarTracks = Array.isArray(lastfmData.similartracks.track)
-                ? lastfmData.similartracks.track
-                : [lastfmData.similartracks.track]
+            const similarTracks = backendData.similarTracks || []
 
             // Search each similar track in Deezer
             const deezerResults = []
 
             for (const lastfmTrack of similarTracks) {
                 try {
-                    const searchQuery = `${lastfmTrack.artist.name} ${lastfmTrack.name}`
+                    const searchQuery = `${lastfmTrack.artist} ${lastfmTrack.name}`
                     const deezerResponse = await this.request(`/search/track?q=${encodeURIComponent(searchQuery)}&limit=1`)
 
                     if (deezerResponse && deezerResponse.data && deezerResponse.data.length > 0) {
@@ -1104,12 +1104,12 @@ export class DeezerService extends MusicServiceInterface {
                         deezerResults.push({
                             lastfmTrack: {
                                 name: lastfmTrack.name,
-                                artist: lastfmTrack.artist.name,
+                                artist: lastfmTrack.artist,
                                 playcount: lastfmTrack.playcount,
                                 match: lastfmTrack.match,
                                 url: lastfmTrack.url,
                                 duration: lastfmTrack.duration,
-                                images: lastfmTrack.image
+                                images: lastfmTrack.images
                             },
                             deezerTrack: this.transformTrack(deezerTrack),
                             searchQuery: searchQuery
@@ -1119,12 +1119,12 @@ export class DeezerService extends MusicServiceInterface {
                         deezerResults.push({
                             lastfmTrack: {
                                 name: lastfmTrack.name,
-                                artist: lastfmTrack.artist.name,
+                                artist: lastfmTrack.artist,
                                 playcount: lastfmTrack.playcount,
                                 match: lastfmTrack.match,
                                 url: lastfmTrack.url,
                                 duration: lastfmTrack.duration,
-                                images: lastfmTrack.image
+                                images: lastfmTrack.images
                             },
                             deezerTrack: null,
                             searchQuery: searchQuery,
@@ -1132,39 +1132,27 @@ export class DeezerService extends MusicServiceInterface {
                         })
                     }
                 } catch (error) {
-                    console.error(`Error searching track "${lastfmTrack.name}" by "${lastfmTrack.artist.name}" in Deezer:`, error)
+                    console.error(`Error searching track "${lastfmTrack.name}" by "${lastfmTrack.artist}" in Deezer:`, error)
                     deezerResults.push({
                         lastfmTrack: {
                             name: lastfmTrack.name,
-                            artist: lastfmTrack.artist.name,
+                            artist: lastfmTrack.artist,
                             playcount: lastfmTrack.playcount,
                             match: lastfmTrack.match,
                             url: lastfmTrack.url,
                             duration: lastfmTrack.duration,
-                            images: lastfmTrack.image
+                            images: lastfmTrack.images
                         },
                         deezerTrack: null,
-                        searchQuery: `${lastfmTrack.artist.name} ${lastfmTrack.name}`,
+                        searchQuery: `${lastfmTrack.artist} ${lastfmTrack.name}`,
                         error: 'Search failed'
                     })
                 }
             }
 
             return {
-                originalTrack: {
-                    artist,
-                    track,
-                    lastfmUrl: `https://www.last.fm/music/${encodeURIComponent(artist)}/_/${encodeURIComponent(track)}`
-                },
-                similarTracks: similarTracks.map(t => ({
-                    name: t.name,
-                    artist: t.artist.name,
-                    playcount: t.playcount,
-                    match: t.match,
-                    url: t.url,
-                    duration: t.duration,
-                    images: t.image
-                })),
+                originalTrack: backendData.originalTrack,
+                similarTracks: similarTracks,
                 deezerResults: deezerResults,
                 summary: {
                     totalSimilarTracks: similarTracks.length,
@@ -1192,14 +1180,11 @@ export class DeezerService extends MusicServiceInterface {
                 throw new Error('Artist parameter is required')
             }
 
-            // Get similar artists from Last.fm
-            const lastfmApiKey = ''
-            const lastfmUrl = `https://ws.audioscrobbler.com/2.0/?method=artist.getsimilar&artist=${encodeURIComponent(artist)}&api_key=${lastfmApiKey}&format=json&limit=${limit}`
+            // Get similar artists from backend (which uses Last.fm)
+            const similarArtistsResponse = await fetch(`${this.backendUrl}/lastfm/artist/similar?artist=${encodeURIComponent(artist)}&limit=${limit}`)
+            const similarArtistsData = await similarArtistsResponse.json()
 
-            const lastfmResponse = await fetch(lastfmUrl)
-            const lastfmData = await lastfmResponse.json()
-
-            if (!lastfmData.similarartists || !lastfmData.similarartists.artist) {
+            if (!similarArtistsResponse.ok || !similarArtistsData.similarartists || !similarArtistsData.similarartists.artist) {
                 return {
                     originalTrack: {artist, track: 'N/A'},
                     similarTracks: [],
@@ -1214,9 +1199,9 @@ export class DeezerService extends MusicServiceInterface {
                 }
             }
 
-            const similarArtists = Array.isArray(lastfmData.similarartists.artist)
-                ? lastfmData.similarartists.artist
-                : [lastfmData.similarartists.artist]
+            const similarArtists = Array.isArray(similarArtistsData.similarartists.artist)
+                ? similarArtistsData.similarartists.artist
+                : [similarArtistsData.similarartists.artist]
 
             // Get top track for each similar artist
             const deezerResults = []
@@ -1224,13 +1209,11 @@ export class DeezerService extends MusicServiceInterface {
 
             for (const lastfmArtist of similarArtists) {
                 try {
-                    // Get top track for this artist
-                    const topTracksUrl = `https://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist=${encodeURIComponent(lastfmArtist.name)}&api_key=${lastfmApiKey}&format=json&limit=1`
-
-                    const topTracksResponse = await fetch(topTracksUrl)
+                    // Get top track for this artist from backend
+                    const topTracksResponse = await fetch(`${this.backendUrl}/lastfm/artist/top-tracks?artist=${encodeURIComponent(lastfmArtist.name)}&limit=1`)
                     const topTracksData = await topTracksResponse.json()
 
-                    if (topTracksData.toptracks && topTracksData.toptracks.track && topTracksData.toptracks.track.length > 0) {
+                    if (topTracksResponse.ok && topTracksData.toptracks && topTracksData.toptracks.track && topTracksData.toptracks.track.length > 0) {
                         const topTrack = Array.isArray(topTracksData.toptracks.track)
                             ? topTracksData.toptracks.track[0]
                             : topTracksData.toptracks.track
@@ -1288,6 +1271,23 @@ export class DeezerService extends MusicServiceInterface {
                                 source: 'similar_artist_top_track'
                             })
                         }
+                    } else {
+                        // No top tracks found for this artist
+                        deezerResults.push({
+                            lastfmTrack: {
+                                name: 'Unknown',
+                                artist: lastfmArtist.name,
+                                playcount: '0',
+                                match: lastfmArtist.match || '0',
+                                url: lastfmArtist.url,
+                                duration: '0',
+                                images: lastfmArtist.image || []
+                            },
+                            deezerTrack: null,
+                            searchQuery: lastfmArtist.name,
+                            error: 'No top tracks found',
+                            source: 'similar_artist_no_tracks'
+                        })
                     }
                 } catch (error) {
                     console.error(`Error getting top track for artist "${lastfmArtist.name}":`, error)

@@ -196,14 +196,6 @@ export class MusicServiceManager {
         follow: true,
         newReleases: true
       },
-      [SERVICE_TYPES.NAPSTER]: {
-        search: true,
-        playlists: true,
-        recommendations: false, // May vary
-        userLibrary: true,
-        follow: true,
-        newReleases: true
-      }
     }
     
     return capabilities[serviceType] || {}

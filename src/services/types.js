@@ -3,7 +3,6 @@ export const SERVICE_TYPES = {
   SPOTIFY: 'spotify',
   DEEZER: 'deezer',
   TIDAL: 'tidal',
-  NAPSTER: 'napster'
 }
 
 export const TIME_RANGES = {
@@ -88,30 +87,30 @@ export class Track {
    */
   generateShortTitle(fullTitle) {
     if (!fullTitle) return ''
-    
+
     let shortTitle = fullTitle.trim()
-    
+
     // Remove common remix indicators
     const remixPatterns = [
       /\s*-\s*[^-]*(?:remix|edit|version|mix|radio|single|extended|club|dub|instrumental|acoustic|live|demo|original|explicit|clean)\s*$/i,
       /\s*\([^)]*(?:remix|edit|version|mix|radio|single|extended|club|dub|instrumental|acoustic|live|demo|original|explicit|clean)[^)]*\)\s*$/i,
       /\s*\[[^\]]*(?:remix|edit|version|mix|radio|single|extended|club|dub|instrumental|acoustic|live|demo|original|explicit|clean)[^\]]*\]\s*$/i
     ]
-    
+
     for (const pattern of remixPatterns) {
       shortTitle = shortTitle.replace(pattern, '')
     }
-    
+
     // Remove common prefixes
     const prefixPatterns = [
       /^(?:feat\.|ft\.|featuring)\s*/i,
       /^(?:prod\.|produced by)\s*/i
     ]
-    
+
     for (const pattern of prefixPatterns) {
       shortTitle = shortTitle.replace(pattern, '')
     }
-    
+
     // Remove extra whitespace and return
     return shortTitle.trim()
   }

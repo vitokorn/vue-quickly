@@ -2,7 +2,6 @@ import { MusicServiceInterface } from './MusicServiceInterface.js'
 import { SpotifyService } from './services/SpotifyService.js'
 import { DeezerService } from './services/DeezerService.js'
 import { TidalService } from './services/TidalService.js'
-import { NapsterService } from './services/NapsterService.js'
 import { SERVICE_TYPES } from './types.js'
 
 export class MusicServiceFactory {
@@ -33,9 +32,6 @@ export class MusicServiceFactory {
         break
       case SERVICE_TYPES.TIDAL:
         service = new TidalService()
-        break
-      case SERVICE_TYPES.NAPSTER:
-        service = new NapsterService()
         break
       default:
         throw new Error(`Service implementation not found for: ${serviceType}`)
@@ -73,7 +69,7 @@ export class MusicServiceFactory {
       [SERVICE_TYPES.SPOTIFY]: 'Spotify',
       [SERVICE_TYPES.DEEZER]: 'Deezer',
       [SERVICE_TYPES.TIDAL]: 'Tidal',
-      [SERVICE_TYPES.NAPSTER]: 'Napster'
+      [SERVICE_TYPES.SPOTYSTEIN]: 'Spotystein',
     }
     return displayNames[serviceType] || serviceType
   }
@@ -88,7 +84,7 @@ export class MusicServiceFactory {
       [SERVICE_TYPES.SPOTIFY]: '/img/spotify-icon.svg',
       [SERVICE_TYPES.DEEZER]: '/img/deezer-icon.svg',
       [SERVICE_TYPES.TIDAL]: '/img/tidal-icon.svg',
-      [SERVICE_TYPES.NAPSTER]: '/img/napster-icon.svg'
+      [SERVICE_TYPES.SPOTYSTEIN]: '/img/spotify-icon.svg', // Use Spotify icon for now
     }
     return icons[serviceType] || '/img/default-service-icon.svg'
   }

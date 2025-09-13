@@ -107,7 +107,6 @@ const getServiceIcon = (serviceType) => {
     [SERVICE_TYPES.SPOTIFY]: '/img/spotify-icon.svg',
     [SERVICE_TYPES.DEEZER]: '/img/deezer-icon.svg',
     [SERVICE_TYPES.TIDAL]: '/img/tidal-icon.svg',
-    [SERVICE_TYPES.NAPSTER]: '/img/napster-icon.svg'
   }
   return icons[serviceType] || '/img/default-service-icon.svg'
 }

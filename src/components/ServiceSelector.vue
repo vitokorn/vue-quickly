@@ -103,7 +103,6 @@ const getServiceIcon = (serviceType) => {
     [SERVICE_TYPES.SPOTIFY]: '/img/spotify-icon.svg',
     [SERVICE_TYPES.DEEZER]: '/img/deezer-icon.svg',
     [SERVICE_TYPES.TIDAL]: '/img/tidal-icon.svg',
-    [SERVICE_TYPES.NAPSTER]: '/img/napster-icon.svg'
   }
   return icons[serviceType] || '/img/default-service-icon.svg'
 }
@@ -113,7 +112,6 @@ const getServiceDescription = (serviceType) => {
     [SERVICE_TYPES.SPOTIFY]: 'Access your Spotify library and playlists',
     [SERVICE_TYPES.DEEZER]: 'Connect to your Deezer account',
     [SERVICE_TYPES.TIDAL]: 'High-quality music streaming',
-    [SERVICE_TYPES.NAPSTER]: 'Discover music with Napster'
   }
   return descriptions[serviceType] || 'Music streaming service'
 }

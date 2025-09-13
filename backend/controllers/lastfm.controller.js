@@ -691,7 +691,7 @@ exports.getTagTopTracks = async (req, res) => {
             return res.status(400).json({ error: 'Tag name required' });
         }
 
-        const data = await makeLastfmRequest('tag.getTopTracks', { 
+        const data = await makeLastfmRequest('tag.getTopTracks', {
             tag: tag,
             limit: limit,
             page: page
@@ -699,5 +699,72 @@ exports.getTagTopTracks = async (req, res) => {
         res.json(data);
     } catch (error) {
         res.status(500).json({ error: 'Failed to get tag top tracks' });
+    }
+};
+
+// ==================== DEEZER INTEGRATION METHODS ====================
+
+exports.getSimilarTracksForDeezer = async (req, res) => {
+    try {
+        const artist = req.query.artist;
+        const track = req.query.track;
+        const limit = req.query.limit || 10;
+
+        if (!artist || !track) {
+            return res.status(400).json({ error: 'Artist and track parameters are required' });
+        }
+
+        // Get similar tracks from Last.fm
+        const data = await makeLastfmRequest('track.getSimilar', {
+            artist: artist,
+            track: track,
+            limit: limit
+        });
+
+        if (!data.similartracks || !data.similartracks.track) {
+            return res.status(404).json({
+                error: 'No similar tracks found',
+                originalTrack: {
+                    artist,
+                    track,
+                    lastfmUrl: `https://www.last.fm/music/${encodeURIComponent(artist)}/_/${encodeURIComponent(track)}`
+                },
+                similarTracks: [],
+                deezerResults: [],
+                summary: {
+                    totalSimilarTracks: 0,
+                    foundInDeezer: 0,
+                    notFoundInDeezer: 0
+                }
+            });
+        }
+
+        const similarTracks = Array.isArray(data.similartracks.track)
+            ? data.similartracks.track
+            : [data.similartracks.track];
+
+        res.json({
+            originalTrack: {
+                artist,
+                track,
+                lastfmUrl: `https://www.last.fm/music/${encodeURIComponent(artist)}/_/${encodeURIComponent(track)}`
+            },
+            similarTracks: similarTracks.map(t => ({
+                name: t.name,
+                artist: t.artist.name,
+                playcount: t.playcount,
+                match: t.match,
+                url: t.url,
+                duration: t.duration,
+                images: t.image
+            })),
+            summary: {
+                totalSimilarTracks: similarTracks.length
+            }
+        });
+
+    } catch (error) {
+        console.error('Error getting similar tracks for Deezer:', error);
+        res.status(500).json({ error: 'Failed to get similar tracks for Deezer' });
     }
 };

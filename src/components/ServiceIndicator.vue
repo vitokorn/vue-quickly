@@ -1,8 +1,8 @@
 <template>
   <div class="service-indicator" @click="toggleDropdown">
     <div class="current-service">
-      <img 
-        :src="currentServiceIcon" 
+      <img
+        :src="currentServiceIcon"
         :alt="currentServiceName"
         class="service-logo"
         @error="handleImageError"
@@ -10,26 +10,26 @@
       <span class="service-name">{{ currentServiceName }}</span>
       <i class="dropdown-arrow" :class="{ 'open': showDropdown }">▼</i>
     </div>
-    
+
     <div v-if="showDropdown" class="service-dropdown">
       <div class="dropdown-header">
         <h4>Switch Music Service</h4>
         <button @click="closeDropdown" class="close-btn">×</button>
       </div>
-      
+
       <div class="service-list">
-        <div 
-          v-for="service in availableServices" 
+        <div
+          v-for="service in availableServices"
           :key="service.type"
           class="service-option"
-          :class="{ 
+          :class="{
             'active': service.type === currentServiceType,
             'disabled': !isServiceImplemented(service.type)
           }"
           @click="selectService(service.type)"
         >
-          <img 
-            :src="getServiceIcon(service.type)" 
+          <img
+            :src="getServiceIcon(service.type)"
             :alt="service.name"
             class="option-icon"
             @error="handleImageError"
@@ -39,7 +39,7 @@
           <span v-else-if="!isServiceImplemented(service.type)" class="coming-soon-badge">Soon</span>
         </div>
       </div>
-      
+
       <div class="dropdown-footer">
         <button @click="openServiceSelector" class="manage-services-btn">
           Manage Services
@@ -52,7 +52,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useMusicStore } from '../stores/music-store.js'
-import { SERVICE_TYPES } from '../services/types.js'
+import {SERVICE_TYPES as SERIVICE_TYPES, SERVICE_TYPES} from '../services/types.js'
 
 const musicStore = useMusicStore()
 
@@ -62,7 +62,8 @@ const currentServiceType = ref(SERVICE_TYPES.SPOTIFY)
 
 const implementedServices = [
   SERVICE_TYPES.SPOTIFY,
-  SERVICE_TYPES.DEEZER
+  SERVICE_TYPES.DEEZER,
+    SERIVICE_TYPES.SPOTYSTEIN,
   // Add other services as they are implemented
 ]
 
@@ -78,7 +79,7 @@ onMounted(async () => {
   await musicStore.initializeServices()
   availableServices.value = musicStore.availableServices
   currentServiceType.value = musicStore.currentServiceType
-  
+
   // Close dropdown when clicking outside
   document.addEventListener('click', handleClickOutside)
 })
@@ -110,7 +111,6 @@ const getServiceIcon = (serviceType) => {
     [SERVICE_TYPES.SPOTIFY]: '/img/spotify-icon.svg',
     [SERVICE_TYPES.DEEZER]: '/img/deezer-icon.svg',
     [SERVICE_TYPES.TIDAL]: '/img/tidal-icon.svg',
-    [SERVICE_TYPES.NAPSTER]: '/img/napster-icon.svg'
   }
   return icons[serviceType] || '/img/default-service-icon.svg'
 }
@@ -124,7 +124,7 @@ const selectService = async (serviceType) => {
     await musicStore.switchService(serviceType)
     currentServiceType.value = serviceType
     showDropdown.value = false
-    
+
     // Emit event to parent component if needed
     // emit('serviceChanged', serviceType)
   } catch (error) {
@@ -326,11 +326,11 @@ const handleImageError = (event) => {
     min-width: 120px;
     padding: 0.4rem 0.6rem;
   }
-  
+
   .service-name {
     font-size: 0.8rem;
   }
-  
+
   .service-dropdown {
     min-width: 180px;
   }
