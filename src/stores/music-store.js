@@ -27,6 +27,7 @@ export const useMusicStore = defineStore('music', {
     savedTracks: [],
     savedTracksTotal: 0,
     followedArtists: [],
+      userPlaylists: [],
     playlists: [],
     genrePlaylists: [],
     spotifyPlaylistsPagination: {
@@ -83,7 +84,7 @@ export const useMusicStore = defineStore('music', {
     getSavedAlbums: (state) => state.savedAlbums,
     getSavedTracks: (state) => state.savedTracks,
     getFollowedArtists: (state) => state.followedArtists,
-    getPlaylists: (state) => state.playlists,
+    getPlaylists: (state) => state.userPlaylists,
     getNewReleases: (state) => state.newReleases,
     getSpotifyPlaylists: (state) => state.playlists, // Legacy compatibility
     getGenrePlaylists: (state) => state.genrePlaylists,
@@ -339,13 +340,13 @@ export const useMusicStore = defineStore('music', {
       try {
         // Clear playlists if this is the first fetch
         if (offset === 0) {
-          this.playlists = []
+          this.userPlaylists = []
         }
 
         const service = musicServiceManager.getCurrentService()
 
         const playlists = await service.getUserPlaylists(null, limit, offset)
-        this.playlists.push(...playlists)
+        this.userPlaylists.push(...playlists)
 
         // Continue fetching if there are more playlists
         if (playlists.length === 50) {
