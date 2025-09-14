@@ -185,7 +185,7 @@ export class TidalService extends MusicServiceInterface {
     throw new Error('Tidal checkFollowingPlaylist not yet implemented')
   }
 
-  async getUserPlaylists(userId, limit = 20) {
+  async getUserPlaylists(userId, limit = 20, offset=0) {
     throw new Error('Tidal getUserPlaylists not yet implemented')
   }
 }

@@ -260,7 +260,7 @@ export class AppleService extends MusicServiceInterface {
     return []
   }
 
-  async getUserPlaylists(userId, limit = 20) {
+  async getUserPlaylists(userId, limit = 20, offset=0) {
     // For Apple Music, userId is not used the same way
     return this.getPlaylists(0, limit)
   }

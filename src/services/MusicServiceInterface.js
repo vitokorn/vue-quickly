@@ -105,7 +105,7 @@ export class MusicServiceInterface {
     throw new Error('getArtistPlaylists() must be implemented by subclass')
   }
 
-  async getUserPlaylists(userId, limit = 20) {
+  async getUserPlaylists(userId, limit = 20, offset=0) {
     throw new Error('getUserPlaylists() must be implemented by subclass')
   }
 

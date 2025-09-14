@@ -1,15 +1,15 @@
-import { MusicServiceInterface } from '../MusicServiceInterface.js'
+import {MusicServiceInterface} from '../MusicServiceInterface.js'
 import {
-  Artist,
-  Album,
-  Track,
-  Playlist,
-  SearchResults,
-  User,
-  Image,
-  ExternalUrls,
-  SERVICE_TYPES,
-  TIME_RANGES
+    Album,
+    Artist,
+    ExternalUrls,
+    Image,
+    Playlist,
+    SearchResults,
+    SERVICE_TYPES,
+    TIME_RANGES,
+    Track,
+    User
 } from '../types.js'
 import axios from 'axios'
 
@@ -166,9 +166,27 @@ export class SpotifyService extends MusicServiceInterface {
   }
 
   async getPlaylist(id) {
-    const response = await this.request(`/playlists/${id}`)
+    const playlistResponse = await this.request(`/playlists/${id}`)
+
+    let playlistWithTracks
+    if (playlistResponse.data.tracks?.items && playlistResponse.data.tracks.items.length > 0) {
+      playlistWithTracks = {
+        ...playlistResponse.data
+      }
+    } else {
+      // If no tracks in the response, fetch them separately
+      const tracksResponse = await this.request(`/playlists/${id}/tracks?limit=100`)
+      playlistWithTracks = {
+        ...playlistResponse.data,
+        tracks: {
+          items: tracksResponse.data.items,
+          total: tracksResponse.data.total
+        }
+      }
+    }
+
     return this.transformPlaylist({
-      ...response.data,
+      ...playlistWithTracks,
       service: this.serviceType
     })
   }
@@ -578,22 +596,19 @@ export class SpotifyService extends MusicServiceInterface {
     })
   }
 
-  async getUserPlaylists(userId, limit = 20) {
+  async getUserPlaylists(userId, limit = 20, offset=0) {
     try {
       let endpoint
       if (userId) {
         // Get playlists for a specific user
-        endpoint = `/users/${userId}/playlists?limit=${limit}`
+        endpoint = `/users/${userId}/playlists?limit=${limit}&offset=${offset}`
       } else {
         // Get current user's playlists
-        endpoint = `/me/playlists?limit=${limit}`
+        endpoint = `/me/playlists?limit=${limit}&offset=${offset}`
       }
 
       const response = await this.request(endpoint)
       const playlists = response.data.items || []
-        for (const playlist of playlists) {
-            playlist.tracks = await this.transformTrack({})
-        }
       return playlists.map(playlist => this.transformPlaylist({
         ...playlist,
         service: this.serviceType

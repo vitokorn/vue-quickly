@@ -334,7 +334,7 @@ export const useMusicStore = defineStore('music', {
     },
 
     // Playlists actions
-    async fetchPlaylists(userId, offset = 0) {
+    async fetchPlaylists(userId, limit=50, offset = 0) {
       this.setLoading(true)
       try {
         // Clear playlists if this is the first fetch
@@ -344,12 +344,12 @@ export const useMusicStore = defineStore('music', {
 
         const service = musicServiceManager.getCurrentService()
 
-        const playlists = await service.getUserPlaylists(null, offset)
+        const playlists = await service.getUserPlaylists(null, limit, offset)
         this.playlists.push(...playlists)
 
         // Continue fetching if there are more playlists
         if (playlists.length === 50) {
-          await this.fetchPlaylists(offset + 50)
+          await this.fetchPlaylists(userId,limit,offset + 50)
         }
       } catch (error) {
         console.error('Failed to fetch playlists:', error)

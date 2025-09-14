@@ -183,7 +183,7 @@ const handleTabClick = async (tabNumber, event) => {
       case 1:
         deeperStore.clearSection('yourPlaylists')
         if (!musicStore.getPlaylists || musicStore.getPlaylists.length === 0) {
-          await musicStore.fetchPlaylists(0)
+          await musicStore.fetchPlaylists(null)
         }
         break
       case 2:
