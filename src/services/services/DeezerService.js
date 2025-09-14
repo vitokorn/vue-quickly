@@ -249,6 +249,10 @@ export class DeezerService extends MusicServiceInterface {
 
     // Cache for artist albums to avoid multiple requests
     artistAlbumsCache = new Map()
+    // Cache for album tracks to avoid multiple requests
+    albumTracksCache = new Map()
+    // Cache for individual album data by album ID
+    albumDataCache = new Map()
     // Cache for loved-tracks playlist id per user
     lovedPlaylistIdCache = new Map()
 
@@ -288,6 +292,12 @@ export class DeezerService extends MusicServiceInterface {
         try {
             console.log('Fetching albums from API for artist:', id)
             const response = await this.request(`/artist/${id}/albums?limit=50`) // Fixed limit for caching
+            
+            // Cache each album by its ID for easy lookup
+            response.data.forEach(album => {
+                this.albumDataCache.set(album.id.toString(), album)
+            })
+            
             this.artistAlbumsCache.set(cacheKey, response.data)
             return response.data
         } catch (error) {
@@ -363,10 +373,44 @@ export class DeezerService extends MusicServiceInterface {
         }
     }
 
-    async getAlbumTracks(id) {
+    async getAlbumTracks(id, albumData = null) {
+        const cacheKey = `album_tracks_${id}`
+        
+        if (this.albumTracksCache.has(cacheKey)) {
+            console.log('Using cached album tracks for album:', id)
+            return this.albumTracksCache.get(cacheKey)
+        }
+        
         try {
-            const response = await this.request(`/album/${id}/tracks`)
-            return response.data.map(track => this.transformTrack(track))
+            console.log('Fetching album tracks from API for album:', id)
+            
+            const tracksResponse = await this.request(`/album/${id}/tracks`)
+            
+            // Try to get album data from cache first, fallback to API if needed
+            let album = this.albumDataCache.get(id.toString()) || albumData
+            
+            if (!album) {
+                console.log('Album data not in cache, fetching from API for album:', id)
+                const albumResponse = await this.request(`/album/${id}`)
+                album = albumResponse
+                // Cache the album data for future use
+                this.albumDataCache.set(id.toString(), album)
+            } else {
+                console.log('Using cached album data for album:', id)
+            }
+            
+            // Enrich each track with album data for proper cover images
+            const tracks = tracksResponse.data.map(track => {
+                // Add album data to track before transformation
+                const enrichedTrack = {
+                    ...track,
+                    album: album
+                }
+                return this.transformTrack(enrichedTrack)
+            })
+            
+            this.albumTracksCache.set(cacheKey, tracks)
+            return tracks
         } catch (error) {
             console.error('Deezer getAlbumTracks error:', error)
             throw error

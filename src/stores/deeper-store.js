@@ -505,6 +505,20 @@ export const useDeeperStore = defineStore('deeper', {
                 }
                 trackartistArray.push(appearancesItem)
 
+                // Check if top tracks are empty and create fallback from album tracks
+                if (!topTracks || topTracks.length === 0) {
+                    console.log('Top tracks empty, creating fallback from album tracks for artist:', item.id)
+                    const fallbackTracks = await this.createFallbackTopTracks(item.id, albums)
+                    if (fallbackTracks.length > 0) {
+                        // Update the existing top tracks item
+                        const topTracksIndex = trackartistArray.findIndex(item => item.type === 'top_tracks')
+                        if (topTracksIndex !== -1) {
+                            trackartistArray[topTracksIndex].tracks = fallbackTracks
+                            console.log('Updated top tracks with fallback:', fallbackTracks.length, 'tracks')
+                        }
+                    }
+                }
+
                 // Add playlists
                 const enrichedPlaylists = await this.enrichPlaylists(playlists)
                 const playlistsItem = {
@@ -1041,6 +1055,42 @@ export const useDeeperStore = defineStore('deeper', {
             }
 
             return enrichedPlaylists
+        },
+
+        async createFallbackTopTracks(artistId, albums) {
+            const service = musicServiceManager.getCurrentService()
+            const allTracks = []
+            
+            try {
+                // Process all albums since data is cached
+                for (const album of albums) {
+                    try {
+                        // Pass album data to getAlbumTracks to avoid extra API calls
+                        const tracks = await service.getAlbumTracks(album.id, album)
+                        allTracks.push(...tracks)
+                    } catch (error) {
+                        console.warn('Failed to get tracks for album:', album.id, error)
+                    }
+                }
+                
+                if (allTracks.length === 0) {
+                    return []
+                }
+                
+                // Sort tracks by rank (higher rank = more popular)
+                const sortedTracks = [...allTracks].sort((a, b) => {
+                    const rankA = a.rank || a.popularity || 0
+                    const rankB = b.rank || b.popularity || 0
+                    return rankB - rankA // Sort descending (highest rank first)
+                })
+                
+                // Return up to 10 highest ranked tracks as fallback top tracks
+                return sortedTracks.slice(0, 10)
+                
+            } catch (error) {
+                console.error('Error creating fallback top tracks for artist:', artistId, error)
+                return []
+            }
         },
 
         async enrichArtists(artists) {
