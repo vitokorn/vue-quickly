@@ -1060,7 +1060,7 @@ export const useDeeperStore = defineStore('deeper', {
         async createFallbackTopTracks(artistId, albums) {
             const service = musicServiceManager.getCurrentService()
             const allTracks = []
-            
+
             try {
                 // Process all albums since data is cached
                 for (const album of albums) {
@@ -1072,23 +1072,104 @@ export const useDeeperStore = defineStore('deeper', {
                         console.warn('Failed to get tracks for album:', album.id, error)
                     }
                 }
-                
+
                 if (allTracks.length === 0) {
                     return []
                 }
-                
+
                 // Sort tracks by rank (higher rank = more popular)
                 const sortedTracks = [...allTracks].sort((a, b) => {
                     const rankA = a.rank || a.popularity || 0
                     const rankB = b.rank || b.popularity || 0
                     return rankB - rankA // Sort descending (highest rank first)
                 })
-                
-                // Return up to 10 highest ranked tracks as fallback top tracks
-                return sortedTracks.slice(0, 10)
-                
+
+                // Get top 5 tracks from Deezer albums
+                const deezerTopTracks = sortedTracks.slice(0, 5)
+
+                // Try to get Last.fm top tracks and add 5 more
+                let finalTracks = [...deezerTopTracks]
+
+                try {
+                    const lastfmTracks = await this.getLastFmTopTracks(artistId, service)
+                    if (lastfmTracks && lastfmTracks.length > 0) {
+                        // Add up to 5 Last.fm tracks
+                        finalTracks.unshift(...lastfmTracks.slice(0, 5))
+                        console.log('Combined tracks: 5 from Deezer albums + ', lastfmTracks.length, 'from Last.fm')
+                    } else {
+                        // If no Last.fm tracks, fill with more Deezer tracks
+                        const additionalDeezerTracks = sortedTracks.slice(5, 10)
+                        finalTracks.push(...additionalDeezerTracks)
+                        console.log('Using 10 Deezer album tracks (Last.fm unavailable)')
+                    }
+                } catch (error) {
+                    console.warn('Failed to get Last.fm tracks, using Deezer only:', error)
+                    // If Last.fm fails, fill with more Deezer tracks
+                    const additionalDeezerTracks = sortedTracks.slice(5, 10)
+                    finalTracks.push(...additionalDeezerTracks)
+                }
+
+                return finalTracks
+
             } catch (error) {
                 console.error('Error creating fallback top tracks for artist:', artistId, error)
+                return []
+            }
+        },
+
+        async getLastFmTopTracks(artistId, service) {
+            try {
+                // First get the artist name from the service
+                const artistInfo = await service.getArtist(artistId)
+                if (!artistInfo || !artistInfo.name) {
+                    console.warn('No artist name found for ID:', artistId)
+                    return []
+                }
+
+                // Make request to Last.fm backend
+                const response = await fetch(`/lastfm/artist/top-tracks?artist=${encodeURIComponent(artistInfo.name)}&limit=10`)
+
+                if (!response.ok) {
+                    console.warn('Last.fm top tracks request failed:', response.status)
+                    return []
+                }
+
+                const lastfmData = await response.json()
+
+                if (!lastfmData.toptracks || !lastfmData.toptracks.track) {
+                    console.warn('No top tracks data from Last.fm for artist:', artistInfo.name)
+                    return []
+                }
+
+                const lastfmTracks = Array.isArray(lastfmData.toptracks.track)
+                    ? lastfmData.toptracks.track
+                    : [lastfmData.toptracks.track]
+
+                // Search each Last.fm track in Deezer and transform to Deezer format
+                const deezerTracks = []
+
+                for (const lastfmTrack of lastfmTracks) {
+                    try {
+                        const searchQuery = `${artistInfo.name} ${lastfmTrack.name}`
+                        const searchResponse = await service.request(`/search/track?q=${encodeURIComponent(searchQuery)}&limit=1`)
+
+                        if (searchResponse && searchResponse.data && searchResponse.data.length > 0) {
+                            const deezerTrack = searchResponse.data[0]
+                            const transformedTrack = service.transformTrack(deezerTrack)
+                            if (transformedTrack) {
+                                deezerTracks.push(transformedTrack)
+                            }
+                        }
+                    } catch (error) {
+                        console.warn('Failed to search/transform Last.fm track:', lastfmTrack.name, error)
+                    }
+                }
+
+                console.log(`Found ${deezerTracks.length} Last.fm tracks in Deezer for artist:`, artistInfo.name)
+                return deezerTracks
+
+            } catch (error) {
+                console.error('Error getting Last.fm top tracks:', error)
                 return []
             }
         },
