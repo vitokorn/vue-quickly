@@ -636,7 +636,6 @@ input[type=checkbox] {
 
 .no-image {
     background: var(--cover-no-image);
-    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;

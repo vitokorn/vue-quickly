@@ -1106,6 +1106,89 @@ export class DeezerService extends MusicServiceInterface {
         })
     }
 
+    // ==================== RADIO METHODS ====================
+
+    /**
+     * Create comprehensive radio based on a seed track using the backend
+     * @param {string} trackId - Deezer track ID
+     * @param {number} limit - Number of tracks to return (default: 20)
+     * @returns {Promise<Array>} Array of radio tracks
+     */
+    async createRadioByTrack(trackId, limit = 20) {
+        try {
+            if (!trackId) {
+                throw new Error('Track ID is required')
+            }
+
+            console.log(`Creating radio for track ID: ${trackId}`)
+
+            // Try comprehensive radio first
+            const response = await fetch(`${this.backendUrl}/deezer/radio/track/${trackId}?limit=${limit}`)
+            
+            if (!response.ok) {
+                // Fallback to simple radio if comprehensive fails
+                console.warn('Comprehensive radio failed, trying simple radio')
+                return await this.createSimpleRadioByTrack(trackId, limit)
+            }
+
+            const data = await response.json()
+            
+            if (!data.tracks || data.tracks.length === 0) {
+                // If no tracks found, fallback to simple radio
+                console.warn('No tracks found in comprehensive radio, trying simple radio')
+                return await this.createSimpleRadioByTrack(trackId, limit)
+            }
+
+            console.log(`Radio created successfully: ${data.tracks.length} tracks from ${Object.keys(data.summary.sources).length} sources`)
+            
+            // Transform tracks to match our format
+            return data.tracks.map(track => this.transformTrack(track))
+            
+        } catch (error) {
+            console.error('Error creating radio by track:', error)
+            // Fallback to simple radio on error
+            try {
+                return await this.createSimpleRadioByTrack(trackId, limit)
+            } catch (fallbackError) {
+                console.error('Simple radio fallback also failed:', fallbackError)
+                return []
+            }
+        }
+    }
+
+    /**
+     * Create simple radio based on artist radio (fallback)
+     * @param {string} trackId - Deezer track ID
+     * @param {number} limit - Number of tracks to return (default: 20)
+     * @returns {Promise<Array>} Array of radio tracks
+     */
+    async createSimpleRadioByTrack(trackId, limit = 20) {
+        try {
+            console.log(`Creating simple radio for track ID: ${trackId}`)
+
+            const response = await fetch(`${this.backendUrl}/deezer/radio/track/${trackId}?limit=${limit}`)
+            
+            if (!response.ok) {
+                throw new Error(`Simple radio API error: ${response.statusText}`)
+            }
+
+            const data = await response.json()
+            
+            if (!data.tracks || data.tracks.length === 0) {
+                throw new Error('No tracks found in simple radio')
+            }
+
+            console.log(`Simple radio created successfully: ${data.tracks.length} tracks`)
+            
+            // Transform tracks to match our format
+            return data.tracks.map(track => this.transformTrack(track))
+            
+        } catch (error) {
+            console.error('Error creating simple radio by track:', error)
+            return []
+        }
+    }
+
     // ==================== LAST.FM INTEGRATION METHODS ====================
 
     /**
@@ -1134,6 +1217,12 @@ export class DeezerService extends MusicServiceInterface {
             }
 
             const similarTracks = backendData.similarTracks || []
+
+            // If no similar tracks found, try fallback to radio by track
+            if (similarTracks.length === 0) {
+                console.warn('No similar tracks found from Last.fm, trying radio by track fallback')
+                return await this.getRadioFallbackForSimilarTracks(artist, track, limit)
+            }
 
             // Search each similar track in Deezer
             const deezerResults = []
@@ -1211,6 +1300,101 @@ export class DeezerService extends MusicServiceInterface {
         }
     }
 
+    /**
+     * Get radio tracks as fallback when Last.fm similar tracks are empty
+     * @param {string} artist - Artist name
+     * @param {string} track - Track name
+     * @param {number} limit - Number of tracks to return (default: 10)
+     * @returns {Promise<Object>} Radio results formatted like similar tracks response
+     */
+    async getRadioFallbackForSimilarTracks(artist, track, limit = 10) {
+        try {
+            console.log(`Creating radio fallback for: "${track}" by "${artist}"`)
+
+            // First, search for the track in Deezer to get its ID
+            const searchQuery = `${artist} ${track}`
+            const searchResponse = await this.request(`/search/track?q=${encodeURIComponent(searchQuery)}&limit=1`)
+
+            // if (!searchResponse || !searchResponse.data || searchResponse.data.length === 0) {
+            //     console.warn('Track not found in Deezer for radio creation, falling back to similar artists')
+            //     return await this.getSimilarArtistsAsTracks(artist, limit)
+            // }
+
+            const foundTrack = searchResponse.data[0]
+            const trackId = foundTrack.id
+
+            console.log(`Found track in Deezer: ID ${trackId}, creating radio...`)
+
+            // Create radio using the found track
+            const radioTracks = await this.createRadioByTrack(trackId, limit)
+
+            // if (!radioTracks || radioTracks.length === 0) {
+            //     console.warn('Radio creation failed or returned no tracks, falling back to similar artists')
+            //     return await this.getSimilarArtistsAsTracks(artist, limit)
+            // }
+
+            // Format the results to match the expected similar tracks response structure
+            const deezerResults = radioTracks.map((radioTrack, index) => ({
+                lastfmTrack: {
+                    name: radioTrack.name,
+                    artist: radioTrack.artists?.[0]?.name || 'Unknown',
+                    playcount: '0', // Radio tracks don't have Last.fm playcount
+                    match: `0.${90 - index}`, // Simulate decreasing match scores
+                    url: radioTrack.external_urls?.deezer || '',
+                    duration: Math.floor((radioTrack.duration_ms || 0) / 1000).toString(),
+                    images: radioTrack.images || []
+                },
+                deezerTrack: radioTrack,
+                searchQuery: `${radioTrack.artists?.[0]?.name || ''} ${radioTrack.name}`,
+                source: 'radio_fallback'
+            }))
+
+            // Create fake similar tracks array for consistency with Last.fm format
+            const similarTracks = deezerResults.map(result => result.lastfmTrack)
+
+            return {
+                originalTrack: {
+                    artist,
+                    track,
+                    lastfmUrl: `https://www.last.fm/music/${encodeURIComponent(artist)}/_/${encodeURIComponent(track)}`
+                },
+                similarTracks: similarTracks,
+                deezerResults: deezerResults,
+                summary: {
+                    totalSimilarTracks: similarTracks.length,
+                    foundInDeezer: deezerResults.length,
+                    notFoundInDeezer: 0
+                },
+                fallbackUsed: 'radio_by_track',
+                fallbackMessage: `Used radio generation based on seed track "${track}" by "${artist}"`
+            }
+
+        } catch (error) {
+            console.error('Error in radio fallback for similar tracks:', error)
+            
+            // Final fallback to similar artists
+            try {
+                console.warn('Radio fallback failed, trying similar artists as final fallback')
+                return await this.getSimilarArtistsAsTracks(artist, limit)
+            } catch (finalError) {
+                console.error('All fallback methods failed:', finalError)
+                
+                // Return empty results structure if everything fails
+                return {
+                    originalTrack: { artist, track },
+                    similarTracks: [],
+                    deezerResults: [],
+                    summary: {
+                        totalSimilarTracks: 0,
+                        foundInDeezer: 0,
+                        notFoundInDeezer: 0
+                    },
+                    fallbackUsed: 'none',
+                    fallbackMessage: 'All fallback methods failed'
+                }
+            }
+        }
+    }
 
     /**
      * Get similar artists and their top tracks as fallback when similar tracks are not available

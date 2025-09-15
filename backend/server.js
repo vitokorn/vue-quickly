@@ -22,6 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 require("./routers/spotify.router.js")(app);
 require("./routers/lastfm.router.js")(app);
 require("./routers/apple.router.js")(app);
+require("./routers/deezer.router.js")(app);
 const publicPath = path.join(__dirname, "../public");
 app.use(express.static(publicPath));
 

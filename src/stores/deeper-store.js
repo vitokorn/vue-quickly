@@ -1087,26 +1087,38 @@ export const useDeeperStore = defineStore('deeper', {
                 // Get top 5 tracks from Deezer albums
                 const deezerTopTracks = sortedTracks.slice(0, 5)
 
+                // Helper function to normalize track info for comparison
+                const normalizeTrackInfo = (track) => {
+                    const name = (track.name || track.title || '').toLowerCase().trim()
+                    const artist = (track.artist?.name || track.artist || '').toLowerCase().trim()
+                    return `${name}|${artist}`
+                }
+
                 // Try to get Last.fm top tracks and add 5 more
                 let finalTracks = [...deezerTopTracks]
 
                 try {
                     const lastfmTracks = await this.getLastFmTopTracks(artistId, service)
                     if (lastfmTracks && lastfmTracks.length > 0) {
-                        // Add up to 5 Last.fm tracks
-                        finalTracks.unshift(...lastfmTracks.slice(0, 5))
-                        console.log('Combined tracks: 5 from Deezer albums + ', lastfmTracks.length, 'from Last.fm')
+                        // Create a set of existing track identifiers from Deezer tracks
+                        const existingTracks = new Set(deezerTopTracks.map(normalizeTrackInfo))
+
+                        // Filter out Last.fm tracks that already exist in Deezer tracks
+                        const uniqueLastfmTracks = lastfmTracks.filter(track =>
+                            !existingTracks.has(normalizeTrackInfo(track))
+                        )
+
+                        finalTracks.unshift(...uniqueLastfmTracks.slice(0, 5))
+                        console.log('Combined tracks: 5 from Deezer albums + ', uniqueLastfmTracks.length, 'unique from Last.fm')
                     } else {
-                        // If no Last.fm tracks, fill with more Deezer tracks
-                        const additionalDeezerTracks = sortedTracks.slice(5, 10)
-                        finalTracks.push(...additionalDeezerTracks)
-                        console.log('Using 10 Deezer album tracks (Last.fm unavailable)')
+                        // If no Last.fm tracks, try Deezer radio for variety
+                        console.log('No Last.fm tracks found, trying Deezer radio by track')
+                        await this.tryDeezerRadioFallback(finalTracks, sortedTracks, service, 'lastfm_empty')
                     }
                 } catch (error) {
-                    console.warn('Failed to get Last.fm tracks, using Deezer only:', error)
-                    // If Last.fm fails, fill with more Deezer tracks
-                    const additionalDeezerTracks = sortedTracks.slice(5, 10)
-                    finalTracks.push(...additionalDeezerTracks)
+                    console.warn('Failed to get Last.fm tracks, trying Deezer radio fallback:', error)
+                    // If Last.fm fails, try Deezer radio before falling back to more album tracks
+                    await this.tryDeezerRadioFallback(finalTracks, sortedTracks, service, 'lastfm_failed')
                 }
 
                 return finalTracks
@@ -1114,6 +1126,79 @@ export const useDeeperStore = defineStore('deeper', {
             } catch (error) {
                 console.error('Error creating fallback top tracks for artist:', artistId, error)
                 return []
+            }
+        },
+
+        async tryDeezerRadioFallback(finalTracks, sortedTracks, service, reason = 'fallback') {
+            try {
+                // Only try radio for Deezer service
+                if (service.getServiceType() !== 'deezer') {
+                    console.log('Radio fallback only available for Deezer service, using additional album tracks')
+                    const additionalDeezerTracks = sortedTracks.slice(5, 10)
+                    finalTracks.push(...additionalDeezerTracks)
+                    return
+                }
+
+                // Try to get a seed track for radio generation
+                let seedTrack = null
+
+                // First try to use the first track from sorted tracks as seed
+                if (sortedTracks.length > 0) {
+                    seedTrack = sortedTracks[0]
+                }
+
+                // If no seed track from albums, try to use the first track from finalTracks
+                if (!seedTrack && finalTracks.length > 0) {
+                    seedTrack = finalTracks[0]
+                }
+
+                if (!seedTrack || !seedTrack.id) {
+                    console.warn('No seed track available for radio, using additional album tracks')
+                    const additionalDeezerTracks = sortedTracks.slice(5, 10)
+                    finalTracks.push(...additionalDeezerTracks)
+                    return
+                }
+
+                console.log(`Creating radio using seed track: "${seedTrack.name}" (ID: ${seedTrack.id})`)
+
+                // Create radio using the seed track
+                const radioTracks = await service.createRadioByTrack(seedTrack.id, 8)
+
+                if (radioTracks && radioTracks.length > 0) {
+                    // Filter out duplicates by comparing with existing tracks
+                    const existingTrackIds = new Set([
+                        ...finalTracks.map(t => t.id),
+                        ...sortedTracks.map(t => t.id)
+                    ])
+
+                    const uniqueRadioTracks = radioTracks.filter(track =>
+                        track && track.id && !existingTrackIds.has(track.id)
+                    )
+
+                    if (uniqueRadioTracks.length > 0) {
+                        // Add radio tracks to the final list
+                        finalTracks.push(...uniqueRadioTracks.slice(0, 5))
+                        console.log(`Added ${Math.min(5, uniqueRadioTracks.length)} unique radio tracks (reason: ${reason})`)
+                        return
+                    } else {
+                        console.log('All radio tracks were duplicates, using additional album tracks')
+                    }
+                } else {
+                    console.warn('Radio creation failed or returned no tracks')
+                }
+
+                // Fallback to additional album tracks if radio fails or returns no unique tracks
+                const additionalDeezerTracks = sortedTracks.slice(5, 10)
+                finalTracks.push(...additionalDeezerTracks)
+                console.log(`Added ${additionalDeezerTracks.length} additional album tracks as fallback`)
+
+            } catch (error) {
+                console.error('Error in Deezer radio fallback:', error)
+
+                // Final fallback to additional album tracks
+                const additionalDeezerTracks = sortedTracks.slice(5, 10)
+                finalTracks.push(...additionalDeezerTracks)
+                console.log(`Radio fallback failed, added ${additionalDeezerTracks.length} additional album tracks`)
             }
         },
 
