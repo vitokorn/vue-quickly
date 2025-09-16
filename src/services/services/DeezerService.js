@@ -228,6 +228,7 @@ export class DeezerService extends MusicServiceInterface {
     async getArtist(id) {
         try {
             const response = await this.request(`/artist/${id}`)
+            this.artistsCache.set(id, response)
             return this.transformArtist(response)
         } catch (error) {
             console.error('Deezer getArtist error:', error)
@@ -246,7 +247,8 @@ export class DeezerService extends MusicServiceInterface {
             throw error
         }
     }
-
+    // Cache for artists to avoid multiple requests
+    artistsCache = new Map()
     // Cache for artist albums to avoid multiple requests
     artistAlbumsCache = new Map()
     // Cache for album tracks to avoid multiple requests
@@ -273,7 +275,24 @@ export class DeezerService extends MusicServiceInterface {
     async getRelatedArtists(id) {
         try {
             const response = await this.request(`/artist/${id}/related`)
-            return response.data.map(artist => this.transformArtist(artist))
+            if (response.data.length > 0) {
+                return response.data.map(artist => this.transformArtist(artist))
+            }
+            let artist = this.artistsCache.get(id)
+            // Get similar artists from backend (which uses Last.fm)
+            const similarArtistsResponse = await fetch(`${this.backendUrl}/lastfm/artist/similar?artist=${encodeURIComponent(artist.name)}&limit=10`)
+            const similarArtistsData = await similarArtistsResponse.json()
+            console.log('similarArtistsData', similarArtistsData)
+            let lastFMArtists = []
+            for (const artist of similarArtistsData.similarartists.artist) {
+                const artistsResponses = await this.request(`/search/artist?q=${encodeURIComponent(artist.name)}&limit=5`)
+                for (const artistResponse of artistsResponses.data) {
+                    if (artistResponse.name === artist.name) {
+                        lastFMArtists.push(artistResponse)
+                    }
+                }
+            }
+            return lastFMArtists.map(artist => this.transformArtist(artist))
         } catch (error) {
             console.error('Deezer getRelatedArtists error:', error)
             throw error
@@ -292,12 +311,12 @@ export class DeezerService extends MusicServiceInterface {
         try {
             console.log('Fetching albums from API for artist:', id)
             const response = await this.request(`/artist/${id}/albums?limit=50`) // Fixed limit for caching
-            
+
             // Cache each album by its ID for easy lookup
             response.data.forEach(album => {
                 this.albumDataCache.set(album.id.toString(), album)
             })
-            
+
             this.artistAlbumsCache.set(cacheKey, response.data)
             return response.data
         } catch (error) {
@@ -375,20 +394,20 @@ export class DeezerService extends MusicServiceInterface {
 
     async getAlbumTracks(id, albumData = null) {
         const cacheKey = `album_tracks_${id}`
-        
+
         if (this.albumTracksCache.has(cacheKey)) {
             console.log('Using cached album tracks for album:', id)
             return this.albumTracksCache.get(cacheKey)
         }
-        
+
         try {
             console.log('Fetching album tracks from API for album:', id)
-            
+
             const tracksResponse = await this.request(`/album/${id}/tracks`)
-            
+
             // Try to get album data from cache first, fallback to API if needed
             let album = this.albumDataCache.get(id.toString()) || albumData
-            
+
             if (!album) {
                 console.log('Album data not in cache, fetching from API for album:', id)
                 const albumResponse = await this.request(`/album/${id}`)
@@ -398,7 +417,7 @@ export class DeezerService extends MusicServiceInterface {
             } else {
                 console.log('Using cached album data for album:', id)
             }
-            
+
             // Enrich each track with album data for proper cover images
             const tracks = tracksResponse.data.map(track => {
                 // Add album data to track before transformation
@@ -408,7 +427,7 @@ export class DeezerService extends MusicServiceInterface {
                 }
                 return this.transformTrack(enrichedTrack)
             })
-            
+
             this.albumTracksCache.set(cacheKey, tracks)
             return tracks
         } catch (error) {
@@ -1124,7 +1143,7 @@ export class DeezerService extends MusicServiceInterface {
 
             // Try comprehensive radio first
             const response = await fetch(`${this.backendUrl}/deezer/radio/track/${trackId}?limit=${limit}`)
-            
+
             if (!response.ok) {
                 // Fallback to simple radio if comprehensive fails
                 console.warn('Comprehensive radio failed, trying simple radio')
@@ -1132,7 +1151,7 @@ export class DeezerService extends MusicServiceInterface {
             }
 
             const data = await response.json()
-            
+
             if (!data.tracks || data.tracks.length === 0) {
                 // If no tracks found, fallback to simple radio
                 console.warn('No tracks found in comprehensive radio, trying simple radio')
@@ -1140,10 +1159,10 @@ export class DeezerService extends MusicServiceInterface {
             }
 
             console.log(`Radio created successfully: ${data.tracks.length} tracks from ${Object.keys(data.summary.sources).length} sources`)
-            
+
             // Transform tracks to match our format
             return data.tracks.map(track => this.transformTrack(track))
-            
+
         } catch (error) {
             console.error('Error creating radio by track:', error)
             // Fallback to simple radio on error
@@ -1167,22 +1186,22 @@ export class DeezerService extends MusicServiceInterface {
             console.log(`Creating simple radio for track ID: ${trackId}`)
 
             const response = await fetch(`${this.backendUrl}/deezer/radio/track/${trackId}?limit=${limit}`)
-            
+
             if (!response.ok) {
                 throw new Error(`Simple radio API error: ${response.statusText}`)
             }
 
             const data = await response.json()
-            
+
             if (!data.tracks || data.tracks.length === 0) {
                 throw new Error('No tracks found in simple radio')
             }
 
             console.log(`Simple radio created successfully: ${data.tracks.length} tracks`)
-            
+
             // Transform tracks to match our format
             return data.tracks.map(track => this.transformTrack(track))
-            
+
         } catch (error) {
             console.error('Error creating simple radio by track:', error)
             return []
@@ -1371,14 +1390,14 @@ export class DeezerService extends MusicServiceInterface {
 
         } catch (error) {
             console.error('Error in radio fallback for similar tracks:', error)
-            
+
             // Final fallback to similar artists
             try {
                 console.warn('Radio fallback failed, trying similar artists as final fallback')
                 return await this.getSimilarArtistsAsTracks(artist, limit)
             } catch (finalError) {
                 console.error('All fallback methods failed:', finalError)
-                
+
                 // Return empty results structure if everything fails
                 return {
                     originalTrack: { artist, track },
