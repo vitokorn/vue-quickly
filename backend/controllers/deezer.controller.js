@@ -380,7 +380,7 @@ exports.createRadioByTrack = async (req, res) => {
                             source: 'artist_top',
                             source_info: { artist_name: seedArtist.name }
                         }));
-                    
+
                     // Filter out duplicate titles within newTopTracks, keeping only the first occurrence
                     const seenTitles = new Set();
                     const uniqueTopTracks = newTopTracks.filter(track => {
@@ -390,7 +390,7 @@ exports.createRadioByTrack = async (req, res) => {
                         seenTitles.add(track.title_short);
                         return true; // Keep first occurrence
                     });
-                    
+
                     radioTracks.push(...uniqueTopTracks);
                     console.log(`[${radioTracks.length}] Added ${uniqueTopTracks.length} artist top tracks as fallback`);
                 }
@@ -420,7 +420,7 @@ exports.createRadioByTrack = async (req, res) => {
                                                 original_artist: seedArtist.name
                                             }
                                         }));
-                                    
+
                                     // Filter out duplicate titles within newRelatedTracks
                                     const seenTitles = new Set();
                                     const uniqueRelatedTracks = newRelatedTracks.filter(track => {
@@ -467,7 +467,7 @@ exports.createRadioByTrack = async (req, res) => {
                                                     original_artist: seedArtist.name
                                                 }
                                             }));
-                                        
+
                                         // Filter out duplicate titles within newRelatedTracks
                                         const seenTitles = new Set();
                                         const uniqueRelatedTracks = newRelatedTracks.filter(track => {
@@ -1343,7 +1343,6 @@ async function getRandomGenreTracks(genreName, targetPopularity) {
             }
         }
         // TODO If MusicBrainz approach didn't work well, fallback to Last.fm second genre tag
-
 
         // Remove duplicates and shuffle
         const uniqueTracks = removeDuplicateTracks(allTracks);
