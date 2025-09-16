@@ -1236,13 +1236,13 @@ export const useDeeperStore = defineStore('deeper', {
                 for (const lastfmTrack of lastfmTracks) {
                     try {
                         const searchQuery = `${artistInfo.name} ${lastfmTrack.name}`
-                        const searchResponse = await service.request(`/search/track?q=${encodeURIComponent(searchQuery)}&limit=1`)
-
-                        if (searchResponse && searchResponse.data && searchResponse.data.length > 0) {
-                            const deezerTrack = searchResponse.data[0]
-                            const transformedTrack = service.transformTrack(deezerTrack)
-                            if (transformedTrack) {
-                                deezerTracks.push(transformedTrack)
+                        const searchResponse = await service.request(`/search/track?q=${encodeURIComponent(searchQuery)}&limit=5`)
+                        for (let track of searchResponse.data) {
+                            if (track.title_short === lastfmTrack.name && track.artist.name === artistInfo.name) {
+                                const transformedTrack = service.transformTrack(track)
+                                if (transformedTrack) {
+                                    deezerTracks.push(transformedTrack)
+                                }
                             }
                         }
                     } catch (error) {
