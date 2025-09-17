@@ -300,7 +300,7 @@ exports.createRadioByTrack = async (req, res) => {
                             if (tracks.length > 0) {
                                 const selectedTracks = tracks.slice(0, 2).map(track => ({
                                     ...track,
-                                    source: 'related_artist_simple',
+                                    source: 'related_artists_simple',
                                     source_info: {
                                         related_artist: artist.name,
                                         original_artist: seedArtist.name
@@ -420,7 +420,7 @@ exports.createRadioByTrack = async (req, res) => {
                                         .slice(0, 2)
                                         .map(track => ({
                                             ...track,
-                                            source: 'related_artist_simple',
+                                            source: 'related_artists_simple',
                                             source_info: {
                                                 related_artist: artist.name,
                                                 original_artist: seedArtist.name
@@ -467,7 +467,7 @@ exports.createRadioByTrack = async (req, res) => {
                                             .slice(0, 2)
                                             .map(track => ({
                                                 ...track,
-                                                source: 'related_artist_simple',
+                                                source: 'related_artists_simple',
                                                 source_info: {
                                                     related_artist: artist.name,
                                                     original_artist: seedArtist.name
@@ -519,7 +519,8 @@ exports.createRadioByTrack = async (req, res) => {
                 sources: {
                     relatedReleases: radioTracks.filter(t => t.source === 'related_releases').length,
                     collaborations: radioTracks.filter(t => t.source === 'collaborations').length,
-                    relatedArtists: radioTracks.filter(t => t.source === 'related_artist_simple').length,
+                    relatedArtists: radioTracks.filter(t => t.source === 'related_artists_simple').length,
+                    deezerRelatedArtists: radioTracks.filter(t => t.source === 'related_artists').length,
                     sameLabel: radioTracks.filter(t => t.source === 'same_label').length,
                     randomGenre: radioTracks.filter(t => t.source === 'random_genre').length,
                     artistTop: radioTracks.filter(t => t.source === 'artist_top').length,
