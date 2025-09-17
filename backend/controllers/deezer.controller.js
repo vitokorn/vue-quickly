@@ -337,6 +337,12 @@ exports.createRadioByTrack = async (req, res) => {
                 if (externalGenre) {
                     genreName = externalGenre;
                     console.log(`Found genre from external source: "${genreName}"`);
+
+                    // Also get the second genre for potential fallback
+                    const allGenres = await getGenresFromLastfm(seedArtist.name);
+                    if (allGenres.length > 1) {
+                        console.log(`Also found secondary genre: "${allGenres[1]}"`);
+                    }
                 } else {
                     console.log('Could not determine genre from external sources, using fallback');
                 }
@@ -355,7 +361,7 @@ exports.createRadioByTrack = async (req, res) => {
         console.log(externalLabel)
         try {
             if (externalLabel) {
-                const labelTracks = await getLabelTracks(externalLabel, genreName, seedPopularity);
+                const labelTracks = await getLabelTracks(externalLabel, genreName, seedYear, seedPopularity);
                 radioTracks.push(...labelTracks.slice(0, 4));
                 console.log(`Added ${Math.min(4, labelTracks.length)} tracks from same label`);
             }
@@ -515,7 +521,8 @@ exports.createRadioByTrack = async (req, res) => {
                     collaborations: radioTracks.filter(t => t.source === 'collaborations').length,
                     relatedArtists: radioTracks.filter(t => t.source === 'related_artist_simple').length,
                     sameLabel: radioTracks.filter(t => t.source === 'same_label').length,
-                    randomGenre: radioTracks.filter(t => t.source === 'random_genre').length
+                    randomGenre: radioTracks.filter(t => t.source === 'random_genre').length,
+                    artistTop: radioTracks.filter(t => t.source === 'artist_top').length,
                 }
             }
         });
@@ -532,24 +539,25 @@ exports.createRadioByTrack = async (req, res) => {
 // ==================== HELPER METHODS ====================
 
 /**
- * Get genre information from external sources (Discogs, Beatport)
+ * Get genre information from external sources (Last.fm + MusicBrainz)
  */
 async function getGenreAndLabelFromExternalSources(trackTitle, artistName, albumTitle) {
     try {
         console.log(`Searching for genre info: "${trackTitle}" by "${artistName}"`);
 
-        // Try Beatport (Discogs returns 403, so skipping it)
-        const [beatportGenre,beatportLabel] = await getGenreAndLabelFromBeatport(trackTitle, artistName);
-        if (beatportGenre) {
-            console.log(`Found genre from Beatport: "${beatportGenre}"`);
-            return [beatportGenre, beatportLabel];
-        }
+        // Get genres from Last.fm (up to 2 tags)
+        const lastfmGenres = await getGenresFromLastfm(artistName);
+        if (lastfmGenres && lastfmGenres.length > 0) {
+            console.log(`Found genres from Last.fm: [${lastfmGenres.join(', ')}]`);
 
-        // Try Last.fm artist.getInfo to get first tag as genre
-        const lastfmGenre = await getGenreFromLastfm(artistName);
-        if (lastfmGenre) {
-            console.log(`Found genre from Last.fm: "${lastfmGenre}"`);
-            return [lastfmGenre, null]; // Last.fm doesn't provide label info
+            // Get label info from MusicBrainz
+            const musicbrainzLabel = await getLabelFromMusicBrainz(artistName, albumTitle);
+            if (musicbrainzLabel) {
+                console.log(`Found label from MusicBrainz: "${musicbrainzLabel}"`);
+                return [lastfmGenres[0], musicbrainzLabel]; // Return first genre and label
+            }
+
+            return [lastfmGenres[0], null]; // Return first genre, no label
         }
 
         console.log('No genre found from external sources');
@@ -605,18 +613,18 @@ async function getGenreAndLabelFromBeatport(trackTitle, artistName) {
 }
 
 /**
- * Get genre from Last.fm artist.getInfo
+ * Get genres from Last.fm artist.getInfo (up to 2 tags)
  */
-async function getGenreFromLastfm(artistName) {
+async function getGenresFromLastfm(artistName) {
     try {
-        console.log(`Getting genre from Last.fm for artist: "${artistName}"`);
+        console.log(`Getting genres from Last.fm for artist: "${artistName}"`);
 
         const baseUrl = process.env.BACKEND_URL || 'http://localhost:8000'
         const response = await fetch(`${baseUrl}/lastfm/artist/info?artist=${encodeURIComponent(artistName)}`);
 
         if (!response.ok) {
             console.warn(`Last.fm API error: ${response.status} ${response.statusText}`);
-            return null;
+            return [];
         }
 
         const data = await response.json();
@@ -627,16 +635,173 @@ async function getGenreFromLastfm(artistName) {
                 : [data.artist.tags.tag];
 
             if (tags.length > 0) {
-                const firstTag = tags[0].name;
-                console.log(`Found Last.fm tag: "${firstTag}" for artist "${artistName}"`);
-                return firstTag;
+                // Get up to 2 genres, filter out common generic tags
+                const genreTags = tags
+                    .map(tag => tag.name)
+                    .filter(tag => !['seen live', 'favorites', 'all', 'music', 'rock', 'pop'].includes(tag.toLowerCase()))
+                    .slice(0, 2);
+
+                console.log(`Found Last.fm genres: [${genreTags.join(', ')}] for artist "${artistName}"`);
+                return genreTags;
             }
         }
 
         console.log(`No tags found for artist "${artistName}" on Last.fm`);
-        return null;
+        return [];
     } catch (error) {
         console.warn('Last.fm genre lookup failed:', error.message);
+        return [];
+    }
+}
+
+/**
+ * Get label information from MusicBrainz
+ */
+async function getLabelFromMusicBrainz(artistName, albumTitle) {
+    try {
+        console.log(`Getting label from MusicBrainz for artist: "${artistName}", album: "${albumTitle}"`);
+
+        // Search for the artist first
+        const artistSearchResponse = await makeMusicBrainzRequest('/artist', {
+            query: artistName,
+            limit: 5
+        });
+
+        if (!artistSearchResponse.artists || artistSearchResponse.artists.length === 0) {
+            console.log(`No artists found for "${artistName}" in MusicBrainz`);
+            return null;
+        }
+
+        // Try to find the artist with releases
+        for (const artist of artistSearchResponse.artists) {
+            try {
+                // Get releases for this artist
+                const releasesResponse = await makeMusicBrainzRequest(`/release`, {
+                    artist: artist.id,
+                    limit: 10
+                });
+
+                if (releasesResponse.releases && releasesResponse.releases.length > 0) {
+                    // Look for a release that matches the album title (if provided)
+                    let targetRelease = null;
+
+                    if (albumTitle) {
+                        targetRelease = releasesResponse.releases.find(release =>
+                            release.title && release.title.toLowerCase().includes(albumTitle.toLowerCase())
+                        );
+                    }
+
+                    // If no specific album match, use the first release
+                    if (!targetRelease) {
+                        targetRelease = releasesResponse.releases[0];
+                    }
+
+                    if (targetRelease && targetRelease['release-group'] && targetRelease['release-group']['label-info']) {
+                        const labelInfo = targetRelease['release-group']['label-info'];
+                        if (Array.isArray(labelInfo) && labelInfo.length > 0) {
+                            const label = labelInfo[0].label;
+                            if (label && label.name) {
+                                console.log(`Found label: "${label.name}" for artist "${artistName}"`);
+                                return label.name;
+                            }
+                        }
+                    }
+                }
+            } catch (releaseError) {
+                console.warn(`Failed to get releases for artist ${artist.id}:`, releaseError.message);
+                continue;
+            }
+        }
+
+        console.log(`No label found for artist "${artistName}" in MusicBrainz, trying track-based search...`);
+
+        // Fallback: Try to get label from track info if artist/release search failed
+        const trackLabel = await getLabelFromTrackInfo(artistName, albumTitle);
+        if (trackLabel) {
+            console.log(`Found label from track info: "${trackLabel}"`);
+            return trackLabel;
+        }
+
+        console.log(`No label found for artist "${artistName}" in MusicBrainz (including track fallback)`);
+        return null;
+    } catch (error) {
+        console.warn('MusicBrainz label lookup failed:', error.message);
+        return null;
+    }
+}
+
+/**
+ * Get label information from MusicBrainz track search (fallback method)
+ */
+async function getLabelFromTrackInfo(artistName, albumTitle) {
+    try {
+        console.log(`Getting label from track info for artist: "${artistName}", album: "${albumTitle}"`);
+
+        // Search for tracks by the artist
+        let trackSearchResponse = await makeMusicBrainzRequest('/recording', {
+            query: `artist:${artistName},title:${albumTitle}`,
+            limit: 10
+        });
+
+        // If no tracks found by artist, try searching by track title (if available)
+        if ((!trackSearchResponse.recordings || trackSearchResponse.recordings.length === 0) && albumTitle) {
+            console.log(`No tracks found by artist, trying track title search...`);
+            trackSearchResponse = await makeMusicBrainzRequest('/recording', {
+                query: `recording:${albumTitle}`,
+                limit: 10
+            });
+        }
+
+        if (!trackSearchResponse.recordings || trackSearchResponse.recordings.length === 0) {
+            console.log(`No tracks found for "${artistName}" in MusicBrainz track search`);
+            return null;
+        }
+        console.log(767, trackSearchResponse.recordings);
+
+        // Look through tracks to find one with release information
+        for (const recording of trackSearchResponse.recordings) {
+            try {
+                // Get detailed recording info including releases
+                const recordingResponse = await makeMusicBrainzRequest(`/recording/${recording.id}`, {
+                    inc: 'releases'
+                });
+                console.log('recordingResponse', recordingResponse.releases)
+
+                if (recordingResponse.releases && recordingResponse.releases.length > 0) {
+                    // Look for a release that matches the album title (if provided)
+                    let targetRelease = null;
+
+                    if (albumTitle) {
+                        targetRelease = recordingResponse.releases.find(release =>
+                            release.title && release.title.toLowerCase().includes(albumTitle.toLowerCase())
+                        );
+                    }
+
+                    // Get detailed release info to access label information
+                    if (targetRelease && targetRelease.id) {
+                        const releaseResponse = await makeMusicBrainzRequest(`/release/${targetRelease.id}`, {
+                            inc: 'labels'
+                        });
+
+                        if (releaseResponse['label-info'] && releaseResponse['label-info'].length > 0) {
+                            const labelInfo = releaseResponse['label-info'][0];
+                            if (labelInfo.label && labelInfo.label.name) {
+                                console.log(`Found label from track info: "${labelInfo.label.name}" for artist "${artistName}"`);
+                                return labelInfo.label.name;
+                            }
+                        }
+                    }
+                }
+            } catch (recordingError) {
+                console.warn(`Failed to get recording details for ${recording.id}:`, recordingError.message);
+                continue;
+            }
+        }
+
+        console.log(`No label found in track info for artist "${artistName}"`);
+        return null;
+    } catch (error) {
+        console.warn('MusicBrainz track label lookup failed:', error.message);
         return null;
     }
 }
@@ -956,21 +1121,23 @@ async function getRelatedArtistsTracks(artistId, targetPopularity, limit = 4) {
 /**
  * Get releases from MusicBrainz by label
  */
-async function getReleasesByLabelFromMusicBrainz(labelName, genreName, limit = 15) {
+async function getReleasesByLabelFromMusicBrainz(labelName, genreName,seedYear, limit = 15) {
     try {
         console.log(`Searching MusicBrainz for releases by label: "${labelName}" with genre: "${genreName}"`);
-
+        const yearRange = 2;
+        const minYear = seedYear - yearRange;
+        const maxYear = seedYear + yearRange;
         // Search for releases by label, optionally filtered by genre
         const searchParams = {
-            query: `label:"${labelName}"`,
+            query: `label:"${labelName}" AND date:[${minYear} TO ${maxYear}]`,
             limit: limit,
             offset: 0
         };
 
-        // If we have a genre, add it to the search
-        if (genreName && genreName !== 'pop') {
-            searchParams.query += ` AND tag:"${genreName}"`;
-        }
+        // // If we have a genre, add it to the search
+        // if (genreName && genreName !== 'pop') {
+        //     searchParams.query += ` AND tag:"${genreName}"`;
+        // }
 
         const data = await makeMusicBrainzRequest('/release', searchParams);
 
@@ -1064,20 +1231,18 @@ async function getTracksFromLabelReleases(releases, targetPopularity, limit = 8)
     return shuffleArray(tracks);
 }
 
-async function getLabelTracks(labelName, genreName, targetPopularity) {
+async function getLabelTracks(labelName, genreName, seedYear, targetPopularity) {
     try {
         console.log(`Getting tracks from label "${labelName}" with genre "${genreName}"`);
 
         // First, try to get releases from MusicBrainz by label
-        const labelReleases = await getReleasesByLabelFromMusicBrainz(labelName, genreName, 12);
+        const labelReleases = await getReleasesByLabelFromMusicBrainz(labelName, genreName,seedYear, 12);
 
         if (labelReleases.length > 0) {
             console.log(`Found ${labelReleases.length} releases from MusicBrainz for label "${labelName}"`);
             return await getTracksFromLabelReleases(labelReleases, targetPopularity, 8);
         }
-
-
-        return shuffleArray(tracks);
+        return null
     } catch (error) {
         console.error('Error getting label tracks:', error);
         return [];
