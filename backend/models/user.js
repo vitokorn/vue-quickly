@@ -19,7 +19,10 @@ module.exports = (sequelize, DataTypes) => {
     display_name: DataTypes.STRING,
     access_token: DataTypes.STRING,
     refresh_token: DataTypes.STRING,
-    lang: DataTypes.STRING
+    lang: DataTypes.STRING,
+    tidal_id: DataTypes.STRING,
+    tidal_access_token: DataTypes.TEXT,
+    tidal_refresh_token: DataTypes.TEXT
   }, {
     sequelize,
     modelName: 'User',
