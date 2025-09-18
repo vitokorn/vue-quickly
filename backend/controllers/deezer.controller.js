@@ -18,6 +18,7 @@ const makeDeezerRequest = async (endpoint) => {
 // Helper function to make MusicBrainz API requests
 const makeMusicBrainzRequest = async (endpoint, params = {}) => {
     try {
+        await new Promise(r => setTimeout(r, 1000));
         const queryString = Object.entries(params)
             .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
             .join('&');
@@ -361,7 +362,7 @@ exports.createRadioByTrack = async (req, res) => {
         console.log(externalLabel)
         try {
             if (externalLabel) {
-                const labelTracks = await getLabelTracks(externalLabel, genreName, seedYear, seedPopularity);
+                const labelTracks = await getLabelTracks(seedArtist, externalLabel, genreName, seedYear, seedPopularity);
                 radioTracks.push(...labelTracks.slice(0, 4));
                 console.log(`Added ${Math.min(4, labelTracks.length)} tracks from same label`);
             }
@@ -762,6 +763,10 @@ async function getLabelFromTrackInfo(artistName, albumTitle) {
         // Look through tracks to find one with release information
         for (const recording of trackSearchResponse.recordings) {
             try {
+                if (recording['artist-credit'].find(item=> item.name.toLowerCase() === artistName.toLowerCase())) {
+                    continue;
+                }
+                console.log(recording.title)
                 // Get detailed recording info including releases
                 const recordingResponse = await makeMusicBrainzRequest(`/recording/${recording.id}`, {
                     inc: 'releases'
@@ -1122,7 +1127,7 @@ async function getRelatedArtistsTracks(artistId, targetPopularity, limit = 4) {
 /**
  * Get releases from MusicBrainz by label
  */
-async function getReleasesByLabelFromMusicBrainz(labelName, genreName,seedYear, limit = 15) {
+async function getReleasesByLabelFromMusicBrainz(seedArtist, labelName, genreName,seedYear, limit = 15) {
     try {
         console.log(`Searching MusicBrainz for releases by label: "${labelName}" with genre: "${genreName}"`);
         const yearRange = 2;
@@ -1232,12 +1237,12 @@ async function getTracksFromLabelReleases(releases, targetPopularity, limit = 8)
     return shuffleArray(tracks);
 }
 
-async function getLabelTracks(labelName, genreName, seedYear, targetPopularity) {
+async function getLabelTracks(seedArtist, labelName, genreName, seedYear, targetPopularity) {
     try {
         console.log(`Getting tracks from label "${labelName}" with genre "${genreName}"`);
 
         // First, try to get releases from MusicBrainz by label
-        const labelReleases = await getReleasesByLabelFromMusicBrainz(labelName, genreName,seedYear, 12);
+        const labelReleases = await getReleasesByLabelFromMusicBrainz(seedArtist, labelName, genreName,seedYear, 12);
 
         if (labelReleases.length > 0) {
             console.log(`Found ${labelReleases.length} releases from MusicBrainz for label "${labelName}"`);
