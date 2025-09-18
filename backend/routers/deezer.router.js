@@ -24,6 +24,15 @@ module.exports = (app) => {
      */
     router.get("/deezer/radio/track/:trackId/simple", deezerController.createSimpleRadio);
 
+    /**
+     * @route GET /deezer/radio/track/:trackId/related
+     * @desc Create related radio based on Last.fm artist relationships (recursive discovery)
+     * @param {string} trackId - Deezer track ID
+     * @query {number} limit - Maximum number of tracks to return (default: 27)
+     * @access Public
+     */
+    router.get("/deezer/radio/track/:trackId/related", deezerController.createRelatedRadio);
+
     // Mount the router
     app.use('/', router);
 };

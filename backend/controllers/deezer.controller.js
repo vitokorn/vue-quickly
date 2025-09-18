@@ -1708,6 +1708,322 @@ function removeDuplicateTracks(tracks) {
     });
 }
 
+// ==================== RELATED RADIO METHODS ====================
+
+/**
+ * Get similar artists from Last.fm for a given artist
+ */
+async function getSimilarArtistsFromLastfm(artistName, limit = 10) {
+    try {
+        console.log(`Getting similar artists from Last.fm for: "${artistName}"`);
+
+        const baseUrl = process.env.BACKEND_URL || 'http://localhost:8000';
+        const response = await fetch(`${baseUrl}/lastfm/artist/similar?artist=${encodeURIComponent(artistName)}&limit=${limit}`);
+
+        if (!response.ok) {
+            console.warn(`Last.fm similar artists API error: ${response.status}`);
+            return [];
+        }
+
+        const data = await response.json();
+
+        if (data.similarartists && data.similarartists.artist) {
+            const similarArtists = Array.isArray(data.similarartists.artist)
+                ? data.similarartists.artist
+                : [data.similarartists.artist];
+
+            console.log(`Found ${similarArtists.length} similar artists from Last.fm for "${artistName}"`);
+            return similarArtists.slice(0, limit);
+        }
+
+        console.log(`No similar artists found for "${artistName}" on Last.fm`);
+        return [];
+    } catch (error) {
+        console.warn('Last.fm similar artists lookup failed:', error.message);
+        return [];
+    }
+}
+
+/**
+ * Get top tracks for an artist from Deezer
+ */
+async function getArtistTopTracks(artistId, limit = 3) {
+    try {
+        const topTracks = await makeDeezerRequest(`/artist/${artistId}/top?limit=${limit}`);
+        return topTracks.data || [];
+    } catch (error) {
+        console.warn(`Failed to get top tracks for artist ${artistId}:`, error.message);
+        return [];
+    }
+}
+
+/**
+ * Find Deezer artist by name
+ */
+async function findDeezerArtist(artistName) {
+    try {
+        const searchResponse = await makeDeezerRequest(`/search/artist?q=${encodeURIComponent(artistName)}&limit=5`);
+
+        if (searchResponse.data && searchResponse.data.length > 0) {
+            // Find exact match first
+            const exactMatch = searchResponse.data.find(artist =>
+                artist.name.toLowerCase() === artistName.toLowerCase()
+            );
+
+            if (exactMatch) {
+                return exactMatch;
+            }
+
+            // Return first result if no exact match
+            return searchResponse.data[0];
+        }
+
+        return null;
+    } catch (error) {
+        console.warn(`Failed to find Deezer artist "${artistName}":`, error.message);
+        return null;
+    }
+}
+
+/**
+ * Recursively discover artists and collect tracks
+ */
+async function discoverArtistsRecursively(seedArtistName, targetPopularity, visitedArtists = new Set(), level = 0, maxLevel = 2) {
+    const discoveredTracks = [];
+    const discoveredArtists = [];
+
+    // Stop recursion at max level
+    if (level > maxLevel) {
+        return { tracks: discoveredTracks, artists: discoveredArtists };
+    }
+
+    console.log(`🎯 Level ${level}: Discovering artists related to "${seedArtistName}"`);
+
+    // Get similar artists from Last.fm (increased to 5 for more variety)
+    const similarArtists = await getSimilarArtistsFromLastfm(seedArtistName, 5);
+
+    if (similarArtists.length === 0) {
+        console.log(`No similar artists found for "${seedArtistName}"`);
+        return { tracks: discoveredTracks, artists: discoveredArtists };
+    }
+
+    // Process each similar artist
+    for (const similarArtist of similarArtists) {
+        const artistName = similarArtist.name;
+
+        // Skip if already visited
+        if (visitedArtists.has(artistName.toLowerCase())) {
+            continue;
+        }
+
+        visitedArtists.add(artistName.toLowerCase());
+        discoveredArtists.push(artistName);
+
+        console.log(`🔍 Processing related artist: "${artistName}"`);
+
+        // Find artist in Deezer
+        const deezerArtist = await findDeezerArtist(artistName);
+
+        if (!deezerArtist) {
+            console.log(`Artist "${artistName}" not found in Deezer`);
+            continue;
+        }
+
+        // Get top tracks for this artist (increased to 3 to have more options)
+        const topTracks = await getArtistTopTracks(deezerArtist.id, 3);
+
+        if (topTracks.length > 0) {
+            // Filter by popularity (increased tolerance for more results)
+            const filteredTracks = filterByPopularityRange(topTracks, targetPopularity, 30);
+
+            if (filteredTracks.length > 0) {
+                // Take up to 2 tracks per artist if available
+                const numTracksToTake = Math.min(filteredTracks.length, 2);
+                for (let i = 0; i < numTracksToTake; i++) {
+                    const selectedTrack = filteredTracks[i];
+
+                    const enrichedTrack = {
+                        ...selectedTrack,
+                        source: 'related_radio',
+                        source_info: {
+                            level: level,
+                            seed_artist: seedArtistName,
+                            discovered_artist: artistName,
+                            deezer_artist_id: deezerArtist.id
+                        }
+                    };
+
+                    discoveredTracks.push(enrichedTrack);
+                    console.log(`✅ Added track "${selectedTrack.title_short}" by "${artistName}" (popularity: ${getTrackPopularity(selectedTrack)})`);
+                }
+            } else {
+                console.log(`No tracks within popularity range for "${artistName}"`);
+            }
+        } else {
+            console.log(`No top tracks found for "${artistName}"`);
+        }
+
+        // Small delay to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 200));
+
+        // Recurse to next level (but limit total tracks to prevent explosion)
+        if (level < maxLevel && discoveredTracks.length < 27) {
+            const { tracks: childTracks, artists: childArtists } = await discoverArtistsRecursively(
+                artistName,
+                targetPopularity,
+                visitedArtists,
+                level + 1,
+                maxLevel
+            );
+
+            discoveredTracks.push(...childTracks);
+            discoveredArtists.push(...childArtists);
+        }
+
+        // Stop if we have enough tracks
+        if (discoveredTracks.length >= 27) {
+            break;
+        }
+    }
+
+    console.log(`📊 Level ${level} complete: ${discoveredTracks.length} tracks, ${discoveredArtists.length} artists discovered`);
+    return { tracks: discoveredTracks, artists: discoveredArtists };
+}
+
+/**
+ * Create comprehensive radio based on artist relationships and Last.fm data
+ */
+exports.createRelatedRadio = async (req, res) => {
+    try {
+        const {trackId} = req.params;
+        const {limit = 27} = req.query;
+
+        if (!trackId) {
+            return res.status(400).json({error: 'Track ID is required'});
+        }
+
+        console.log(`🎵 Creating related radio for track ID: ${trackId}`);
+
+        // Get the seed track information
+        const seedTrack = await makeDeezerRequest(`/track/${trackId}`);
+        if (!seedTrack || !seedTrack.artist) {
+            return res.status(404).json({error: 'Track not found'});
+        }
+
+        const seedArtist = seedTrack.artist;
+        const seedAlbum = seedTrack.album;
+        const seedPopularity = getTrackPopularity(seedTrack);
+
+        console.log(`🎼 Seed track: "${seedTrack.title}" by "${seedArtist.name}" (Popularity: ${seedPopularity})`);
+
+        // Get artist genres/tags from Last.fm
+        const artistGenres = await getGenresFromLastfm(seedArtist.name);
+        console.log(`🏷️ Found genres for "${seedArtist.name}": [${artistGenres.join(', ')}]`);
+
+        // Start with seed artist track
+        const radioTracks = [];
+
+        // Add the seed track first
+        const seedTrackEnriched = {
+            ...seedTrack,
+            source: 'seed_track',
+            source_info: {
+                level: 0,
+                is_seed: true
+            }
+        };
+        radioTracks.push(seedTrackEnriched);
+
+        // Discover related artists recursively
+        const visitedArtists = new Set([seedArtist.name.toLowerCase()]);
+        const { tracks: discoveredTracks, artists: discoveredArtists } = await discoverArtistsRecursively(
+            seedArtist.name,
+            seedPopularity,
+            visitedArtists,
+            1, // Start at level 1
+            3  // Go 3 levels deep for more tracks
+        );
+
+        radioTracks.push(...discoveredTracks);
+
+        // If we still need more tracks, try the second genre
+        if (radioTracks.length < limit && artistGenres.length > 1) {
+            console.log(`🔄 Not enough tracks (${radioTracks.length}), trying second genre: "${artistGenres[1]}"`);
+
+            // Find artists from the second genre (increased to 10)
+            const genreArtists = await getArtistsByGenreFromMusicBrainz(artistGenres[1], 10);
+
+            for (const genreArtist of genreArtists) {
+                if (visitedArtists.has(genreArtist.name.toLowerCase())) {
+                    continue;
+                }
+
+                visitedArtists.add(genreArtist.name.toLowerCase());
+
+                const deezerArtist = await findDeezerArtist(genreArtist.name);
+                if (!deezerArtist) continue;
+
+                const topTracks = await getArtistTopTracks(deezerArtist.id, 1);
+                const filteredTracks = filterByPopularityRange(topTracks, seedPopularity, 20);
+
+                if (filteredTracks.length > 0) {
+                    const selectedTrack = {
+                        ...filteredTracks[0],
+                        source: 'related_radio_genre',
+                        source_info: {
+                            genre: artistGenres[1],
+                            discovered_artist: genreArtist.name,
+                            deezer_artist_id: deezerArtist.id
+                        }
+                    };
+
+                    radioTracks.push(selectedTrack);
+                    console.log(`➕ Added genre track: "${selectedTrack.title_short}" by "${genreArtist.name}"`);
+
+                    if (radioTracks.length >= limit) break;
+                }
+            }
+        }
+
+        // Remove duplicates and limit results
+        const uniqueTracks = removeDuplicateTracks(radioTracks);
+        const finalTracks = uniqueTracks.slice(0, parseInt(limit));
+
+        console.log(`🎉 Related radio complete: ${finalTracks.length} tracks from ${discoveredArtists.length + 1} artists`);
+
+        res.json({
+            seedTrack: {
+                id: seedTrack.id,
+                title: seedTrack.title,
+                artist: seedArtist.name,
+                album: seedAlbum?.title,
+                year: seedAlbum?.release_date ? new Date(seedAlbum.release_date).getFullYear() : null,
+                genres: artistGenres,
+                popularity: seedPopularity
+            },
+            tracks: finalTracks,
+            summary: {
+                totalFound: uniqueTracks.length,
+                returned: finalTracks.length,
+                discoveredArtists: discoveredArtists.length,
+                genresUsed: artistGenres,
+                sources: {
+                    seedTrack: 1,
+                    relatedArtists: discoveredTracks.length,
+                    genreFallback: radioTracks.filter(t => t.source === 'related_radio_genre').length
+                }
+            }
+        });
+
+    } catch (error) {
+        console.error('❌ Error creating related radio:', error);
+        res.status(500).json({
+            error: 'Failed to create related radio',
+            details: error.message
+        });
+    }
+};
+
 // ==================== FALLBACK RADIO METHODS ====================
 
 /**
