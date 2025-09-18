@@ -15,25 +15,9 @@ const makeDeezerRequest = async (endpoint) => {
     }
 };
 
-// Helper function to make MusicBrainz API requests
+// Helper function to make MusicBrainz API requests (now uses optimized version)
 const makeMusicBrainzRequest = async (endpoint, params = {}) => {
-    try {
-        await new Promise(r => setTimeout(r, 1000));
-        const queryString = Object.entries(params)
-            .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
-            .join('&');
-        const url = `${MUSICBRAINZ_BASE_URL}${endpoint}?${queryString}&fmt=json`;
-
-        const response = await axios.get(url, {
-            headers: {
-                'User-Agent': 'DeezerRadioApp/1.0.0 ( contact@example.com )'
-            }
-        });
-        return response.data;
-    } catch (error) {
-        console.error('MusicBrainz API Error:', error.response?.data || error.message);
-        throw error;
-    }
+    return makeOptimizedMusicBrainzRequest(endpoint, params);
 };
 
 // Helper function to extract featured artists from track names
@@ -71,7 +55,7 @@ const extractFeaturedArtists = (trackName) => {
 
 // Helper function to extract remix information from track names
 const extractRemixInfo = (trackName) => {
-    if (!trackName) return { isRemix: false, remixArtist: null, originalTitle: trackName };
+    if (!trackName) return {isRemix: false, remixArtist: null, originalTitle: trackName};
 
     const remixInfo = {
         isRemix: false,
@@ -173,17 +157,17 @@ const shuffleArray = (array) => {
  */
 exports.createRadioByTrack = async (req, res) => {
     try {
-        const { trackId } = req.params;
-        const { limit = 20 } = req.query;
+        const {trackId} = req.params;
+        const {limit = 20} = req.query;
 
         if (!trackId) {
-            return res.status(400).json({ error: 'Track ID is required' });
+            return res.status(400).json({error: 'Track ID is required'});
         }
 
         // Get the seed track information
         const seedTrack = await makeDeezerRequest(`/track/${trackId}`);
         if (!seedTrack || !seedTrack.artist) {
-            return res.status(404).json({ error: 'Track not found' });
+            return res.status(404).json({error: 'Track not found'});
         }
 
         const seedArtist = seedTrack.artist;
@@ -385,7 +369,7 @@ exports.createRadioByTrack = async (req, res) => {
                         .map(track => ({
                             ...track,
                             source: 'artist_top',
-                            source_info: { artist_name: seedArtist.name }
+                            source_info: {artist_name: seedArtist.name}
                         }));
 
                     // Filter out duplicate titles within newTopTracks, keeping only the first occurrence
@@ -538,6 +522,175 @@ exports.createRadioByTrack = async (req, res) => {
     }
 };
 
+// ==================== MUSICBRAINZ OPTIMIZATION ====================
+
+// MusicBrainz request cache
+const musicbrainzCache = new Map();
+const CACHE_TTL = 1000 * 60 * 30; // 30 minutes
+
+// Request deduplication
+const activeRequests = new Map();
+
+// Rate limiting
+let lastRequestTime = 0;
+const MIN_REQUEST_INTERVAL = 1000; // 1 second between requests
+
+/**
+ * Optimized MusicBrainz request with caching and rate limiting
+ */
+async function makeOptimizedMusicBrainzRequest(endpoint, params = {}) {
+    const cacheKey = `${endpoint}?${new URLSearchParams(params).toString()}`;
+
+    // Check cache first
+    if (musicbrainzCache.has(cacheKey)) {
+        const cached = musicbrainzCache.get(cacheKey);
+        if (Date.now() - cached.timestamp < CACHE_TTL) {
+            console.log(`🎯 MusicBrainz cache hit: ${cacheKey}`);
+            return cached.data;
+        } else {
+            musicbrainzCache.delete(cacheKey);
+        }
+    }
+
+    // Check for active request (deduplication)
+    if (activeRequests.has(cacheKey)) {
+        console.log(`🔄 MusicBrainz request deduplicated: ${cacheKey}`);
+        return activeRequests.get(cacheKey);
+    }
+
+    // Rate limiting
+    const now = Date.now();
+    const timeSinceLastRequest = now - lastRequestTime;
+    if (timeSinceLastRequest < MIN_REQUEST_INTERVAL) {
+        const waitTime = MIN_REQUEST_INTERVAL - timeSinceLastRequest;
+        console.log(`⏱️ MusicBrainz rate limiting: waiting ${waitTime}ms`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+    }
+
+    // Create promise for deduplication
+    const requestPromise = (async () => {
+        try {
+            lastRequestTime = Date.now();
+            console.log(`🌐 MusicBrainz request: ${endpoint} with params:`, params);
+
+            const queryString = Object.entries(params)
+                .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+                .join('&');
+
+            const url = `${MUSICBRAINZ_BASE_URL}${endpoint}?${queryString}&fmt=json`;
+
+            const response = await axios.get(url, {
+                headers: {
+                    'User-Agent': 'Vue-Quickly/1.0.0 ( contact@example.com )'
+                }
+            });
+
+            const data = response.data;
+
+            // Cache the result
+            musicbrainzCache.set(cacheKey, {
+                data,
+                timestamp: Date.now()
+            });
+
+            return data;
+        } catch (error) {
+            console.error('MusicBrainz request failed:', error.response?.data || error.message);
+            throw error;
+        } finally {
+            // Clean up active request
+            activeRequests.delete(cacheKey);
+        }
+    })();
+
+    // Store active request for deduplication
+    activeRequests.set(cacheKey, requestPromise);
+
+    return requestPromise;
+}
+
+/**
+ * Batch multiple MusicBrainz requests efficiently
+ */
+async function batchMusicBrainzRequests(requests) {
+    const results = [];
+    const batchSize = 3; // Process in smaller batches to respect rate limits
+
+    for (let i = 0; i < requests.length; i += batchSize) {
+        const batch = requests.slice(i, i + batchSize);
+        const batchPromises = batch.map(({endpoint, params}) =>
+            makeOptimizedMusicBrainzRequest(endpoint, params)
+        );
+
+        const batchResults = await Promise.allSettled(batchPromises);
+        results.push(...batchResults);
+
+        // Small delay between batches
+        if (i + batchSize < requests.length) {
+            await new Promise(resolve => setTimeout(resolve, 200));
+        }
+    }
+
+    return results.map(result =>
+        result.status === 'fulfilled' ? result.value : null
+    );
+}
+
+/**
+ * Get multiple recordings in parallel with optimization
+ */
+
+
+/**
+ * Get multiple releases in parallel with optimization
+ */
+async function getMultipleReleaseDetails(releaseIds) {
+    if (!releaseIds || releaseIds.length === 0) return [];
+
+    console.log(`📦 Getting details for ${releaseIds.length} releases in parallel`);
+
+    const requests = releaseIds.map(id => ({
+        endpoint: `/release/${id}`,
+        params: {inc: 'labels'}
+    }));
+
+    const results = await batchMusicBrainzRequests(requests);
+    return results.filter(result => result !== null);
+}
+
+/**
+ * Clean up expired cache entries periodically
+ */
+function cleanupMusicBrainzCache() {
+    const now = Date.now();
+    let cleanedCount = 0;
+
+    for (const [key, value] of musicbrainzCache.entries()) {
+        if (now - value.timestamp > CACHE_TTL) {
+            musicbrainzCache.delete(key);
+            cleanedCount++;
+        }
+    }
+
+    if (cleanedCount > 0) {
+        console.log(`🧹 Cleaned up ${cleanedCount} expired MusicBrainz cache entries`);
+    }
+}
+
+/**
+ * Get cache statistics
+ */
+function getMusicBrainzCacheStats() {
+    return {
+        cacheSize: musicbrainzCache.size,
+        activeRequests: activeRequests.size,
+        cacheHitRate: 'N/A' // Could be implemented with additional tracking
+    };
+}
+
+// Clean up cache every 10 minutes
+setInterval(cleanupMusicBrainzCache, 10 * 60 * 1000);
+
 // ==================== HELPER METHODS ====================
 
 /**
@@ -582,7 +735,7 @@ async function getGenreAndLabelFromBeatport(trackTitle, artistName) {
 
         console.log(`Searching Beatport: ${searchUrl}`);
 
-        const { data } = await axios.get(searchUrl, {
+        const {data} = await axios.get(searchUrl, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
             },
@@ -763,10 +916,6 @@ async function getLabelFromTrackInfo(artistName, albumTitle) {
         // Look through tracks to find one with release information
         for (const recording of trackSearchResponse.recordings) {
             try {
-                if (recording['artist-credit'].find(item=> item.name.toLowerCase() === artistName.toLowerCase())) {
-                    continue;
-                }
-                console.log(recording.title)
                 // Get detailed recording info including releases
                 const recordingResponse = await makeMusicBrainzRequest(`/recording/${recording.id}`, {
                     inc: 'releases'
@@ -1127,7 +1276,7 @@ async function getRelatedArtistsTracks(artistId, targetPopularity, limit = 4) {
 /**
  * Get releases from MusicBrainz by label
  */
-async function getReleasesByLabelFromMusicBrainz(seedArtist, labelName, genreName,seedYear, limit = 15) {
+async function getReleasesByLabelFromMusicBrainz(seedArtist, labelName, genreName, seedYear, limit = 15) {
     try {
         console.log(`Searching MusicBrainz for releases by label: "${labelName}" with genre: "${genreName}"`);
         const yearRange = 2;
@@ -1168,6 +1317,8 @@ async function getReleasesByLabelFromMusicBrainz(seedArtist, labelName, genreNam
             }))
             .sort((a, b) => b.score - a.score);
 
+        console.log('releases', releases);
+
         console.log(`Processed ${releases.length} releases from MusicBrainz for label "${labelName}"`);
         return releases;
 
@@ -1201,28 +1352,33 @@ async function getTracksFromLabelReleases(releases, targetPopularity, limit = 8)
             const artistSearchResponse = await makeDeezerRequest(`/search/track?q=artist:"${encodeURIComponent(release.artist)}"&limit=15`);
 
             if (artistSearchResponse.data && artistSearchResponse.data.length > 0) {
-                // Filter by popularity
-                const filteredTracks = filterByPopularityRange(artistSearchResponse.data, targetPopularity);
-
-                const processedTracks = filteredTracks.slice(0, 2).map(track => ({
-                    ...track,
-                    source: 'same_label',
-                    source_info: {
-                        label_name: release.label,
-                        musicbrainz_release: release.title,
-                        musicbrainz_artist: release.artist,
-                        musicbrainz_score: release.score,
-                        artist_name: track.artist?.name
+                if (artistSearchResponse.data.find(item => item.artist.name.toLowerCase() === release.artist.toLowerCase())) {
+                    // select only target artist
+                    let selectedReleases = artistSearchResponse.data.filter(item => item.artist.name.toLowerCase() === release.artist.toLowerCase())
+                    // Filter by popularity
+                    const filteredTracks = filterByPopularityRange(selectedReleases, targetPopularity);
+                    if (filteredTracks.length > 0) {
                     }
-                }));
+                    const processedTracks = filteredTracks.slice(0, 2).map(track => ({
+                        ...track,
+                        source: 'same_label',
+                        source_info: {
+                            label_name: release.label,
+                            musicbrainz_release: release.title,
+                            musicbrainz_artist: release.artist,
+                            musicbrainz_score: release.score,
+                            artist_name: track.artist?.name
+                        }
+                    }));
 
-                tracks.push(...processedTracks);
-                console.log(`Added ${processedTracks.length} tracks from ${release.artist}`);
-
+                    tracks.push(...processedTracks);
+                    console.log(`Added ${processedTracks.length} tracks from ${release.artist}`);
+                }
                 // Stop if we have enough tracks
                 if (tracks.length >= limit) {
                     break;
                 }
+
             }
 
             // Small delay to avoid rate limiting
@@ -1242,7 +1398,7 @@ async function getLabelTracks(seedArtist, labelName, genreName, seedYear, target
         console.log(`Getting tracks from label "${labelName}" with genre "${genreName}"`);
 
         // First, try to get releases from MusicBrainz by label
-        const labelReleases = await getReleasesByLabelFromMusicBrainz(seedArtist, labelName, genreName,seedYear, 12);
+        const labelReleases = await getReleasesByLabelFromMusicBrainz(seedArtist, labelName, genreName, seedYear, 12);
 
         if (labelReleases.length > 0) {
             console.log(`Found ${labelReleases.length} releases from MusicBrainz for label "${labelName}"`);
@@ -1293,9 +1449,9 @@ async function getArtistsByGenreFromMusicBrainz(genreName, limit = 20) {
 
                 // Try multiple search strategies for diversity
                 const searchStrategies = [
-                    { query: `tag:"${tag}"`, limit: Math.ceil(limit / 4), offset: 0 }, // Top results
-                    { query: `tag:"${tag}"`, limit: Math.ceil(limit / 4), offset: Math.ceil(limit / 4) }, // Skip some top results
-                    { query: `tag:"${tag}" AND country:*`, limit: Math.ceil(limit / 4), offset: 0 }, // Include country info for diversity
+                    {query: `tag:"${tag}"`, limit: Math.ceil(limit / 4), offset: 0}, // Top results
+                    {query: `tag:"${tag}"`, limit: Math.ceil(limit / 4), offset: Math.ceil(limit / 4)}, // Skip some top results
+                    {query: `tag:"${tag}" AND country:*`, limit: Math.ceil(limit / 4), offset: 0}, // Include country info for diversity
                 ];
 
                 for (const strategy of searchStrategies) {
@@ -1559,20 +1715,20 @@ function removeDuplicateTracks(tracks) {
  */
 exports.createSimpleRadio = async (req, res) => {
     try {
-        const { trackId } = req.params;
-        const { limit = 20 } = req.query;
+        const {trackId} = req.params;
+        const {limit = 20} = req.query;
 
         // Get the seed track information
         const seedTrack = await makeDeezerRequest(`/track/${trackId}`);
         if (!seedTrack || !seedTrack.artist) {
-            return res.status(404).json({ error: 'Track not found' });
+            return res.status(404).json({error: 'Track not found'});
         }
 
         // Use artist radio as fallback
         const artistRadio = await makeDeezerRequest(`/artist/${seedTrack.artist.id}/radio`);
 
         if (!artistRadio.data) {
-            return res.status(404).json({ error: 'No radio tracks found' });
+            return res.status(404).json({error: 'No radio tracks found'});
         }
 
         const tracks = artistRadio.data.slice(0, parseInt(limit)).map(track => ({
