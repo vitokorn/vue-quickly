@@ -20,6 +20,238 @@ const makeMusicBrainzRequest = async (endpoint, params = {}) => {
     return makeOptimizedMusicBrainzRequest(endpoint, params);
 };
 
+// ==================== CACHE SYSTEM ====================
+
+/**
+ * Enhanced in-memory cache for Last.fm API requests with size limits and better error handling
+ */
+class LastfmCache {
+    constructor(options = {}) {
+        this.cache = new Map();
+        this.defaultTTL = options.defaultTTL || 30 * 60 * 1000; // 30 minutes default
+        this.maxSize = options.maxSize || 1000; // Maximum cache entries
+        this.cleanupInterval = options.cleanupInterval || 10 * 60 * 1000; // 10 minutes
+        this.stats = {
+            hits: 0,
+            misses: 0,
+            evictions: 0
+        };
+
+        // Start periodic cleanup
+        this.startCleanup();
+    }
+
+    /**
+     * Generate cache key from method and parameters
+     * @param {string} method - API method name
+     * @param {object} params - Request parameters
+     * @returns {string} Cache key
+     */
+    generateKey(method, params) {
+        if (typeof method !== 'string' || !params || typeof params !== 'object') {
+            throw new TypeError('Invalid method or params');
+        }
+
+        const sortedParams = Object.keys(params)
+            .sort()
+            .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+            .join('&');
+        return `${method}:${sortedParams}`;
+    }
+
+    /**
+     * Get cached data if not expired
+     * @param {string} method - API method name
+     * @param {object} params - Request parameters
+     * @returns {object|null} Cached data or null
+     */
+    get(method, params) {
+        try {
+            const key = this.generateKey(method, params);
+            const cached = this.cache.get(key);
+
+            if (!cached) {
+                this.stats.misses++;
+                console.log(`📭 Cache MISS for Last.fm ${method}`);
+                return null;
+            }
+
+            if (Date.now() >= cached.expires) {
+                this.cache.delete(key);
+                this.stats.evictions++;
+                console.log(`⏰ Cache EXPIRED for Last.fm ${method}`);
+                return null;
+            }
+
+            this.stats.hits++;
+            console.log(`📦 Cache HIT for Last.fm ${method}`);
+            return cached.data;
+        } catch (error) {
+            console.error(`Cache get error for ${method}:`, error.message);
+            return null;
+        }
+    }
+
+    /**
+     * Store data in cache with TTL
+     * @param {string} method - API method name
+     * @param {object} params - Request parameters
+     * @param {object} data - Data to cache
+     * @param {number|null} ttl - Custom TTL in milliseconds
+     */
+    set(method, params, data, ttl = null) {
+        try {
+            // Evict oldest entry if cache is full
+            if (this.cache.size >= this.maxSize) {
+                const oldestKey = this.cache.keys().next().value;
+                this.cache.delete(oldestKey);
+                this.stats.evictions++;
+                console.log(`🗑️ Cache evicted oldest entry due to size limit`);
+            }
+
+            const key = this.generateKey(method, params);
+            const expires = Date.now() + (ttl || this.defaultTTL);
+
+            this.cache.set(key, {
+                data: structuredClone(data), // Deep copy to prevent external mutations
+                expires,
+                created: Date.now()
+            });
+
+            console.log(`💾 Cache STORED for Last.fm ${method} (expires in ${Math.round((ttl || this.defaultTTL) / 60000)} minutes)`);
+        } catch (error) {
+            console.error(`Cache set error for ${method}:`, error.message);
+        }
+    }
+
+    /**
+     * Clear expired entries from cache
+     */
+    cleanup() {
+        const now = Date.now();
+        let cleaned = 0;
+
+        for (const [key, value] of this.cache.entries()) {
+            if (now >= value.expires) {
+                this.cache.delete(key);
+                cleaned++;
+                this.stats.evictions++;
+            }
+        }
+
+        if (cleaned > 0) {
+            console.log(`🧹 Cache cleanup: removed ${cleaned} expired entries`);
+        }
+    }
+
+    /**
+     * Start periodic cleanup
+     */
+    startCleanup() {
+        this.cleanupIntervalId = setInterval(() => this.cleanup(), this.cleanupInterval);
+    }
+
+    /**
+     * Stop periodic cleanup
+     */
+    stopCleanup() {
+        if (this.cleanupIntervalId) {
+            clearInterval(this.cleanupIntervalId);
+            this.cleanupIntervalId = null;
+        }
+    }
+
+    /**
+     * Get cache statistics
+     * @returns {object} Cache statistics
+     */
+    getStats() {
+        const now = Date.now();
+        let active = 0;
+
+        for (const value of this.cache.values()) {
+            if (now < value.expires) {
+                active++;
+            }
+        }
+
+        return {
+            total: this.cache.size,
+            active,
+            expired: this.cache.size - active,
+            ...this.stats,
+            hitRatio: this.stats.hits / (this.stats.hits + this.stats.misses) || 0
+        };
+    }
+
+    /**
+     * Clear all cache entries
+     */
+    clear() {
+        const size = this.cache.size;
+        this.cache.clear();
+        this.stats = { hits: 0, misses: 0, evictions: 0 };
+        console.log(`🗑️ Cache cleared: removed ${size} entries`);
+    }
+}
+
+// Create global cache instance with configuration
+const lastfmCache = new LastfmCache({
+    defaultTTL: 30 * 60 * 1000,
+    maxSize: 1000,
+    cleanupInterval: 10 * 60 * 1000
+});
+
+/**
+ * Make cached Last.fm API request
+ * @param {string} method - API method name
+ * @param {object} params - Request parameters
+ * @param {number|null} ttl - Custom TTL in milliseconds
+ * @returns {Promise<object|null>} API response or null
+ */
+async function makeCachedLastfmRequest(method, params = {}, ttl = null) {
+    try {
+        // Validate inputs
+        if (typeof method !== 'string' || !params || typeof params !== 'object') {
+            throw new TypeError('Invalid method or params');
+        }
+
+        // Check cache first
+        const cached = lastfmCache.get(method, params);
+        if (cached) {
+            return cached;
+        }
+
+        // Validate API key
+        const LASTFM_API_KEY = process.env.LASTFM_API_KEY;
+        if (!LASTFM_API_KEY) {
+            throw new Error('Last.fm API key not configured');
+        }
+
+        // Make API request
+        const response = await axios.get('https://ws.audioscrobbler.com/2.0/', {
+            params: {
+                method,
+                api_key: LASTFM_API_KEY,
+                format: 'json',
+                ...params
+            },
+            timeout: 10000 // 10 second timeout
+        });
+
+        // Cache successful responses
+        if (response.data && !response.data.error) {
+            lastfmCache.set(method, params, response.data, ttl);
+            return response.data;
+        }
+
+        throw new Error(response.data?.message || 'Invalid API response');
+    } catch (error) {
+        console.error(`Last.fm API request failed for ${method}:`, error.message);
+        return null;
+    }
+}
+
 // Helper function to extract featured artists from track names
 const extractFeaturedArtists = (trackName) => {
     if (!trackName) return [];
@@ -774,20 +1006,15 @@ async function getGenresFromLastfm(artistName) {
     try {
         console.log(`Getting genres from Last.fm for artist: "${artistName}"`);
 
-        const baseUrl = process.env.BACKEND_URL || 'http://localhost:8000'
-        const response = await fetch(`${baseUrl}/lastfm/artist/info?artist=${encodeURIComponent(artistName)}`);
+        // Use cached request with 1 hour TTL for artist info
+        const response = await makeCachedLastfmRequest('artist.getInfo', {
+            artist: artistName
+        }, 60 * 60 * 1000); // 1 hour cache
 
-        if (!response.ok) {
-            console.warn(`Last.fm API error: ${response.status} ${response.statusText}`);
-            return [];
-        }
-
-        const data = await response.json();
-
-        if (data.artist && data.artist.tags && data.artist.tags.tag) {
-            const tags = Array.isArray(data.artist.tags.tag)
-                ? data.artist.tags.tag
-                : [data.artist.tags.tag];
+        if (response && response.artist && response.artist.tags && response.artist.tags.tag) {
+            const tags = Array.isArray(response.artist.tags.tag)
+                ? response.artist.tags.tag
+                : [response.artist.tags.tag];
 
             if (tags.length > 0) {
                 // Get up to 2 genres, filter out common generic tags
@@ -1751,20 +1978,16 @@ async function getArtistTopTracksFromLastfm(artistName, limit = 5) {
     try {
         console.log(`Getting top tracks from Last.fm for: "${artistName}"`);
 
-        const baseUrl = process.env.BACKEND_URL || 'http://localhost:8000';
-        const response = await fetch(`${baseUrl}/lastfm/artist/toptracks?artist=${encodeURIComponent(artistName)}&limit=${limit}`);
+        // Use cached request with 30 minute TTL for top tracks (changes more frequently)
+        const response = await makeCachedLastfmRequest('artist.getTopTracks', {
+            artist: artistName,
+            limit: limit
+        }, 30 * 60 * 1000); // 30 minute cache
 
-        if (!response.ok) {
-            console.warn(`Last.fm top tracks API error: ${response.status} for artist "${artistName}"`);
-            return [];
-        }
-
-        const data = await response.json();
-
-        if (data.toptracks && data.toptracks.track) {
-            const tracks = Array.isArray(data.toptracks.track)
-                ? data.toptracks.track
-                : [data.toptracks.track];
+        if (response && response.toptracks && response.toptracks.track) {
+            const tracks = Array.isArray(response.toptracks.track)
+                ? response.toptracks.track
+                : [response.toptracks.track];
 
             console.log(`Found ${tracks.length} top tracks from Last.fm for "${artistName}"`);
             return tracks.slice(0, limit);
@@ -1783,26 +2006,14 @@ async function getArtistTopTracksFromLastfm(artistName, limit = 5) {
  */
 async function getArtistInfoFromLastfm(artistName) {
     try {
-        const axios = require('axios');
-        const LASTFM_API_KEY = process.env.LASTFM_API_KEY;
-        
-        if (!LASTFM_API_KEY) {
-            console.warn('Last.fm API key not configured');
-            return null;
-        }
+        // Use cached request with 1 hour TTL for artist info (changes less frequently)
+        const response = await makeCachedLastfmRequest('artist.getInfo', {
+            artist: artistName
+        }, 60 * 60 * 1000); // 1 hour cache
 
-        const response = await axios.get('https://ws.audioscrobbler.com/2.0/', {
-            params: {
-                method: 'artist.getInfo',
-                artist: artistName,
-                api_key: LASTFM_API_KEY,
-                format: 'json'
-            }
-        });
+        if (response && response.artist) {
+            const artist = response.artist;
 
-        if (response.data && response.data.artist) {
-            const artist = response.data.artist;
-            
             // Extract genres from tags
             const genres = [];
             if (artist.tags && artist.tags.tag) {
@@ -1832,29 +2043,17 @@ async function getArtistInfoFromLastfm(artistName) {
  */
 async function getSimilarArtistsFromLastfm(artistName, limit = 10) {
     try {
-        const axios = require('axios');
-        const LASTFM_API_KEY = process.env.LASTFM_API_KEY;
-        
-        if (!LASTFM_API_KEY) {
-            console.warn('Last.fm API key not configured');
-            return [];
-        }
+        // Use cached request with 2 hour TTL for similar artists (changes less frequently)
+        const response = await makeCachedLastfmRequest('artist.getSimilar', {
+            artist: artistName,
+            limit: limit
+        }, 2 * 60 * 60 * 1000); // 2 hour cache
 
-        const response = await axios.get('https://ws.audioscrobbler.com/2.0/', {
-            params: {
-                method: 'artist.getSimilar',
-                artist: artistName,
-                api_key: LASTFM_API_KEY,
-                format: 'json',
-                limit: limit
-            }
-        });
+        if (response && response.similarartists && response.similarartists.artist) {
+            const artists = Array.isArray(response.similarartists.artist)
+                ? response.similarartists.artist
+                : [response.similarartists.artist];
 
-        if (response.data && response.data.similarartists && response.data.similarartists.artist) {
-            const artists = Array.isArray(response.data.similarartists.artist) 
-                ? response.data.similarartists.artist 
-                : [response.data.similarartists.artist];
-            
             return artists.map(artist => ({
                 name: artist.name,
                 mbid: artist.mbid,
@@ -2376,6 +2575,58 @@ exports.createArtistRadio = async (req, res) => {
         console.error('❌ Error creating artist radio:', error);
         res.status(500).json({
             error: 'Failed to create artist radio',
+            details: error.message
+        });
+    }
+};
+
+/**
+ * Get Last.fm cache statistics and management
+ */
+exports.getLastfmCacheStats = async (req, res) => {
+    try {
+        const stats = lastfmCache.getStats();
+
+        res.json({
+            cache: {
+                ...stats,
+                defaultTTL: lastfmCache.defaultTTL,
+                defaultTTLMinutes: Math.round(lastfmCache.defaultTTL / 60000)
+            },
+            endpoints: {
+                clear: 'POST /deezer/cache/lastfm/clear',
+                stats: 'GET /deezer/cache/lastfm/stats'
+            }
+        });
+    } catch (error) {
+        console.error('❌ Error getting cache stats:', error);
+        res.status(500).json({
+            error: 'Failed to get cache stats',
+            details: error.message
+        });
+    }
+};
+
+/**
+ * Clear Last.fm cache
+ */
+exports.clearLastfmCache = async (req, res) => {
+    try {
+        const stats = lastfmCache.getStats();
+        lastfmCache.clear();
+
+        res.json({
+            message: 'Last.fm cache cleared successfully',
+            cleared: {
+                total: stats.total,
+                active: stats.active,
+                expired: stats.expired
+            }
+        });
+    } catch (error) {
+        console.error('❌ Error clearing cache:', error);
+        res.status(500).json({
+            error: 'Failed to clear cache',
             details: error.message
         });
     }

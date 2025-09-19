@@ -42,6 +42,22 @@ module.exports = (app) => {
      */
     router.get("/deezer/radio/artist/:artistId", deezerController.createArtistRadio);
 
+    // ==================== CACHE MANAGEMENT ROUTES ====================
+
+    /**
+     * @route GET /deezer/cache/lastfm/stats
+     * @desc Get Last.fm cache statistics
+     * @access Public
+     */
+    router.get("/deezer/cache/lastfm/stats", deezerController.getLastfmCacheStats);
+
+    /**
+     * @route POST /deezer/cache/lastfm/clear
+     * @desc Clear Last.fm cache
+     * @access Public
+     */
+    router.post("/deezer/cache/lastfm/clear", deezerController.clearLastfmCache);
+
     // Mount the router
     app.use('/', router);
 };
