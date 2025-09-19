@@ -1779,6 +1779,99 @@ async function getArtistTopTracksFromLastfm(artistName, limit = 5) {
 }
 
 /**
+ * Get artist info from Last.fm including genres and similar artists
+ */
+async function getArtistInfoFromLastfm(artistName) {
+    try {
+        const axios = require('axios');
+        const LASTFM_API_KEY = process.env.LASTFM_API_KEY;
+        
+        if (!LASTFM_API_KEY) {
+            console.warn('Last.fm API key not configured');
+            return null;
+        }
+
+        const response = await axios.get('https://ws.audioscrobbler.com/2.0/', {
+            params: {
+                method: 'artist.getInfo',
+                artist: artistName,
+                api_key: LASTFM_API_KEY,
+                format: 'json'
+            }
+        });
+
+        if (response.data && response.data.artist) {
+            const artist = response.data.artist;
+            
+            // Extract genres from tags
+            const genres = [];
+            if (artist.tags && artist.tags.tag) {
+                const tags = Array.isArray(artist.tags.tag) ? artist.tags.tag : [artist.tags.tag];
+                genres.push(...tags.slice(0, 2).map(tag => tag.name));
+            }
+
+            return {
+                name: artist.name,
+                mbid: artist.mbid,
+                genres: genres,
+                bio: artist.bio?.summary || '',
+                playcount: artist.stats?.playcount || 0,
+                listeners: artist.stats?.listeners || 0
+            };
+        }
+
+        return null;
+    } catch (error) {
+        console.warn(`Last.fm artist info lookup failed for "${artistName}":`, error.message);
+        return null;
+    }
+}
+
+/**
+ * Get similar artists from Last.fm
+ */
+async function getSimilarArtistsFromLastfm(artistName, limit = 10) {
+    try {
+        const axios = require('axios');
+        const LASTFM_API_KEY = process.env.LASTFM_API_KEY;
+        
+        if (!LASTFM_API_KEY) {
+            console.warn('Last.fm API key not configured');
+            return [];
+        }
+
+        const response = await axios.get('https://ws.audioscrobbler.com/2.0/', {
+            params: {
+                method: 'artist.getSimilar',
+                artist: artistName,
+                api_key: LASTFM_API_KEY,
+                format: 'json',
+                limit: limit
+            }
+        });
+
+        if (response.data && response.data.similarartists && response.data.similarartists.artist) {
+            const artists = Array.isArray(response.data.similarartists.artist) 
+                ? response.data.similarartists.artist 
+                : [response.data.similarartists.artist];
+            
+            return artists.map(artist => ({
+                name: artist.name,
+                mbid: artist.mbid,
+                match: artist.match,
+                url: artist.url,
+                images: artist.image
+            }));
+        }
+
+        return [];
+    } catch (error) {
+        console.warn(`Last.fm similar artists lookup failed for "${artistName}":`, error.message);
+        return [];
+    }
+}
+
+/**
  * Get a random track from an artist's top tracks
  */
 async function getRandomTrackFromArtist(artistName) {
@@ -2089,6 +2182,200 @@ exports.createRelatedRadio = async (req, res) => {
         console.error('❌ Error creating related radio:', error);
         res.status(500).json({
             error: 'Failed to create related radio',
+            details: error.message
+        });
+    }
+};
+
+/**
+ * Create comprehensive radio based on artist relationships and Last.fm data
+ */
+exports.createArtistRadio = async (req, res) => {
+    try {
+        const {artistId} = req.params;
+        const {limit = 27} = req.query;
+
+        if (!artistId) {
+            return res.status(400).json({error: 'Artist ID is required'});
+        }
+
+        console.log(`🎤 Creating artist radio for artist ID: ${artistId}`);
+
+        // Get the seed artist information from Deezer
+        const seedArtist = await makeDeezerRequest(`/artist/${artistId}`);
+        if (!seedArtist) {
+            return res.status(404).json({error: 'Artist not found'});
+        }
+
+        console.log(`🎼 Seed artist: "${seedArtist.name}"`);
+
+        // Get artist info from Last.fm including genres
+        const lastfmArtistInfo = await getArtistInfoFromLastfm(seedArtist.name);
+        const artistGenres = lastfmArtistInfo?.genres || [];
+        console.log(`🏷️ Found genres for "${seedArtist.name}": [${artistGenres.join(', ')}]`);
+
+        // Get similar artists from Last.fm
+        const similarArtists = await getSimilarArtistsFromLastfm(seedArtist.name, 15);
+        console.log(`👥 Found ${similarArtists.length} similar artists from Last.fm`);
+
+        // Start building the radio tracks
+        const radioTracks = [];
+        const visitedArtists = new Set([seedArtist.name.toLowerCase()]);
+
+        // Add a random track from the seed artist first
+        const seedTrack = await getRandomTrackFromArtist(seedArtist.name);
+        if (seedTrack) {
+            const seedTrackEnriched = {
+                ...seedTrack,
+                source: 'seed_artist',
+                source_info: {
+                    level: 0,
+                    is_seed: true,
+                    artist: seedArtist.name
+                }
+            };
+            radioTracks.push(seedTrackEnriched);
+            console.log(`🎵 Added seed track: "${seedTrack.title_short}" by "${seedArtist.name}"`);
+        }
+
+        // Add tracks from similar artists
+        for (const similarArtist of similarArtists) {
+            if (visitedArtists.has(similarArtist.name.toLowerCase())) {
+                continue;
+            }
+
+            visitedArtists.add(similarArtist.name.toLowerCase());
+
+            // Get a random track from this similar artist
+            const randomTrack = await getRandomTrackFromArtist(similarArtist.name);
+
+            if (randomTrack) {
+                const selectedTrack = {
+                    ...randomTrack,
+                    source: 'similar_artist',
+                    source_info: {
+                        similar_artist: similarArtist.name,
+                        match_score: similarArtist.match,
+                        lastfm_source: true,
+                        level: 1
+                    }
+                };
+
+                radioTracks.push(selectedTrack);
+                console.log(`➕ Added similar artist track: "${selectedTrack.title_short}" by "${similarArtist.name}" (match: ${similarArtist.match})`);
+
+                if (radioTracks.length >= limit) break;
+            }
+        }
+
+        // If we still need more tracks, try the first genre
+        if (radioTracks.length < limit && artistGenres.length > 0) {
+            console.log(`🔄 Not enough tracks (${radioTracks.length}), trying first genre: "${artistGenres[0]}"`);
+
+            // Find artists from the first genre
+            const genreArtists = await getArtistsByGenreFromMusicBrainz(artistGenres[0], 10);
+
+            for (const genreArtist of genreArtists) {
+                if (visitedArtists.has(genreArtist.name.toLowerCase())) {
+                    continue;
+                }
+
+                visitedArtists.add(genreArtist.name.toLowerCase());
+
+                // Get a random track from this genre artist
+                const randomTrack = await getRandomTrackFromArtist(genreArtist.name);
+
+                if (randomTrack) {
+                    const selectedTrack = {
+                        ...randomTrack,
+                        source: 'artist_radio_genre',
+                        source_info: {
+                            genre: artistGenres[0],
+                            discovered_artist: genreArtist.name,
+                            lastfm_source: true,
+                            level: 2
+                        }
+                    };
+
+                    radioTracks.push(selectedTrack);
+                    console.log(`➕ Added genre track: "${selectedTrack.title_short}" by "${genreArtist.name}"`);
+
+                    if (radioTracks.length >= limit) break;
+                }
+            }
+        }
+
+        // If we still need more tracks, try the second genre
+        if (radioTracks.length < limit && artistGenres.length > 1) {
+            console.log(`🔄 Still need more tracks (${radioTracks.length}), trying second genre: "${artistGenres[1]}"`);
+
+            // Find artists from the second genre
+            const genreArtists = await getArtistsByGenreFromMusicBrainz(artistGenres[1], 10);
+
+            for (const genreArtist of genreArtists) {
+                if (visitedArtists.has(genreArtist.name.toLowerCase())) {
+                    continue;
+                }
+
+                visitedArtists.add(genreArtist.name.toLowerCase());
+
+                // Get a random track from this genre artist
+                const randomTrack = await getRandomTrackFromArtist(genreArtist.name);
+
+                if (randomTrack) {
+                    const selectedTrack = {
+                        ...randomTrack,
+                        source: 'artist_radio_genre',
+                        source_info: {
+                            genre: artistGenres[1],
+                            discovered_artist: genreArtist.name,
+                            lastfm_source: true,
+                            level: 2
+                        }
+                    };
+
+                    radioTracks.push(selectedTrack);
+                    console.log(`➕ Added second genre track: "${selectedTrack.title_short}" by "${genreArtist.name}"`);
+
+                    if (radioTracks.length >= limit) break;
+                }
+            }
+        }
+
+        // Remove duplicates and limit results
+        const uniqueTracks = removeDuplicateTracks(radioTracks);
+        const finalTracks = uniqueTracks.slice(0, parseInt(limit));
+
+        console.log(`🎉 Artist radio complete: ${finalTracks.length} tracks from ${visitedArtists.size} artists`);
+
+        res.json({
+            seedArtist: {
+                id: seedArtist.id,
+                name: seedArtist.name,
+                picture: seedArtist.picture,
+                genres: artistGenres,
+                lastfmInfo: lastfmArtistInfo
+            },
+            tracks: finalTracks,
+            summary: {
+                totalFound: uniqueTracks.length,
+                returned: finalTracks.length,
+                discoveredArtists: visitedArtists.size - 1, // -1 for seed artist
+                genresUsed: artistGenres,
+                similarArtistsFound: similarArtists.length,
+                sources: {
+                    seedArtist: radioTracks.filter(t => t.source === 'seed_artist').length,
+                    similarArtists: radioTracks.filter(t => t.source === 'similar_artist').length,
+                    genreFallback: radioTracks.filter(t => t.source === 'artist_radio_genre').length,
+                    lastfmPowered: radioTracks.filter(t => t.source_info?.lastfm_source).length
+                }
+            }
+        });
+
+    } catch (error) {
+        console.error('❌ Error creating artist radio:', error);
+        res.status(500).json({
+            error: 'Failed to create artist radio',
             details: error.message
         });
     }

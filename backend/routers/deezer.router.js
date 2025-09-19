@@ -33,6 +33,15 @@ module.exports = (app) => {
      */
     router.get("/deezer/radio/track/:trackId/related", deezerController.createRelatedRadio);
 
+    /**
+     * @route GET /deezer/radio/artist/:artistId
+     * @desc Create comprehensive radio based on a seed artist using Last.fm data
+     * @param {string} artistId - Deezer artist ID
+     * @query {number} limit - Maximum number of tracks to return (default: 27)
+     * @access Public
+     */
+    router.get("/deezer/radio/artist/:artistId", deezerController.createArtistRadio);
+
     // Mount the router
     app.use('/', router);
 };
