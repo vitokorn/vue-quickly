@@ -572,6 +572,62 @@ exports.createRadioByTrack = async (req, res) => {
                 const labelTracks = await getLabelTracks(seedArtist, externalLabel, genreName, seedYear, seedPopularity);
                 radioTracks.push(...labelTracks.slice(0, 4));
                 console.log(`Added ${Math.min(4, labelTracks.length)} tracks from same label`);
+                if (labelTracks.length === 0) {
+                    // fallback request
+                    const deezerLabelTracks = await makeDeezerRequest(`/search?q=label:"${externalLabel}"`);
+                    for (const track of deezerLabelTracks.data) {
+                        labelTracks.push(...track);
+                    }
+                    radioTracks.push(...shuffleArray(labelTracks).slice(0, 4).map(track => ({
+                        ...track,
+                        source: 'same_label',
+                        source_info: {
+                            label_name: externalLabel,
+                            source_method: 'deezer_direct'
+                        }
+                    })));
+                }
+            } else {
+                // fallback request
+                let labelTracks = []
+                const artistSearchResponse = await makeMusicBrainzRequest('/artist', {
+                    query: `${seedArtist.name}`,
+                    limit: 5
+                });
+                console.log('596')
+                if (artistSearchResponse.artists && artistSearchResponse.artists.length > 0) {
+                    const artistResponse = await makeMusicBrainzRequest(`/artist/${artistSearchResponse.artists[0].id}`, {
+                        inc: 'releases'
+                    })
+                    if (artistResponse.releases && artistResponse.releases.length > 0) {
+                        for (const track of artistResponse.releases) {
+                            const artistRelease = await makeMusicBrainzRequest(`/release/${track.id}`, {
+                                inc: 'labels'
+                            })
+                            if (artistRelease && artistRelease['label-info'].length > 0) {
+                                console.log('artistRelease', artistRelease);
+                                const labelInfo = artistRelease['label-info'];
+                                console.log('labelInfo', labelInfo);
+                                externalLabel = externalLabel = artistRelease['label-info'][0].label
+                                    ? artistRelease['label-info'][0].label.name
+                                    : null;
+                                const deezerLabelTracks = await makeDeezerRequest(`/search?q=label:"${externalLabel}"`);
+                                for (const track of deezerLabelTracks.data) {
+                                    labelTracks.push(track);
+                                }
+                                radioTracks.push(...shuffleArray(labelTracks).slice(0, 4).map(track => ({
+                                    ...track,
+                                    source: 'same_label',
+                                    source_info: {
+                                        label_name: externalLabel,
+                                        source_method: 'musicbrainz_label_deezer_search'
+                                    }
+                                })));
+                                break;
+                            }
+                        }
+                    }
+                }
             }
         } catch (error) {
             console.warn('Failed to get label tracks:', error.message);
