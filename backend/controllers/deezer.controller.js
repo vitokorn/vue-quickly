@@ -3,6 +3,7 @@ const axios = require('axios');
 // Deezer API configuration
 const DEEZER_BASE_URL = 'https://api.deezer.com';
 const MUSICBRAINZ_BASE_URL = 'https://musicbrainz.org/ws/2';
+const GENRES_LIST = ["electronic", "dance","house","techno","trance","drum & bass","dnb","d&b","dubstep","hardcore","breakbeat","downtempo","moombahton","complextro","glitch hop","electroclash","rock","metal","pop","hip-hop","hip hop","rap","r&b","soul","funk","jazz","classical","folk","country","reggae","chillhop","synthwave","vaporwave","edm","opera","minimalism","modernism"]
 
 // Helper function to make Deezer API requests
 const makeDeezerRequest = async (endpoint) => {
@@ -426,7 +427,6 @@ exports.createRadioByTrack = async (req, res) => {
             const relatedReleases = await getRelatedReleasesByYearAndGenre(
                 seedArtist.name,
                 seedYear,
-                seedGenres[0]?.name || 'pop'
             );
 
             console.log(`Found ${relatedReleases.length} related releases from MusicBrainz`);
@@ -434,10 +434,8 @@ exports.createRadioByTrack = async (req, res) => {
             if (relatedReleases.length > 0) {
                 const relatedTracks = await getTracksFromReleases(relatedReleases.slice(0, 4));
                 console.log(`Found ${relatedTracks.length} tracks from releases before filtering`);
-                const filteredTracks = filterByPopularityRange(relatedTracks, seedPopularity);
-                console.log(`Found ${filteredTracks.length} tracks after popularity filtering`);
-                radioTracks.push(...shuffleArray(filteredTracks).slice(0, 4));
-                console.log(`[${radioTracks.length}] Added ${Math.min(4, filteredTracks.length)} tracks from related releases`);
+                radioTracks.push(...shuffleArray(relatedTracks).slice(0, 4));
+                console.log(`[${radioTracks.length}] Added ${Math.min(4, relatedTracks.length)} tracks from related releases`);
             } else {
                 console.log(`[${radioTracks.length}] Added 0 tracks from related releases`);
             }
@@ -449,7 +447,7 @@ exports.createRadioByTrack = async (req, res) => {
         // Step 2: Get collaboration tracks
         const collaborations = []
         try {
-            const collabTracks = await getCollaborationTracks(seedArtist.id, seedPopularity);
+            const collabTracks = await getCollaborationTracks(seedArtist.name,seedArtist.id, seedTrack.title, seedPopularity);
             radioTracks.push(...collabTracks.slice(0, 4));
             console.log(`[${radioTracks.length}] Added ${Math.min(4, collabTracks.length)} collaboration tracks`);
             for (const track of collabTracks) {
@@ -542,7 +540,7 @@ exports.createRadioByTrack = async (req, res) => {
                 console.warn('Failed to get related artist tracks:', error.message);
             }
         }
-        let externalGenre, externalLabel
+        let externalGenres, externalLabel
         let genreName = seedGenres[0]?.name || 'pop';
         // Step 4: Get random tracks in same genre with similar popularity
         try {
@@ -550,24 +548,17 @@ exports.createRadioByTrack = async (req, res) => {
             // If genre is empty or generic, try to get genre from external sources
             if (!seedGenres[0]?.name || seedGenres[0]?.name === 'pop' || seedGenres[0]?.name === 'unknown') {
                 console.log('Genre is empty or generic, trying to get genre from external sources...');
-                [externalGenre, externalLabel] = await getGenreAndLabelFromExternalSources(seedTrack.title, seedArtist.name, seedAlbum?.title);
-                if (externalGenre) {
-                    genreName = externalGenre;
-                    console.log(`Found genre from external source: "${genreName}"`);
-
-                    // Also get the second genre for potential fallback
-                    const allGenres = await getGenresFromLastfm(seedArtist.name);
-                    if (allGenres.length > 1) {
-                        console.log(`Also found secondary genre: "${allGenres[1]}"`);
-                    }
+                [externalGenres, externalLabel] = await getGenreAndLabelFromExternalSources(seedTrack.title, seedArtist.name, seedAlbum?.title);
+                if (externalGenres) {
+                    console.log(`Found genres from external source: "${externalGenres}"`);
                 } else {
                     console.log('Could not determine genre from external sources, using fallback');
                 }
             }
 
-            const randomTracks = await getRandomGenreTracks(genreName, seedPopularity);
+            const randomTracks = await getRandomGenreTracks(externalGenres,seedYear, seedPopularity);
             radioTracks.push(...randomTracks.slice(0, 4));
-            console.log('Genre:', genreName);
+            console.log('Genre:', externalGenres);
             console.log(`[${radioTracks.length}] Added ${Math.min(4, randomTracks.length)} random genre tracks`);
         } catch (error) {
             console.warn('Failed to get random genre tracks:', error.message);
@@ -941,10 +932,10 @@ async function getGenreAndLabelFromExternalSources(trackTitle, artistName, album
             const musicbrainzLabel = await getLabelFromMusicBrainz(artistName, albumTitle);
             if (musicbrainzLabel) {
                 console.log(`Found label from MusicBrainz: "${musicbrainzLabel}"`);
-                return [lastfmGenres[0], musicbrainzLabel]; // Return first genre and label
+                return [lastfmGenres, musicbrainzLabel]; // Return genres and label
             }
 
-            return [lastfmGenres[0], null]; // Return first genre, no label
+            return [lastfmGenres, null]; // Return genres, no label
         }
 
         console.log('No genre found from external sources');
@@ -1020,11 +1011,20 @@ async function getGenresFromLastfm(artistName) {
                 // Get up to 2 genres, filter out common generic tags
                 const genreTags = tags
                     .map(tag => tag.name)
-                    .filter(tag => !['seen live', 'favorites', 'all', 'music', 'rock', 'pop'].includes(tag.toLowerCase()))
+                    .filter(tag => !['seen live', 'favorites', 'all', 'music'].includes(tag.toLowerCase()))
                     .slice(0, 2);
 
                 console.log(`Found Last.fm genres: [${genreTags.join(', ')}] for artist "${artistName}"`);
-                return genreTags;
+                // stabilization for genres
+                let stabilizedGenres = [];
+                for (const genreTag of genreTags) {
+                    if (GENRES_LIST.includes(genreTag.toLowerCase())) {
+                        console.log(`found genres from Genres ${genreTag}`);
+                        stabilizedGenres.push(genreTag.toLowerCase());
+                    }
+                }
+                console.log(`Stabilized genres: ${stabilizedGenres.join(',')}`);
+                return stabilizedGenres;
             }
         }
 
@@ -1191,7 +1191,7 @@ async function getLabelFromTrackInfo(artistName, albumTitle) {
 /**
  * Get related releases by year and genre using MusicBrainz
  */
-async function getRelatedReleasesByYearAndGenre(artistName, seedYear, genreName) {
+async function getRelatedReleasesByYearAndGenre(artistName, seedYear) {
     if (!seedYear) {
         console.log('No seed year provided, skipping MusicBrainz search');
         return [];
@@ -1383,7 +1383,7 @@ async function getTracksFromReleases(releases) {
 /**
  * Get collaboration tracks for an artist
  */
-async function getCollaborationTracks(artistId, targetPopularity) {
+async function getCollaborationTracks(artistName, artistId,trackTitle, targetPopularity) {
     try {
         console.log(`Looking for collaboration tracks for artist ${artistId}`);
 
@@ -1401,21 +1401,23 @@ async function getCollaborationTracks(artistId, targetPopularity) {
 
                     if (albumTracks.data) {
                         console.log(`Album "${album.title}": ${albumTracks.data.length} tracks`);
+                        const tracks = []
+                        for (const track of albumTracks.data) {
+                            if (track.title_short.toLowerCase() !== trackTitle.toLowerCase()) {
+                                const albumTrack = await makeDeezerRequest(`/track/${track.id}`);
+                                console.log('Album track', albumTrack);
+                                if (albumTrack.contributors.length > 1) {
+                                    for (const collab of albumTrack.contributors) {
+                                        if (collab.name.toLowerCase() !== artistName.toLowerCase()) {
+                                            tracks.push(albumTrack);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        console.log(`Found ${tracks.length} collaboration tracks in album "${album.title}"`);
 
-                        // Look for tracks with multiple contributors (collaborations)
-                        const albumCollabs = albumTracks.data.filter(track => {
-                            // Check if track has contributors array or multiple artists mentioned in title
-                            const hasContributors = track.contributors && track.contributors.length > 1;
-                            const titleHasFeaturing = /\b(ft\.?|feat\.?|featuring|with)\b/i.test(track.title);
-                            return hasContributors || titleHasFeaturing;
-                        });
-
-                        console.log(`Found ${albumCollabs.length} collaboration tracks in album "${album.title}"`);
-
-                        if (albumCollabs.length > 0) {
-                            const filteredCollabs = filterByPopularityRange(albumCollabs, targetPopularity);
-
-                            collabTracks.push(...filteredCollabs.map(track => ({
+                            collabTracks.push(...tracks.map(track => ({
                                 ...track,
                                 source: 'collaborations',
                                 source_info: {
@@ -1424,7 +1426,6 @@ async function getCollaborationTracks(artistId, targetPopularity) {
                                 }
                             })));
                         }
-                    }
                 } catch (error) {
                     console.warn(`Failed to get tracks for album ${album.title}:`, error.message);
                 }
@@ -1576,17 +1577,13 @@ async function getTracksFromLabelReleases(releases, targetPopularity, limit = 8)
             console.log(`Searching Deezer for tracks by "${release.artist}" (from label release: "${release.title}")`);
 
             // Search Deezer for tracks by this artist
-            const artistSearchResponse = await makeDeezerRequest(`/search/track?q=artist:"${encodeURIComponent(release.artist)}"&limit=15`);
+            const artistSearchResponse = await makeDeezerRequest(`/search/track?q=${encodeURIComponent(release.artist)} ${release.title}&limit=15`);
 
             if (artistSearchResponse.data && artistSearchResponse.data.length > 0) {
                 if (artistSearchResponse.data.find(item => item.artist.name.toLowerCase() === release.artist.toLowerCase())) {
                     // select only target artist
                     let selectedReleases = artistSearchResponse.data.filter(item => item.artist.name.toLowerCase() === release.artist.toLowerCase())
-                    // Filter by popularity
-                    const filteredTracks = filterByPopularityRange(selectedReleases, targetPopularity);
-                    if (filteredTracks.length > 0) {
-                    }
-                    const processedTracks = filteredTracks.slice(0, 2).map(track => ({
+                    const processedTracks = selectedReleases.slice(0, 2).map(track => ({
                         ...track,
                         source: 'same_label',
                         source_info: {
@@ -1740,10 +1737,12 @@ async function getArtistsByGenreFromMusicBrainz(genreName, limit = 20) {
 /**
  * Get releases from MusicBrainz by genre tag
  */
-async function getReleasesByGenreFromMusicBrainz(genreName, limit = 20) {
+async function getReleasesByGenreFromMusicBrainz(genreName, seedYear, limit = 20) {
     try {
         console.log(`Searching MusicBrainz for releases in genre: "${genreName}"`);
-
+        const yearRange = 2;
+        const minYear = seedYear - yearRange;
+        const maxYear = seedYear + yearRange;
         // Use the same genre tag mapping as above - simplified
         const genreTags = {
             'rock': ['rock'],
@@ -1772,7 +1771,7 @@ async function getReleasesByGenreFromMusicBrainz(genreName, limit = 20) {
                 console.log(`Searching for releases with tag: "${tag}"`);
 
                 const searchParams = {
-                    query: `tag:"${tag}"`,
+                    query: `tag:"${tag}" AND date:[${minYear} TO ${maxYear}]`,
                     limit: Math.ceil(limit / 2),
                     offset: 0
                 };
@@ -1800,7 +1799,6 @@ async function getReleasesByGenreFromMusicBrainz(genreName, limit = 20) {
 
             } catch (tagError) {
                 console.warn(`Failed to search for tag "${tag}":`, tagError.message);
-                continue;
             }
         }
 
@@ -1824,9 +1822,9 @@ async function getReleasesByGenreFromMusicBrainz(genreName, limit = 20) {
 /**
  * Get random tracks from the same genre with similar popularity
  */
-async function getRandomGenreTracks(genreName, targetPopularity) {
+async function getRandomGenreTracks(genresName,seedYear, targetPopularity) {
     try {
-        console.log(`Looking for random tracks in genre: "${genreName}" using MusicBrainz`);
+        console.log(`Looking for random tracks in genres: "${genresName}" using MusicBrainz`);
 
         let allTracks = [];
 
@@ -1836,67 +1834,68 @@ async function getRandomGenreTracks(genreName, targetPopularity) {
         // If we didn't find enough tracks from artists, try releases
         if (allTracks.length < 8) {
             console.log('Not enough tracks from artists, trying releases from MusicBrainz');
+            for (const genreName of genresName) {
+                console.log('Current genre: ', genreName);
+                const genreReleases = await getReleasesByGenreFromMusicBrainz(genreName, seedYear, 20);
+                const artistSet = new Set();
+                const releaseSet = new Set();
+                if (genreReleases.length > 0) {
+                    // Get tracks from these releases
+                    for (const release of genreReleases) {
+                        try {
+                            console.log(`Searching Deezer for tracks from release: "${release.title}" by "${release.artist}"`);
+                            if (!artistSet.has(release.artist) && !releaseSet.has(`${release.artist}:${release.title}`)) {
+                                artistSet.add(release.artist);
+                                releaseSet.add(`${release.artist}:${release.title}`);
+                                const releaseSearchResponse = await makeDeezerRequest(`/search/track?q=album:"${encodeURIComponent(release.title)}" artist:"${encodeURIComponent(release.artist)}"&limit=10`);
 
-            const genreReleases = await getReleasesByGenreFromMusicBrainz(genreName, 20);
-            const artistSet = new Set();
-            const releaseSet = new Set();
-            if (genreReleases.length > 0) {
-                // Get tracks from these releases
-                for (const release of genreReleases) { // Limit to top 5 releases
-                    try {
-                        console.log(`Searching Deezer for tracks from release: "${release.title}" by "${release.artist}"`);
-                        if (!artistSet.has(release.artist)) {
-                            artistSet.add(release.artist);
-                            const releaseSearchResponse = await makeDeezerRequest(`/search/track?q=album:"${encodeURIComponent(release.title)}" artist:"${encodeURIComponent(release.artist)}"&limit=10`);
+                                if (releaseSearchResponse.data && releaseSearchResponse.data.length > 0) {
+                                    console.log(`Found ${releaseSearchResponse.data.length} tracks from Deezer for release "${release.title}"`);
 
-                            if (releaseSearchResponse.data && releaseSearchResponse.data.length > 0) {
-                                console.log(`Found ${releaseSearchResponse.data.length} tracks from Deezer for release "${release.title}"`);
-
-                                // Debug: Log popularity values for first few tracks
-                                if (releaseSearchResponse.data.length > 0) {
-                                    console.log(`Target popularity: ${targetPopularity}, tolerance: ${genreTolerance}, range: ${Math.max(0, targetPopularity - genreTolerance)} - ${Math.min(100, targetPopularity + genreTolerance)}`);
-                                }
-                                for (const searchRelease of releaseSearchResponse.data) {
-                                    if (searchRelease.artist.name === release.artist && !releaseSet.has(`${release.artist}:${searchRelease.title_short}`)) {
-                                        releaseSet.add(`${release.artist}:${searchRelease.title_short}`);
-                                        // Filter by popularity with higher tolerance for genre searches
-                                        const filteredTracks = filterByPopularityRange([searchRelease], targetPopularity, genreTolerance);
-                                        if (filteredTracks.length === 0) {
-                                            continue;
-                                        }
-                                        const processedTracks = filteredTracks.map(track => ({
-                                            ...track,
-                                            source: 'random_genre',
-                                            source_info: {
-                                                genre_name: genreName,
-                                                musicbrainz_release: release.title,
-                                                musicbrainz_artist: release.artist,
-                                                musicbrainz_score: release.score,
-                                                musicbrainz_genre_tag: release.genre_tag,
-                                                artist_name: track.artist?.name
+                                    // Debug: Log popularity values for first few tracks
+                                    if (releaseSearchResponse.data.length > 0) {
+                                        console.log(`Target popularity: ${targetPopularity}, tolerance: ${genreTolerance}, range: ${Math.max(0, targetPopularity - genreTolerance)} - ${Math.min(100, targetPopularity + genreTolerance)}`);
+                                    }
+                                    for (const searchRelease of releaseSearchResponse.data) {
+                                        console.log(`${release.artist}:${searchRelease.title_short}`);
+                                        if (searchRelease.artist.name === release.artist) {
+                                            // Filter by popularity with higher tolerance for genre searches
+                                            const filteredTracks = filterByPopularityRange([searchRelease], targetPopularity, genreTolerance);
+                                            if (filteredTracks.length === 0) {
+                                                continue;
                                             }
-                                        }));
+                                            const processedTracks = filteredTracks.map(track => ({
+                                                ...track,
+                                                source: 'random_genre',
+                                                source_info: {
+                                                    genre_name: genreName,
+                                                    musicbrainz_release: release.title,
+                                                    musicbrainz_artist: release.artist,
+                                                    musicbrainz_score: release.score,
+                                                    musicbrainz_genre_tag: release.genre_tag,
+                                                    artist_name: track.artist?.name
+                                                }
+                                            }));
 
-                                        allTracks.push(...processedTracks);
-                                        console.log(`Added ${processedTracks.length} tracks from release "${release.title}" (score: ${release.score}) - ${filteredTracks.length} passed filter out of ${releaseSearchResponse.data.length}`);
+                                            allTracks.push(...processedTracks);
+                                            console.log(`Added ${processedTracks.length} tracks from release "${release.title}" (score: ${release.score}) - ${filteredTracks.length} passed filter out of ${releaseSearchResponse.data.length}`);
 
-                                        // If we have enough tracks, stop
-                                        if (allTracks.length >= 20) {
+                                            // If we have enough tracks, stop
+                                            if (allTracks.length >= 20) {
+                                                break;
+                                            }
                                             break;
                                         }
-                                        break;
                                     }
                                 }
                             }
+                        } catch (releaseError) {
+                            console.warn(`Failed to get tracks for release "${release.title}":`, releaseError.message);
                         }
-                    } catch (releaseError) {
-                        console.warn(`Failed to get tracks for release "${release.title}":`, releaseError.message);
-                        continue;
                     }
                 }
             }
         }
-        // TODO If MusicBrainz approach didn't work well, fallback to Last.fm second genre tag
 
         // Remove duplicates and shuffle
         const uniqueTracks = removeDuplicateTracks(allTracks);
