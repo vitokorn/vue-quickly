@@ -11,6 +11,7 @@ import TrackItem from './TrackItem.vue'
 import Loader from './Loader.vue'
 import RefreshButton from "./RefreshButton.vue";
 import PaginationContainer from './PaginationContainer.vue'
+import LoadingMoreComponent from "./common/LoadingMoreComponent.vue";
 
 // Props
 const props = defineProps({
@@ -112,11 +113,8 @@ const handlePageChange = async (page) => {
       </div>
       <SortTracks v-model="selectedSTSortOption" />
     </div>
-    <Loader v-if="musicStore.isLoading" />
-    <div v-if="loadingMore" class="loading-more">
-      <div class="loading-spinner"></div>
-      <span>Loading more tracks...</span>
-    </div>
+    <Loader v-if="loadingMore" />
+    <LoadingMoreComponent v-if="loadingMore"/>
       <div id="savedtrack" class="display-flex flex-wrap" v-show="selectedTopMenu === 5">
         <div class="display-flex flex-wrap py-2 gap-8">
           <template v-for="(item, index) of displayedItems" :key="index">
@@ -144,27 +142,5 @@ const handlePageChange = async (page) => {
 </template>
 
 <style scoped>
-.loading-more {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 1rem;
-  color: #777;
-  font-size: 0.9rem;
-}
 
-.loading-spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid #f3f3f3;
-  border-top: 2px solid #1db954;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
 </style>

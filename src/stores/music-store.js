@@ -363,7 +363,7 @@ export const useMusicStore = defineStore('music', {
     async fetchPlaylistTracks(id, offset = 0) {
       try {
         const service = musicServiceManager.getCurrentService()
-        const tracks = await service.getPlaylistTracks(id, offset, 100)
+        const tracks = await service.getPlaylistTracks(id, offset, 50)
         return tracks
       } catch (error) {
         console.error('Failed to fetch playlist tracks:', error)
