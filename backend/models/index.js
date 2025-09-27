@@ -25,6 +25,22 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.users = require("./user.js")(sequelize, Sequelize);
+db.users = require('./user.js')(sequelize, Sequelize.DataTypes);
+
+db.Artist = require('./artist.js')(sequelize);
+db.Label = require('./label.js')(sequelize);
+db.Genre = require('./genre.js')(sequelize);
+db.Album = require('./album.js')(sequelize);
+db.Track = require('./track.js')(sequelize);
+db.ArtistsLabels = require('./artists-labels.js')(sequelize);
+db.LabelGenres = require('./label-genres.js')(sequelize);
+db.TrackArtists = require('./track-artists.js')(sequelize);
+
+// Associations
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
 
 module.exports = db;
