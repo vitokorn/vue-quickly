@@ -32,7 +32,7 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING
     },
     deezer_id: {
-      type: DataTypes.INTEGER
+      type: DataTypes.BIGINT
     }
   }, {
     timestamps: true,

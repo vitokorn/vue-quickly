@@ -40,8 +40,15 @@ module.exports = (sequelize) => {
         key: 'id'
       }
     },
+    label_id: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'Labels',
+        key: 'id'
+      }
+    },
     deezer_id: {
-      type: DataTypes.INTEGER
+      type: DataTypes.BIGINT
     }
   }, {
     timestamps: true,
@@ -52,10 +59,18 @@ module.exports = (sequelize) => {
     Track.belongsTo(models.Album, {
       foreignKey: 'album_id'
     });
+    Track.belongsTo(models.Label, {
+      foreignKey: 'label_id'
+    });
     Track.belongsToMany(models.Artist, {
       through: models.TrackArtists,
       foreignKey: 'track_id',
       otherKey: 'artist_id'
+    });
+    Track.belongsToMany(models.Genre, {
+      through: models.TrackGenres,
+      foreignKey: 'track_id',
+      otherKey: 'genre_id'
     });
   };
 

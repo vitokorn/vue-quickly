@@ -13,7 +13,7 @@ module.exports = (sequelize) => {
       allowNull: false
     },
     deezer_id: {
-      type: DataTypes.INTEGER
+      type: DataTypes.BIGINT
     }
   }, {
     timestamps: true,

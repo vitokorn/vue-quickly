@@ -31,6 +31,11 @@ module.exports = (sequelize) => {
       foreignKey: 'genre_id',
       otherKey: 'label_id'
     });
+    Genre.belongsToMany(models.Track, {
+      through: models.TrackGenres,
+      foreignKey: 'genre_id',
+      otherKey: 'track_id'
+    });
   };
 
   return Genre;

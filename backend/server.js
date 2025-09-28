@@ -27,6 +27,23 @@ require("./routers/tidal.router.js")(app);
 const publicPath = path.join(__dirname, "../public");
 app.use(express.static(publicPath));
 
+// Initialize BullMQ queues and workers
+const { queues, redisConnection } = require('./queues');
+console.log('BullMQ queues and workers initialized');
+
+// Graceful shutdown handling
+process.on('SIGTERM', async () => {
+    console.log('Shutting down gracefully...');
+    await redisConnection.quit();
+    process.exit(0);
+});
+
+process.on('SIGINT', async () => {
+    console.log('Shutting down gracefully...');
+    await redisConnection.quit();
+    process.exit(0);
+});
+
 app.get("*", (req, res) => {
     if (!req.path.startsWith("/spotify") &&
         !req.path.startsWith("/lastfm") &&

@@ -35,6 +35,7 @@ db.Track = require('./track.js')(sequelize);
 db.ArtistsLabels = require('./artists-labels.js')(sequelize);
 db.LabelGenres = require('./label-genres.js')(sequelize);
 db.TrackArtists = require('./track-artists.js')(sequelize);
+db.TrackGenres = require('./track-genres.js')(sequelize);
 
 // Associations
 Object.keys(db).forEach(modelName => {

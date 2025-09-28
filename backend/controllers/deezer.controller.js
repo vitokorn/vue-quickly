@@ -1,5 +1,6 @@
 const axios = require('axios');
 const db = require('../models');
+const {queues} = require("../queues");
 
 // Deezer API configuration
 const DEEZER_BASE_URL = 'https://api.deezer.com';
@@ -533,7 +534,7 @@ async function getOrCreateTrack(deezerTrackData) {
     if (!deezerTrackData || !deezerTrackData.id) return deezerTrackData; // Return raw data if no ID
 
     // Check if we need to fetch full track data from Deezer API
-    const needsFullData = !deezerTrackData.isrc || !deezerTrackData.release_date || !deezerTrackData.bpm || !deezerTrackData.gain;
+    const needsFullData = !deezerTrackData.isrc || !deezerTrackData.release_date || !deezerTrackData.bpm || !deezerTrackData.gain || !deezerTrackData.album;
     if (needsFullData) {
       console.log(`Fetching full track data for ${deezerTrackData.id} (missing fields: ${[
         !deezerTrackData.isrc && 'isrc',
@@ -546,6 +547,11 @@ async function getOrCreateTrack(deezerTrackData) {
         if (fullTrackData) {
           // Merge the full data with existing data
           deezerTrackData = { ...deezerTrackData, ...fullTrackData };
+
+          // Check if full track data has album with label info
+          if (fullTrackData.album && fullTrackData.album.label && !deezerTrackData.album?.label) {
+            console.log(`Found label info from full track data: ${fullTrackData.album.label}`);
+          }
         }
       } catch (fetchError) {
         console.warn(`Failed to fetch full track data for ${deezerTrackData.id}:`, fetchError.message);
@@ -559,6 +565,21 @@ async function getOrCreateTrack(deezerTrackData) {
 
     if (track && (Date.now() - new Date(track.updatedAt).getTime()) < ONE_MONTH_MS) {
       console.log(`Using cached track: ${track.title}`);
+
+      // Try to enhance cached track data with label information
+      if (track.label_id && (!deezerTrackData.album || !deezerTrackData.album.label)) {
+        const label = await db.Label.findOne({
+          where: { id: track.label_id }
+        });
+        if (label) {
+          console.log(`Enhancing cached track with label info: ${label.label_name}`);
+          deezerTrackData.album = {
+            ...deezerTrackData.album,
+            label: label.label_name
+          };
+        }
+      }
+
       // Return enriched track data
       return {
         ...deezerTrackData,
@@ -570,13 +591,36 @@ async function getOrCreateTrack(deezerTrackData) {
     let album = null;
     if (deezerTrackData.album) {
       album = await getOrCreateAlbum(deezerTrackData.album);
+
+      // If album exists and has label info, try to enhance track data with cached label info
+      if (album && album.label_id && !deezerTrackData.album.label) {
+        // Check if we can get label name from cached album data
+        const cachedAlbum = await db.Album.findOne({
+          where: { id: album.id },
+          include: [{ model: db.Label }]
+        });
+
+        if (cachedAlbum && cachedAlbum.Label) {
+          console.log(`Using cached label info from album: ${cachedAlbum.Label.label_name}`);
+          deezerTrackData.album = {
+            ...deezerTrackData.album,
+            label: cachedAlbum.Label.label_name
+          };
+        }
+      }
     }
 
     // Get or create artist
     let artist = null;
     if (deezerTrackData.artist) {
       artist = await getOrCreateArtist(deezerTrackData.artist);
+    }
 
+    // Get label from album if available
+    let labelId = null;
+    if (deezerTrackData.album && deezerTrackData.album.label) {
+      const label = await getOrCreateLabel({ name: deezerTrackData.album.label });
+      labelId = label ? label.id : null;
     }
 
     const trackData = {
@@ -589,6 +633,7 @@ async function getOrCreateTrack(deezerTrackData) {
       bpm: deezerTrackData.bpm,
       gain: deezerTrackData.gain,
       album_id: album ? album.id : null,
+      label_id: labelId,
       deezer_id: deezerTrackData.id
     };
 
@@ -608,6 +653,26 @@ async function getOrCreateTrack(deezerTrackData) {
           artist_id: artist.id
         }
       });
+    }
+
+    // Associate track with genres (if available)
+    if (track && artist) {
+      try {
+        // Try to get genres from Last.fm for the artist
+        const lastfmGenres = await getGenresFromLastfm(artist.name);
+
+        for (const genreName of lastfmGenres.slice(0, 3)) { // Limit to 3 genres per track
+          const genre = await getOrCreateGenre({ name: genreName });
+          if (genre) {
+            await getOrCreateTrackGenre({
+              track_id: track.id,
+              genre_id: genre.id
+            });
+          }
+        }
+      } catch (genreError) {
+        console.warn(`Failed to associate genres for track ${track.title}:`, genreError.message);
+      }
     }
 
     return {
@@ -718,34 +783,64 @@ async function getOrCreateArtistLabel(artistLabelData) {
     return null;
   }
 }
-
 /**
  * Get or create label-genre association from database
  */
 async function getOrCreateLabelGenre(labelGenreData) {
-  try {
-    if (!labelGenreData || !labelGenreData.label_id || !labelGenreData.genre_id) return null;
+    try {
+        if (!labelGenreData || !labelGenreData.label_id || !labelGenreData.genre_id) return null;
 
-    let labelGenre = await db.LabelGenres.findOne({
+        let labelGenre = await db.LabelGenres.findOne({
+            where: {
+                label_id: labelGenreData.label_id,
+                genre_id: labelGenreData.genre_id
+            }
+        });
+
+        if (labelGenre) {
+            return labelGenre;
+        }
+
+        // Create new association
+        labelGenre = await db.LabelGenres.create({
+            label_id: labelGenreData.label_id,
+            genre_id: labelGenreData.genre_id
+        });
+
+        return labelGenre;
+    } catch (error) {
+        console.warn('Error in getOrCreateLabelGenre:', error.message);
+        return null;
+    }
+}
+
+/**
+ * Get or create track-genre association from database
+ */
+async function getOrCreateTrackGenre(trackGenreData) {
+  try {
+    if (!trackGenreData || !trackGenreData.track_id || !trackGenreData.genre_id) return null;
+
+    let trackGenre = await db.TrackGenres.findOne({
       where: {
-        label_id: labelGenreData.label_id,
-        genre_id: labelGenreData.genre_id
+        track_id: trackGenreData.track_id,
+        genre_id: trackGenreData.genre_id
       }
     });
 
-    if (labelGenre) {
-      return labelGenre;
+    if (trackGenre) {
+      return trackGenre;
     }
 
     // Create new association
-    labelGenre = await db.LabelGenres.create({
-      label_id: labelGenreData.label_id,
-      genre_id: labelGenreData.genre_id
+    trackGenre = await db.TrackGenres.create({
+      track_id: trackGenreData.track_id,
+      genre_id: trackGenreData.genre_id
     });
 
-    return labelGenre;
+    return trackGenre;
   } catch (error) {
-    console.warn('Error in getOrCreateLabelGenre:', error.message);
+    console.warn('Error in getOrCreateTrackGenre:', error.message);
     return null;
   }
 }
@@ -861,6 +956,11 @@ exports.createRadioByTrack = async (req, res) => {
                 if (artist) {
                     await getOrCreateArtistLabel({artist_id: artist.id, label_id: labelDB.id})
                 }
+                await queues.labelTracks.add('fetch-label-tracks', {
+                    labelName: label,
+                }, {
+                    delay: 5000
+                });
                 const labelTracks = []
                 const deezerLabelTracks = await makeDeezerRequest(`/search?q=label:"${label}"`);
                 for (const track of deezerLabelTracks.data) {
@@ -931,6 +1031,11 @@ exports.createRadioByTrack = async (req, res) => {
         if (externalLabels.length > 0) {
             for (let externalLabel of externalLabels) {
                 let label = await getOrCreateLabel({name: externalLabel});
+                await queues.labelTracks.add('fetch-label-tracks', {
+                    labelName: externalLabel,
+                }, {
+                    delay: 5000
+                });
                 for (const externalGenre of externalGenres) {
                     let genre = await getOrCreateGenre({name: externalGenre});
                     await getOrCreateLabelGenre({label_id: label.id, genre_id: genre.id})
@@ -994,6 +1099,7 @@ exports.createRadioByTrack = async (req, res) => {
         // Step 5: Check collaboration artists top tracks
         if (collaborations.length > 1) {
             for (const contributor of seedContributors) {
+
                 // Try to get top tracks first
                 const artistTopTracks = await makeDeezerRequest(`/artist/${contributor.id}/top?limit=3`);
                 console.log(`artists top track`, artistTopTracks.data);
@@ -3055,3 +3161,16 @@ exports.createRadioByTrack = async (req, res) => {
             });
         }
     };
+
+// Export additional helper functions for workers
+exports.makeDeezerRequest = makeDeezerRequest;
+exports.getOrCreateArtist = getOrCreateArtist;
+exports.getOrCreateAlbum = getOrCreateAlbum;
+exports.getOrCreateTrack = getOrCreateTrack;
+exports.getOrCreateLabel = getOrCreateLabel;
+exports.getOrCreateGenre = getOrCreateGenre;
+exports.getOrCreateArtistLabel = getOrCreateArtistLabel;
+exports.getOrCreateLabelGenre = getOrCreateLabelGenre;
+exports.getOrCreateTrackGenre = getOrCreateTrackGenre;
+exports.getGenresFromLastfm = getGenresFromLastfm;
+exports.processTracksWithCache = processTracksWithCache;
