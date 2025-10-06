@@ -50,6 +50,243 @@ const BEATPORT_GENRE_MAPPING = {
     "R&B": "r&b"
 };
 
+/**
+ * Get artist top tracks with backend fallback logic
+ * - Try Deezer /artist/:id/top (two pages)
+ * - If empty, aggregate tracks from artist albums and sort by popularity/rank
+ * - As a last resort, use Deezer artist radio
+ */
+exports.getArtistTopTracksWithFallback = async (req, res) => {
+  try {
+    const { artistId } = req.params;
+    if (!artistId) {
+      return res.status(400).json({ error: 'Artist ID is required' });
+    }
+
+    // 1) Try official top endpoint (fetch two pages to increase coverage)
+    let topData = await makeDeezerRequest(`/artist/${artistId}/top`);
+    let tracks = Array.isArray(topData?.data) ? topData.data : (Array.isArray(topData) ? topData : []);
+    try {
+      const secondPage = await makeDeezerRequest(`/artist/${artistId}/top?index=5`);
+      const secondTracks = Array.isArray(secondPage?.data) ? secondPage.data : (Array.isArray(secondPage) ? secondPage : []);
+      tracks = [...tracks, ...secondTracks];
+    } catch (e) {
+      // Ignore pagination fetch failures
+    }
+
+    // If we have tracks, dedupe by id and return
+    if (Array.isArray(tracks) && tracks.length > 0) {
+      const unique = [];
+      const seen = new Set();
+      for (const t of tracks) {
+        if (t && t.id && !seen.has(t.id)) {
+          seen.add(t.id);
+          unique.push(t);
+        }
+      }
+      return res.json(unique);
+    }
+
+    // 2) Fallback: use database-cached tracks for this artist if available
+    try {
+      const dbArtist = await db.Artist.findOne({ where: { deezer_id: parseInt(artistId, 10) } });
+      if (dbArtist) {
+        const rows = await db.Track.findAll({
+          include: [
+            { model: db.Artist, through: db.TrackArtists, where: { id: dbArtist.id } },
+            { model: db.Album }
+          ],
+          order: [ ['rank', 'DESC'], ['updatedAt', 'DESC'] ],
+          limit: 20
+        });
+
+        const mappedFromDb = [];
+        const seenDb = new Set();
+        for (const row of rows) {
+          if (!row || !row.deezer_id) continue;
+          if (seenDb.has(row.deezer_id)) continue;
+          seenDb.add(row.deezer_id);
+          mappedFromDb.push({
+            id: row.deezer_id,
+            title: row.title,
+            title_short: row.title_short || row.title,
+            duration: row.duration,
+            rank: row.rank,
+            release_date: row.release_date,
+            bpm: row.bpm,
+            gain: row.gain,
+            artist: { id: parseInt(artistId, 10), name: dbArtist.name },
+            album: row.Album ? {
+              id: row.Album.deezer_id,
+              title: row.Album.title,
+              cover: row.Album.cover,
+              release_date: row.Album.release_date
+            } : null
+          });
+        }
+
+        if (mappedFromDb.length > 0) {
+          const top = mappedFromDb.slice(0, 10);
+          // Enrich with dynamic preview and missing album cover via Deezer track endpoint
+          for (let i = 0; i < top.length; i++) {
+            const t = top[i];
+            try {
+              const full = await makeDeezerRequest(`/track/${t.id}`);
+              if (full && full.preview) {
+                t.preview = full.preview; // Deezer preview URL
+              }
+              // If album cover missing, try to use from full.album
+              if ((!t.album || !t.album.cover) && full && full.album) {
+                t.album = t.album || {};
+                t.album.cover = full.album.cover || full.album.cover_medium || full.album.cover_big || t.album.cover;
+              }
+            } catch (e) {
+              // ignore per-track enrichment failures
+            }
+          }
+          return res.json(top);
+        }
+      }
+    } catch (e) {
+      console.warn('DB cached tracks fallback failed:', e.message);
+    }
+
+    // 3) Fallback: Last.fm top tracks mapped to Deezer + enqueue background job to process artist album tracks
+    try {
+      // Fetch artist name for Last.fm
+      const artistInfo = await makeDeezerRequest(`/artist/${artistId}`);
+      const artistName = artistInfo?.name;
+
+      if (artistName) {
+        // Get top tracks from Last.fm (cached)
+        const lastfmData = await makeCachedLastfmRequest('artist.gettoptracks', {
+          artist: artistName,
+          limit: 20
+        });
+
+        const lastfmTracks = Array.isArray(lastfmData?.toptracks?.track)
+          ? lastfmData.toptracks.track
+          : (lastfmData?.toptracks?.track ? [lastfmData.toptracks.track] : []);
+
+        const mapped = [];
+        const seen = new Set();
+        // Map Last.fm tracks to Deezer tracks via search
+        for (const lf of lastfmTracks) {
+          if (!lf?.name) continue;
+          try {
+            const q = `${artistName} ${lf.name}`;
+            const searchResp = await makeDeezerRequest(`/search/track?q=${encodeURIComponent(q)}&limit=5`);
+            const candidates = Array.isArray(searchResp?.data) ? searchResp.data : (Array.isArray(searchResp) ? searchResp : []);
+            for (const cand of candidates) {
+              if (!cand || !cand.id) continue;
+              const titleMatches = (cand.title_short || cand.title || '').toLowerCase() === lf.name.toLowerCase();
+              const artistMatches = (cand.artist?.name || '').toLowerCase() === artistName.toLowerCase();
+              if (titleMatches && artistMatches && !seen.has(cand.id)) {
+                seen.add(cand.id);
+                mapped.push(cand);
+                break;
+              }
+            }
+            if (mapped.length >= 10) break;
+          } catch (e) {
+            // continue if search fails for a specific track
+          }
+        }
+
+        // Enqueue background job to fetch/cache artist albums/tracks for processing in worker
+        try {
+          const dbArtist = await getOrCreateArtist({ id: parseInt(artistId, 10), name: artistName });
+          if (dbArtist && dbArtist.id) {
+            await queues.artistAlbums.add('fetch-artist-albums', {
+              artistId: dbArtist.id,
+              limit: 50
+            });
+          }
+        } catch (e) {
+          console.warn('Failed to enqueue artist albums job:', e.message);
+        }
+
+        if (mapped.length > 0) {
+          return res.json(mapped);
+        }
+      }
+    } catch (e) {
+      console.warn('Last.fm top-tracks fallback failed:', e.message);
+    }
+
+    // 4) Fallback: build from artist albums
+    const albumsResp = await makeDeezerRequest(`/artist/${artistId}/albums?limit=50`);
+    const albums = Array.isArray(albumsResp?.data) ? albumsResp.data : (Array.isArray(albumsResp) ? albumsResp : []);
+
+    const albumTracks = [];
+    for (const album of albums) {
+      try {
+        if (!album || !album.id) continue;
+        // Fetch album tracks
+        const trResp = await makeDeezerRequest(`/album/${album.id}/tracks`);
+        const tr = Array.isArray(trResp?.data) ? trResp.data : (Array.isArray(trResp) ? trResp : []);
+        // Enrich each track with album (ensure downstream images availability)
+        for (const t of tr) {
+          if (!t) continue;
+          albumTracks.push({ ...t, album: t.album || album });
+        }
+      } catch (e) {
+        // continue on album failure
+      }
+    }
+
+    if (albumTracks.length > 0) {
+      // Sort by computed popularity (rank or other fields) and pick top slice
+      const sorted = [...albumTracks].sort((a, b) => {
+        const pa = getTrackPopularity(a);
+        const pb = getTrackPopularity(b);
+        return pb - pa;
+      });
+
+      // Dedupe by id preserving order
+      const deduped = [];
+      const seen = new Set();
+      for (const t of sorted) {
+        if (t && t.id && !seen.has(t.id)) {
+          seen.add(t.id);
+          deduped.push(t);
+        }
+      }
+
+      // Return top 10 from albums
+      if (deduped.length > 0) {
+        return res.json(deduped.slice(0, 10));
+      }
+    }
+
+    // 5) Last resort: artist radio TODO rework
+    try {
+      const radioResp = await makeDeezerRequest(`/artist/${artistId}/radio`);
+      const radio = Array.isArray(radioResp?.data) ? radioResp.data : (Array.isArray(radioResp) ? radioResp : []);
+      if (radio.length > 0) {
+        // Dedupe just in case
+        const unique = [];
+        const seen = new Set();
+        for (const t of radio) {
+          if (t && t.id && !seen.has(t.id)) {
+            seen.add(t.id);
+            unique.push(t);
+          }
+        }
+        return res.json(unique.slice(0, 10));
+      }
+    } catch (e) {
+      // ignore
+    }
+
+    // Nothing found
+    return res.json([]);
+  } catch (error) {
+    console.error('Error in getArtistTopTracksWithFallback:', error);
+    return res.status(500).json({ error: 'Failed to get artist top tracks' });
+  }
+};
+
 // Helper function to make Deezer API requests
 const makeDeezerRequest = async (endpoint) => {
     try {

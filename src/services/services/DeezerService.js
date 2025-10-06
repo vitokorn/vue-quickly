@@ -238,10 +238,13 @@ export class DeezerService extends MusicServiceInterface {
 
     async getArtistTopTracks(id, market) {
         try {
-            let first_response = await this.request(`/artist/${id}/top`)
-            let second_response = await this.request(`/artist/${id}/top?index=5`)
-            let response = first_response.data.concat(second_response.data)
-            return response.map(track => this.transformTrack(track))
+            const resp = await fetch(`${this.backendUrl}/deezer/artist/${encodeURIComponent(id)}/top-tracks`)
+            if (!resp.ok) {
+                throw new Error(`Backend top-tracks failed: ${resp.status}`)
+            }
+            const data = await resp.json()
+            const tracks = Array.isArray(data) ? data : []
+            return tracks.map(track => this.transformTrack(track))
         } catch (error) {
             console.error('Deezer getArtistTopTracks error:', error)
             throw error

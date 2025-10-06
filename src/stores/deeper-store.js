@@ -505,19 +505,7 @@ export const useDeeperStore = defineStore('deeper', {
                 }
                 trackartistArray.push(appearancesItem)
 
-                // Check if top tracks are empty and create fallback from album tracks
-                if (!topTracks || topTracks.length === 0) {
-                    console.log('Top tracks empty, creating fallback from album tracks for artist:', item.id)
-                    const fallbackTracks = await this.createFallbackTopTracks(item.id, albums)
-                    if (fallbackTracks.length > 0) {
-                        // Update the existing top tracks item
-                        const topTracksIndex = trackartistArray.findIndex(item => item.type === 'top_tracks')
-                        if (topTracksIndex !== -1) {
-                            trackartistArray[topTracksIndex].tracks = fallbackTracks
-                            console.log('Updated top tracks with fallback:', fallbackTracks.length, 'tracks')
-                        }
-                    }
-                }
+                // Top tracks fallback is handled by backend now; no client-side fallback
 
                 // Add playlists
                 const enrichedPlaylists = await this.enrichPlaylists(playlists)

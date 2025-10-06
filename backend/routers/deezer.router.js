@@ -43,6 +43,15 @@ module.exports = (app) => {
      */
     router.get("/deezer/radio/artist/:artistId", deezerController.createArtistRadio);
 
+    // ==================== ARTIST TOP TRACKS ====================
+    /**
+     * @route GET /deezer/artist/:artistId/top-tracks
+     * @desc Get artist top tracks with server-side fallback
+     * @param {string} artistId - Deezer artist ID
+     * @access Public
+     */
+    router.get("/deezer/artist/:artistId/top-tracks", deezerController.getArtistTopTracksWithFallback);
+
     // ==================== QUEUE MANAGEMENT ROUTES ====================
 
     /**
