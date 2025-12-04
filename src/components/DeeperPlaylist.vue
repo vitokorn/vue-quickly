@@ -232,6 +232,7 @@ const displayedItems = computed(() => {
           <PlaylistTrackItem
               :track="item.track || item"
               :track-item="item"
+              :unplayable-tracks="true"
               @click="handleTrackClick"
               @hover="audioStore.handleAudioHover($event)"
               @leave="audioStore.handleAudioLeave($event)"
