@@ -51,6 +51,50 @@ const BEATPORT_GENRE_MAPPING = {
 };
 
 /**
+ * Search Deezer tracks via backend proxy (used for preview lookup)
+ */
+exports.searchTrackPreview = async (req, res) => {
+  try {
+    const { query, limit = 5 } = req.query;
+    const trimmedQuery = (query || '').trim();
+
+    if (!trimmedQuery) {
+      return res.status(400).json({ error: 'Query parameter is required' });
+    }
+
+    const safeLimit = Math.max(1, Math.min(parseInt(limit, 10) || 5, 25));
+    const searchEndpoint = `/search/track?q=${encodeURIComponent(trimmedQuery)}&limit=${safeLimit}`;
+    const searchResponse = await makeDeezerRequest(searchEndpoint);
+    const tracks = Array.isArray(searchResponse?.data) ? searchResponse.data : (Array.isArray(searchResponse) ? searchResponse : []);
+
+    const normalized = tracks.map(track => ({
+      id: track.id,
+      title: track.title,
+      duration: track.duration,
+      preview: track.preview,
+      link: track.link,
+      artist: track.artist ? {
+        id: track.artist.id,
+        name: track.artist.name
+      } : null,
+      album: track.album ? {
+        id: track.album.id,
+        title: track.album.title,
+        cover: track.album.cover,
+        cover_small: track.album.cover_small,
+        cover_medium: track.album.cover_medium,
+        cover_big: track.album.cover_big
+      } : null
+    }));
+
+    return res.json(normalized);
+  } catch (error) {
+    console.error('Error searching Deezer previews:', error.message);
+    return res.status(500).json({ error: 'Failed to search Deezer previews' });
+  }
+};
+
+/**
  * Get artist top tracks with backend fallback logic
  * - Try Deezer /artist/:id/top (two pages)
  * - If empty, aggregate tracks from artist albums and sort by popularity/rank

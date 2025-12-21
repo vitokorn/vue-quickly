@@ -5,6 +5,16 @@ const express = require("express");
 module.exports = (app) => {
     const router = express.Router();
 
+    // ==================== SEARCH ROUTES ====================
+    /**
+     * @route GET /deezer/search/preview
+     * @desc Proxy Deezer track search used for preview lookups
+     * @query {string} query - Search string (required)
+     * @query {number} limit - Maximum number of tracks to return (default: 5, max: 25)
+     * @access Public
+     */
+    router.get("/deezer/search/preview", deezerController.searchTrackPreview);
+
     // ==================== RADIO ROUTES ====================
 
     /**
